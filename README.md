@@ -4,6 +4,30 @@ Verifiable Autonomous Decision Intelligence Platform Website
 
 **7-Stage SRDPV-DAL Pipeline:** SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN
 
+**Core Innovations:**
+- Decision Control Plane (DCP)
+- Validation & Arbitration Layer
+- Counterfactual Simulation Engine
+- Temporal-Causal Knowledge Graph (TCO-KG)
+
+---
+
+## 🚀 One-Click Master Deployment
+
+```bash
+chmod +x master-deploy.sh
+./master-deploy.sh YOUR_GCP_PROJECT_ID https://github.com/YOUR_USERNAME/mizoki-website.git
+```
+
+This deploys:
+- ✅ Main website to Cloud Run
+- ✅ All 12 marketing pages
+- ✅ Blog with thought leadership
+- ✅ Pushes to GitHub
+- ✅ Configures custom domain
+
+---
+
 ## Quick Deploy to Google Cloud Run
 
 ### Prerequisites

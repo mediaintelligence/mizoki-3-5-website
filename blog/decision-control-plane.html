@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Agents Need a Decision Control Plane — MIZ OKI</title>
+    <meta name="description" content="The architectural innovation that separates action proposal from authorization—and why it's essential for enterprise AI.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --border: rgba(255,255,255,0.08);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+
+        .article-header {
+            padding: 10rem 2rem 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: var(--accent-cyan);
+        }
+        .post-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        .article-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .article-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--bg-primary);
+        }
+        .author-info {
+            flex: 1;
+        }
+        .author-name {
+            font-weight: 500;
+        }
+        .article-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem;
+        }
+        .article-content p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+        .article-content h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin: 3rem 0 1.5rem;
+            color: var(--text-primary);
+        }
+        .article-content h3 {
+            font-size: 1.25rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .article-content strong {
+            color: var(--text-primary);
+        }
+        .article-content ul, .article-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+        .article-content code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        .article-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        @media (max-width: 600px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+        .comparison-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .comparison-card.bad {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        .comparison-card.good {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .comparison-card h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        .comparison-card.bad h4 { color: var(--accent-red); }
+        .comparison-card.good h4 { color: var(--accent-green); }
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .comparison-card li {
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.05));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .highlight-box p {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0;
+        }
+
+        .formula-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .formula-box code {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+        }
+
+        .cta-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin: 4rem 0;
+        }
+        .cta-section h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="../how-it-works.html">How It Works</a>
+                <a href="../platform.html">Platform</a>
+                <a href="../industries.html">Industries</a>
+                <a href="../pricing.html">Pricing</a>
+                <a href="index.html">Blog</a>
+            </div>
+            <div class="nav-cta">
+                <a href="../roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="../walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <article>
+        <header class="article-header">
+            <div class="breadcrumb">
+                <a href="index.html">Blog</a> / Architecture
+            </div>
+            <span class="post-tag">Architecture</span>
+            <h1>Why Agents Need a Decision Control Plane</h1>
+            <p class="article-subtitle">The architectural innovation that separates action proposal from authorization—and why it's essential for enterprise AI</p>
+            <div class="article-meta">
+                <div class="author-avatar">BM</div>
+                <div class="author-info">
+                    <div class="author-name">Boris Mizhen</div>
+                    <div class="article-date">January 2026 • 8 min read</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="article-content">
+            <p>Every week, another AI agent framework launches with promises of autonomous operation. And every week, enterprise buyers ask the same question: <strong>"How do we trust it?"</strong></p>
+
+            <p>The answer isn't better prompts or more guardrails. It's a fundamental architectural change: <strong>separating action proposal from action authorization</strong>.</p>
+
+            <p>This is what we call the <strong>Decision Control Plane (DCP)</strong>—and it's the difference between AI that assists and AI that actually runs parts of your business.</p>
+
+            <hr>
+
+            <h2>The Problem with Direct-Execute Agents</h2>
+
+            <p>Most AI agent frameworks follow a simple pattern:</p>
+
+            <ol>
+                <li>Agent receives goal</li>
+                <li>Agent reasons about what to do</li>
+                <li>Agent executes action</li>
+                <li>Agent observes result</li>
+                <li>Repeat</li>
+            </ol>
+
+            <p>This works great for demos. It fails catastrophically in production because:</p>
+
+            <div class="comparison-grid">
+                <div class="comparison-card bad">
+                    <h4>Direct-Execute Problems</h4>
+                    <ul>
+                        <li>No pre-execution verification</li>
+                        <li>No counterfactual analysis</li>
+                        <li>No policy enforcement at runtime</li>
+                        <li>No audit trail of decisions</li>
+                        <li>Errors discovered after damage done</li>
+                    </ul>
+                </div>
+                <div class="comparison-card good">
+                    <h4>DCP Solutions</h4>
+                    <ul>
+                        <li>Every action verified before execution</li>
+                        <li>Alternatives simulated and compared</li>
+                        <li>Policy constraints enforced in real-time</li>
+                        <li>Complete decision provenance</li>
+                        <li>Failures prevented, not explained</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2>What is a Decision Control Plane?</h2>
+
+            <p>The Decision Control Plane is a centralized authority that sits between agent proposals and execution. Think of it like air traffic control for AI decisions.</p>
+
+            <div class="highlight-box">
+                <p><strong>Agents propose. The DCP authorizes.</strong><br>This separation is not optional—it's a fundamental architectural constraint.</p>
+            </div>
+
+            <p>When an agent wants to take an action, it doesn't execute directly. Instead:</p>
+
+            <ol>
+                <li><strong>Agent submits proposal</strong> to the DCP with reasoning and expected outcomes</li>
+                <li><strong>DCP evaluates</strong> using multiple factors (confidence, risk, policy, alternatives)</li>
+                <li><strong>DCP decides</strong>: Approve, Modify, Defer, Reject, or Escalate</li>
+                <li><strong>Only authorized actions execute</strong></li>
+                <li><strong>Everything is logged</strong> to the knowledge graph</li>
+            </ol>
+
+            <p>Critically: <strong>agents cannot bypass the DCP</strong>. This isn't a suggestion or a soft constraint—it's enforced at the architectural level.</p>
+
+            <hr>
+
+            <h2>The Authorization Algorithm</h2>
+
+            <p>The DCP doesn't just rubber-stamp proposals. It evaluates them using a multi-factor authorization algorithm:</p>
+
+            <div class="formula-box">
+                <code>Authorization_Score = α(Causal_Confidence) + β(Validation_Agreement) + γ(Simulation_Delta) + δ(Policy_Compliance) + ε(Historical_Performance)</code>
+            </div>
+
+            <p>Where:</p>
+            <ul>
+                <li><strong>Causal Confidence</strong>: How certain is the causal reasoning behind this action?</li>
+                <li><strong>Validation Agreement</strong>: Do independent Verifier agents agree with the proposal?</li>
+                <li><strong>Simulation Delta</strong>: How does this action compare to alternatives in simulation?</li>
+                <li><strong>Policy Compliance</strong>: Does this action satisfy all constraints?</li>
+                <li><strong>Historical Performance</strong>: How have similar actions performed in the past?</li>
+            </ul>
+
+            <p>The weights (α, β, γ, δ, ε) are learned from outcomes and adapt based on domain and risk profile.</p>
+
+            <hr>
+
+            <h2>The Validation Layer: Disagreement as Signal</h2>
+
+            <p>Before the DCP makes its decision, proposals pass through a Validation Layer with specialized agents:</p>
+
+            <ul>
+                <li><strong>Planner Agents</strong>: Propose actions based on causal reasoning</li>
+                <li><strong>Verifier Agents</strong>: Challenge logic and assumptions</li>
+                <li><strong>Risk Agents</strong>: Model downside scenarios</li>
+                <li><strong>Policy Agents</strong>: Enforce compliance constraints</li>
+            </ul>
+
+            <p>Here's the key insight: <strong>disagreement is not an error—it's valuable signal</strong>.</p>
+
+            <p>When agents disagree, we measure it:</p>
+
+            <div class="formula-box">
+                <code>Disagreement_Metric = Variance(Agent_Scores) × Confidence_Weighted_Deviation</code>
+            </div>
+
+            <p>High disagreement on a low-stakes decision? Probably fine to proceed. High disagreement on a high-stakes decision? That's a signal to slow down, gather more information, or escalate to human review.</p>
+
+            <p>The system doesn't require consensus. Arbitration can authorize action despite disagreement when confidence thresholds are met.</p>
+
+            <hr>
+
+            <h2>Counterfactual Simulation: What If We Don't?</h2>
+
+            <p>Before any action executes, the Counterfactual Simulation Engine asks three questions:</p>
+
+            <ol>
+                <li><strong>What happens if we do this?</strong> (Proposed action)</li>
+                <li><strong>What happens if we do something else?</strong> (Alternatives)</li>
+                <li><strong>What happens if we do nothing?</strong> (Baseline)</li>
+            </ol>
+
+            <p>This isn't just risk management—it's how the system learns without taking risks. The platform updates its models based on simulated outcomes that were never executed.</p>
+
+            <p>Authorization can be denied when simulated alternatives produce superior outcomes, even if the proposed action meets all other criteria.</p>
+
+            <hr>
+
+            <h2>Why This Matters for Enterprise</h2>
+
+            <p>The DCP architecture solves the three biggest blockers to enterprise AI adoption:</p>
+
+            <h3>1. Trust</h3>
+            <p>When every decision is verified before execution, explained with causal reasoning, and logged with full provenance, trust isn't a leap of faith—it's earned through transparency.</p>
+
+            <h3>2. Compliance</h3>
+            <p>Policy constraints are enforced at runtime, not audited after the fact. When regulators ask "why did the system do this?", you have a complete answer.</p>
+
+            <h3>3. Governance</h3>
+            <p>Human oversight doesn't mean human bottlenecks. The DCP can handle 89% of decisions autonomously while escalating the 11% that genuinely need human judgment.</p>
+
+            <hr>
+
+            <h2>The Bottom Line</h2>
+
+            <div class="highlight-box">
+                <p><strong>Decisions verified before execution—not explained after failure.</strong></p>
+            </div>
+
+            <p>This is the fundamental shift from AI assistants to AI operators. Not agents that do whatever they want with guardrails bolted on. Not humans manually reviewing every AI suggestion. But a genuine partnership where:</p>
+
+            <ul>
+                <li>AI proposes with full reasoning</li>
+                <li>The DCP validates with independent analysis</li>
+                <li>Simulations test alternatives</li>
+                <li>Policies constrain the envelope</li>
+                <li>Execution happens only when verified</li>
+                <li>Everything is logged for learning and audit</li>
+            </ul>
+
+            <p>That's what it takes to run parts of a business autonomously. That's why agents need a Decision Control Plane.</p>
+
+            <div class="cta-section">
+                <h2>See the Decision Control Plane in Action</h2>
+                <p>Request a demo to see how MIZ OKI 3.5 separates proposal from authorization for verifiable autonomous operation.</p>
+                <div class="cta-buttons">
+                    <a href="../walkthrough.html" class="btn btn-primary">Get Demo</a>
+                    <a href="../how-it-works.html" class="btn btn-ghost">Technical Deep Dive</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
