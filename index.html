@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIZ OKI 3.5 — Verifiable Autonomous Decision Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, var(--glow-cyan) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 60%, var(--glow-blue) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .hero-badge-dot {
+            width: 8px; height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .hero h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+        }
+        .hero h1 em { font-style: italic; color: var(--accent-cyan); }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+        .hero-trust { font-size: 0.85rem; color: var(--text-muted); }
+        .core-loop {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .section-container { max-width: 1200px; margin: 0 auto; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle { color: var(--text-secondary); max-width: 600px; margin-bottom: 3rem; }
+        .loop-container {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        .loop-header { text-align: center; margin-bottom: 2rem; }
+        .loop-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .loop-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            letter-spacing: 0.05em;
+        }
+        .loop-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+        .loop-step { display: flex; align-items: center; gap: 0.5rem; }
+        .loop-node {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        .loop-node:hover { border-color: var(--accent-cyan); box-shadow: 0 0 20px var(--glow-cyan); }
+        .loop-node.sense { color: var(--accent-orange); }
+        .loop-node.reason { color: var(--accent-purple); }
+        .loop-node.plan { color: var(--accent-blue); }
+        .loop-node.validate { color: var(--accent-green); }
+        .loop-node.decide { color: var(--accent-cyan); }
+        .loop-node.act { color: var(--accent-red); }
+        .loop-node.learn { color: #f472b6; }
+        .loop-arrow { color: var(--text-muted); font-size: 1.25rem; }
+        .loop-feedback { text-align: center; font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
+        .innovations { padding: 6rem 2rem; }
+        .innovations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .innovation-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .innovation-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .innovation-card:hover::before { transform: scaleX(1); }
+        .innovation-card:hover { border-color: rgba(79, 143, 255, 0.3); transform: translateY(-2px); }
+        .innovation-icon {
+            width: 48px; height: 48px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.5rem;
+        }
+        .innovation-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .innovation-abbr {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.75rem;
+        }
+        .innovation-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+        .metrics {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .metric-card { text-align: center; padding: 2rem; }
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .metric-label { font-size: 0.9rem; color: var(--text-secondary); }
+        .how-works { padding: 6rem 2rem; }
+        .steps-container { display: grid; gap: 3rem; margin-top: 3rem; }
+        .step-row { display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start; }
+        .step-number {
+            width: 80px; height: 80px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+        .step-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .step-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+        .step-content p { color: var(--text-secondary); line-height: 1.7; }
+        .media-buying {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+            border-top: 1px solid var(--border);
+        }
+        .relu-callout {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent-orange);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+        }
+        .relu-callout h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-orange);
+            margin-bottom: 0.5rem;
+        }
+        .relu-callout p { color: var(--text-secondary); font-size: 0.95rem; }
+        .threshold-list { display: grid; gap: 1rem; margin-top: 2rem; }
+        .threshold-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .threshold-icon {
+            width: 40px; height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .threshold-item h5 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .threshold-item p { font-size: 0.85rem; color: var(--text-secondary); }
+        .industries { padding: 6rem 2rem; }
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .industry-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .industry-card:hover { border-color: var(--accent-blue); }
+        .industry-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .industry-card p { font-size: 0.85rem; color: var(--text-secondary); }
+        .trust {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+        .trust-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .trust-feature { display: flex; gap: 1rem; align-items: flex-start; }
+        .trust-icon {
+            width: 44px; height: 44px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+        }
+        .trust-feature h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .trust-feature p { font-size: 0.85rem; color: var(--text-secondary); }
+        .cta-section { padding: 6rem 2rem; text-align: center; }
+        .cta-section h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+        .footer-container { max-width: 1200px; margin: 0 auto; }
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            max-width: 300px;
+        }
+        .footer-links h5 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .footer-links a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.25rem 0;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .footer-top { grid-template-columns: 1fr 1fr; }
+            .step-row { grid-template-columns: 1fr; }
+            .step-number { width: 60px; height: 60px; }
+            .loop-visual { flex-direction: column; }
+            .loop-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="how-it-works.html">How It Works</a>
+                <a href="platform.html">Platform</a>
+                <a href="security.html">Security</a>
+                <a href="industries.html">Industries</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="case-studies.html">Case Studies</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="roi.html" class="btn btn-ghost">Estimate ROI</a>
+                <a href="walkthrough.html" class="btn btn-primary">12-Min Walkthrough</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Verifiable Autonomous Decision Intelligence
+            </div>
+            <h1>Decisions <em>verified before execution</em>—not explained after failure</h1>
+            <p class="hero-subtitle">MIZ OKI 3.5 is the first Business General Intelligence platform where autonomous agents propose actions, but a Decision Control Plane verifies, simulates, and authorizes every decision before execution. No more black-box AI. Full auditability. 50-75× faster decisions.</p>
+            <div class="hero-actions">
+                <a href="walkthrough.html" class="btn btn-primary">See 12-Minute Walkthrough →</a>
+                <a href="roi.html" class="btn btn-ghost">Estimate Your ROI</a>
+            </div>
+            <p class="hero-trust">No rip-and-replace. No black-box autonomy. Agents cannot bypass governance.</p>
+        </div>
+    </section>
+
+    <section class="core-loop">
+        <div class="section-container">
+            <span class="section-label">The Cognitive Architecture</span>
+            <h2 class="section-title">Seven-Stage Autonomous Intelligence Loop</h2>
+            <p class="section-subtitle">Every decision flows through a verifiable pipeline. PLAN and VALIDATE stages ensure proposals are challenged before the Decision Control Plane authorizes execution.</p>
+            <div class="loop-container">
+                <div class="loop-header">
+                    <div class="loop-title">SRDPV-DAL Pipeline (Patent Pending)</div>
+                    <div class="loop-name">Sense → Reason → Plan → Validate → Decide → Act → Learn</div>
+                </div>
+                <div class="loop-visual">
+                    <div class="loop-step"><span class="loop-node sense">SENSE</span><span class="loop-arrow">→</span></div>
+                    <div class="loop-step"><span class="loop-node reason">REASON</span><span class="loop-arrow">→</span></div>
+                    <div class="loop-step"><span class="loop-node plan">PLAN</span><span class="loop-arrow">→</span></div>
+                    <div class="loop-step"><span class="loop-node validate">VALIDATE</span><span class="loop-arrow">→</span></div>
+                    <div class="loop-step"><span class="loop-node decide">DECIDE</span><span class="loop-arrow">→</span></div>
+                    <div class="loop-step"><span class="loop-node act">ACT</span><span class="loop-arrow">→</span></div>
+                    <div class="loop-step"><span class="loop-node learn">LEARN</span></div>
+                </div>
+                <p class="loop-feedback">↺ LEARN feeds outcomes back into SENSE — continuous improvement from real results</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="innovations">
+        <div class="section-container">
+            <span class="section-label">Core Innovations</span>
+            <h2 class="section-title">What Makes 3.5 Different</h2>
+            <p class="section-subtitle">Four architectural breakthroughs that enable verifiable, governed autonomy—suitable for enterprise and regulated environments.</p>
+            <div class="innovations-grid">
+                <div class="innovation-card">
+                    <div class="innovation-icon">⚡</div>
+                    <h3>Decision Control Plane</h3>
+                    <div class="innovation-abbr">DCP</div>
+                    <p>Centralized authority that receives proposals from autonomous agents and authorizes, rejects, modifies, or defers them. Agents cannot bypass the DCP—this separation of proposal from authorization is a fundamental architectural constraint.</p>
+                </div>
+                <div class="innovation-card">
+                    <div class="innovation-icon">🔍</div>
+                    <h3>Validation & Arbitration Layer</h3>
+                    <div class="innovation-abbr">VAL</div>
+                    <p>Planner, Verifier, Risk, and Policy agents independently evaluate each proposal. Disagreement is signal, not error. Arbitration resolves conflicts based on confidence thresholds and historical accuracy.</p>
+                </div>
+                <div class="innovation-card">
+                    <div class="innovation-icon">🔮</div>
+                    <h3>Counterfactual Simulation Engine</h3>
+                    <div class="innovation-abbr">CSE</div>
+                    <p>Before execution, simulate the proposed action, alternatives, and a no-action baseline. Learn from simulated outcomes without real-world risk. Authorization denied when alternatives score higher.</p>
+                </div>
+                <div class="innovation-card">
+                    <div class="innovation-icon">🕸️</div>
+                    <h3>Temporal-Causal Knowledge Graph</h3>
+                    <div class="innovation-abbr">TCO-KG</div>
+                    <p>Decision memory and audit spine. Stores facts, proposals, simulations, outcomes, and causal confidence with timestamps. Every decision is traceable. Every outcome feeds learning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="metrics">
+        <div class="section-container">
+            <span class="section-label">Measurable Impact</span>
+            <h2 class="section-title">This is not analytics. This is operational intelligence.</h2>
+            <p class="section-subtitle">Every action is logged. Every decision is auditable. Performance improves continuously through the Learn cycle.</p>
+            <div class="metrics-grid">
+                <div class="metric-card"><div class="metric-value">50-75×</div><div class="metric-label">Faster decision velocity</div></div>
+                <div class="metric-card"><div class="metric-value">↓35%</div><div class="metric-label">Revenue leakage reduction</div></div>
+                <div class="metric-card"><div class="metric-value">↓41%</div><div class="metric-label">Operational cost reduction</div></div>
+                <div class="metric-card"><div class="metric-value">3.2mo</div><div class="metric-label">Typical payback period</div></div>
+                <div class="metric-card"><div class="metric-value">89%</div><div class="metric-label">Automation coverage</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-works">
+        <div class="section-container">
+            <span class="section-label">The Pipeline</span>
+            <h2 class="section-title">How Autonomous Decision Controllers Work</h2>
+            <p class="section-subtitle">Each stage is powered by a specialized Autonomous Decision Controller (ADC) with explicit algorithms and audit trails.</p>
+            <div class="steps-container">
+                <div class="step-row"><div class="step-number">S</div><div class="step-content"><h3>SENSE <span class="step-tag">SENSE-ADC</span></h3><p>Autonomous attention allocation calculates priority scores based on impact magnitude, uncertainty, time criticality, and strategic alignment. Ingests live signals from ERP, CRM, market data, and operations. Dynamic thresholds adapt to system load.</p></div></div>
+                <div class="step-row"><div class="step-number">R</div><div class="step-content"><h3>REASON <span class="step-tag">REASON-ADC</span></h3><p>Causal GraphRAG traverses the knowledge graph using causally-informed queries—not just semantic similarity. Automated confounder detection. Analysis depth scales with decision value and uncertainty reduction potential.</p></div></div>
+                <div class="step-row"><div class="step-number">P</div><div class="step-content"><h3>PLAN <span class="step-tag">PLAN-ADC</span></h3><p>Generates candidate actions through causal reasoning over the knowledge graph. Multi-objective optimization considers probability, value, and ethical alignment. Multiple alternatives are always generated.</p></div></div>
+                <div class="step-row"><div class="step-number">V</div><div class="step-content"><h3>VALIDATE <span class="step-tag">Validation Layer</span></h3><p>Independent Verifier, Risk, and Policy agents challenge every proposal. Disagreement is measured and weighted. The system doesn't require consensus—arbitration resolves based on confidence thresholds.</p></div></div>
+                <div class="step-row"><div class="step-number">D</div><div class="step-content"><h3>DECIDE <span class="step-tag">Decision Control Plane</span></h3><p>The DCP calculates authorization scores combining causal confidence, validation agreement, simulation delta, policy compliance, and historical performance. Approve, modify, defer, reject, or escalate.</p></div></div>
+                <div class="step-row"><div class="step-number">A</div><div class="step-content"><h3>ACT <span class="step-tag">ACT-ADC</span></h3><p>Orchestrates execution with dependency resolution and adaptive rollback. Performance deviation triggers automatic rollback strategies—immediate, gradual, partial, or checkpoint-based.</p></div></div>
+                <div class="step-row"><div class="step-number">L</div><div class="step-content"><h3>LEARN <span class="step-tag">LEARN-ADC</span></h3><p>Prioritizes learning by prediction error, business impact, knowledge gap, and frequency. Updates models with stability-plasticity balance. Feeds outcomes back into SENSE for continuous improvement.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="media-buying">
+        <div class="section-container">
+            <span class="section-label">Featured Use Case</span>
+            <h2 class="section-title">Media Buying Intelligence with Threshold Awareness</h2>
+            <p class="section-subtitle">Meta's ad system behaves non-linearly. Below thresholds, effort feels invisible. Above thresholds, learning compounds. MIZ OKI 3.5 understands these dynamics.</p>
+            <div class="relu-callout">
+                <h4>The ReLU Lens</h4>
+                <p>Meta's delivery + optimization behaves like a ReLU activation function: below certain thresholds, nothing really happens. Above them, momentum kicks in. MIZ OKI's Counterfactual Simulation Engine models these non-linear dynamics to find optimal operating points.</p>
+            </div>
+            <div class="threshold-list">
+                <div class="threshold-item"><div class="threshold-icon">📊</div><div><h5>Learning Phase Detection</h5><p>Detects when ad sets are trending toward "Learning Limited" (~50 events/week threshold) and recommends consolidation or budget concentration before performance degrades.</p></div></div>
+                <div class="threshold-item"><div class="threshold-icon">🎯</div><div><h5>Signal Quality Optimization</h5><p>Monitors Event Match Quality, deduplication accuracy, and funnel completeness. Clean tracking as "voltage"—you can't cross thresholds with noisy instrumentation.</p></div></div>
+                <div class="threshold-item"><div class="threshold-icon">🧠</div><div><h5>Institutional Memory</h5><p>Knowledge Graph captures what you tested, what changed, what worked, what failed, and under what conditions. Stop reinventing the wheel every campaign.</p></div></div>
+                <div class="threshold-item"><div class="threshold-icon">⚖️</div><div><h5>Stability Windows</h5><p>Protects learning by limiting edits that reset optimization dynamics. Turns campaign management into a system, not a reaction.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="industries">
+        <div class="section-container">
+            <span class="section-label">Industry Templates</span>
+            <h2 class="section-title">Pre-configured for Your Domain</h2>
+            <p class="section-subtitle">Deploy in weeks, not months. Each template includes pre-trained causal models, agent configurations, and compliance frameworks.</p>
+            <div class="industry-grid">
+                <div class="industry-card"><h4>🏪 Retail & Commerce</h4><p>Demand forecasting • Pricing optimization • Inventory risk • Customer behavior models</p></div>
+                <div class="industry-card"><h4>💰 Finance & Capital</h4><p>Risk exposure • Scenario simulation • Portfolio automation • Fraud patterns</p></div>
+                <div class="industry-card"><h4>⚙️ Operations & Supply Chain</h4><p>Bottleneck prediction • Cost optimization • Disruption response • Production flows</p></div>
+                <div class="industry-card"><h4>🏥 Healthcare</h4><p>Compliance automation • Resource optimization • Clinical pathways • Outcome forecasting</p></div>
+                <div class="industry-card"><h4>📺 Media Buying</h4><p>Attribution models • Channel optimization • Creative performance • Threshold-aware bidding</p></div>
+                <div class="industry-card"><h4>🏭 Manufacturing</h4><p>Quality models • Maintenance schedules • Supply chain optimization • Production optimization</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust">
+        <div class="section-container">
+            <span class="section-label">Enterprise Ready</span>
+            <h2 class="section-title">Built for Boards, CISOs, and Regulators</h2>
+            <p class="section-subtitle">Full decision traceability. Explainable reasoning. Quantum-resistant security. Deploy on your cloud or ours.</p>
+            <div class="trust-features">
+                <div class="trust-feature"><div class="trust-icon">🔐</div><div><h4>Quantum-Resistant Security</h4><p>CRYSTALS-Kyber key encapsulation, CRYSTALS-Dilithium signatures. Future-proof cryptography.</p></div></div>
+                <div class="trust-feature"><div class="trust-icon">📋</div><div><h4>Immutable Audit Logs</h4><p>Every proposal, validation, simulation, and execution is cryptographically signed and logged.</p></div></div>
+                <div class="trust-feature"><div class="trust-icon">🎛️</div><div><h4>Human-in-the-Loop Controls</h4><p>Full override capability. Configurable thresholds. Automatic escalation for novel situations.</p></div></div>
+                <div class="trust-feature"><div class="trust-icon">🏢</div><div><h4>Multi-Tenant Isolation</h4><p>Kubernetes namespace isolation. Tenant-specific knowledge graphs. Federated learning with differential privacy.</p></div></div>
+                <div class="trust-feature"><div class="trust-icon">📊</div><div><h4>Explainable Decisions</h4><p>Causal pathways for every decision. Transparent reasoning. No black-box mystery.</p></div></div>
+                <div class="trust-feature"><div class="trust-icon">⚡</div><div><h4>Sub-100ms Latency</h4><p>Operational queries under 100ms. Full decision cycle under 60 seconds. Real-time intelligence.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="section-container">
+            <h2>Ready to see verifiable autonomy in action?</h2>
+            <p>Estimate your ROI in 60 seconds, or see the full platform in a 12-minute walkthrough.</p>
+            <div class="cta-buttons">
+                <a href="roi.html" class="btn btn-ghost">Estimate ROI →</a>
+                <a href="walkthrough.html" class="btn btn-primary">Watch 12-Min Walkthrough →</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand"><a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a><p>Verifiable Autonomous Decision Intelligence. Agents propose. The Decision Control Plane authorizes. Every decision auditable.</p></div>
+                <div class="footer-links"><h5>Platform</h5><a href="how-it-works.html">How It Works</a><a href="platform.html">Architecture</a><a href="security.html">Security</a><a href="industries.html">Industries</a></div>
+                <div class="footer-links"><h5>Resources</h5><a href="case-studies.html">Case Studies</a><a href="roi.html">ROI Calculator</a><a href="walkthrough.html">Walkthrough</a><a href="resources.html">Documentation</a></div>
+                <div class="footer-links"><h5>Company</h5><a href="investor.html">Investors</a><a href="sales-one-pager.html">Sales Brief</a><a href="demo-opener.html">Demo Script</a></div>
+            </div>
+            <div class="footer-bottom"><span>© 2026 MIZ OKI. All rights reserved.</span><span>Every action logged. Every decision auditable.</span></div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator — MIZ OKI 3.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a.active { color: var(--accent-cyan); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, var(--glow-cyan) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .page-header p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Calculator Section */
+        .calculator-section {
+            padding: 2rem 2rem 5rem;
+        }
+        .calculator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        @media (max-width: 900px) {
+            .calculator-container { grid-template-columns: 1fr; }
+        }
+
+        /* Input Panel */
+        .input-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .panel-header {
+            margin-bottom: 2rem;
+        }
+        .panel-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .panel-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .input-label label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .input-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+        }
+        .input-slider {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        .input-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .input-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        .input-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .select-group {
+            margin-bottom: 1.5rem;
+        }
+        .select-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+            cursor: pointer;
+            appearance: none;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .select-wrapper select:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        /* Results Panel */
+        .results-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            position: sticky;
+            top: 100px;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .results-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+        }
+        .results-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .roi-hero {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.1));
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        .roi-hero-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .roi-hero-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .roi-hero-subtext {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .results-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .metric-card.highlight {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .metric-value.positive { color: var(--accent-green); }
+        .metric-value.negative { color: var(--accent-red); }
+
+        .results-breakdown {
+            margin-bottom: 2rem;
+        }
+        .breakdown-header {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+        .breakdown-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .breakdown-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .results-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .results-cta .btn {
+            width: 100%;
+            text-align: center;
+            padding: 0.9rem;
+        }
+
+        /* Methodology Section */
+        .methodology-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .methodology-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .methodology-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .methodology-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .methodology-header p {
+            color: var(--text-secondary);
+        }
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 800px) {
+            .methodology-grid { grid-template-columns: 1fr; }
+        }
+        .methodology-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .methodology-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .methodology-card h3::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+        }
+        .methodology-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .methodology-formula {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+        }
+
+        /* Assumptions */
+        .assumptions-section {
+            padding: 4rem 2rem;
+        }
+        .assumptions-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .assumptions-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .assumptions-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .assumptions-list {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .assumption-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .assumption-item:last-child {
+            border-bottom: none;
+        }
+        .assumption-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        .assumption-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .assumption-text strong {
+            color: var(--text-primary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+            text-align: center;
+        }
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-container h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-container p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-buttons .btn {
+            padding: 0.9rem 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            max-width: 280px;
+        }
+        .footer-col h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="how-it-works.html">How It Works</a>
+                <a href="platform.html">Platform</a>
+                <a href="security.html">Security</a>
+                <a href="industries.html">Industries</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="case-studies.html">Case Studies</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="roi.html" class="btn btn-ghost active">ROI Calculator</a>
+                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1>Calculate Your ROI</h1>
+            <p>See how MIZ OKI 3.5 can transform your decision-making economics with our interactive calculator</p>
+        </div>
+    </section>
+
+    <section class="calculator-section">
+        <div class="calculator-container">
+            <!-- Input Panel -->
+            <div class="input-panel">
+                <div class="panel-header">
+                    <h2>Your Organization</h2>
+                    <p>Adjust the inputs to match your current operations</p>
+                </div>
+
+                <div class="select-group">
+                    <label>Industry</label>
+                    <div class="select-wrapper">
+                        <select id="industry">
+                            <option value="media">Media Buying / Advertising</option>
+                            <option value="finance">Financial Services</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="retail">Retail</option>
+                            <option value="manufacturing">Manufacturing</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <label>Annual Revenue / AUM</label>
+                        <span class="input-value" id="revenue-display">$50M</span>
+                    </div>
+                    <input type="range" class="input-slider" id="revenue" min="5" max="500" value="50" step="5">
+                    <p class="input-hint">Your annual revenue or assets under management</p>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <label>Decisions Per Month</label>
+                        <span class="input-value" id="decisions-display">10,000</span>
+                    </div>
+                    <input type="range" class="input-slider" id="decisions" min="1000" max="500000" value="10000" step="1000">
+                    <p class="input-hint">Budget changes, bid adjustments, inventory decisions, etc.</p>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <label>Current Decision Latency (hours)</label>
+                        <span class="input-value" id="latency-display">24 hours</span>
+                    </div>
+                    <input type="range" class="input-slider" id="latency" min="1" max="168" value="24" step="1">
+                    <p class="input-hint">Average time from signal detection to action</p>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <label>Estimated Revenue Leakage (%)</label>
+                        <span class="input-value" id="leakage-display">8%</span>
+                    </div>
+                    <input type="range" class="input-slider" id="leakage" min="1" max="25" value="8" step="1">
+                    <p class="input-hint">Revenue lost to slow decisions, missed opportunities, errors</p>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <label>Team Size (Decision-Makers)</label>
+                        <span class="input-value" id="team-display">15 people</span>
+                    </div>
+                    <input type="range" class="input-slider" id="team" min="5" max="100" value="15" step="1">
+                    <p class="input-hint">People involved in operational decision-making</p>
+                </div>
+
+                <div class="select-group">
+                    <label>Target MIZ OKI Tier</label>
+                    <div class="select-wrapper">
+                        <select id="tier">
+                            <option value="foundation">Foundation ($8,500/mo)</option>
+                            <option value="professional" selected>Professional ($24,000/mo)</option>
+                            <option value="enterprise">Enterprise (Custom)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel">
+                <div class="results-header">
+                    <h2>Your ROI Estimate</h2>
+                    <span class="results-badge">Live Calculation</span>
+                </div>
+
+                <div class="roi-hero">
+                    <div class="roi-hero-label">Projected Annual ROI</div>
+                    <div class="roi-hero-value" id="roi-value">847%</div>
+                    <div class="roi-hero-subtext">Based on your inputs</div>
+                </div>
+
+                <div class="results-metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Annual Value Created</div>
+                        <div class="metric-value positive" id="value-created">$2.44M</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Annual Platform Cost</div>
+                        <div class="metric-value" id="platform-cost">$288K</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Net Annual Benefit</div>
+                        <div class="metric-value positive" id="net-benefit">$2.15M</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Payback Period</div>
+                        <div class="metric-value" id="payback">1.4 months</div>
+                    </div>
+                    <div class="metric-card highlight">
+                        <div class="metric-label">5-Year Net Present Value</div>
+                        <div class="metric-value positive" id="npv">$8.7M</div>
+                    </div>
+                </div>
+
+                <div class="results-breakdown">
+                    <div class="breakdown-header">Value Breakdown</div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Revenue leakage reduction (35%)</span>
+                        <span class="breakdown-value" id="leakage-savings">$1.4M</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Decision velocity improvement (63×)</span>
+                        <span class="breakdown-value" id="velocity-savings">$680K</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Team productivity gains</span>
+                        <span class="breakdown-value" id="productivity-savings">$360K</span>
+                    </div>
+                </div>
+
+                <div class="results-cta">
+                    <a href="walkthrough.html" class="btn btn-primary">Get Custom Analysis</a>
+                    <a href="#" class="btn btn-ghost" onclick="downloadROI()">Download PDF Report</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="methodology-section">
+        <div class="methodology-container">
+            <div class="methodology-header">
+                <h2>Our Methodology</h2>
+                <p>How we calculate your potential return on investment</p>
+            </div>
+            <div class="methodology-grid">
+                <div class="methodology-card">
+                    <h3>Revenue Leakage</h3>
+                    <p>Based on our case study data, MIZ OKI reduces revenue leakage by an average of 35% across industries through faster response to market signals and elimination of decision errors.</p>
+                    <div class="methodology-formula">Savings = Revenue × Leakage% × 0.35</div>
+                </div>
+                <div class="methodology-card">
+                    <h3>Decision Velocity</h3>
+                    <p>Autonomous decision-making delivers 50-75× improvement in decision latency. We calculate value based on the opportunity cost of delayed decisions in your industry.</p>
+                    <div class="methodology-formula">Value = (Old_Latency - New_Latency) × Decision_Value</div>
+                </div>
+                <div class="methodology-card">
+                    <h3>Team Productivity</h3>
+                    <p>With 89% automation coverage, your team shifts from routine decisions to strategic work. We estimate 40% productivity improvement for decision-making roles.</p>
+                    <div class="methodology-formula">Savings = Team_Size × Avg_Salary × 0.40</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="assumptions-section">
+        <div class="assumptions-container">
+            <div class="assumptions-header">
+                <h2>Key Assumptions</h2>
+                <p>Transparency in our calculations</p>
+            </div>
+            <div class="assumptions-list">
+                <div class="assumption-item">
+                    <div class="assumption-icon">📊</div>
+                    <p class="assumption-text"><strong>Revenue leakage reduction of 35%</strong> — Conservative estimate based on case study average (range: 18-52%)</p>
+                </div>
+                <div class="assumption-item">
+                    <div class="assumption-icon">⚡</div>
+                    <p class="assumption-text"><strong>Decision velocity improvement of 63×</strong> — Midpoint of documented 50-75× range after 90 days</p>
+                </div>
+                <div class="assumption-item">
+                    <div class="assumption-icon">👥</div>
+                    <p class="assumption-text"><strong>Average decision-maker salary of $120K</strong> — Fully-loaded cost for mid-level operational roles</p>
+                </div>
+                <div class="assumption-item">
+                    <div class="assumption-icon">📈</div>
+                    <p class="assumption-text"><strong>Automation coverage of 89%</strong> — Percentage of routine decisions handled autonomously</p>
+                </div>
+                <div class="assumption-item">
+                    <div class="assumption-icon">🎯</div>
+                    <p class="assumption-text"><strong>Full value realized by month 3</strong> — Ramp period of 30-60 days before full optimization</p>
+                </div>
+                <div class="assumption-item">
+                    <div class="assumption-icon">💰</div>
+                    <p class="assumption-text"><strong>NPV calculated at 10% discount rate</strong> — Standard enterprise discount rate for technology investments</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready for a Custom Analysis?</h2>
+            <p>Our team can build a detailed business case with your specific metrics and constraints</p>
+            <div class="cta-buttons">
+                <a href="walkthrough.html" class="btn btn-primary">Schedule Deep Dive</a>
+                <a href="case-studies.html" class="btn btn-ghost">See Real Results</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+                    <p>Verifiable Autonomous Decision Intelligence. Decisions verified before execution—not explained after failure.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <a href="how-it-works.html">How It Works</a>
+                    <a href="platform.html">Architecture</a>
+                    <a href="security.html">Security</a>
+                    <a href="industries.html">Industries</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="case-studies.html">Case Studies</a>
+                    <a href="resources.html">Documentation</a>
+                    <a href="roi.html">ROI Calculator</a>
+                    <a href="#">API Reference</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Calculator Logic
+        const inputs = {
+            revenue: document.getElementById('revenue'),
+            decisions: document.getElementById('decisions'),
+            latency: document.getElementById('latency'),
+            leakage: document.getElementById('leakage'),
+            team: document.getElementById('team'),
+            tier: document.getElementById('tier'),
+            industry: document.getElementById('industry')
+        };
+
+        const displays = {
+            revenue: document.getElementById('revenue-display'),
+            decisions: document.getElementById('decisions-display'),
+            latency: document.getElementById('latency-display'),
+            leakage: document.getElementById('leakage-display'),
+            team: document.getElementById('team-display')
+        };
+
+        const tierCosts = {
+            foundation: 8500 * 12,
+            professional: 24000 * 12,
+            enterprise: 50000 * 12
+        };
+
+        function formatCurrency(num) {
+            if (num >= 1000000) {
+                return '$' + (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return '$' + (num / 1000).toFixed(0) + 'K';
+            }
+            return '$' + num.toFixed(0);
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function calculateROI() {
+            const revenue = parseInt(inputs.revenue.value) * 1000000;
+            const decisions = parseInt(inputs.decisions.value);
+            const latency = parseInt(inputs.latency.value);
+            const leakageRate = parseInt(inputs.leakage.value) / 100;
+            const team = parseInt(inputs.team.value);
+            const tier = inputs.tier.value;
+
+            // Update displays
+            displays.revenue.textContent = '$' + inputs.revenue.value + 'M';
+            displays.decisions.textContent = formatNumber(decisions);
+            displays.latency.textContent = latency + ' hours';
+            displays.leakage.textContent = inputs.leakage.value + '%';
+            displays.team.textContent = team + ' people';
+
+            // Calculate value components
+            const leakageReduction = 0.35; // 35% reduction in leakage
+            const leakageSavings = revenue * leakageRate * leakageReduction;
+
+            const velocityImprovement = 63; // 63x faster
+            const decisionValue = revenue * 0.0001; // Each decision worth 0.01% of revenue
+            const velocityValue = (latency / velocityImprovement) * decisions * 12 * (decisionValue / decisions);
+            const velocitySavings = Math.min(velocityValue, revenue * 0.02); // Cap at 2% of revenue
+
+            const avgSalary = 120000;
+            const productivityGain = 0.40;
+            const productivitySavings = team * avgSalary * productivityGain;
+
+            // Total value
+            const totalValue = leakageSavings + velocitySavings + productivitySavings;
+            const platformCost = tierCosts[tier];
+            const netBenefit = totalValue - platformCost;
+            const roi = ((totalValue - platformCost) / platformCost) * 100;
+            const paybackMonths = platformCost / (totalValue / 12);
+
+            // 5-year NPV at 10% discount rate
+            const discountRate = 0.10;
+            let npv = -platformCost;
+            for (let year = 1; year <= 5; year++) {
+                npv += netBenefit / Math.pow(1 + discountRate, year);
+            }
+
+            // Update results
+            document.getElementById('roi-value').textContent = Math.round(roi) + '%';
+            document.getElementById('value-created').textContent = formatCurrency(totalValue);
+            document.getElementById('platform-cost').textContent = formatCurrency(platformCost);
+            document.getElementById('net-benefit').textContent = formatCurrency(netBenefit);
+            document.getElementById('payback').textContent = paybackMonths.toFixed(1) + ' months';
+            document.getElementById('npv').textContent = formatCurrency(npv);
+            document.getElementById('leakage-savings').textContent = formatCurrency(leakageSavings);
+            document.getElementById('velocity-savings').textContent = formatCurrency(velocitySavings);
+            document.getElementById('productivity-savings').textContent = formatCurrency(productivitySavings);
+        }
+
+        // Add event listeners
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', calculateROI);
+            input.addEventListener('change', calculateROI);
+        });
+
+        // Initial calculation
+        calculateROI();
+
+        function downloadROI() {
+            alert('PDF report generation coming soon! Contact sales for a custom analysis.');
+        }
+    </script>
+</body>
+</html>

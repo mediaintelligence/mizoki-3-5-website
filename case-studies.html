@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Studies — MIZ OKI 3.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-pink: #f472b6;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a.active { color: var(--accent-cyan); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, var(--glow-cyan) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .page-header p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Results Summary */
+        .results-summary {
+            padding: 0 2rem 4rem;
+        }
+        .results-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .results-container { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .results-container { grid-template-columns: 1fr; }
+        }
+        .result-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Case Study Cards */
+        .cases-section {
+            padding: 4rem 2rem;
+        }
+        .cases-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            margin-bottom: 3rem;
+        }
+        .section-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+        }
+
+        .case-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+        .case-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-4px);
+        }
+        .case-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 280px;
+        }
+        @media (max-width: 900px) {
+            .case-header { grid-template-columns: 1fr; }
+        }
+        .case-content {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .case-industry {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+        .case-title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+        .case-company {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .case-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .case-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-cyan);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: gap 0.2s;
+        }
+        .case-cta:hover { gap: 0.75rem; }
+        .case-metrics {
+            background: var(--bg-tertiary);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .case-metric {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            min-width: 100px;
+        }
+        .metric-value.positive { color: var(--accent-green); }
+        .metric-value.negative { color: var(--accent-red); }
+        .metric-value.neutral { color: var(--accent-cyan); }
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Featured Quote */
+        .case-quote {
+            background: var(--bg-tertiary);
+            padding: 2rem 2.5rem;
+            border-top: 1px solid var(--border);
+        }
+        .quote-text {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        .quote-text::before { content: '"'; }
+        .quote-text::after { content: '"'; }
+        .quote-author {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .quote-author strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Detailed Case Study */
+        .detailed-case {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .detailed-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .detailed-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .detailed-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .detailed-header p {
+            color: var(--text-secondary);
+        }
+        .detailed-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        @media (max-width: 800px) {
+            .detailed-content { grid-template-columns: 1fr; }
+        }
+        .detailed-section {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        .detailed-section h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        .detailed-section ul {
+            list-style: none;
+        }
+        .detailed-section li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        .detailed-section li::before {
+            content: '→';
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .detailed-section li strong {
+            color: var(--text-primary);
+        }
+
+        /* Timeline */
+        .timeline-section {
+            padding: 5rem 2rem;
+        }
+        .timeline-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .timeline-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+        }
+        .timeline-item {
+            position: relative;
+            padding: 1.5rem 0 1.5rem 2rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 1.8rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            transform: translateX(-5px);
+        }
+        .timeline-week {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Logos Section */
+        .logos-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .logos-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .logos-header {
+            margin-bottom: 3rem;
+        }
+        .logos-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .logos-header p {
+            color: var(--text-secondary);
+        }
+        .logos-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 3rem;
+            opacity: 0.6;
+        }
+        .logo-placeholder {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            padding: 1rem 2rem;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-container h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-container p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-buttons .btn {
+            padding: 0.9rem 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            max-width: 280px;
+        }
+        .footer-col h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="how-it-works.html">How It Works</a>
+                <a href="platform.html">Platform</a>
+                <a href="security.html">Security</a>
+                <a href="industries.html">Industries</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="case-studies.html" class="active">Case Studies</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1>Real Results, Verified Outcomes</h1>
+            <p>How leading organizations use MIZ OKI 3.5 to transform decision-making with measurable, auditable results</p>
+        </div>
+    </section>
+
+    <section class="results-summary">
+        <div class="results-container">
+            <div class="result-card">
+                <div class="result-value">63×</div>
+                <div class="result-label">Average decision velocity improvement</div>
+            </div>
+            <div class="result-card">
+                <div class="result-value">↓35%</div>
+                <div class="result-label">Revenue leakage reduction</div>
+            </div>
+            <div class="result-card">
+                <div class="result-value">3.2mo</div>
+                <div class="result-label">Average payback period</div>
+            </div>
+            <div class="result-card">
+                <div class="result-value">89%</div>
+                <div class="result-label">Automation coverage achieved</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cases-section">
+        <div class="cases-container">
+            <div class="section-header">
+                <h2>Featured Case Studies</h2>
+                <p>Across industries, MIZ OKI 3.5 delivers verifiable autonomous decision intelligence</p>
+            </div>
+
+            <!-- Case Study 1: Media Buying -->
+            <article class="case-card">
+                <div class="case-header">
+                    <div class="case-content">
+                        <div class="case-industry">Media Buying / Performance Marketing</div>
+                        <h3 class="case-title">Breaking Through the Learning Limited Wall</h3>
+                        <p class="case-company">Fortune 500 DTC Brand — $42M Annual Ad Spend</p>
+                        <p class="case-desc">A major DTC brand was experiencing chronic "Learning Limited" status across 80% of their Meta ad sets, causing volatile ROAS and unpredictable scaling. MIZ OKI's ReLU-aware optimization identified systematic threshold failures and restructured their entire campaign architecture.</p>
+                        <a href="#" class="case-cta">Read Full Case Study →</a>
+                    </div>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="metric-value positive">+47%</span>
+                            <span class="metric-label">ROAS improvement within 90 days</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value negative">-68%</span>
+                            <span class="metric-label">Ad sets in Learning Limited status</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value neutral">12→3</span>
+                            <span class="metric-label">Days to stable performance after launch</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-quote">
+                    <p class="quote-text">We went from constantly firefighting volatile campaigns to having the system automatically detect threshold issues before they impacted performance. The Counterfactual Simulation Engine showed us what we were leaving on the table.</p>
+                    <p class="quote-author"><strong>VP of Growth</strong> — Fortune 500 DTC Brand</p>
+                </div>
+            </article>
+
+            <!-- Case Study 2: Financial Services -->
+            <article class="case-card">
+                <div class="case-header">
+                    <div class="case-content">
+                        <div class="case-industry">Financial Services / Risk Management</div>
+                        <h3 class="case-title">From Quarterly Reviews to Real-Time Risk Decisions</h3>
+                        <p class="case-company">Regional Bank — $8.2B AUM</p>
+                        <p class="case-desc">A regional bank's risk committee met quarterly to review portfolio allocations, missing market signals and reacting to crises after the fact. MIZ OKI's Decision Control Plane now autonomously rebalances within policy constraints while maintaining full audit trails for regulators.</p>
+                        <a href="#" class="case-cta">Read Full Case Study →</a>
+                    </div>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="metric-value positive">74×</span>
+                            <span class="metric-label">Faster risk signal response time</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value positive">+18%</span>
+                            <span class="metric-label">Risk-adjusted returns vs. benchmark</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value neutral">100%</span>
+                            <span class="metric-label">Regulatory audit compliance</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-quote">
+                    <p class="quote-text">The Validation Layer gave our compliance team confidence that autonomous decisions weren't black boxes. Every rebalancing decision comes with causal reasoning and counterfactual analysis that satisfies our regulators.</p>
+                    <p class="quote-author"><strong>Chief Risk Officer</strong> — Regional Bank</p>
+                </div>
+            </article>
+
+            <!-- Case Study 3: Healthcare -->
+            <article class="case-card">
+                <div class="case-header">
+                    <div class="case-content">
+                        <div class="case-industry">Healthcare / Revenue Cycle Management</div>
+                        <h3 class="case-title">Eliminating Revenue Leakage in Claims Processing</h3>
+                        <p class="case-company">Multi-Hospital Health System — 12 Facilities</p>
+                        <p class="case-desc">A health system was losing $4.2M annually to coding errors, missed authorizations, and claim denials. MIZ OKI's causal GraphRAG identified root causes of denials and autonomously routes claims through optimal pathways while maintaining HIPAA compliance.</p>
+                        <a href="#" class="case-cta">Read Full Case Study →</a>
+                    </div>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="metric-value negative">-41%</span>
+                            <span class="metric-label">Claim denial rate reduction</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value positive">$3.1M</span>
+                            <span class="metric-label">Annual revenue recovered</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value negative">-62%</span>
+                            <span class="metric-label">Time to first-pass resolution</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-quote">
+                    <p class="quote-text">The system identified patterns we'd been blind to for years—specific procedure codes that consistently triggered denials from certain payers. Now it proactively routes those claims differently before submission.</p>
+                    <p class="quote-author"><strong>Director of Revenue Cycle</strong> — Multi-Hospital Health System</p>
+                </div>
+            </article>
+
+            <!-- Case Study 4: Retail -->
+            <article class="case-card">
+                <div class="case-header">
+                    <div class="case-content">
+                        <div class="case-industry">Retail / Inventory Optimization</div>
+                        <h3 class="case-title">Autonomous Inventory Decisions That Don't Break the Supply Chain</h3>
+                        <p class="case-company">National Specialty Retailer — 340 Locations</p>
+                        <p class="case-desc">A specialty retailer's inventory team was overwhelmed by 12,000+ SKUs across 340 locations. Previous AI attempts created cascading stockouts. MIZ OKI's Counterfactual Simulation Engine tests every reorder decision against supply chain constraints before execution.</p>
+                        <a href="#" class="case-cta">Read Full Case Study →</a>
+                    </div>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="metric-value negative">-28%</span>
+                            <span class="metric-label">Inventory carrying costs</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value positive">+15%</span>
+                            <span class="metric-label">Same-store sales from availability</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value negative">-73%</span>
+                            <span class="metric-label">Stockout incidents</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-quote">
+                    <p class="quote-text">Previous systems would optimize one metric and destroy another. MIZ OKI runs multi-objective optimization that balances availability, carrying costs, and supplier relationships simultaneously. The simulation engine caught issues before they hit our stores.</p>
+                    <p class="quote-author"><strong>SVP of Supply Chain</strong> — National Specialty Retailer</p>
+                </div>
+            </article>
+
+            <!-- Case Study 5: Manufacturing -->
+            <article class="case-card">
+                <div class="case-header">
+                    <div class="case-content">
+                        <div class="case-industry">Manufacturing / Predictive Maintenance</div>
+                        <h3 class="case-title">From Reactive Repairs to Verified Autonomous Maintenance</h3>
+                        <p class="case-company">Industrial Equipment Manufacturer — 4 Plants</p>
+                        <p class="case-desc">An equipment manufacturer's maintenance costs were consuming 23% of operating budget. Existing predictive maintenance tools generated too many false positives. MIZ OKI's Validation Layer validates predictions with multiple agent perspectives before scheduling interventions.</p>
+                        <a href="#" class="case-cta">Read Full Case Study →</a>
+                    </div>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="metric-value negative">-52%</span>
+                            <span class="metric-label">Unplanned downtime</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value negative">-34%</span>
+                            <span class="metric-label">Maintenance costs</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="metric-value negative">-81%</span>
+                            <span class="metric-label">False positive maintenance alerts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-quote">
+                    <p class="quote-text">The Validation Layer was the breakthrough. Instead of one model crying wolf, we have Planner, Risk, and Verifier agents that must agree before scheduling maintenance. False positives dropped from 40% to under 8%.</p>
+                    <p class="quote-author"><strong>VP of Operations</strong> — Industrial Equipment Manufacturer</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="detailed-case">
+        <div class="detailed-container">
+            <div class="detailed-header">
+                <h2>Deep Dive: Media Buying Transformation</h2>
+                <p>How the ReLU-aware approach changed everything for a $42M ad operation</p>
+            </div>
+            <div class="detailed-content">
+                <div class="detailed-section">
+                    <h3>The Challenge</h3>
+                    <ul>
+                        <li><strong>80% of ad sets</strong> stuck in Learning Limited status</li>
+                        <li><strong>ROAS volatility</strong> of ±40% week-over-week</li>
+                        <li><strong>15+ campaigns</strong> with fragmented budgets below activation thresholds</li>
+                        <li><strong>No institutional memory</strong> of what worked in previous launches</li>
+                        <li><strong>Daily manual adjustments</strong> resetting learning progress</li>
+                    </ul>
+                </div>
+                <div class="detailed-section">
+                    <h3>The MIZ OKI Approach</h3>
+                    <ul>
+                        <li><strong>SENSE-ADC</strong> detected threshold proximity across all ad sets</li>
+                        <li><strong>Causal GraphRAG</strong> identified true performance drivers vs. noise</li>
+                        <li><strong>Counterfactual Simulation</strong> tested consolidation scenarios</li>
+                        <li><strong>Decision Control Plane</strong> enforced stability windows</li>
+                        <li><strong>TCO Knowledge Graph</strong> retained learnings across campaigns</li>
+                    </ul>
+                </div>
+                <div class="detailed-section">
+                    <h3>Key Interventions</h3>
+                    <ul>
+                        <li><strong>Consolidated 15 campaigns to 4</strong> with concentrated budgets</li>
+                        <li><strong>Shifted optimization events</strong> from Purchase to Add-to-Cart for low-volume segments</li>
+                        <li><strong>Implemented 7-day stability windows</strong> preventing premature edits</li>
+                        <li><strong>Established Event Match Quality</strong> optimization via CAPI</li>
+                        <li><strong>Created threshold alerts</strong> before Learning Limited triggers</li>
+                    </ul>
+                </div>
+                <div class="detailed-section">
+                    <h3>Results Timeline</h3>
+                    <ul>
+                        <li><strong>Week 2:</strong> Learning Limited dropped from 80% to 45%</li>
+                        <li><strong>Week 4:</strong> ROAS volatility reduced to ±15%</li>
+                        <li><strong>Week 8:</strong> First profitable scaling of 25%+ budgets</li>
+                        <li><strong>Week 12:</strong> +47% ROAS vs. pre-implementation baseline</li>
+                        <li><strong>Ongoing:</strong> Autonomous threshold management with human oversight</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="timeline-section">
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h2>Typical Implementation Timeline</h2>
+                <p>From kickoff to measurable results in weeks, not months</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 1</div>
+                    <h4 class="timeline-title">Discovery & Data Integration</h4>
+                    <p class="timeline-desc">Connect data sources, configure industry templates, establish baseline metrics</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 2</div>
+                    <h4 class="timeline-title">Knowledge Graph Hydration</h4>
+                    <p class="timeline-desc">TCO-KG populated with historical data, causal relationships identified, initial models calibrated</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 3</div>
+                    <h4 class="timeline-title">Autonomous Operations Begin</h4>
+                    <p class="timeline-desc">SRDPV-DAL pipeline active, first autonomous decisions with human oversight, validation layer engaged</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 4</div>
+                    <h4 class="timeline-title">Performance Optimization</h4>
+                    <p class="timeline-desc">Counterfactual simulations refining decisions, confidence thresholds calibrated, initial results measured</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 6-8</div>
+                    <h4 class="timeline-title">Scaled Autonomy</h4>
+                    <p class="timeline-desc">Expanded scope, reduced human oversight on proven patterns, continuous learning active</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 12+</div>
+                    <h4 class="timeline-title">Full Production</h4>
+                    <p class="timeline-desc">Measurable ROI achieved, autonomy level optimized, ongoing refinement</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="logos-section">
+        <div class="logos-container">
+            <div class="logos-header">
+                <h2>Trusted by Industry Leaders</h2>
+                <p>Organizations across sectors rely on MIZ OKI for verified autonomous decisions</p>
+            </div>
+            <div class="logos-grid">
+                <div class="logo-placeholder">[Financial Services]</div>
+                <div class="logo-placeholder">[Healthcare]</div>
+                <div class="logo-placeholder">[Retail]</div>
+                <div class="logo-placeholder">[Manufacturing]</div>
+                <div class="logo-placeholder">[Media]</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to See Results Like These?</h2>
+            <p>Schedule a custom demo to see how MIZ OKI 3.5 can transform your decision-making</p>
+            <div class="cta-buttons">
+                <a href="walkthrough.html" class="btn btn-primary">Get Custom Demo</a>
+                <a href="roi.html" class="btn btn-ghost">Calculate Your ROI</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+                    <p>Verifiable Autonomous Decision Intelligence. Decisions verified before execution—not explained after failure.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <a href="how-it-works.html">How It Works</a>
+                    <a href="platform.html">Architecture</a>
+                    <a href="security.html">Security</a>
+                    <a href="industries.html">Industries</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="case-studies.html">Case Studies</a>
+                    <a href="resources.html">Documentation</a>
+                    <a href="roi.html">ROI Calculator</a>
+                    <a href="#">API Reference</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

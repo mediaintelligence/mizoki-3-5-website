@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — MIZ OKI 3.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a.active { color: var(--accent-cyan); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, var(--glow-cyan) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .page-header p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Philosophy */
+        .philosophy {
+            padding: 2rem 2rem 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .philosophy-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        .philosophy-box h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        .philosophy-box p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .philosophy-box p strong {
+            color: var(--text-primary);
+        }
+
+        /* Pricing Grid */
+        .pricing-section {
+            padding: 4rem 2rem;
+        }
+        .pricing-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+        }
+
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .pricing-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-4px);
+        }
+        .pricing-card.featured {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(180deg, rgba(0, 212, 255, 0.05) 0%, var(--bg-secondary) 100%);
+        }
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35rem 1rem;
+            border-radius: 100px;
+        }
+        .pricing-tier {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-name {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            min-height: 44px;
+        }
+        .pricing-price {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .price-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .price-period {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .price-note {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--accent-green);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .pricing-features li.highlight {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .pricing-cta {
+            width: 100%;
+            padding: 0.9rem;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+        .pricing-card:not(.featured) .pricing-cta {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .pricing-card:not(.featured) .pricing-cta:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .pricing-card.featured .pricing-cta {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+        }
+        .pricing-card.featured .pricing-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        /* Enterprise Section */
+        .enterprise-section {
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .enterprise-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .enterprise-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .enterprise-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+        }
+        .enterprise-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .enterprise-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .enterprise-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .enterprise-grid { grid-template-columns: 1fr; }
+        }
+        .enterprise-feature {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .enterprise-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+        .enterprise-feature h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .enterprise-feature p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 5rem 2rem;
+        }
+        .comparison-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .comparison-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .comparison-header p {
+            color: var(--text-secondary);
+        }
+        .comparison-table {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .comparison-table thead {
+            background: var(--bg-tertiary);
+        }
+        .comparison-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .comparison-table th:not(:first-child) {
+            text-align: center;
+        }
+        .comparison-table th.featured-col {
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .comparison-table td {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .comparison-table td:not(:first-child) {
+            text-align: center;
+        }
+        .comparison-table td.featured-col {
+            background: rgba(0, 212, 255, 0.03);
+        }
+        .comparison-table .category-row td {
+            background: var(--bg-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 1.5rem;
+        }
+        .check { color: var(--accent-green); font-size: 1.1rem; }
+        .partial { color: var(--accent-orange); font-size: 0.85rem; }
+        .dash { color: var(--text-muted); }
+
+        /* Deployment Timeline */
+        .timeline-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .timeline-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .timeline-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-header p {
+            color: var(--text-secondary);
+        }
+        .timeline-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 120px 1fr 100px;
+            gap: 1.5rem;
+            align-items: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        @media (max-width: 700px) {
+            .timeline-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        .timeline-duration {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+        .timeline-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .timeline-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .timeline-comparison {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+        .timeline-comparison span {
+            display: block;
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        .timeline-comparison strong {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 2rem;
+        }
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .faq-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.25rem;
+        }
+        .faq-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .faq-question:hover {
+            background: var(--bg-tertiary);
+        }
+        .faq-question::after {
+            content: '+';
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+        .faq-item.open .faq-question::after {
+            content: '−';
+        }
+        .faq-answer {
+            display: none;
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+            text-align: center;
+        }
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-container h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-container p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-buttons .btn {
+            padding: 0.9rem 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            max-width: 280px;
+        }
+        .footer-col h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="how-it-works.html">How It Works</a>
+                <a href="platform.html">Platform</a>
+                <a href="security.html">Security</a>
+                <a href="industries.html">Industries</a>
+                <a href="pricing.html" class="active">Pricing</a>
+                <a href="case-studies.html">Case Studies</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1>Transparent Pricing, Measurable Outcomes</h1>
+            <p>Deploy enterprise-grade autonomous decision intelligence in weeks, not months. No hidden fees, no vendor lock-in.</p>
+        </div>
+    </section>
+
+    <section class="philosophy">
+        <div class="philosophy-box">
+            <h3>Our Pricing Philosophy</h3>
+            <p>Traditional enterprise AI deployments take 6–12 months and cost millions before delivering value. <strong>MIZ OKI 3.5 deploys in 2–4 weeks with predictable, usage-based pricing.</strong> You pay for decisions made, not infrastructure provisioned. Every tier includes the complete SRDPV-DAL pipeline, Decision Control Plane, and full audit capabilities.</p>
+        </div>
+    </section>
+
+    <!-- 7-Stage Pipeline Included -->
+    <section style="padding: 3rem 2rem;">
+        <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">Included in Every Tier</div>
+            <h3 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 1.5rem; font-weight: 400; margin-bottom: 1.5rem;">Complete 7-Stage SRDPV-DAL Pipeline</h3>
+            <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem;">
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">📡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">SENSE</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">🧠</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">REASON</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">📋</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">PLAN</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">🔍</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">VALIDATE</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">⚡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">DECIDE</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">🚀</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">ACT</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">📈</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">LEARN</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing-section">
+        <div class="pricing-container">
+            <div class="pricing-grid">
+                <!-- Growth Tier -->
+                <div class="pricing-card">
+                    <div class="pricing-tier">Growth</div>
+                    <h3 class="pricing-name">Foundation</h3>
+                    <p class="pricing-desc">For teams starting their autonomous decision journey</p>
+                    <div class="pricing-price">
+                        <span class="price-amount">$8,500</span>
+                        <span class="price-period">/month</span>
+                        <p class="price-note">Billed annually. Monthly billing +15%</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li class="highlight">Up to 50,000 decisions/month</li>
+                        <li>Complete SRDPV-DAL pipeline</li>
+                        <li>Decision Control Plane</li>
+                        <li>Standard industry templates</li>
+                        <li>99.5% uptime SLA</li>
+                        <li>Email + chat support</li>
+                        <li>5 user seats</li>
+                        <li>30-day data retention</li>
+                    </ul>
+                    <a href="#" class="pricing-cta">Start Free Trial</a>
+                </div>
+
+                <!-- Scale Tier (Featured) -->
+                <div class="pricing-card featured">
+                    <div class="pricing-tier">Scale</div>
+                    <h3 class="pricing-name">Professional</h3>
+                    <p class="pricing-desc">For organizations scaling autonomous operations</p>
+                    <div class="pricing-price">
+                        <span class="price-amount">$24,000</span>
+                        <span class="price-period">/month</span>
+                        <p class="price-note">Billed annually. Monthly billing +15%</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li class="highlight">Up to 500,000 decisions/month</li>
+                        <li>Everything in Foundation, plus:</li>
+                        <li>Counterfactual Simulation Engine</li>
+                        <li>Advanced causal GraphRAG</li>
+                        <li>Custom workflow builder</li>
+                        <li>99.9% uptime SLA</li>
+                        <li>Priority support + CSM</li>
+                        <li>25 user seats</li>
+                        <li>1-year data retention</li>
+                        <li>API access (rate-limited)</li>
+                    </ul>
+                    <a href="#" class="pricing-cta">Start Free Trial</a>
+                </div>
+
+                <!-- Enterprise Tier -->
+                <div class="pricing-card">
+                    <div class="pricing-tier">Enterprise</div>
+                    <h3 class="pricing-name">Unlimited</h3>
+                    <p class="pricing-desc">For organizations requiring maximum scale and control</p>
+                    <div class="pricing-price">
+                        <span class="price-amount">Custom</span>
+                        <span class="price-period"></span>
+                        <p class="price-note">Volume-based pricing from $50K/mo</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li class="highlight">Unlimited decisions</li>
+                        <li>Everything in Professional, plus:</li>
+                        <li>Dedicated knowledge graph instance</li>
+                        <li>Private cloud / VPC deployment</li>
+                        <li>Custom agent development</li>
+                        <li>99.99% uptime SLA</li>
+                        <li>24/7 white-glove support</li>
+                        <li>Unlimited user seats</li>
+                        <li>Unlimited data retention</li>
+                        <li>Federated learning enabled</li>
+                        <li>Custom compliance frameworks</li>
+                    </ul>
+                    <a href="#" class="pricing-cta">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="enterprise-section">
+        <div class="enterprise-container">
+            <div class="enterprise-header">
+                <h2>Enterprise-Only Capabilities</h2>
+                <p>Additional features available for Enterprise tier customers with dedicated infrastructure</p>
+            </div>
+            <div class="enterprise-grid">
+                <div class="enterprise-feature">
+                    <div class="enterprise-icon">🔐</div>
+                    <h4>BYOK Encryption</h4>
+                    <p>Bring your own encryption keys with HSM integration</p>
+                </div>
+                <div class="enterprise-feature">
+                    <div class="enterprise-icon">🌐</div>
+                    <h4>Multi-Region Deploy</h4>
+                    <p>Geographic redundancy with data sovereignty controls</p>
+                </div>
+                <div class="enterprise-feature">
+                    <div class="enterprise-icon">🤖</div>
+                    <h4>Custom ADCs</h4>
+                    <p>Build domain-specific Autonomous Decision Controllers</p>
+                </div>
+                <div class="enterprise-feature">
+                    <div class="enterprise-icon">📊</div>
+                    <h4>Advanced Analytics</h4>
+                    <p>Custom dashboards, BI integrations, and data exports</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="comparison-section">
+        <div class="comparison-container">
+            <div class="comparison-header">
+                <h2>Feature Comparison</h2>
+                <p>Everything you need to make the right choice</p>
+            </div>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Foundation</th>
+                            <th class="featured-col">Professional</th>
+                            <th>Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="category-row">
+                            <td colspan="4">Core Platform</td>
+                        </tr>
+                        <tr>
+                            <td>SRDPV-DAL Pipeline (7 stages)</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Decision Control Plane</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Validation & Arbitration Layer</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Counterfactual Simulation Engine</td>
+                            <td><span class="partial">Basic</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>TCO Knowledge Graph</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr class="category-row">
+                            <td colspan="4">Intelligence & Learning</td>
+                        </tr>
+                        <tr>
+                            <td>Causal GraphRAG</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Confounder Detection</td>
+                            <td><span class="partial">Basic</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Temporal Causal Models</td>
+                            <td><span class="dash">—</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Federated Learning</td>
+                            <td><span class="dash">—</span></td>
+                            <td class="featured-col"><span class="dash">—</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr class="category-row">
+                            <td colspan="4">Security & Compliance</td>
+                        </tr>
+                        <tr>
+                            <td>Quantum-Resistant Encryption</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Immutable Audit Logs</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>SOC 2 Type II</td>
+                            <td><span class="check">✓</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Custom Compliance Frameworks</td>
+                            <td><span class="dash">—</span></td>
+                            <td class="featured-col"><span class="partial">Limited</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>BYOK (Bring Your Own Key)</td>
+                            <td><span class="dash">—</span></td>
+                            <td class="featured-col"><span class="dash">—</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr class="category-row">
+                            <td colspan="4">Support & Services</td>
+                        </tr>
+                        <tr>
+                            <td>Implementation Support</td>
+                            <td>Self-serve + docs</td>
+                            <td class="featured-col">Guided onboarding</td>
+                            <td>White-glove</td>
+                        </tr>
+                        <tr>
+                            <td>Customer Success Manager</td>
+                            <td><span class="dash">—</span></td>
+                            <td class="featured-col"><span class="check">✓</span></td>
+                            <td>Dedicated</td>
+                        </tr>
+                        <tr>
+                            <td>Support Hours</td>
+                            <td>Business hours</td>
+                            <td class="featured-col">Extended hours</td>
+                            <td>24/7/365</td>
+                        </tr>
+                        <tr>
+                            <td>Training Sessions</td>
+                            <td>On-demand videos</td>
+                            <td class="featured-col">Live quarterly</td>
+                            <td>Unlimited custom</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="timeline-section">
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h2>Deployment Timeline</h2>
+                <p>From contract to production faster than traditional enterprise AI</p>
+            </div>
+            <div class="timeline-items">
+                <div class="timeline-item">
+                    <div class="timeline-duration">1–2 wks</div>
+                    <div class="timeline-content">
+                        <h4>Template Deployment</h4>
+                        <p>Pre-configured industry templates with standard integrations</p>
+                    </div>
+                    <div class="timeline-comparison">
+                        <span>Traditional: 3–6 mo</span>
+                        <strong>10× faster</strong>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-duration">2–4 wks</div>
+                    <div class="timeline-content">
+                        <h4>Standard Deployment</h4>
+                        <p>Custom configurations with data integration and workflow setup</p>
+                    </div>
+                    <div class="timeline-comparison">
+                        <span>Traditional: 6–12 mo</span>
+                        <strong>8× faster</strong>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-duration">4–8 wks</div>
+                    <div class="timeline-content">
+                        <h4>Custom Deployment</h4>
+                        <p>Enterprise requirements with private infrastructure and custom ADCs</p>
+                    </div>
+                    <div class="timeline-comparison">
+                        <span>Traditional: 12–18 mo</span>
+                        <strong>6× faster</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="faq-container">
+            <div class="faq-header">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+
+            <div class="faq-item open">
+                <div class="faq-question">What counts as a "decision"?</div>
+                <div class="faq-answer">
+                    A decision is any action that passes through the Decision Control Plane for authorization. This includes automated actions (budget adjustments, bid changes, inventory reorders) as well as recommendations that require human approval. Read-only queries and monitoring do not count against your decision quota.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Can I upgrade or downgrade my plan?</div>
+                <div class="faq-answer">
+                    Yes, you can upgrade at any time and the new pricing takes effect immediately (prorated for the billing period). Downgrades take effect at the next billing cycle. Enterprise customers on annual contracts should discuss changes with their account team.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">What happens if I exceed my decision limit?</div>
+                <div class="faq-answer">
+                    We'll notify you at 80% and 90% of your limit. If you exceed your limit, decisions continue to process (we never block critical operations) but overage charges apply at $0.25/decision for Foundation, $0.15/decision for Professional. Enterprise plans have negotiated overage rates.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Is there a free trial?</div>
+                <div class="faq-answer">
+                    Yes, we offer a 14-day free trial on Foundation and Professional tiers with full platform access and up to 5,000 decisions. No credit card required to start. Enterprise trials are scoped individually based on your requirements.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">What's included in implementation support?</div>
+                <div class="faq-answer">
+                    Foundation includes self-serve documentation, video tutorials, and community support. Professional includes guided onboarding sessions, data integration assistance, and a dedicated customer success manager. Enterprise includes full white-glove implementation with dedicated engineering resources.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Do you offer discounts for startups or non-profits?</div>
+                <div class="faq-answer">
+                    Yes, we offer 50% off Foundation tier for qualified startups (under $5M funding, less than 50 employees) and 30% off for registered non-profits. Contact our team to apply.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">What's the contract length?</div>
+                <div class="faq-answer">
+                    Foundation and Professional are available month-to-month or annually (15% discount for annual). Enterprise contracts are typically 1–3 years with volume commitments. All plans include a 30-day satisfaction guarantee.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to Transform Your Decision-Making?</h2>
+            <p>Start your 14-day free trial or schedule a custom demo with our team</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">Start Free Trial</a>
+                <a href="roi.html" class="btn btn-ghost">Calculate Your ROI</a>
+                <a href="#" class="btn btn-ghost">Talk to Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+                    <p>Verifiable Autonomous Decision Intelligence. Decisions verified before execution—not explained after failure.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <a href="how-it-works.html">How It Works</a>
+                    <a href="platform.html">Architecture</a>
+                    <a href="security.html">Security</a>
+                    <a href="industries.html">Industries</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="case-studies.html">Case Studies</a>
+                    <a href="resources.html">Documentation</a>
+                    <a href="roi.html">ROI Calculator</a>
+                    <a href="#">API Reference</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+    </script>
+</body>
+</html>

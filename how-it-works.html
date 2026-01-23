@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works — MIZ OKI 3.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-pink: #f472b6;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+            position: relative;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--glow-cyan) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .page-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .page-header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section { padding: 5rem 2rem; }
+        .section-container { max-width: 1100px; margin: 0 auto; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .pipeline-overview {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+        .pipeline-name {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            color: var(--accent-cyan);
+            margin-bottom: 2rem;
+        }
+        .pipeline-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .pipeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .pipeline-node {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .pipeline-node:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-cyan);
+        }
+        .pipeline-node .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .pipeline-node.sense { color: var(--accent-orange); border-color: rgba(245, 158, 11, 0.3); }
+        .pipeline-node.reason { color: var(--accent-purple); border-color: rgba(168, 85, 247, 0.3); }
+        .pipeline-node.plan { color: var(--accent-blue); border-color: rgba(79, 143, 255, 0.3); }
+        .pipeline-node.validate { color: var(--accent-green); border-color: rgba(16, 185, 129, 0.3); }
+        .pipeline-node.decide { color: var(--accent-cyan); border-color: rgba(0, 212, 255, 0.3); }
+        .pipeline-node.act { color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); }
+        .pipeline-node.learn { color: var(--accent-pink); border-color: rgba(244, 114, 182, 0.3); }
+        .pipeline-arrow { color: var(--text-muted); font-size: 1.5rem; margin: 0 0.25rem; }
+        .pipeline-description {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .stage-detail {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .stage-detail::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+        }
+        .stage-detail.sense::before { background: var(--accent-orange); }
+        .stage-detail.reason::before { background: var(--accent-purple); }
+        .stage-detail.plan::before { background: var(--accent-blue); }
+        .stage-detail.validate::before { background: var(--accent-green); }
+        .stage-detail.decide::before { background: var(--accent-cyan); }
+        .stage-detail.act::before { background: var(--accent-red); }
+        .stage-detail.learn::before { background: var(--accent-pink); }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stage-icon {
+            width: 56px; height: 56px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .stage-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        .stage-header .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+        .stage-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .formula-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+        .formula-box .label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .formula-box code {
+            color: var(--accent-cyan);
+            display: block;
+            white-space: pre-wrap;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .feature-item {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .feature-item .icon { color: var(--accent-green); font-size: 1.1rem; }
+        .feature-item span { font-size: 0.9rem; color: var(--text-secondary); }
+
+        .dcp-highlight {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        .dcp-highlight h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+        .dcp-highlight p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .dcp-highlight ul {
+            list-style: none;
+            display: grid;
+            gap: 0.5rem;
+        }
+        .dcp-highlight li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .dcp-highlight li::before {
+            content: '→';
+            color: var(--accent-cyan);
+        }
+
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+        .footer-container { max-width: 1200px; margin: 0 auto; }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .pipeline-visual { flex-direction: column; }
+            .pipeline-arrow { transform: rotate(90deg); }
+            .stage-header { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="how-it-works.html" class="active">How It Works</a>
+                <a href="platform.html">Platform</a>
+                <a href="security.html">Security</a>
+                <a href="industries.html">Industries</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="case-studies.html">Case Studies</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="roi.html" class="btn btn-ghost">Estimate ROI</a>
+                <a href="walkthrough.html" class="btn btn-primary">12-Min Walkthrough</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>How MIZ OKI 3.5 Works</h1>
+        <p>A seven-stage autonomous intelligence pipeline with built-in validation, simulation, and governance. Every decision is proposed, challenged, simulated, and authorized before execution.</p>
+    </header>
+
+    <section class="section">
+        <div class="section-container">
+            <span class="section-label">The SRDPV-DAL Pipeline</span>
+            <h2 class="section-title">Seven Stages of Verifiable Autonomy</h2>
+            <p class="section-subtitle">Each stage is powered by an Autonomous Decision Controller (ADC) with explicit algorithms, thresholds, and audit trails.</p>
+
+            <div class="pipeline-overview">
+                <div class="pipeline-name">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</div>
+                <div class="pipeline-visual">
+                    <div class="pipeline-step">
+                        <div class="pipeline-node sense"><span class="icon">📡</span>SENSE</div>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node reason"><span class="icon">🧠</span>REASON</div>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node plan"><span class="icon">📋</span>PLAN</div>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node validate"><span class="icon">🔍</span>VALIDATE</div>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node decide"><span class="icon">⚡</span>DECIDE</div>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node act"><span class="icon">🚀</span>ACT</div>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node learn"><span class="icon">📈</span>LEARN</div>
+                    </div>
+                </div>
+                <p class="pipeline-description">LEARN feeds outcomes back into SENSE — creating a continuous improvement loop from real results</p>
+            </div>
+
+            <!-- SENSE Stage -->
+            <div class="stage-detail sense">
+                <div class="stage-header">
+                    <div class="stage-icon">📡</div>
+                    <div>
+                        <h3>SENSE <span class="tag">SENSE-ADC</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>The SENSE-ADC implements autonomous attention allocation—determining what deserves immediate processing versus what can wait. It continuously monitors incoming data streams and prioritizes based on business impact.</p>
+                    
+                    <div class="formula-box">
+                        <div class="label">Attention Score Calculation</div>
+                        <code>Attention_Score = Impact_Magnitude × Uncertainty_Level × Time_Criticality × Strategic_Alignment</code>
+                    </div>
+
+                    <p><strong>Where:</strong></p>
+                    <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>Impact_Magnitude = Potential_Revenue_Impact + Risk_Exposure + Opportunity_Value</li>
+                        <li>Uncertainty_Level = 1 - Confidence_in_Current_Knowledge</li>
+                        <li>Time_Criticality = 1 / Time_Until_Impact</li>
+                        <li>Strategic_Alignment = Relevance_to_KPIs × Business_Priority</li>
+                    </ul>
+
+                    <div class="features-list">
+                        <div class="feature-item"><span class="icon">✓</span><span>Live signal ingestion from ERP, CRM, market data</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Dynamic thresholds adapt to system load</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Automatic priority queuing</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Real-time anomaly detection</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REASON Stage -->
+            <div class="stage-detail reason">
+                <div class="stage-header">
+                    <div class="stage-icon">🧠</div>
+                    <div>
+                        <h3>REASON <span class="tag">REASON-ADC</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>The REASON-ADC employs Causal GraphRAG to traverse the knowledge graph using causally-informed queries—not just semantic similarity. It identifies genuine cause-and-effect relationships, detects confounders, and determines appropriate analysis depth.</p>
+                    
+                    <div class="formula-box">
+                        <div class="label">Analysis Depth Selection</div>
+                        <code>Analysis_Depth = (Decision_Value × Uncertainty_Reduction_Potential) / (Time_Constraint × Resource_Cost)</code>
+                    </div>
+
+                    <p>Unlike traditional RAG systems that retrieve based on semantic similarity alone, Causal GraphRAG identifies and retrieves information along causal pathways, ensuring that context provided for decision-making reflects genuine cause-and-effect relationships.</p>
+
+                    <div class="features-list">
+                        <div class="feature-item"><span class="icon">✓</span><span>Causally-informed graph traversal</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Automated confounder detection</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Temporal causal models with lag detection</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Bayesian confidence updates</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PLAN Stage -->
+            <div class="stage-detail plan">
+                <div class="stage-header">
+                    <div class="stage-icon">📋</div>
+                    <div>
+                        <h3>PLAN <span class="tag">PLAN-ADC</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>The PLAN-ADC generates multiple candidate actions through causal reasoning over the knowledge graph. It never proposes just one option—alternatives are always generated to enable meaningful comparison.</p>
+                    
+                    <div class="formula-box">
+                        <div class="label">Strategy Scoring</div>
+                        <code>Strategy_Score = Σ(wi × P(Outcomei) × V(Outcomei) × Ethical_Scorei)</code>
+                    </div>
+
+                    <p>Multi-objective optimization considers probability of success, expected value, risk profile, resource requirements, and ethical alignment. The system explicitly models trade-offs rather than hiding them.</p>
+
+                    <div class="features-list">
+                        <div class="feature-item"><span class="icon">✓</span><span>Multiple alternatives always generated</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Explicit trade-off modeling</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Resource requirement estimation</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Ethical constraint integration</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALIDATE Stage -->
+            <div class="stage-detail validate">
+                <div class="stage-header">
+                    <div class="stage-icon">🔍</div>
+                    <div>
+                        <h3>VALIDATE <span class="tag">Validation & Arbitration Layer</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>Independent Verifier, Risk, and Policy agents challenge every proposal using separate analysis pathways. Disagreement between agents is treated as signal containing information about uncertainty—not as an error to be eliminated.</p>
+                    
+                    <div class="formula-box">
+                        <div class="label">Disagreement Metric</div>
+                        <code>Disagreement_Metric = Variance(Agent_Scores) × Confidence_Weighted_Deviation</code>
+                    </div>
+
+                    <p><strong>Agent roles:</strong></p>
+                    <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li><strong>Verifier Agents:</strong> Challenge logic and assumptions using independent analysis</li>
+                        <li><strong>Risk Agents:</strong> Model downside scenarios using Monte Carlo simulation</li>
+                        <li><strong>Policy Agents:</strong> Enforce regulatory and internal policy constraints</li>
+                    </ul>
+
+                    <p>The system does not require consensus—arbitration can authorize action despite disagreement when confidence thresholds are met. Arbitration weights are adjusted based on historical accuracy of each agent type.</p>
+                </div>
+            </div>
+
+            <!-- DECIDE Stage -->
+            <div class="stage-detail decide">
+                <div class="stage-header">
+                    <div class="stage-icon">⚡</div>
+                    <div>
+                        <h3>DECIDE <span class="tag">Decision Control Plane</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>The Decision Control Plane (DCP) is the centralized authority that receives all proposed actions and determines whether to authorize, modify, defer, reject, or escalate them. <strong>This is the critical architectural constraint: agents cannot bypass the DCP.</strong></p>
+
+                    <div class="dcp-highlight">
+                        <h4>The DCP Authorization Algorithm</h4>
+                        <div class="formula-box" style="margin: 1rem 0;">
+                            <code>Authorization_Score = α(Causal_Confidence) + β(Validation_Agreement) + γ(Simulation_Delta) + δ(Policy_Compliance) + ε(Historical_Performance)</code>
+                        </div>
+                        <p>Where α, β, γ, δ, and ε are learned weights that adapt based on outcome feedback. Authorization proceeds when the score exceeds the dynamic threshold.</p>
+                        <ul>
+                            <li><strong>Approve:</strong> Execute as proposed when all thresholds are met</li>
+                            <li><strong>Modify:</strong> Adjust parameters to bring within acceptable bounds</li>
+                            <li><strong>Defer:</strong> Await additional validation or simulation</li>
+                            <li><strong>Reject:</strong> Block proposals that fail confidence or policy thresholds</li>
+                            <li><strong>Escalate:</strong> Route to human review for high-risk or novel situations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACT Stage -->
+            <div class="stage-detail act">
+                <div class="stage-header">
+                    <div class="stage-icon">🚀</div>
+                    <div>
+                        <h3>ACT <span class="tag">ACT-ADC</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>The ACT-ADC orchestrates execution with intelligent dependency resolution and adaptive rollback capabilities. It monitors performance in real-time and can trigger automatic rollback when deviations exceed thresholds.</p>
+                    
+                    <div class="formula-box">
+                        <div class="label">Performance Deviation Trigger</div>
+                        <code>Performance_Deviation = |Expected_Performance - Actual_Performance|</code>
+                    </div>
+
+                    <p><strong>Rollback strategies:</strong></p>
+                    <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li><strong>Immediate full rollback:</strong> Critical failures or regulatory violations</li>
+                        <li><strong>Gradual rollback with A/B testing:</strong> Performance degradation scenarios</li>
+                        <li><strong>Partial rollback:</strong> Preserve working components</li>
+                        <li><strong>Checkpoint rollback:</strong> Return to last known good state</li>
+                    </ul>
+
+                    <div class="features-list">
+                        <div class="feature-item"><span class="icon">✓</span><span>Dependency graph resolution</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Real-time performance monitoring</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Automatic rollback triggers</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Cryptographic execution signing</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEARN Stage -->
+            <div class="stage-detail learn">
+                <div class="stage-header">
+                    <div class="stage-icon">📈</div>
+                    <div>
+                        <h3>LEARN <span class="tag">LEARN-ADC</span></h3>
+                    </div>
+                </div>
+                <div class="stage-content">
+                    <p>The LEARN-ADC determines what and how to learn from outcomes, prioritizing updates that have the highest expected improvement impact while maintaining stability of existing reliable knowledge.</p>
+                    
+                    <div class="formula-box">
+                        <div class="label">Learning Priority Calculation</div>
+                        <code>Learning_Priority = Prediction_Error × Business_Impact × Knowledge_Gap × Frequency_of_Occurrence</code>
+                    </div>
+
+                    <p>The LEARN-ADC maintains stability-plasticity balance—ensuring that new learning does not destabilize existing reliable knowledge while still adapting to changing conditions. Updates are bounded by safety constraints:</p>
+
+                    <div class="formula-box">
+                        <div class="label">Update Magnitude Control</div>
+                        <code>Update_Magnitude = MIN(Error_Correction_Required, Stability_Constraint, MAX_SAFE_UPDATE)</code>
+                    </div>
+
+                    <p><strong>Critically:</strong> The system also learns from <em>simulated outcomes that were not executed</em>. The Counterfactual Simulation Engine enables continuous improvement without requiring actual execution of suboptimal strategies.</p>
+
+                    <div class="features-list">
+                        <div class="feature-item"><span class="icon">✓</span><span>Learns from simulated alternatives</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Stability-plasticity balance</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Bounded update magnitudes</span></div>
+                        <div class="feature-item"><span class="icon">✓</span><span>Feedback to SENSE for loop closure</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>Every action logged. Every decision auditable.</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
