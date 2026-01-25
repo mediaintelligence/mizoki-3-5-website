@@ -1,0 +1,90 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="50%" style="stop-color:#12121a"/>
+      <stop offset="100%" style="stop-color:#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="ctaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#4f8fff"/>
+    </linearGradient>
+    <filter id="glowC8" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC8)"/>
+  
+  <!-- Slide number -->
+  <text x="80" y="80" fill="#606070" font-family="monospace" font-size="16">07</text>
+  
+  <!-- Decorative elements -->
+  <g opacity="0.1">
+    <circle cx="200" cy="300" r="150" fill="none" stroke="#00d4ff" stroke-width="1"/>
+    <circle cx="880" cy="1050" r="180" fill="none" stroke="#a855f7" stroke-width="1"/>
+  </g>
+  
+  <!-- Main quote box -->
+  <g transform="translate(100, 180)">
+    <rect x="0" y="0" width="880" height="280" rx="20" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.4)" stroke-width="2"/>
+    
+    <text x="440" y="80" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="36" font-style="italic">"Below thresholds,</text>
+    <text x="440" y="130" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="36" font-style="italic">effort feels invisible.</text>
+    
+    <text x="440" y="200" text-anchor="middle" fill="#00d4ff" font-family="Georgia, serif" font-size="36" font-style="italic">Above thresholds,</text>
+    <text x="440" y="250" text-anchor="middle" fill="#00d4ff" font-family="Georgia, serif" font-size="36" font-style="italic">learning compounds."</text>
+  </g>
+  
+  <!-- Key insight -->
+  <g transform="translate(100, 520)">
+    <text x="440" y="0" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="22">ReLU isn't just mathit's a powerful metaphor</text>
+    <text x="440" y="35" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="22">for how modern ad systems behave.</text>
+  </g>
+  
+  <!-- Results you can expect -->
+  <g transform="translate(100, 620)">
+    <text x="440" y="0" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="24" font-weight="600">What threshold-awareness creates:</text>
+    
+    <g transform="translate(140, 40)">
+      <rect x="0" y="0" width="600" height="50" rx="8" fill="rgba(16,185,129,0.1)"/>
+      <text x="30" y="32" fill="#10b981" font-family="system-ui, sans-serif" font-size="18"> More stable CPA/ROAS</text>
+    </g>
+    <g transform="translate(140, 100)">
+      <rect x="0" y="0" width="600" height="50" rx="8" fill="rgba(16,185,129,0.1)"/>
+      <text x="30" y="32" fill="#10b981" font-family="system-ui, sans-serif" font-size="18"> Faster learning (enough signal to stop guessing)</text>
+    </g>
+    <g transform="translate(140, 160)">
+      <rect x="0" y="0" width="600" height="50" rx="8" fill="rgba(16,185,129,0.1)"/>
+      <text x="30" y="32" fill="#10b981" font-family="system-ui, sans-serif" font-size="18"> More efficient auctions</text>
+    </g>
+    <g transform="translate(140, 220)">
+      <rect x="0" y="0" width="600" height="50" rx="8" fill="rgba(16,185,129,0.1)"/>
+      <text x="30" y="32" fill="#10b981" font-family="system-ui, sans-serif" font-size="18"> Cleaner scaling (already above activation)</text>
+    </g>
+    <g transform="translate(140, 280)">
+      <rect x="0" y="0" width="600" height="50" rx="8" fill="rgba(16,185,129,0.1)"/>
+      <text x="30" y="32" fill="#10b981" font-family="system-ui, sans-serif" font-size="18"> Less wasted spend on fragmented ad sets</text>
+    </g>
+  </g>
+  
+  <!-- CTA -->
+  <g transform="translate(100, 1020)">
+    <rect x="0" y="0" width="880" height="200" rx="20" fill="rgba(0,212,255,0.15)" stroke="url(#ctaGrad)" stroke-width="3" filter="url(#glowC8)"/>
+    
+    <text x="440" y="50" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="22" font-weight="500">Want to automate threshold-aware media buying?</text>
+    
+    <rect x="240" y="80" width="400" height="60" rx="30" fill="url(#ctaGrad)"/>
+    <text x="440" y="120" text-anchor="middle" fill="#0a0a0f" font-family="system-ui, sans-serif" font-size="22" font-weight="700">Get a Demo</text>
+    
+    <text x="440" y="175" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">mizoki.ai " MIZ OKI 3.5</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

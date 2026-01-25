@@ -28,6 +28,26 @@ This deploys:
 
 ---
 
+## 📝 Blog & Thought Leadership
+
+### ReLU Lens Meta Algorithm Article
+
+Complete LinkedIn content kit for "Unlocking Meta's Ad Algorithm With the ReLU Lens":
+
+- **Blog Article**: `/blog/relu-lens-meta-algorithm.html`
+- **Article Images**: 5 SVG infographics in `/assets/img/relu-article/`
+- **Carousel Slides**: 8 SVG slides in `/assets/img/relu-carousel/`
+- **Image Preview**: `/assets/img/preview.html`
+- **Documentation**: `/assets/img/README.md`
+
+Key concepts covered:
+- ReLU-style threshold activation in Meta's algorithm
+- 50 events/week learning phase target
+- Budget concentration vs dilution strategy
+- Compounding feedback loop mechanics
+
+---
+
 ## Quick Deploy to Google Cloud Run
 
 ### Prerequisites
@@ -121,14 +141,25 @@ mizoki-website/
 ├── walkthrough.html        # Demo request
 ├── investor.html           # Investor overview
 ├── sales-one-pager.html    # Sales summary
+├── blog/                   # Thought leadership content
+│   ├── index.html          # Blog listing
+│   ├── decision-control-plane.html
+│   └── relu-lens-meta-algorithm.html
 ├── assets/                 # Static assets
 │   ├── css/
 │   ├── img/
+│   │   ├── relu-article/   # LinkedIn article images (5 SVGs)
+│   │   ├── relu-carousel/  # LinkedIn carousel slides (8 SVGs)
+│   │   ├── preview.html    # Image preview page
+│   │   └── README.md       # Image kit documentation
 │   └── pdf/
 ├── Dockerfile              # Container definition
 ├── nginx.conf              # Web server config
 ├── cloudbuild.yaml         # Cloud Build config
 ├── deploy.sh               # One-click deploy script
+├── master-deploy.sh        # Full deployment script
+├── github-push.sh          # GitHub sync script
+├── CLAUDE.md               # AI assistant context
 └── README.md               # This file
 ```
 

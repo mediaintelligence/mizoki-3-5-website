@@ -1,0 +1,103 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <linearGradient id="loopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <filter id="glow4" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arrowCyan" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#00d4ff"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#a855f7"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bgGrad4)"/>
+  
+  <!-- Title -->
+  <text x="600" y="55" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600">The Compounding Feedback Loop</text>
+  <text x="600" y="90" text-anchor="middle" fill="#9090a0" font-family="system-ui, -apple-system, sans-serif" font-size="18">Better signals ’ Better delivery ’ More signals</text>
+  
+  <!-- Flywheel visualization -->
+  <g transform="translate(600, 340)">
+    <!-- Outer glow ring -->
+    <circle cx="0" cy="0" r="200" fill="none" stroke="url(#loopGrad)" stroke-width="8" opacity="0.3" filter="url(#glow4)"/>
+    
+    <!-- Main ring -->
+    <circle cx="0" cy="0" r="180" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="40"/>
+    
+    <!-- Animated arrows on ring -->
+    <!-- Arrow segments -->
+    <path d="M 0 -180 A 180 180 0 0 1 156 90" fill="none" stroke="#00d4ff" stroke-width="4" marker-end="url(#arrowCyan)" filter="url(#glow4)"/>
+    <path d="M 156 90 A 180 180 0 0 1 -156 90" fill="none" stroke="#a855f7" stroke-width="4" marker-end="url(#arrowPurple)" filter="url(#glow4)"/>
+    <path d="M -156 90 A 180 180 0 0 1 0 -180" fill="none" stroke="#10b981" stroke-width="4" marker-end="url(#arrowGreen)" filter="url(#glow4)"/>
+    
+    <!-- Center label -->
+    <circle cx="0" cy="0" r="70" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.3)" stroke-width="2"/>
+    <text x="0" y="-5" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="14" font-weight="600">FLYWHEEL</text>
+    <text x="0" y="15" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="12">Effect</text>
+    
+    <!-- Node 1: Conversion Signals -->
+    <g transform="translate(0, -200)">
+      <rect x="-100" y="-35" width="200" height="70" rx="12" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="2"/>
+      <text x="0" y="-5" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="14" font-weight="600">More Conversion</text>
+      <text x="0" y="15" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Signals</text>
+    </g>
+    
+    <!-- Node 2: Better Predictions -->
+    <g transform="translate(173, 100)">
+      <rect x="-100" y="-35" width="200" height="70" rx="12" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="2"/>
+      <text x="0" y="-5" text-anchor="middle" fill="#a855f7" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Better Predictions</text>
+      <text x="0" y="15" text-anchor="middle" fill="#a855f7" font-family="system-ui, sans-serif" font-size="14" font-weight="600">(Higher EAR)</text>
+    </g>
+    
+    <!-- Node 3: More Delivery -->
+    <g transform="translate(-173, 100)">
+      <rect x="-100" y="-35" width="200" height="70" rx="12" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2"/>
+      <text x="0" y="-5" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="600">More Delivery</text>
+      <text x="0" y="15" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="600">(Win More Auctions)</text>
+    </g>
+  </g>
+  
+  <!-- Side annotations -->
+  <g transform="translate(100, 250)">
+    <rect x="0" y="0" width="180" height="80" rx="10" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+    <text x="90" y="30" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="13" font-weight="500">Result:</text>
+    <text x="90" y="50" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="12">Lower CPA</text>
+    <text x="90" y="68" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="12">Better ROAS</text>
+  </g>
+  
+  <g transform="translate(920, 250)">
+    <rect x="0" y="0" width="180" height="80" rx="10" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="90" y="30" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="13" font-weight="500">Without loop:</text>
+    <text x="90" y="50" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="12">Stuck in "Learning"</text>
+    <text x="90" y="68" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="12">Volatile results</text>
+  </g>
+  
+  <!-- Bottom insight -->
+  <rect x="200" y="570" width="800" height="70" rx="10" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
+  <text x="600" y="598" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="15">Once activated, the loop compounds:</text>
+  <text x="600" y="622" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="15" font-weight="500">signal ’ prediction ’ delivery ’ signal ’ ...</text>
+  
+  <!-- MIZ OKI branding -->
+  <text x="1150" y="650" text-anchor="end" fill="#606070" font-family="monospace" font-size="12">MIZ OKI 3.5</text>
+</svg>

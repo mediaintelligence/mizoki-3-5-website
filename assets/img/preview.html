@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReLU LinkedIn Image Kit Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #f0f0f5;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #00d4ff, #4f8fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            color: #9090a0;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin: 3rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .section {
+            margin-bottom: 3rem;
+        }
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+        .grid-article {
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        }
+        .grid-carousel {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        .card {
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #00d4ff;
+        }
+        .card img, .card object {
+            width: 100%;
+            display: block;
+            background: #0a0a0f;
+        }
+        .card-article object {
+            aspect-ratio: 1200 / 675;
+        }
+        .card-carousel object {
+            aspect-ratio: 1080 / 1350;
+        }
+        .card-info {
+            padding: 1rem;
+        }
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .card-caption {
+            font-size: 0.9rem;
+            color: #9090a0;
+            margin-bottom: 0.75rem;
+        }
+        .card-alt {
+            font-size: 0.8rem;
+            color: #606070;
+            font-style: italic;
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+        }
+        .card-alt strong {
+            color: #9090a0;
+            font-style: normal;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #00d4ff, #4f8fff);
+            color: #0a0a0f;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+        .instructions {
+            background: rgba(0,212,255,0.1);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .instructions h3 {
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+        .instructions ul {
+            margin-left: 1.5rem;
+            color: #9090a0;
+        }
+        .instructions li {
+            margin-bottom: 0.25rem;
+        }
+        .instructions code {
+            background: rgba(0,0,0,0.3);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <h1>ReLU LinkedIn Image Kit</h1>
+    <p class="subtitle">Preview all images. Right-click → "Save Image As" to download as PNG.</p>
+
+    <div class="instructions">
+        <h3>How to Export</h3>
+        <ul>
+            <li><strong>Quick:</strong> Right-click any image → "Save Image As" → Choose PNG format</li>
+            <li><strong>Article images:</strong> 1200×675 for inline, 1920×1080 for cover</li>
+            <li><strong>Carousel slides:</strong> 1080×1350 (4:5 ratio for LinkedIn mobile)</li>
+            <li><strong>Tip:</strong> Use browser zoom (Cmd/Ctrl + scroll) for higher resolution screenshots</li>
+        </ul>
+    </div>
+
+    <section class="section">
+        <h2>LinkedIn Article Images (1200×675)</h2>
+        <div class="grid grid-article">
+            <div class="card card-article">
+                <object data="relu-article/01_relu_gate.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Figure 1 — ReLU Gate</div>
+                    <div class="card-caption">The "ReLU-style gate": weak signals get filtered; strong signals get amplified.</div>
+                    <div class="card-alt"><strong>Alt text:</strong> ReLU gate concept for Meta Ads optimization—weak engagement signals filtered, strong signals amplified.</div>
+                    <a href="relu-article/01_relu_gate.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-article">
+                <object data="relu-article/02_nonlinear_activation_curve.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Figure 2 — Nonlinear Activation Curve</div>
+                    <div class="card-caption">Nonlinear delivery: results often jump once you cross a learning threshold.</div>
+                    <div class="card-alt"><strong>Alt text:</strong> Nonlinear activation curve showing threshold effect in Meta Ads learning and performance marketing.</div>
+                    <a href="relu-article/02_nonlinear_activation_curve.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-article">
+                <object data="relu-article/03_learning_50_events.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Figure 3 — Learning Phase (~50 Events)</div>
+                    <div class="card-caption">Learning phase math: aim for ~50 optimization events per ad set per week to stabilize.</div>
+                    <div class="card-alt"><strong>Alt text:</strong> Learning phase target of 50 optimization events per week per ad set for Facebook and Instagram ads.</div>
+                    <a href="relu-article/03_learning_50_events.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-article">
+                <object data="relu-article/04_compounding_feedback_loop.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Figure 4 — Compounding Feedback Loop</div>
+                    <div class="card-caption">Feedback loop: better signals → better delivery → more signals (compounding).</div>
+                    <div class="card-alt"><strong>Alt text:</strong> Compounding feedback loop in Meta ad auctions—more conversion signals improve delivery and ROAS.</div>
+                    <a href="relu-article/04_compounding_feedback_loop.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-article">
+                <object data="relu-article/05_budget_dilution_vs_concentration.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Figure 5 — Budget Dilution vs Concentration</div>
+                    <div class="card-caption">Budget dilution vs concentration: fewer ad sets = faster learning.</div>
+                    <div class="card-alt"><strong>Alt text:</strong> Comparison of budget dilution vs budget concentration in Meta media buying and campaign structure.</div>
+                    <a href="relu-article/05_budget_dilution_vs_concentration.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>LinkedIn Carousel Slides (1080×1350)</h2>
+        <div class="grid grid-carousel">
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_01_cover.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 1 — Cover</div>
+                    <div class="card-caption">Title card with ReLU Lens branding</div>
+                    <a href="relu-carousel/slide_01_cover.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_02_problem.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 2 — The Problem</div>
+                    <div class="card-caption">Flatline to breakout phenomenon</div>
+                    <a href="relu-carousel/slide_02_problem.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_03_relu_explained.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 3 — What is ReLU?</div>
+                    <div class="card-caption">The gate concept explained visually</div>
+                    <a href="relu-carousel/slide_03_relu_explained.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_04_50_events.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 4 — The Magic Number</div>
+                    <div class="card-caption">50 events per week threshold</div>
+                    <a href="relu-carousel/slide_04_50_events.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_05_consolidate.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 5 — Consolidate</div>
+                    <div class="card-caption">Budget dilution vs concentration</div>
+                    <a href="relu-carousel/slide_05_consolidate.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_06_flywheel.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 6 — Flywheel</div>
+                    <div class="card-caption">The compounding feedback loop</div>
+                    <a href="relu-carousel/slide_06_flywheel.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_07_checklist.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 7 — The Playbook</div>
+                    <div class="card-caption">6-move ReLU checklist</div>
+                    <a href="relu-carousel/slide_07_checklist.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+            <div class="card card-carousel">
+                <object data="relu-carousel/slide_08_cta.svg" type="image/svg+xml"></object>
+                <div class="card-info">
+                    <div class="card-title">Slide 8 — CTA</div>
+                    <div class="card-caption">Closing quote and call-to-action</div>
+                    <a href="relu-carousel/slide_08_cta.svg" download class="download-btn">Download SVG</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="instructions" style="margin-top: 3rem;">
+        <h3>Image Placement in Article</h3>
+        <ul>
+            <li><strong>Figure 1 (ReLU Gate)</strong> → right after the hook + "you're invisible below threshold"</li>
+            <li><strong>Figure 2 (Nonlinear Curve)</strong> → when you explain "it's not linear… it jumps"</li>
+            <li><strong>Figure 3 (50 Events)</strong> → when you explain stabilization / learning phase</li>
+            <li><strong>Figure 4 (Flywheel)</strong> → when you explain momentum / flywheel effect</li>
+            <li><strong>Figure 5 (Dilution vs Concentration)</strong> → when you explain "go deep before wide"</li>
+        </ul>
+    </div>
+</body>
+</html>
