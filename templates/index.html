@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIZ OKI | Autonomous Business Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #e0e0e0;
+            --accent-color: #00d4ff;
+            --highlight-color: #ff9f1c;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        #neuro-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 0 20px;
+            background: radial-gradient(circle at center, transparent 0%, var(--bg-color) 120%);
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 0.2em;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .copy-block {
+            max-width: 800px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            border-left: 3px solid var(--highlight-color);
+            padding-left: 20px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+        }
+
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .btn-main,
+        .btn-secondary {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-main {
+            color: var(--bg-color);
+            background-color: var(--highlight-color);
+            box-shadow: 0 0 15px rgba(255, 159, 28, 0.4);
+        }
+
+        .btn-main:hover {
+            background-color: #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-secondary {
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: transparent;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            box-shadow: 0 0 18px rgba(0, 212, 255, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .copy-block {
+                text-align: center;
+                border-left: none;
+                border-top: 3px solid var(--highlight-color);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="neuro-grid"></canvas>
+
+    <div class="content">
+        <h1>Intelligence That Moves<br>Faster Than the Market</h1>
+        <h2>MIZ OKI: Autonomous Business Intelligence</h2>
+
+        <div class="copy-block">
+            <p><strong>This is the shift from managing your business to unleashing it.</strong></p>
+            <p>In a world of static data, MIZ OKI introduces the era of kinetic insight. We do not simply report the past; our autonomous engines ingest the chaotic noise of the global economy and distill it into clear, executed directives.</p>
+            <p><strong>Observe. Decide. Act.</strong></p>
+        </div>
+
+        <div class="cta-row">
+            <a class="btn-main" href="mailto:hello@mizoki3.com">Initialize Protocol</a>
+            <a class="btn-secondary" href="mailto:hello@mizoki3.com">Request Access</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('neuro-grid');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#00d4ff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor((width * height) / 15000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - distance / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+        resize();
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>

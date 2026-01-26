@@ -45,16 +45,19 @@ SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN
 ```
 mizoki-website/
 │
-├── 🏠 Core Pages
-│   ├── index.html              # Homepage
+├── 🧠 Application
+│   ├── app.py                  # Flask entrypoint for Cloud Run
+│   ├── templates/index.html    # Neuro-Grid landing page
+│   └── requirements.txt        # Runtime dependencies
+│
+├── 🏠 Legacy Pages
+│   ├── index.html              # Previous static homepage
 │   ├── login.html              # Platform login (mizoki.mizoki3.com)
 │   ├── how-it-works.html       # SRDPV-DAL pipeline deep-dive
 │   ├── platform.html           # Four-layer architecture
 │   ├── security.html           # Quantum-resistant security
 │   ├── industries.html         # Industry templates
-│   └── pricing.html            # Enterprise/Growth/Pilot tiers
-│
-├── 📊 Business Pages
+│   ├── pricing.html            # Enterprise/Growth/Pilot tiers
 │   ├── case-studies.html       # Customer success stories
 │   ├── roi.html                # Interactive ROI calculator
 │   ├── walkthrough.html        # 12-minute demo request
@@ -73,8 +76,7 @@ mizoki-website/
 │   └── assets/pdf/             # Downloadable documents
 │
 ├── ⚙️ Infrastructure
-│   ├── Dockerfile              # nginx:alpine container
-│   ├── nginx.conf              # Web server + subdomain routing
+│   ├── Dockerfile              # Python + gunicorn container
 │   ├── cloudbuild.yaml         # Google Cloud Build config
 │   ├── deploy.sh               # One-click deployment
 │   ├── master-deploy.sh        # Multi-service deploy
@@ -111,7 +113,7 @@ The script will:
 1. ✅ Authenticate with Google Cloud
 2. ✅ Enable required APIs (Cloud Build, Container Registry, Cloud Run)
 3. ✅ Build Docker container
-4. ✅ Deploy to Cloud Run
+4. ✅ Deploy the Flask app to Cloud Run
 5. ✅ Output your live URL
 
 ### Manual Deployment
@@ -122,13 +124,24 @@ gcloud config set project $PROJECT_ID
 
 # Build and deploy
 gcloud builds submit --tag gcr.io/$PROJECT_ID/mizoki-website
-gcloud run deploy mizoki-website \
-  --image gcr.io/$PROJECT_ID/mizoki-website \
-  --region us-central1 \
-  --platform managed \
-  --allow-unauthenticated \
+gcloud run deploy mizoki-website \\
+  --image gcr.io/$PROJECT_ID/mizoki-website \\
+  --region us-central1 \\
+  --platform managed \\
+  --allow-unauthenticated \\
   --port 8080
 ```
+
+### Local Development
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+Visit `http://localhost:8080` to view the Neuro-Grid landing page.
 
 ---
 
@@ -167,19 +180,14 @@ gcloud beta run domain-mappings list --region us-central1
 
 | Variable | Hex | Usage |
 |----------|-----|-------|
-| `--bg-primary` | `#0a0a0f` | Page background |
-| `--accent-cyan` | `#00d4ff` | Primary CTAs, links |
-| `--accent-blue` | `#4f8fff` | Secondary accents |
-| `--accent-green` | `#10b981` | Success, VALIDATE |
-| `--accent-orange` | `#f59e0b` | SENSE stage |
-| `--accent-purple` | `#a855f7` | REASON stage |
-| `--accent-red` | `#ef4444` | ACT stage, warnings |
+| `--bg-color` | `#050505` | Page background |
+| `--text-color` | `#e0e0e0` | Primary text |
+| `--accent-color` | `#00d4ff` | Neuro-Grid accents |
+| `--highlight-color` | `#ff9f1c` | Primary calls-to-action |
 
 ### Typography
 
-- **Headlines:** Instrument Serif
-- **Body:** DM Sans
-- **Code:** JetBrains Mono
+- **Headlines + Body:** Rajdhani
 
 ---
 

@@ -1,18 +1,14 @@
-FROM nginx:alpine
+FROM python:3.11-slim
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+WORKDIR /app
 
-# Copy website files
-COPY *.html /usr/share/nginx/html/
-COPY assets/ /usr/share/nginx/html/assets/
-COPY blog/ /usr/share/nginx/html/blog/
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Cloud Run uses PORT environment variable
+COPY app.py ./app.py
+COPY templates/ ./templates/
+
 ENV PORT=8080
-
-# Expose port
 EXPOSE 8080
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["gunicorn", "--bind", ":8080", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
