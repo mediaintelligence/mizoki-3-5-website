@@ -1,679 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Overview — MIZ OKI 3.5</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
-            --border: rgba(255,255,255,0.08);
-            --glow-blue: rgba(79, 143, 255, 0.15);
-            --glow-cyan: rgba(0, 212, 255, 0.15);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-        nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            padding: 1rem 2rem;
-            background: rgba(10, 10, 15, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .logo-version {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.4rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 4px;
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text-primary); }
-        .nav-cta { display: flex; gap: 0.75rem; }
-        .btn {
-            padding: 0.6rem 1.25rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
-        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 20px var(--glow-cyan);
-        }
-
-        /* One-Pager Layout */
-        .one-pager {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 8rem 2rem 4rem;
-        }
-
-        /* Header */
-        .op-header {
-            text-align: center;
-            margin-bottom: 4rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .op-header h1 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-        .op-tagline {
-            font-size: 1.15rem;
-            color: var(--accent-cyan);
-            margin-bottom: 0.5rem;
-        }
-        .op-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-        }
-
-        /* Problem/Solution Grid */
-        .op-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        @media (max-width: 700px) {
-            .op-grid { grid-template-columns: 1fr; }
-        }
-        .op-box {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-        .op-box h3 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-        .op-box.problem h3 { color: var(--accent-red); }
-        .op-box.solution h3 { color: var(--accent-green); }
-        .op-box ul {
-            list-style: none;
-        }
-        .op-box li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.4rem 0;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        .op-box.problem li::before {
-            content: '✗';
-            color: var(--accent-red);
-            opacity: 0.7;
-        }
-        .op-box.solution li::before {
-            content: '✓';
-            color: var(--accent-green);
-        }
-
-        /* Core Value Prop */
-        .op-value {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.05));
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .op-value h2 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .op-value p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* Metrics Row */
-        .op-metrics {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-        @media (max-width: 700px) {
-            .op-metrics { grid-template-columns: repeat(2, 1fr); }
-        }
-        .op-metric {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.25rem;
-            text-align: center;
-        }
-        .op-metric-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.75rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .op-metric-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        /* How It Works */
-        .op-how {
-            margin-bottom: 3rem;
-        }
-        .op-section-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-cyan);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        .op-pipeline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-        .op-stage {
-            text-align: center;
-            flex: 1;
-            min-width: 80px;
-        }
-        .op-stage-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 0.5rem;
-            font-size: 1rem;
-        }
-        .op-stage-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .op-arrow {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-        @media (max-width: 600px) {
-            .op-arrow { display: none; }
-            .op-pipeline { justify-content: center; }
-        }
-
-        /* Industries */
-        .op-industries {
-            margin-bottom: 3rem;
-        }
-        .op-industry-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-        }
-        @media (max-width: 700px) {
-            .op-industry-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (max-width: 500px) {
-            .op-industry-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        .op-industry {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .op-industry-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Pricing Summary */
-        .op-pricing {
-            margin-bottom: 3rem;
-        }
-        .op-pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-        @media (max-width: 700px) {
-            .op-pricing-grid { grid-template-columns: 1fr; }
-        }
-        .op-tier {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .op-tier.featured {
-            border-color: var(--accent-cyan);
-            background: linear-gradient(180deg, rgba(0, 212, 255, 0.05), var(--bg-secondary));
-        }
-        .op-tier-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-        .op-tier.featured .op-tier-name {
-            color: var(--accent-cyan);
-        }
-        .op-tier-price {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .op-tier-period {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        .op-tier-note {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 0.5rem;
-        }
-
-        /* Timeline */
-        .op-timeline {
-            margin-bottom: 3rem;
-        }
-        .op-timeline-bar {
-            display: flex;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .op-timeline-step {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            border-right: 1px solid var(--border);
-        }
-        .op-timeline-step:last-child {
-            border-right: none;
-        }
-        .op-timeline-week {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            margin-bottom: 0.25rem;
-        }
-        .op-timeline-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        @media (max-width: 600px) {
-            .op-timeline-bar { flex-direction: column; }
-            .op-timeline-step { border-right: none; border-bottom: 1px solid var(--border); }
-            .op-timeline-step:last-child { border-bottom: none; }
-        }
-
-        /* CTA */
-        .op-cta {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-        }
-        .op-cta h3 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .op-cta p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        .op-cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .op-cta-buttons .btn {
-            padding: 0.9rem 2rem;
-        }
-
-        /* Download Link */
-        .op-download {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-        .op-download a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        .op-download a:hover {
-            color: var(--accent-cyan);
-        }
-
-        /* Footer */
-        footer {
-            padding: 4rem 2rem 2rem;
-            border-top: 1px solid var(--border);
-            margin-top: 4rem;
-        }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        @media (max-width: 600px) {
-            .footer-bottom { flex-direction: column; gap: 0.5rem; }
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sales One-Pager — MIZ OKI 3.5</title>
+  <meta name="description" content="Forwardable summary with the SRDPV-DAL pipeline, Decision Control Plane, and value narrative."/>
+  <meta name="theme-color" content="#050A12"/>
+  <link rel="icon" href="assets/svg/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css"/>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
-            <div class="nav-links">
-                <a href="how-it-works.html">How It Works</a>
-                <a href="platform.html">Platform</a>
-                <a href="security.html">Security</a>
-                <a href="industries.html">Industries</a>
-                <a href="pricing.html">Pricing</a>
-                <a href="case-studies.html">Case Studies</a>
-            </div>
-            <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
-                <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
-                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
-            </div>
-        </div>
-    </nav>
+  <a href="#content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
+  <div class="topbar">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="index.html" aria-label="MIZ OKI Home">
+          <div class="mark" aria-hidden="true"></div>
+          <span>
+            MIZ OKI <small>3.5</small>
+          </span>
+        </a>
 
-    <main class="one-pager">
-        <header class="op-header">
-            <h1>MIZ OKI 3.5</h1>
-            <p class="op-tagline">Verifiable Autonomous Decision Intelligence</p>
-            <p class="op-subtitle">Decisions verified before execution—not explained after failure</p>
-        </header>
+        <nav class="navlinks" data-navlinks>
+          <a href="index.html">Home</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="platform.html">Platform</a>
+          <a href="security.html">Security</a>
+          <a href="industries.html">Industries</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="case-studies.html">Case Studies</a>
+          <a href="resources.html">Resources</a>
+          <a href="roi.html">ROI Calculator</a>
+        </nav>
 
-        <div class="op-grid">
-            <div class="op-box problem">
-                <h3>The Problem</h3>
-                <ul>
-                    <li>Enterprise decisions take days or weeks</li>
-                    <li>Revenue leakage from slow response</li>
-                    <li>AI "copilots" still require human execution</li>
-                    <li>Black-box AI fails compliance requirements</li>
-                    <li>No institutional memory across decisions</li>
-                </ul>
-            </div>
-            <div class="op-box solution">
-                <h3>MIZ OKI Solution</h3>
-                <ul>
-                    <li>Autonomous decisions in minutes, not days</li>
-                    <li>↓35% revenue leakage reduction</li>
-                    <li>Full autonomy with validation layer</li>
-                    <li>Every decision auditable and explainable</li>
-                    <li>Knowledge graph retains decision history</li>
-                </ul>
-            </div>
+        <div class="actions">
+          <a class="btn ghost small" href="walkthrough.html">12-Min Walkthrough</a>
+          <a class="btn primary small" href="roi.html">Estimate ROI</a>
+          <a class="btn primary small" href="https://mizoki.mizoki3.com">Login</a>
+          <button class="btn ghost small menuBtn" data-menu-btn aria-label="Open menu">Menu</button>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="op-value">
-            <h2>Not an AI Assistant. An Autonomous Decision System.</h2>
-            <p>MIZ OKI doesn't answer questions—it runs parts of the business. With decisions verified before execution through multi-agent evaluation, counterfactual simulation, and policy governance.</p>
-        </div>
+  <main id="content">
+    
+<section class="section">
+  <div class="container">
+    <h1 class="sectionTitle">Sales One-Pager</h1>
+    <p class="sectionSub">A forwardable summary designed to survive internal forwarding without losing accuracy.</p>
 
-        <div class="op-metrics">
-            <div class="op-metric">
-                <div class="op-metric-value">63×</div>
-                <div class="op-metric-label">Faster Decisions</div>
-            </div>
-            <div class="op-metric">
-                <div class="op-metric-value">↓35%</div>
-                <div class="op-metric-label">Revenue Leakage</div>
-            </div>
-            <div class="op-metric">
-                <div class="op-metric-value">89%</div>
-                <div class="op-metric-label">Automation Coverage</div>
-            </div>
-            <div class="op-metric">
-                <div class="op-metric-value">3.2mo</div>
-                <div class="op-metric-label">Payback Period</div>
-            </div>
-        </div>
+    <div class="card">
+      <h3>MIZ OKI 3.5 — Verifiable Autonomous Decision Intelligence</h3>
+      <p><strong>Core thesis:</strong> "Decisions verified before execution—not explained after failure."</p>
+      <p style="margin-top:12px;"><strong>Pipeline:</strong> <span class="badge">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</span></p>
+      <p style="margin-top:12px; color:var(--muted);">
+        MIZ OKI 3.5 is the first Business General Intelligence platform where autonomous agents propose actions, but the Decision Control Plane verifies, simulates, and authorizes every decision before execution. No black-box AI. Full auditability.
+      </p>
 
-        <div class="op-how">
-            <div class="op-section-title">The SRDPV-DAL Pipeline</div>
-            <div class="op-pipeline">
-                <div class="op-stage">
-                    <div class="op-stage-icon">📡</div>
-                    <div class="op-stage-name">SENSE</div>
-                </div>
-                <span class="op-arrow">→</span>
-                <div class="op-stage">
-                    <div class="op-stage-icon">🧠</div>
-                    <div class="op-stage-name">REASON</div>
-                </div>
-                <span class="op-arrow">→</span>
-                <div class="op-stage">
-                    <div class="op-stage-icon">📋</div>
-                    <div class="op-stage-name">PLAN</div>
-                </div>
-                <span class="op-arrow">→</span>
-                <div class="op-stage">
-                    <div class="op-stage-icon">✓</div>
-                    <div class="op-stage-name">VALIDATE</div>
-                </div>
-                <span class="op-arrow">→</span>
-                <div class="op-stage">
-                    <div class="op-stage-icon">⚖️</div>
-                    <div class="op-stage-name">DECIDE</div>
-                </div>
-                <span class="op-arrow">→</span>
-                <div class="op-stage">
-                    <div class="op-stage-icon">⚡</div>
-                    <div class="op-stage-name">ACT</div>
-                </div>
-                <span class="op-arrow">→</span>
-                <div class="op-stage">
-                    <div class="op-stage-icon">📈</div>
-                    <div class="op-stage-name">LEARN</div>
-                </div>
-            </div>
+      <div class="grid2" style="margin-top:16px;">
+        <div class="card" style="background: rgba(5,10,18,.35);">
+          <h3>What it does</h3>
+          <ul style="color:var(--muted); margin-left:1.5rem;">
+            <li>Senses signals from your existing systems</li>
+            <li>Reasons using Causal GraphRAG</li>
+            <li>Plans multiple strategy alternatives</li>
+            <li>Validates via independent agents</li>
+            <li>Decides through the Decision Control Plane</li>
+            <li>Acts with automatic rollback</li>
+            <li>Learns from every outcome</li>
+          </ul>
         </div>
+        <div class="card" style="background: rgba(5,10,18,.35);">
+          <h3>Who it's for</h3>
+          <p>Enterprises with:</p>
+          <ul style="color:var(--muted); margin-left:1.5rem;">
+            <li>Complex, high-stakes decision flows</li>
+            <li>Regulated environments requiring audit trails</li>
+            <li>Teams overwhelmed by dashboards but lacking action</li>
+            <li>Need for governed autonomy, not black-box AI</li>
+          </ul>
+        </div>
+      </div>
 
-        <div class="op-industries">
-            <div class="op-section-title">Industry Templates</div>
-            <div class="op-industry-grid">
-                <div class="op-industry">
-                    <div class="op-industry-icon">📊</div>
-                    Media Buying
-                </div>
-                <div class="op-industry">
-                    <div class="op-industry-icon">🏦</div>
-                    Financial Services
-                </div>
-                <div class="op-industry">
-                    <div class="op-industry-icon">🏥</div>
-                    Healthcare
-                </div>
-                <div class="op-industry">
-                    <div class="op-industry-icon">🛒</div>
-                    Retail
-                </div>
-                <div class="op-industry">
-                    <div class="op-industry-icon">🏭</div>
-                    Manufacturing
-                </div>
-            </div>
-        </div>
+      <h4 style="margin-top:20px;">Impact ranges (typical)</h4>
+      <table class="table" style="margin-top:12px;">
+        <tbody>
+          <tr><td>Decision latency</td><td>↓ 50–75×</td></tr>
+          <tr><td>Revenue leakage</td><td>↓ 18–35%</td></tr>
+          <tr><td>Operational cost</td><td>↓ 22–41%</td></tr>
+          <tr><td>Payback period</td><td>~3.2 months</td></tr>
+        </tbody>
+      </table>
 
-        <div class="op-pricing">
-            <div class="op-section-title">Pricing</div>
-            <div class="op-pricing-grid">
-                <div class="op-tier">
-                    <div class="op-tier-name">Foundation</div>
-                    <div class="op-tier-price">$8,500</div>
-                    <div class="op-tier-period">/month</div>
-                    <div class="op-tier-note">Up to 50K decisions/mo</div>
-                </div>
-                <div class="op-tier featured">
-                    <div class="op-tier-name">Professional</div>
-                    <div class="op-tier-price">$24,000</div>
-                    <div class="op-tier-period">/month</div>
-                    <div class="op-tier-note">Up to 500K decisions/mo</div>
-                </div>
-                <div class="op-tier">
-                    <div class="op-tier-name">Enterprise</div>
-                    <div class="op-tier-price">Custom</div>
-                    <div class="op-tier-period"></div>
-                    <div class="op-tier-note">Unlimited + dedicated infra</div>
-                </div>
-            </div>
-        </div>
+      <div style="margin-top:16px;" class="callout">
+        <strong>Not an AI assistant</strong>
+        <p>Assistants answer questions. <strong>MIZ OKI 3.5 runs decisions—verifiably.</strong> Agents propose. The Decision Control Plane authorizes.</p>
+      </div>
 
-        <div class="op-timeline">
-            <div class="op-section-title">Deployment Timeline</div>
-            <div class="op-timeline-bar">
-                <div class="op-timeline-step">
-                    <div class="op-timeline-week">Week 1</div>
-                    <div class="op-timeline-label">Integration</div>
-                </div>
-                <div class="op-timeline-step">
-                    <div class="op-timeline-week">Week 2</div>
-                    <div class="op-timeline-label">Calibration</div>
-                </div>
-                <div class="op-timeline-step">
-                    <div class="op-timeline-week">Week 3</div>
-                    <div class="op-timeline-label">Go Live</div>
-                </div>
-                <div class="op-timeline-step">
-                    <div class="op-timeline-week">Week 4+</div>
-                    <div class="op-timeline-label">Optimization</div>
-                </div>
-            </div>
-        </div>
+      <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+        <a class="btn primary" href="assets/pdf/sales-one-pager.pdf">Download PDF</a>
+        <a class="btn ghost" href="walkthrough.html">12-Min Walkthrough</a>
+        <a class="btn ghost" href="roi.html">Estimate ROI</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <div class="op-cta">
-            <h3>Ready to See It in Action?</h3>
-            <p>Schedule a 30-minute demo customized to your industry and challenges</p>
-            <div class="op-cta-buttons">
-                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
-                <a href="roi.html" class="btn btn-ghost">Calculate ROI</a>
-                <a href="case-studies.html" class="btn btn-ghost">Case Studies</a>
-            </div>
-        </div>
+  </main>
 
-        <div class="op-download">
-            <a href="#" onclick="window.print(); return false;">📄 Download as PDF</a>
+  <footer class="footer">
+    <div class="container">
+      <div class="footerGrid">
+        <div>
+          <div class="brand" style="gap:10px;">
+            <div class="mark" aria-hidden="true"></div>
+            <span>MIZ OKI <small>3.5 — Verifiable Autonomous Decision Intelligence</small></span>
+          </div>
+          <p class="trustline" style="margin-top:14px; max-width: 760px;">
+            <strong>Agents propose. The Decision Control Plane authorizes. Every decision auditable. Every outcome feeds learning.</strong>
+          </p>
+          <small>© <span data-year></span> MIZ OKI. All rights reserved.</small>
         </div>
-    </main>
+        <div>
+          <div class="footerLinks">
+            <a href="security.html">Security & Governance</a>
+            <a href="investor.html">Investor Overview</a>
+            <a href="sales-one-pager.html">Sales One-Pager</a>
+            <a href="demo-opener.html">Demo Opener Script</a>
+          </div>
+          <div style="margin-top:14px;" class="notice">
+            Every action is logged. Every decision is auditable. Humans remain in control.
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-bottom">
-                <span>© 2026 MIZ OKI. All rights reserved.</span>
-                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
-            </div>
-        </div>
-    </footer>
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>

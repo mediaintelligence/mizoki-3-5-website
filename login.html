@@ -1,484 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIZ OKI 3.5 — Log In</title>
-    <meta name="description" content="Log in to your MIZ OKI 3.5 Decision Intelligence Platform workspace.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --border: rgba(255,255,255,0.08);
-            --glow-cyan: rgba(0, 212, 255, 0.2);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        nav {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border);
-            background: rgba(10, 10, 15, 0.85);
-            backdrop-filter: blur(20px);
-        }
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .logo-version {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.4rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 4px;
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            margin-left: 1.5rem;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text-primary); }
-        .page {
-            flex: 1;
-            display: grid;
-            place-items: center;
-            padding: 4rem 2rem;
-            position: relative;
-        }
-        .page::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse 60% 40% at 50% 0%, var(--glow-cyan) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .login-card {
-            width: min(440px, 100%);
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-            position: relative;
-            z-index: 1;
-        }
-        .login-card h1 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 2rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-        }
-        .login-card > p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-        
-        /* SSO Buttons */
-        .sso-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .sso-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .sso-btn:hover {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 212, 255, 0.05);
-        }
-        .sso-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-        
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-        }
-        label { font-size: 0.85rem; color: var(--text-secondary); }
-        input[type="email"], input[type="password"] {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.75rem 0.9rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            transition: all 0.2s;
-        }
-        input[type="email"]:focus, input[type="password"]:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 3px var(--glow-cyan);
-        }
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1.25rem 0 1.5rem;
-            font-size: 0.85rem;
-        }
-        .actions label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-        .actions input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--accent-cyan);
-        }
-        .actions a { color: var(--accent-cyan); text-decoration: none; }
-        .actions a:hover { text-decoration: underline; }
-        
-        .btn-primary {
-            width: 100%;
-            padding: 0.9rem 1.2rem;
-            border-radius: 8px;
-            border: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            color: var(--bg-primary);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .btn-primary:hover:not(:disabled) { 
-            transform: translateY(-1px);
-            box-shadow: 0 4px 20px var(--glow-cyan);
-        }
-        .btn-primary:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid transparent;
-            border-top-color: currentColor;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--accent-red);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        .error-message.show { display: block; }
-        
-        .login-footer {
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
-        .login-footer a { color: var(--accent-cyan); text-decoration: none; }
-        .login-footer a:hover { text-decoration: underline; }
-        
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--accent-green);
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-        }
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        @media (max-width: 480px) {
-            .login-card { padding: 2rem 1.5rem; }
-            .login-card h1 { font-size: 1.75rem; }
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Login — MIZ OKI 3.5</title>
+  <meta name="description" content="Access the MIZ OKI 3.5 platform."/>
+  <meta name="theme-color" content="#050A12"/>
+  <link rel="icon" href="assets/svg/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+  <style>
+    .loginPage {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .loginCard {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(180deg, rgba(15,26,46,.85), rgba(11,18,32,.75));
+      border: 1px solid rgba(25,245,255,.18);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    .loginCard h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .loginCard p {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .loginForm {
+      display: grid;
+      gap: 16px;
+    }
+    .loginBtn {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+    }
+  </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="https://mizoki3.com" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
-            <div class="nav-links">
-                <a href="https://mizoki3.com/resources.html">Docs</a>
-                <a href="https://mizoki3.com/pricing.html">Pricing</a>
-                <a href="https://mizoki3.com/walkthrough.html">Demo</a>
-            </div>
+  <a href="#content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
+  
+  <main id="content" class="loginPage">
+    <div class="loginCard">
+      <div class="brand" style="margin-bottom:24px;">
+        <div class="mark" aria-hidden="true"></div>
+        <span>
+          MIZ OKI <small>3.5</small>
+        </span>
+      </div>
+      
+      <h1>Welcome back</h1>
+      <p>Sign in to access the MIZ OKI 3.5 platform and Decision Control Center.</p>
+      
+      <form class="loginForm" action="#" method="post">
+        <div>
+          <div class="label">Email address</div>
+          <input class="input" type="email" name="email" placeholder="you@company.com" required/>
         </div>
-    </nav>
+        
+        <div>
+          <div class="label">Password</div>
+          <input class="input" type="password" name="password" placeholder="••••••••" required/>
+        </div>
+        
+        <button type="submit" class="btn primary loginBtn">Sign in</button>
+      </form>
+      
+      <div style="margin-top:20px; text-align:center;">
+        <a href="index.html" style="color:var(--muted); font-size:14px;">← Back to homepage</a>
+      </div>
+      
+      <div style="margin-top:24px;" class="notice">
+        <strong>Verifiable Autonomous Decision Intelligence</strong><br/>
+        <span style="font-size:13px;">Agents propose. The Decision Control Plane authorizes.</span>
+      </div>
+    </div>
+  </main>
 
-    <main class="page">
-        <section class="login-card">
-            <h1>Log in to MIZ OKI</h1>
-            <p>Access your decision intelligence workspace and audit trails.</p>
-            
-            <div class="sso-buttons">
-                <a href="#" class="sso-btn" id="google-sso">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    Continue with Google
-                </a>
-                <a href="#" class="sso-btn" id="microsoft-sso">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M11.4 11.4H2V2h9.4v9.4z" fill="#F25022"/>
-                        <path d="M22 11.4h-9.4V2H22v9.4z" fill="#7FBA00"/>
-                        <path d="M11.4 22H2v-9.4h9.4V22z" fill="#00A4EF"/>
-                        <path d="M22 22h-9.4v-9.4H22V22z" fill="#FFB900"/>
-                    </svg>
-                    Continue with Microsoft
-                </a>
-            </div>
-            
-            <div class="divider">or sign in with email</div>
-            
-            <div class="error-message" id="error-msg"></div>
-            
-            <form id="login-form">
-                <div class="form-field">
-                    <label for="email">Work email</label>
-                    <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
-                </div>
-                <div class="form-field">
-                    <label for="password">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
-                </div>
-                <div class="actions">
-                    <label><input type="checkbox" name="remember" id="remember"> Remember me</label>
-                    <a href="#" id="forgot-password">Forgot password?</a>
-                </div>
-                <button class="btn-primary" type="submit" id="login-btn">
-                    <span id="btn-text">Log in</span>
-                    <div class="spinner" id="btn-spinner" style="display: none;"></div>
-                </button>
-            </form>
-            
-            <div class="login-footer">
-                Need an account? <a href="https://mizoki3.com/pricing.html">Request access</a>
-            </div>
-            
-            <div class="status-badge">
-                <span class="status-dot"></span>
-                All systems operational
-            </div>
-        </section>
-    </main>
-
-    <script>
-        // MIZ OKI 3.5 Login Handler
-        // Cloud Run Authentication Integration
-        
-        const API_BASE = 'https://miz-oki-command-center-ui-ehqxake3ia-uc.a.run.app';
-        const DASHBOARD_URL = 'https://miz.mizoki3.com';
-        
-        const form = document.getElementById('login-form');
-        const loginBtn = document.getElementById('login-btn');
-        const btnText = document.getElementById('btn-text');
-        const btnSpinner = document.getElementById('btn-spinner');
-        const errorMsg = document.getElementById('error-msg');
-        
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorMsg.classList.add('show');
-        }
-        
-        function hideError() {
-            errorMsg.classList.remove('show');
-        }
-        
-        function setLoading(loading) {
-            loginBtn.disabled = loading;
-            btnText.textContent = loading ? 'Signing in...' : 'Log in';
-            btnSpinner.style.display = loading ? 'block' : 'none';
-        }
-        
-        // Email/Password Login
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideError();
-            setLoading(true);
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
-            
-            try {
-                // Authenticate with backend
-                const response = await fetch(`${API_BASE}/api/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password, remember }),
-                    credentials: 'include'
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    // Store token if provided
-                    if (data.token) {
-                        localStorage.setItem('mizoki_token', data.token);
-                    }
-                    // Redirect to dashboard
-                    window.location.href = data.redirectUrl || DASHBOARD_URL;
-                } else {
-                    const error = await response.json();
-                    showError(error.message || 'Invalid email or password. Please try again.');
-                }
-            } catch (err) {
-                console.error('Login error:', err);
-                // For demo/development - redirect anyway
-                showError('Authentication service unavailable. Redirecting to dashboard...');
-                setTimeout(() => {
-                    window.location.href = DASHBOARD_URL;
-                }, 2000);
-            } finally {
-                setLoading(false);
-            }
-        });
-        
-        // Google SSO
-        document.getElementById('google-sso').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = `${API_BASE}/api/auth/google`;
-        });
-        
-        // Microsoft SSO
-        document.getElementById('microsoft-sso').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = `${API_BASE}/api/auth/microsoft`;
-        });
-        
-        // Forgot Password
-        document.getElementById('forgot-password').addEventListener('click', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            if (email) {
-                window.location.href = `${API_BASE}/api/auth/reset-password?email=${encodeURIComponent(email)}`;
-            } else {
-                showError('Please enter your email address first.');
-            }
-        });
-        
-        // Check for existing session
-        window.addEventListener('load', async () => {
-            const token = localStorage.getItem('mizoki_token');
-            if (token) {
-                try {
-                    const response = await fetch(`${API_BASE}/api/auth/verify`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (response.ok) {
-                        window.location.href = DASHBOARD_URL;
-                    } else {
-                        localStorage.removeItem('mizoki_token');
-                    }
-                } catch (err) {
-                    // Token invalid or API unavailable
-                    localStorage.removeItem('mizoki_token');
-                }
-            }
-            
-            // Check for OAuth callback errors
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('error')) {
-                showError(urlParams.get('error_description') || 'Authentication failed. Please try again.');
-            }
-        });
-    </script>
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>

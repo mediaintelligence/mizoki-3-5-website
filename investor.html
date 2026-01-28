@@ -1,907 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investor Overview — MIZ OKI 3.5</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
-            --border: rgba(255,255,255,0.08);
-            --glow-blue: rgba(79, 143, 255, 0.15);
-            --glow-cyan: rgba(0, 212, 255, 0.15);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-        nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            padding: 1rem 2rem;
-            background: rgba(10, 10, 15, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .logo-version {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.4rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 4px;
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text-primary); }
-        .nav-cta { display: flex; gap: 0.75rem; }
-        .btn {
-            padding: 0.6rem 1.25rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
-        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 20px var(--glow-cyan);
-        }
-
-        /* Page Header */
-        .page-header {
-            padding: 10rem 2rem 4rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse 80% 50% at 50% -20%, var(--glow-cyan) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        .page-header-content {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .page-header h1 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-        .page-header p {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Thesis Section */
-        .thesis-section {
-            padding: 4rem 2rem;
-        }
-        .thesis-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .thesis-box {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.05));
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 16px;
-            padding: 3rem;
-            text-align: center;
-        }
-        .thesis-box h2 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .thesis-box p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Market Section */
-        .market-section {
-            padding: 5rem 2rem;
-            background: var(--bg-secondary);
-        }
-        .market-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .section-header h2 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 2.25rem;
-            margin-bottom: 0.5rem;
-        }
-        .section-header p {
-            color: var(--text-secondary);
-        }
-        .market-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-        @media (max-width: 800px) {
-            .market-grid { grid-template-columns: 1fr; }
-        }
-        .market-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-        }
-        .market-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 3rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .market-label {
-            font-size: 1rem;
-            color: var(--text-primary);
-            margin-top: 0.5rem;
-        }
-        .market-note {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.5rem;
-        }
-
-        /* Differentiation Section */
-        .diff-section {
-            padding: 5rem 2rem;
-        }
-        .diff-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .diff-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        @media (max-width: 800px) {
-            .diff-grid { grid-template-columns: 1fr; }
-        }
-        .diff-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-        .diff-card.highlight {
-            border-color: var(--accent-cyan);
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), var(--bg-secondary));
-        }
-        .diff-card h3 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-        .diff-card:not(.highlight) h3 {
-            color: var(--text-muted);
-        }
-        .diff-card.highlight h3 {
-            color: var(--accent-cyan);
-        }
-        .diff-card ul {
-            list-style: none;
-        }
-        .diff-card li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-        .diff-card:not(.highlight) li::before {
-            content: '✗';
-            color: var(--accent-red);
-            opacity: 0.6;
-        }
-        .diff-card.highlight li::before {
-            content: '✓';
-            color: var(--accent-green);
-        }
-
-        /* Innovation Section */
-        .innovation-section {
-            padding: 5rem 2rem;
-            background: var(--bg-secondary);
-        }
-        .innovation-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .innovation-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-        @media (max-width: 700px) {
-            .innovation-grid { grid-template-columns: 1fr; }
-        }
-        .innovation-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-        .innovation-card h4 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .innovation-card h4::before {
-            content: '◆';
-            color: var(--accent-purple);
-            font-size: 0.75rem;
-        }
-        .innovation-card p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Traction Section */
-        .traction-section {
-            padding: 5rem 2rem;
-        }
-        .traction-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .traction-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-        }
-        @media (max-width: 900px) {
-            .traction-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 500px) {
-            .traction-grid { grid-template-columns: 1fr; }
-        }
-        .traction-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .traction-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--accent-green);
-        }
-        .traction-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        /* Business Model */
-        .model-section {
-            padding: 5rem 2rem;
-            background: var(--bg-secondary);
-        }
-        .model-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .model-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        @media (max-width: 700px) {
-            .model-grid { grid-template-columns: 1fr; }
-        }
-        .model-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-        }
-        .model-card h3 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1.5rem;
-        }
-        .model-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .model-item:last-child {
-            border-bottom: none;
-        }
-        .model-item-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        .model-item-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-        }
-
-        /* Team Section */
-        .team-section {
-            padding: 5rem 2rem;
-        }
-        .team-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .team-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2.5rem;
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 2rem;
-            align-items: center;
-        }
-        @media (max-width: 600px) {
-            .team-card { grid-template-columns: 1fr; text-align: center; }
-        }
-        .team-avatar {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2rem;
-            color: var(--bg-primary);
-        }
-        .team-info h3 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
-        .team-info .title {
-            color: var(--accent-cyan);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        .team-info p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* IP Section */
-        .ip-section {
-            padding: 5rem 2rem;
-            background: var(--bg-secondary);
-        }
-        .ip-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .ip-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-        .ip-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .ip-header h3 {
-            font-size: 1.25rem;
-        }
-        .ip-status {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            padding: 0.3rem 0.75rem;
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
-            border-radius: 100px;
-        }
-        .ip-title {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-style: italic;
-        }
-        .ip-claims {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-        @media (max-width: 600px) {
-            .ip-claims { grid-template-columns: 1fr; }
-        }
-        .ip-claim {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .ip-claim::before {
-            content: '◆';
-            color: var(--accent-purple);
-            font-size: 0.6rem;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 5rem 2rem;
-            text-align: center;
-        }
-        .cta-container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .cta-container h2 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .cta-container p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .cta-buttons .btn {
-            padding: 0.9rem 2rem;
-        }
-
-        /* Footer */
-        footer {
-            padding: 4rem 2rem 2rem;
-            border-top: 1px solid var(--border);
-        }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr repeat(3, 1fr);
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-        @media (max-width: 768px) {
-            .footer-grid { grid-template-columns: 1fr 1fr; }
-        }
-        .footer-brand p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            max-width: 280px;
-        }
-        .footer-col h4 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-        .footer-col a {
-            display: block;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            padding: 0.3rem 0;
-            transition: color 0.2s;
-        }
-        .footer-col a:hover { color: var(--text-primary); }
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Investor Overview — MIZ OKI 3.5</title>
+  <meta name="description" content="Verifiable autonomous decision intelligence. Outcome-first framing for diligence. The SRDPV-DAL pipeline and Decision Control Plane architecture."/>
+  <meta name="theme-color" content="#050A12"/>
+  <link rel="icon" href="assets/svg/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css"/>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
-            <div class="nav-links">
-                <a href="how-it-works.html">How It Works</a>
-                <a href="platform.html">Platform</a>
-                <a href="security.html">Security</a>
-                <a href="industries.html">Industries</a>
-                <a href="pricing.html">Pricing</a>
-                <a href="case-studies.html">Case Studies</a>
-            </div>
-            <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
-                <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
-                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
-            </div>
-        </div>
-    </nav>
+  <a href="#content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
+  <div class="topbar">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="index.html" aria-label="MIZ OKI Home">
+          <div class="mark" aria-hidden="true"></div>
+          <span>
+            MIZ OKI <small>3.5</small>
+          </span>
+        </a>
 
-    <section class="page-header">
-        <div class="page-header-content">
-            <h1>Investor Overview</h1>
-            <p>MIZ OKI 3.5 is pioneering Verifiable Autonomous Decision Intelligence—the next evolution beyond AI assistants and copilots into systems that run parts of the business autonomously, with full validation and governance.</p>
-        </div>
-    </section>
+        <nav class="navlinks" data-navlinks>
+          <a href="index.html">Home</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="platform.html">Platform</a>
+          <a href="security.html">Security</a>
+          <a href="industries.html">Industries</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="case-studies.html">Case Studies</a>
+          <a href="resources.html">Resources</a>
+          <a href="roi.html">ROI Calculator</a>
+        </nav>
 
-    <section class="thesis-section">
-        <div class="thesis-container">
-            <div class="thesis-box">
-                <h2>Investment Thesis</h2>
-                <p>Enterprise AI is evolving from <strong>assistants that answer questions</strong> to <strong>autonomous systems that execute decisions</strong>. MIZ OKI is the first platform to solve the trust problem that blocks this transition—through verified autonomy with full decision traceability, counterfactual simulation, and multi-agent validation before execution.</p>
-            </div>
+        <div class="actions">
+          <a class="btn ghost small" href="walkthrough.html">12-Min Walkthrough</a>
+          <a class="btn primary small" href="roi.html">Estimate ROI</a>
+          <a class="btn primary small" href="https://mizoki.mizoki3.com">Login</a>
+          <button class="btn ghost small menuBtn" data-menu-btn aria-label="Open menu">Menu</button>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <!-- 7-Stage Pipeline Section -->
-    <section style="padding: 4rem 2rem; background: var(--bg-secondary);">
-        <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">Patent-Pending Architecture</div>
-            <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 2rem; margin-bottom: 0.5rem;">The SRDPV-DAL Pipeline</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Seven stages with validation and simulation before every autonomous action</p>
-            <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">SENSE</span></div>
-                <span style="color: var(--text-muted);">→</span>
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">🧠</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">REASON</span></div>
-                <span style="color: var(--text-muted);">→</span>
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📋</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">PLAN</span></div>
-                <span style="color: var(--text-muted);">→</span>
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">🔍</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">VALIDATE</span></div>
-                <span style="color: var(--text-muted);">→</span>
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">⚡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">DECIDE</span></div>
-                <span style="color: var(--text-muted);">→</span>
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">🚀</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">ACT</span></div>
-                <span style="color: var(--text-muted);">→</span>
-                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📈</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">LEARN</span></div>
-            </div>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">↺ LEARN feeds outcomes back into SENSE — continuous improvement from real results</p>
-        </div>
-    </section>
+  <main id="content">
+    
+<section class="section">
+  <div class="container">
+    <h1 class="sectionTitle">Investor Overview</h1>
+    <p class="sectionSub">Verifiable autonomous decision intelligence. Outcome-first framing designed for diligence and board contexts.</p>
 
-    <section class="market-section">
-        <div class="market-container">
-            <div class="section-header">
-                <h2>Market Opportunity</h2>
-                <p>The convergence of decision intelligence, process automation, and enterprise AI</p>
-            </div>
-            <div class="market-grid">
-                <div class="market-card">
-                    <div class="market-value">$45B</div>
-                    <div class="market-label">Decision Intelligence Market</div>
-                    <div class="market-note">Projected 2028 • 22% CAGR</div>
-                </div>
-                <div class="market-card">
-                    <div class="market-value">$98B</div>
-                    <div class="market-label">Enterprise AI Market</div>
-                    <div class="market-note">Projected 2028 • 35% CAGR</div>
-                </div>
-                <div class="market-card">
-                    <div class="market-value">$180B</div>
-                    <div class="market-label">Intelligent Automation</div>
-                    <div class="market-note">Projected 2028 • 28% CAGR</div>
-                </div>
-            </div>
+    <div class="split">
+      <div>
+        <div class="callout">
+          <strong>Core thesis</strong>
+          <p>"Decisions verified before execution—not explained after failure." <strong>MIZ OKI 3.5</strong> is the first Business General Intelligence platform where autonomous agents propose, but the Decision Control Plane authorizes. No black-box autonomy.</p>
         </div>
-    </section>
 
-    <section class="diff-section">
-        <div class="diff-container">
-            <div class="section-header">
-                <h2>Why Now? Why Us?</h2>
-                <p>Existing solutions fail to bridge the gap between AI capabilities and enterprise trust requirements</p>
-            </div>
-            <div class="diff-grid">
-                <div class="diff-card">
-                    <h3>Current AI Solutions</h3>
-                    <ul>
-                        <li>Black-box decisions with post-hoc explanations</li>
-                        <li>No pre-execution validation or simulation</li>
-                        <li>Agents execute directly without governance</li>
-                        <li>Correlation-based reasoning, not causal</li>
-                        <li>No institutional memory across decisions</li>
-                        <li>Fails regulatory and compliance requirements</li>
-                    </ul>
-                </div>
-                <div class="diff-card highlight">
-                    <h3>MIZ OKI 3.5</h3>
-                    <ul>
-                        <li>Decisions verified before execution</li>
-                        <li>Counterfactual simulation of alternatives</li>
-                        <li>Decision Control Plane separates proposal from authorization</li>
-                        <li>Causal reasoning with GraphRAG</li>
-                        <li>Temporal-Causal Knowledge Graph as decision memory</li>
-                        <li>Built for regulated industries (SOC 2, HIPAA-ready)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+        <h2 class="sectionTitle" style="margin-top:28px; font-size:24px;">The SRDPV-DAL Pipeline (Patent Pending)</h2>
+        <p style="color:var(--muted); margin-bottom:16px;">Seven-stage autonomous intelligence loop with built-in validation and governance.</p>
+        <div class="badge" style="margin-bottom:20px;">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</div>
 
-    <section class="innovation-section">
-        <div class="innovation-container">
-            <div class="section-header">
-                <h2>Core Innovations (Patent Pending)</h2>
-                <p>Novel architecture enabling verifiable autonomous operation</p>
-            </div>
-            <div class="innovation-grid">
-                <div class="innovation-card">
-                    <h4>Decision Control Plane (DCP)</h4>
-                    <p>Centralized authority that separates action proposal from authorization. Agents cannot bypass the DCP—this architectural constraint enables verifiable autonomy.</p>
-                </div>
-                <div class="innovation-card">
-                    <h4>Validation & Arbitration Layer</h4>
-                    <p>Planner, Verifier, Risk, and Policy agents independently evaluate proposals. Disagreement is a signal, not an error—arbitration proceeds without requiring consensus.</p>
-                </div>
-                <div class="innovation-card">
-                    <h4>Counterfactual Simulation Engine</h4>
-                    <p>Before execution, simulates proposed action, alternatives, and no-action baseline. Platform learns from simulated outcomes never executed.</p>
-                </div>
-                <div class="innovation-card">
-                    <h4>Temporal-Causal Knowledge Graph</h4>
-                    <p>Decision memory and audit spine storing proposals, simulations, validations, and outcomes with timestamps, provenance, and causal confidence.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <h2 class="sectionTitle" style="margin-top:28px; font-size:24px;">Impact snapshot</h2>
+        <table class="table" aria-label="Impact snapshot">
+          <thead><tr><th>Metric</th><th>Typical Impact</th></tr></thead>
+          <tbody>
+            <tr><td>Decision latency</td><td>↓ 50–75×</td></tr>
+            <tr><td>Revenue leakage</td><td>↓ 18–35%</td></tr>
+            <tr><td>Operational cost</td><td>↓ 22–41%</td></tr>
+            <tr><td>Payback period</td><td>~3.2 months</td></tr>
+            <tr><td>Automation coverage</td><td>Up to 89%</td></tr>
+          </tbody>
+        </table>
 
-    <section class="traction-section">
-        <div class="traction-container">
-            <div class="section-header">
-                <h2>Early Traction</h2>
-                <p>Validated product-market fit across industries</p>
-            </div>
-            <div class="traction-grid">
-                <div class="traction-card">
-                    <div class="traction-value">63×</div>
-                    <div class="traction-label">Decision velocity improvement</div>
-                </div>
-                <div class="traction-card">
-                    <div class="traction-value">↓35%</div>
-                    <div class="traction-label">Revenue leakage reduction</div>
-                </div>
-                <div class="traction-card">
-                    <div class="traction-value">3.2mo</div>
-                    <div class="traction-label">Average payback period</div>
-                </div>
-                <div class="traction-card">
-                    <div class="traction-value">2-4wk</div>
-                    <div class="traction-label">Deployment timeline</div>
-                </div>
-            </div>
+        <h2 class="sectionTitle" style="margin-top:28px; font-size:24px;">Key differentiators</h2>
+        <div class="grid2" style="margin-top:12px;">
+          <div class="card">
+            <h3>Decision Control Plane</h3>
+            <p>Centralized authority for all autonomous proposals. Agents cannot bypass the DCP.</p>
+          </div>
+          <div class="card">
+            <h3>Validation Layer</h3>
+            <p>Independent agents challenge every proposal. Disagreement is signal, not error.</p>
+          </div>
+          <div class="card">
+            <h3>Counterfactual Simulation</h3>
+            <p>Test alternatives before execution. Learn without real-world risk.</p>
+          </div>
+          <div class="card">
+            <h3>Quantum-Resistant Security</h3>
+            <p>CRYSTALS-Kyber + Dilithium. Future-proof cryptography.</p>
+          </div>
         </div>
-    </section>
 
-    <section class="model-section">
-        <div class="model-container">
-            <div class="section-header">
-                <h2>Business Model</h2>
-                <p>SaaS pricing with usage-based scaling</p>
-            </div>
-            <div class="model-grid">
-                <div class="model-card">
-                    <h3>Revenue Model</h3>
-                    <div class="model-item">
-                        <span class="model-item-label">Foundation Tier</span>
-                        <span class="model-item-value">$8,500/mo</span>
-                    </div>
-                    <div class="model-item">
-                        <span class="model-item-label">Professional Tier</span>
-                        <span class="model-item-value">$24,000/mo</span>
-                    </div>
-                    <div class="model-item">
-                        <span class="model-item-label">Enterprise Tier</span>
-                        <span class="model-item-value">$50K+/mo</span>
-                    </div>
-                    <div class="model-item">
-                        <span class="model-item-label">Overage Pricing</span>
-                        <span class="model-item-value">$0.15-0.25/decision</span>
-                    </div>
-                </div>
-                <div class="model-card">
-                    <h3>Unit Economics</h3>
-                    <div class="model-item">
-                        <span class="model-item-label">Target Gross Margin</span>
-                        <span class="model-item-value">75-80%</span>
-                    </div>
-                    <div class="model-item">
-                        <span class="model-item-label">Target LTV:CAC</span>
-                        <span class="model-item-value">>5:1</span>
-                    </div>
-                    <div class="model-item">
-                        <span class="model-item-label">Net Revenue Retention</span>
-                        <span class="model-item-value">>120%</span>
-                    </div>
-                    <div class="model-item">
-                        <span class="model-item-label">Sales Cycle</span>
-                        <span class="model-item-value">45-90 days</span>
-                    </div>
-                </div>
-            </div>
+        <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn primary" href="assets/pdf/investor-overview.pdf">Download Investor Overview (PDF)</a>
+          <a class="btn ghost" href="security.html">Governance posture</a>
+          <a class="btn ghost" href="platform.html">Architecture</a>
         </div>
-    </section>
+      </div>
 
-    <section class="team-section">
-        <div class="team-container">
-            <div class="section-header">
-                <h2>Founding Team</h2>
-            </div>
-            <div class="team-card">
-                <div class="team-avatar">BM</div>
-                <div class="team-info">
-                    <h3>Boris Mizhen</h3>
-                    <div class="title">Founder & CEO</div>
-                    <p>Serial entrepreneur with deep expertise in marketing technology, data infrastructure, and AI/ML systems. Previous exits in ad-tech and martech. Inventor of the core MIZ OKI architecture with patent-pending innovations in verifiable autonomous decision systems.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+      <div class="heroArt">
+        <img src="assets/img/mosaic-hero-3.png" alt="Investor-facing visual mosaic"/>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section class="ip-section">
-        <div class="ip-container">
-            <div class="section-header">
-                <h2>Intellectual Property</h2>
-            </div>
-            <div class="ip-card">
-                <div class="ip-header">
-                    <h3>Provisional Patent Filed</h3>
-                    <span class="ip-status">January 2026</span>
-                </div>
-                <p class="ip-title">"Verifiable Autonomous Decision Intelligence Platform with Temporal-Causal Knowledge Graph, Decision Control Plane, Autonomous Decision Controllers, Validation Layer, and Counterfactual Simulation Engine"</p>
-                <div class="ip-claims">
-                    <div class="ip-claim">Decision Control Plane architecture</div>
-                    <div class="ip-claim">SRDPV-DAL pipeline methodology</div>
-                    <div class="ip-claim">Validation & Arbitration Layer</div>
-                    <div class="ip-claim">Counterfactual Simulation Engine</div>
-                    <div class="ip-claim">Temporal-Causal Knowledge Graph</div>
-                    <div class="ip-claim">Autonomous Decision Controllers</div>
-                    <div class="ip-claim">Multi-agent validation system</div>
-                    <div class="ip-claim">50 total claims filed</div>
-                </div>
-            </div>
-        </div>
-    </section>
+  </main>
 
-    <section class="cta-section">
-        <div class="cta-container">
-            <h2>Let's Discuss</h2>
-            <p>We're raising to accelerate product development and go-to-market across target verticals</p>
-            <div class="cta-buttons">
-                <a href="mailto:investors@mizoki.com" class="btn btn-primary">Contact for Deck</a>
-                <a href="walkthrough.html" class="btn btn-ghost">See Product Demo</a>
-            </div>
+  <footer class="footer">
+    <div class="container">
+      <div class="footerGrid">
+        <div>
+          <div class="brand" style="gap:10px;">
+            <div class="mark" aria-hidden="true"></div>
+            <span>MIZ OKI <small>3.5 — Verifiable Autonomous Decision Intelligence</small></span>
+          </div>
+          <p class="trustline" style="margin-top:14px; max-width: 760px;">
+            <strong>Agents propose. The Decision Control Plane authorizes. Every decision auditable. Every outcome feeds learning.</strong>
+          </p>
+          <small>© <span data-year></span> MIZ OKI. All rights reserved.</small>
         </div>
-    </section>
+        <div>
+          <div class="footerLinks">
+            <a href="security.html">Security & Governance</a>
+            <a href="investor.html">Investor Overview</a>
+            <a href="sales-one-pager.html">Sales One-Pager</a>
+            <a href="demo-opener.html">Demo Opener Script</a>
+          </div>
+          <div style="margin-top:14px;" class="notice">
+            Every action is logged. Every decision is auditable. Humans remain in control.
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
-                    <p>Verifiable Autonomous Decision Intelligence. Decisions verified before execution—not explained after failure.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Platform</h4>
-                    <a href="how-it-works.html">How It Works</a>
-                    <a href="platform.html">Architecture</a>
-                    <a href="security.html">Security</a>
-                    <a href="industries.html">Industries</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Resources</h4>
-                    <a href="case-studies.html">Case Studies</a>
-                    <a href="resources.html">Documentation</a>
-                    <a href="roi.html">ROI Calculator</a>
-                    <a href="#">API Reference</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <a href="#">About</a>
-                    <a href="#">Careers</a>
-                    <a href="#">Contact</a>
-                    <a href="#">Legal</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <span>© 2026 MIZ OKI. All rights reserved.</span>
-                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
-            </div>
-        </div>
-    </footer>
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>

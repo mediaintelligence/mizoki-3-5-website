@@ -1,0 +1,82 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MIZ OKI Cognitive Engine loop: Sense, Reason, Decide, Act, Learn">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0B1C2D"/>
+      <stop offset="100%" stop-color="#050A12"/>
+    </radialGradient>
+
+    <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#19F5FF"/>
+      <stop offset="100%" stop-color="#00C2D1"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#19F5FF"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="600" cy="600" r="590" fill="url(#bg)"/>
+
+  <!-- Orbit path (hidden) -->
+  <path id="orbit" d="M600 200 A400 400 0 1 1 599.9 200" fill="none" stroke="none"/>
+
+  <!-- Outer Ring -->
+  <circle cx="600" cy="600" r="420" fill="none" stroke="url(#cyanGlow)" stroke-width="3" opacity="0.35"/>
+
+  <!-- Moving pulse (subtle) -->
+  <circle r="10" fill="#19F5FF" opacity="0.85" filter="url(#glow)">
+    <animateMotion dur="8s" repeatCount="indefinite" rotate="auto">
+      <mpath href="#orbit"/>
+    </animateMotion>
+    <animate attributeName="opacity" values="0.15;0.85;0.15" dur="2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Center -->
+  <circle cx="600" cy="600" r="110" fill="#050A12" stroke="#19F5FF" stroke-width="2" filter="url(#glow)"/>
+  <text x="600" y="590" text-anchor="middle" fill="#EAFBFF" font-size="22" font-family="Inter, IBM Plex Sans, Arial" font-weight="700">
+    MIZ OKI
+  </text>
+  <text x="600" y="625" text-anchor="middle" fill="#7CB9C0" font-size="14" font-family="Inter, IBM Plex Sans, Arial">
+    Autonomous Intelligence Engine
+  </text>
+
+  <!-- Labels -->
+  <g font-family="Inter, IBM Plex Sans, Arial">
+    <!-- SENSE -->
+    <text x="600" y="135" text-anchor="middle" fill="#19F5FF" font-size="22" font-weight="800">SENSE</text>
+    <text x="600" y="160" text-anchor="middle" fill="#A7EAF0" font-size="14">Ingests live signals</text>
+
+    <!-- REASON -->
+    <text x="965" y="465" text-anchor="middle" fill="#19F5FF" font-size="22" font-weight="800">REASON</text>
+    <text x="965" y="490" text-anchor="middle" fill="#A7EAF0" font-size="14">Evaluates options &amp; causality</text>
+
+    <!-- DECIDE -->
+    <text x="600" y="1045" text-anchor="middle" fill="#19F5FF" font-size="22" font-weight="800">DECIDE</text>
+    <text x="600" y="1070" text-anchor="middle" fill="#A7EAF0" font-size="14">Scores &amp; selects actions</text>
+
+    <!-- ACT -->
+    <text x="235" y="735" text-anchor="middle" fill="#19F5FF" font-size="22" font-weight="800">ACT</text>
+    <text x="235" y="760" text-anchor="middle" fill="#A7EAF0" font-size="14">Executes or routes for approval</text>
+
+    <!-- LEARN -->
+    <text x="235" y="465" text-anchor="middle" fill="#19F5FF" font-size="22" font-weight="800">LEARN</text>
+    <text x="235" y="490" text-anchor="middle" fill="#A7EAF0" font-size="14">Updates models from outcomes</text>
+  </g>
+
+  <!-- Arrows between steps (explicit) -->
+  <path d="M600 205 A395 395 0 0 1 885 465" stroke="#19F5FF" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.9"/>
+  <path d="M940 520 A395 395 0 0 1 600 980" stroke="#19F5FF" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.9"/>
+  <path d="M600 995 A395 395 0 0 1 275 720" stroke="#19F5FF" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.9"/>
+  <path d="M220 670 A395 395 0 0 1 260 470" stroke="#19F5FF" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.9"/>
+  <path d="M305 420 A395 395 0 0 1 600 205" stroke="#19F5FF" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.9"/>
+
+</svg>

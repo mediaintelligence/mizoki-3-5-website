@@ -1,1429 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security & Governance | MIZ OKI 3.5</title>
-    <meta name="description" content="Enterprise-grade security with quantum-resistant cryptography, immutable audit logs, and comprehensive governance controls.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --bg-card: #0f0f16;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-cyan: #00d4ff;
-            --accent-blue: #4f8fff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-orange: #f59e0b;
-            --border-subtle: rgba(255,255,255,0.06);
-            --border-accent: rgba(0,212,255,0.3);
-            --glow-cyan: 0 0 30px rgba(0,212,255,0.15);
-            --glow-green: 0 0 30px rgba(16,185,129,0.15);
-            --gradient-hero: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(79,143,255,0.05) 50%, rgba(168,85,247,0.03) 100%);
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 1rem 2rem;
-            background: rgba(10,10,15,0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .logo-badge {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.5rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 4px;
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--accent-cyan);
-        }
-        
-        .nav-cta {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .btn {
-            padding: 0.6rem 1.25rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-subtle);
-        }
-        
-        .btn-ghost:hover {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--glow-cyan);
-        }
-        
-        /* Page Header */
-        .page-header {
-            padding: 10rem 2rem 5rem;
-            background: var(--gradient-hero);
-            text-align: center;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .page-header h1 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 3.5rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .page-header .subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-        
-        /* Badge Row */
-        .badge-row {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-        
-        .badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        
-        .badge-icon {
-            width: 18px;
-            height: 18px;
-            fill: var(--accent-green);
-        }
-        
-        /* Section Styles */
-        section {
-            padding: 6rem 2rem;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        
-        .section-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--accent-cyan);
-            margin-bottom: 1rem;
-        }
-        
-        .section-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.5rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-        
-        .section-subtitle {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            max-width: 650px;
-            margin: 0 auto;
-        }
-        
-        /* Security Pillars */
-        .security-pillars {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-        
-        .pillar-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 2.5rem;
-            transition: all 0.3s;
-        }
-        
-        .pillar-card:hover {
-            border-color: var(--accent-cyan);
-            transform: translateY(-4px);
-            box-shadow: var(--glow-cyan);
-        }
-        
-        .pillar-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.75rem;
-        }
-        
-        .pillar-icon.quantum { background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(79,143,255,0.1)); }
-        .pillar-icon.audit { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.1)); }
-        .pillar-icon.governance { background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(168,85,247,0.1)); }
-        
-        .pillar-card h3 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.5rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-        
-        .pillar-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .pillar-features {
-            list-style: none;
-        }
-        
-        .pillar-features li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .pillar-features li::before {
-            content: "✓";
-            color: var(--accent-green);
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-        
-        /* Quantum Security Section */
-        .quantum-section {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .quantum-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-        
-        .quantum-content h2 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.25rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-        }
-        
-        .quantum-content p {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-        
-        .crypto-specs {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .crypto-spec-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .crypto-spec-item:last-child {
-            border-bottom: none;
-        }
-        
-        .crypto-spec-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        
-        .crypto-spec-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--accent-cyan);
-            background: rgba(0,212,255,0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-        }
-        
-        .quantum-visual {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 3rem;
-            text-align: center;
-        }
-        
-        .quantum-diagram {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 2;
-        }
-        
-        .quantum-diagram .highlight {
-            color: var(--accent-cyan);
-        }
-        
-        .quantum-diagram .secure {
-            color: var(--accent-green);
-        }
-        
-        /* DCP Security Flow */
-        .dcp-flow {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 2rem;
-            background: var(--bg-primary);
-            border-radius: 12px;
-            border: 1px solid var(--border-subtle);
-        }
-        
-        .dcp-flow-step {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-        }
-        
-        .dcp-flow-step .step-num {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--accent-cyan);
-            color: var(--bg-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .dcp-flow-step .step-text {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .dcp-flow-step .step-text strong {
-            color: var(--text-primary);
-        }
-        
-        /* Audit Trail Section */
-        .audit-section {
-            background: var(--bg-primary);
-        }
-        
-        .audit-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-        }
-        
-        .audit-log-preview {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        
-        .log-header {
-            background: var(--bg-tertiary);
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .log-header-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-        }
-        
-        .log-header-status {
-            font-size: 0.75rem;
-            color: var(--accent-green);
-            background: rgba(16,185,129,0.15);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-        }
-        
-        .log-entries {
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .log-entry {
-            display: grid;
-            grid-template-columns: 140px 80px 1fr;
-            gap: 1rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .log-entry:last-child {
-            border-bottom: none;
-        }
-        
-        .log-timestamp {
-            color: var(--text-muted);
-        }
-        
-        .log-type {
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            text-align: center;
-        }
-        
-        .log-type.auth { background: rgba(0,212,255,0.15); color: var(--accent-cyan); }
-        .log-type.validate { background: rgba(168,85,247,0.15); color: var(--accent-purple); }
-        .log-type.exec { background: rgba(16,185,129,0.15); color: var(--accent-green); }
-        .log-type.sim { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
-        .log-type.reject { background: rgba(239,68,68,0.15); color: var(--accent-red); }
-        
-        .log-message {
-            color: var(--text-secondary);
-        }
-        
-        .audit-features {
-            padding: 2rem 0;
-        }
-        
-        .audit-features h3 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.75rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-        }
-        
-        .audit-features p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-        
-        .audit-feature-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .audit-feature-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-        }
-        
-        .audit-feature-list .feature-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: rgba(16,185,129,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-green);
-            flex-shrink: 0;
-        }
-        
-        .audit-feature-list .feature-content h4 {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .audit-feature-list .feature-content p {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0;
-        }
-        
-        /* Governance Controls */
-        .governance-section {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .governance-controls {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-        
-        .control-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s;
-        }
-        
-        .control-card:hover {
-            border-color: rgba(168,85,247,0.4);
-        }
-        
-        .control-card h3 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1rem;
-            color: var(--accent-purple);
-            margin-bottom: 1rem;
-        }
-        
-        .control-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .control-example {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-        }
-        
-        .control-example .label {
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .control-example .value {
-            color: var(--accent-cyan);
-        }
-        
-        /* Compliance Section */
-        .compliance-section {
-            background: var(--bg-primary);
-        }
-        
-        .compliance-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-        }
-        
-        .compliance-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .compliance-card:hover {
-            border-color: var(--accent-green);
-        }
-        
-        .compliance-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .compliance-card h4 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .compliance-card p {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        
-        /* Deployment Options */
-        .deployment-section {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-subtle);
-        }
-        
-        .deployment-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-        
-        .deployment-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 2.5rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .deployment-card:hover {
-            border-color: var(--accent-blue);
-            transform: translateY(-4px);
-        }
-        
-        .deployment-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .deployment-card h3 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.5rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-        
-        .deployment-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .deployment-features {
-            list-style: none;
-            text-align: left;
-        }
-        
-        .deployment-features li {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        .deployment-features li:last-child {
-            border-bottom: none;
-        }
-        
-        .deployment-features li::before {
-            content: "→";
-            color: var(--accent-cyan);
-        }
-        
-        /* CTA Section */
-        .cta-section {
-            background: var(--gradient-hero);
-            text-align: center;
-        }
-        
-        .cta-section h2 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.5rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-        
-        .cta-section p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        
-        /* Footer */
-        footer {
-            padding: 4rem 2rem 2rem;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-subtle);
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 4rem;
-        }
-        
-        .footer-brand p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-top: 1rem;
-            max-width: 300px;
-        }
-        
-        .footer-links {
-            display: flex;
-            gap: 4rem;
-        }
-        
-        .footer-column h4 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-        
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer-column a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        
-        .footer-column a:hover {
-            color: var(--accent-cyan);
-        }
-        
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 3rem auto 0;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .security-pillars {
-                grid-template-columns: 1fr;
-            }
-            
-            .quantum-grid,
-            .audit-grid,
-            .governance-controls {
-                grid-template-columns: 1fr;
-            }
-            
-            .compliance-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .deployment-options {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .page-header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .compliance-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                gap: 2rem;
-            }
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Security & Governance — MIZ OKI 3.5</title>
+  <meta name="description" content="Full decision traceability, quantum-resistant security, explainable reasoning, RBAC, immutable audit logs. Built for boards, CISOs, and regulators."/>
+  <meta name="theme-color" content="#050A12"/>
+  <link rel="icon" href="assets/svg/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css"/>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                MIZ OKI
-                <span class="logo-badge">3.5</span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="how-it-works.html">How It Works</a></li>
-                <li><a href="platform.html">Platform</a></li>
-                <li><a href="security.html" class="active">Security</a></li>
-                <li><a href="industries.html">Industries</a></li>
-                <li><a href="pricing.html">Pricing</a></li>
-            </ul>
-            <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
-                <a href="walkthrough.html" class="btn btn-ghost">12-Min Walkthrough</a>
-                <a href="roi.html" class="btn btn-primary">Estimate ROI</a>
-            </div>
-        </div>
-    </nav>
+  <a href="#content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
+  <div class="topbar">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="index.html" aria-label="MIZ OKI Home">
+          <div class="mark" aria-hidden="true"></div>
+          <span>
+            MIZ OKI <small>3.5</small>
+          </span>
+        </a>
 
-    <!-- Page Header -->
-    <header class="page-header">
-        <h1>Security & Governance</h1>
-        <p class="subtitle">
-            Enterprise-grade protection with quantum-resistant cryptography, immutable audit trails, 
-            and comprehensive governance controls. Built for boards, CISOs, and regulators.
-        </p>
-        <div class="badge-row">
-            <div class="badge">
-                <svg class="badge-icon" viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5.25 3.78 10.13 9 11 5.22-.87 9-5.75 9-11V7l-9-5z"/></svg>
-                Quantum-Resistant
-            </div>
-            <div class="badge">
-                <svg class="badge-icon" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                SOC 2 Type II Ready
-            </div>
-            <div class="badge">
-                <svg class="badge-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                GDPR Compliant
-            </div>
-            <div class="badge">
-                <svg class="badge-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-                Full Audit Trail
-            </div>
-        </div>
-    </header>
+        <nav class="navlinks" data-navlinks>
+          <a href="index.html">Home</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="platform.html">Platform</a>
+          <a href="security.html" class="active">Security</a>
+          <a href="industries.html">Industries</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="case-studies.html">Case Studies</a>
+          <a href="resources.html">Resources</a>
+          <a href="roi.html">ROI Calculator</a>
+        </nav>
 
-    <!-- Security Pillars -->
-    <section>
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Security Architecture</div>
-                <h2 class="section-title">Three Pillars of Trust</h2>
-                <p class="section-subtitle">
-                    Every autonomous decision passes through multiple layers of security, 
-                    validation, and governance before execution.
-                </p>
-            </div>
-            
-            <div class="security-pillars">
-                <div class="pillar-card">
-                    <div class="pillar-icon quantum">🔐</div>
-                    <h3>Quantum-Resistant Cryptography</h3>
-                    <p>
-                        Future-proof protection using NIST post-quantum cryptographic standards. 
-                        Secure against both classical and quantum computing threats.
-                    </p>
-                    <ul class="pillar-features">
-                        <li>CRYSTALS-Kyber key encapsulation</li>
-                        <li>CRYSTALS-Dilithium digital signatures</li>
-                        <li>Autonomous threat-based key rotation</li>
-                        <li>Post-quantum secure inter-agent channels</li>
-                        <li>Hardware Security Module integration</li>
-                    </ul>
-                </div>
-                
-                <div class="pillar-card">
-                    <div class="pillar-icon audit">📋</div>
-                    <h3>Immutable Audit Trail</h3>
-                    <p>
-                        Complete decision provenance from proposal through execution. 
-                        Every action cryptographically signed and permanently logged.
-                    </p>
-                    <ul class="pillar-features">
-                        <li>Cryptographic signing of all decisions</li>
-                        <li>Tamper-evident logging infrastructure</li>
-                        <li>Complete causal chain reconstruction</li>
-                        <li>Simulation results as evidence</li>
-                        <li>Regulatory export capabilities</li>
-                    </ul>
-                </div>
-                
-                <div class="pillar-card">
-                    <div class="pillar-icon governance">⚖️</div>
-                    <h3>Comprehensive Governance</h3>
-                    <p>
-                        Policy-enforced autonomy with human override at every level. 
-                        The Decision Control Plane ensures no action bypasses governance.
-                    </p>
-                    <ul class="pillar-features">
-                        <li>Decision Control Plane authorization</li>
-                        <li>Multi-factor authorization scoring</li>
-                        <li>Role-based access control (RBAC)</li>
-                        <li>Configurable confidence thresholds</li>
-                        <li>Automatic escalation to human review</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="actions">
+          <a class="btn ghost small" href="walkthrough.html">12-Min Walkthrough</a>
+          <a class="btn primary small" href="roi.html">Estimate ROI</a>
+          <a class="btn primary small" href="https://mizoki.mizoki3.com">Login</a>
+          <button class="btn ghost small menuBtn" data-menu-btn aria-label="Open menu">Menu</button>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <!-- Quantum Security -->
-    <section class="quantum-section">
-        <div class="container">
-            <div class="quantum-grid">
-                <div class="quantum-content">
-                    <div class="section-label">Post-Quantum Security</div>
-                    <h2>Ready for the Quantum Era</h2>
-                    <p>
-                        MIZ OKI 3.5 implements NIST-standardized post-quantum cryptographic algorithms, 
-                        ensuring your autonomous decisions remain secure against future quantum computing threats.
-                    </p>
-                    <p>
-                        Our quantum-resistant security framework protects all inter-agent communication, 
-                        decision authorization signatures, and data at rest using algorithms proven secure 
-                        against known quantum attacks.
-                    </p>
-                    
-                    <div class="crypto-specs">
-                        <div class="crypto-spec-item">
-                            <span class="crypto-spec-label">Key Encapsulation</span>
-                            <span class="crypto-spec-value">CRYSTALS-Kyber-1024</span>
-                        </div>
-                        <div class="crypto-spec-item">
-                            <span class="crypto-spec-label">Digital Signatures</span>
-                            <span class="crypto-spec-value">CRYSTALS-Dilithium-5</span>
-                        </div>
-                        <div class="crypto-spec-item">
-                            <span class="crypto-spec-label">Key Rotation</span>
-                            <span class="crypto-spec-value">Autonomous / Threat-Based</span>
-                        </div>
-                        <div class="crypto-spec-item">
-                            <span class="crypto-spec-label">HSM Integration</span>
-                            <span class="crypto-spec-value">AWS CloudHSM / Azure HSM</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="quantum-visual">
-                    <div class="quantum-diagram">
-                        <div>┌─────────────────────────────────────────┐</div>
-                        <div>│ <span class="highlight">DECISION PROPOSAL</span>                       │</div>
-                        <div>│     ↓                                   │</div>
-                        <div>│ <span class="secure">● CRYSTALS-Kyber Encrypted Channel</span>      │</div>
-                        <div>│     ↓                                   │</div>
-                        <div>│ <span class="highlight">VERIFICATION LAYER</span>                      │</div>
-                        <div>│     ↓                                   │</div>
-                        <div>│ <span class="secure">● CRYSTALS-Dilithium Signature</span>          │</div>
-                        <div>│     ↓                                   │</div>
-                        <div>│ <span class="highlight">DECISION CONTROL PLANE</span>                  │</div>
-                        <div>│     ↓                                   │</div>
-                        <div>│ <span class="secure">● Authorization Signature</span>                │</div>
-                        <div>│     ↓                                   │</div>
-                        <div>│ <span class="highlight">EXECUTION + IMMUTABLE LOG</span>               │</div>
-                        <div>└─────────────────────────────────────────┘</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <main id="content">
+    
+<section class="section">
+  <div class="container">
+    <h1 class="sectionTitle">Security & Governance</h1>
+    <p class="sectionSub">Autonomous intelligence without accountability is automation risk. MIZ OKI 3.5 is built for trust—suitable for boards, CISOs, and regulators.</p>
 
-    <!-- Audit Trail Section -->
-    <section class="audit-section">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Complete Traceability</div>
-                <h2 class="section-title">Immutable Decision Audit Trail</h2>
-                <p class="section-subtitle">
-                    Every proposal, validation, simulation, and execution is cryptographically 
-                    signed and permanently recorded in the Temporal-Causal Knowledge Graph.
-                </p>
-            </div>
-            
-            <div class="audit-grid">
-                <div class="audit-log-preview">
-                    <div class="log-header">
-                        <span class="log-header-title">decision_audit_log_2026-01-15.json</span>
-                        <span class="log-header-status">● VERIFIED</span>
-                    </div>
-                    <div class="log-entries">
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:01Z</span>
-                            <span class="log-type auth">PROPOSE</span>
-                            <span class="log-message">PLAN-ADC proposed budget_reallocation_q1</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:02Z</span>
-                            <span class="log-type validate">VALIDATE</span>
-                            <span class="log-message">Verifier-001: causal_confidence=0.87</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:02Z</span>
-                            <span class="log-type validate">VALIDATE</span>
-                            <span class="log-message">Risk-Agent: downside_risk=-2.3% (acceptable)</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:03Z</span>
-                            <span class="log-type sim">SIMULATE</span>
-                            <span class="log-message">CSE: 1000 scenarios, expected_uplift=+4.2%</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:04Z</span>
-                            <span class="log-type sim">SIMULATE</span>
-                            <span class="log-message">CSE: alternative_a=-1.1%, no_action=-3.7%</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:05Z</span>
-                            <span class="log-type auth">AUTHORIZE</span>
-                            <span class="log-message">DCP: auth_score=0.91, threshold=0.85 ✓</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:06Z</span>
-                            <span class="log-type exec">EXECUTE</span>
-                            <span class="log-message">ACT-ADC: budget_reallocation_q1 initiated</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:23:07Z</span>
-                            <span class="log-type exec">COMPLETE</span>
-                            <span class="log-message">Execution complete, signature: 0x7f3a...9c2d</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:35:12Z</span>
-                            <span class="log-type auth">PROPOSE</span>
-                            <span class="log-message">PLAN-ADC proposed creative_rotation_fb</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:35:14Z</span>
-                            <span class="log-type validate">VALIDATE</span>
-                            <span class="log-message">Policy-Agent: compliance_check=PASS</span>
-                        </div>
-                        <div class="log-entry">
-                            <span class="log-timestamp">2026-01-15T14:35:15Z</span>
-                            <span class="log-type reject">REJECT</span>
-                            <span class="log-message">DCP: causal_confidence=0.62 < threshold</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="audit-features">
-                    <h3>Complete Decision Provenance</h3>
-                    <p>
-                        The TCO-KG functions as your organization's decision memory and audit spine, 
-                        providing regulators, auditors, and executives with complete visibility into 
-                        why every autonomous decision was made.
-                    </p>
-                    
-                    <ul class="audit-feature-list">
-                        <li>
-                            <div class="feature-icon">📍</div>
-                            <div class="feature-content">
-                                <h4>Full Causal Chain</h4>
-                                <p>Trace any outcome back through the complete decision pathway</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">🔏</div>
-                            <div class="feature-content">
-                                <h4>Cryptographic Signatures</h4>
-                                <p>Every decision signed with quantum-resistant digital signatures</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">🧪</div>
-                            <div class="feature-content">
-                                <h4>Simulation Evidence</h4>
-                                <p>Pre-execution simulations stored as evidence of due diligence</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">📤</div>
-                            <div class="feature-content">
-                                <h4>Regulatory Export</h4>
-                                <p>One-click export for SOX, GDPR, HIPAA, and regulatory audits</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="grid2">
+      <div class="card">
+        <div class="innovationIcon">🔐</div>
+        <h3>Quantum-Resistant Security</h3>
+        <p>CRYSTALS-Kyber key encapsulation, CRYSTALS-Dilithium signatures. Future-proof cryptography for decision data at rest and in transit.</p>
+      </div>
+      <div class="card">
+        <div class="innovationIcon">📋</div>
+        <h3>Immutable Audit Logs</h3>
+        <p>Every proposal, validation, simulation, and execution is cryptographically signed and logged. Tamper-resistant records for compliance.</p>
+      </div>
+      <div class="card">
+        <div class="innovationIcon">🎛️</div>
+        <h3>Human-in-the-Loop Controls</h3>
+        <p>Full override capability at any stage. Configurable thresholds. Automatic escalation for novel situations and high-risk decisions.</p>
+      </div>
+      <div class="card">
+        <div class="innovationIcon">🏢</div>
+        <h3>Multi-Tenant Isolation</h3>
+        <p>Kubernetes namespace isolation. Tenant-specific knowledge graphs. Federated learning with differential privacy.</p>
+      </div>
+      <div class="card">
+        <div class="innovationIcon">📊</div>
+        <h3>Explainable Decisions</h3>
+        <p>Causal pathways for every decision. See why an action was selected, alternatives rejected, and how confidence was weighted.</p>
+      </div>
+      <div class="card">
+        <div class="innovationIcon">⚡</div>
+        <h3>Sub-100ms Query Latency</h3>
+        <p>Operational queries under 100ms. Full decision cycle under 60 seconds. Real-time intelligence at enterprise scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Governance Controls -->
-    <section class="governance-section">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Policy Enforcement</div>
-                <h2 class="section-title">Governance Controls</h2>
-                <p class="section-subtitle">
-                    Configure precisely what autonomous agents can and cannot do. 
-                    The Decision Control Plane enforces your policies at runtime.
-                </p>
-            </div>
-            
-            <div class="governance-controls">
-                <div class="control-card">
-                    <h3>Confidence Thresholds</h3>
-                    <p>
-                        Set minimum confidence scores required for autonomous execution. 
-                        Decisions below threshold automatically escalate to human review.
-                    </p>
-                    <div class="control-example">
-                        <div class="label">Example Configuration</div>
-                        <code class="value">min_auth_score: 0.85<br>escalate_below: 0.70<br>auto_reject_below: 0.50</code>
-                    </div>
-                </div>
-                
-                <div class="control-card">
-                    <h3>Cost & Risk Envelopes</h3>
-                    <p>
-                        Define maximum spend, risk exposure, and volatility bounds 
-                        for autonomous decisions by domain, agent type, or tenant.
-                    </p>
-                    <div class="control-example">
-                        <div class="label">Example Configuration</div>
-                        <code class="value">max_spend_per_decision: $10,000<br>max_daily_exposure: $100,000<br>max_risk_score: 0.35</code>
-                    </div>
-                </div>
-                
-                <div class="control-card">
-                    <h3>Domain Restrictions</h3>
-                    <p>
-                        Specify which domains or data sources require additional 
-                        authorization, human approval, or are off-limits entirely.
-                    </p>
-                    <div class="control-example">
-                        <div class="label">Example Configuration</div>
-                        <code class="value">require_human: [PII, financial]<br>additional_auth: [healthcare]<br>blocked: [experimental]</code>
-                    </div>
-                </div>
-                
-                <div class="control-card">
-                    <h3>Agent Permissions</h3>
-                    <p>
-                        Role-based access control for each agent type. Define what 
-                        actions specific agents can propose and what they can execute.
-                    </p>
-                    <div class="control-example">
-                        <div class="label">Example Configuration</div>
-                        <code class="value">PLAN-ADC: [propose, analyze]<br>ACT-ADC: [execute, rollback]<br>SENSE-ADC: [read, prioritize]</code>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="hr"></div>
 
-    <!-- Compliance -->
-    <section class="compliance-section">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Regulatory Ready</div>
-                <h2 class="section-title">Compliance & Certifications</h2>
-                <p class="section-subtitle">
-                    Built from the ground up to meet enterprise compliance requirements 
-                    across industries and geographies.
-                </p>
-            </div>
-            
-            <div class="compliance-grid">
-                <div class="compliance-card">
-                    <div class="compliance-icon">🔒</div>
-                    <h4>SOC 2 Type II</h4>
-                    <p>Security, availability, and confidentiality controls</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">🇪🇺</div>
-                    <h4>GDPR</h4>
-                    <p>Full data protection regulation compliance</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">🏥</div>
-                    <h4>HIPAA</h4>
-                    <p>Healthcare data protection standards</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">💳</div>
-                    <h4>PCI DSS</h4>
-                    <p>Payment card industry security standards</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">📊</div>
-                    <h4>SOX</h4>
-                    <p>Financial reporting and audit controls</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">🇺🇸</div>
-                    <h4>FedRAMP</h4>
-                    <p>Federal government cloud security</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">🌐</div>
-                    <h4>ISO 27001</h4>
-                    <p>International security management</p>
-                </div>
-                
-                <div class="compliance-card">
-                    <div class="compliance-icon">🤖</div>
-                    <h4>AI Act Ready</h4>
-                    <p>EU AI regulation compliance framework</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<section class="section">
+  <div class="container">
+    <h2 class="sectionTitle">Governance Framework</h2>
+    <p class="sectionSub">The Decision Control Plane enforces governance at the architectural level—agents cannot bypass it.</p>
 
-    <!-- Deployment Options -->
-    <section class="deployment-section">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Your Infrastructure, Your Rules</div>
-                <h2 class="section-title">Deployment Options</h2>
-                <p class="section-subtitle">
-                    Deploy where it makes sense for your organization. 
-                    Same platform, same security, your choice of environment.
-                </p>
-            </div>
-            
-            <div class="deployment-options">
-                <div class="deployment-card">
-                    <div class="deployment-icon">☁️</div>
-                    <h3>MIZ OKI Cloud</h3>
-                    <p>
-                        Fully managed SaaS deployment. Get started in days, 
-                        not months. We handle infrastructure, you focus on decisions.
-                    </p>
-                    <ul class="deployment-features">
-                        <li>Multi-tenant isolation</li>
-                        <li>Automatic scaling</li>
-                        <li>Managed updates</li>
-                        <li>99.9% SLA</li>
-                        <li>2-4 week deployment</li>
-                    </ul>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="deployment-icon">🏢</div>
-                    <h3>Private Cloud</h3>
-                    <p>
-                        Deploy on your cloud infrastructure (AWS, Azure, GCP). 
-                        Your VPC, your security controls, our platform.
-                    </p>
-                    <ul class="deployment-features">
-                        <li>Your VPC / network</li>
-                        <li>Your encryption keys</li>
-                        <li>Your compliance boundary</li>
-                        <li>Hybrid connectivity</li>
-                        <li>4-8 week deployment</li>
-                    </ul>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="deployment-icon">🏛️</div>
-                    <h3>On-Premises</h3>
-                    <p>
-                        For organizations with strict data residency or 
-                        air-gap requirements. Full platform in your data center.
-                    </p>
-                    <ul class="deployment-features">
-                        <li>Complete data control</li>
-                        <li>Air-gap capable</li>
-                        <li>Custom integration</li>
-                        <li>Dedicated support</li>
-                        <li>8-12 week deployment</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="dcpHighlight">
+      <h4>Decision Control Plane (DCP) Governance</h4>
+      <p>Every autonomous proposal must pass through the DCP. The system supports five authorization outcomes:</p>
+      <ul>
+        <li><strong>Approve:</strong> Execute as proposed when all thresholds are met</li>
+        <li><strong>Modify:</strong> Adjust parameters to bring within acceptable bounds</li>
+        <li><strong>Defer:</strong> Await additional validation or simulation results</li>
+        <li><strong>Reject:</strong> Block proposals that fail confidence or policy thresholds</li>
+        <li><strong>Escalate:</strong> Route to human review for high-risk or novel situations</li>
+      </ul>
+    </div>
 
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Security Questions?</h2>
-            <p>
-                Our security team is ready to discuss your specific requirements, 
-                compliance needs, and deployment options.
-            </p>
-            <div class="cta-buttons">
-                <a href="assets/pdf/security-compliance-brief.pdf" class="btn btn-ghost">Download Security Brief</a>
-                <a href="roi.html" class="btn btn-primary">Estimate Your ROI</a>
-            </div>
-        </div>
-    </section>
+    <div class="grid2" style="margin-top:24px;">
+      <div class="card">
+        <h3>Policy-Driven Autonomy</h3>
+        <p>Define what can be automated, what requires approval, and what must remain advisory. Policies are versioned and auditable.</p>
+        <div class="meta">Risk thresholds • Dollar limits • Domain restrictions • Time windows</div>
+      </div>
+      <div class="card">
+        <h3>Role-Based Access Control</h3>
+        <p>Granular permissions for approve, execute, audit, and configure. Separation of duties enforced at the platform level.</p>
+        <div class="meta">RBAC • SSO integration • Activity logging • Session management</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <a href="index.html" class="logo">
-                    MIZ OKI
-                    <span class="logo-badge">3.5</span>
-                </a>
-                <p>
-                    Verifiable autonomous decision intelligence. 
-                    Decisions verified before execution—not explained after failure.
-                </p>
-            </div>
-            
-            <div class="footer-links">
-                <div class="footer-column">
-                    <h4>Platform</h4>
-                    <ul>
-                        <li><a href="how-it-works.html">How It Works</a></li>
-                        <li><a href="platform.html">Architecture</a></li>
-                        <li><a href="security.html">Security</a></li>
-                        <li><a href="pricing.html">Pricing</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="case-studies.html">Case Studies</a></li>
-                        <li><a href="resources.html">Documentation</a></li>
-                        <li><a href="walkthrough.html">Walkthrough</a></li>
-                        <li><a href="roi.html">ROI Calculator</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="investor.html">Investors</a></li>
-                        <li><a href="sales-one-pager.html">Sales</a></li>
-                        <li><a href="demo-opener.html">Demo</a></li>
-                    </ul>
-                </div>
-            </div>
+<div class="hr"></div>
+
+<section class="section compact">
+  <div class="container">
+    <h2 class="sectionTitle">Compliance & Deployment</h2>
+    <p class="sectionSub">Deploy on your cloud or ours. Maintain control of data boundaries and governance policies.</p>
+
+    <div class="grid3">
+      <div class="card">
+        <h3>Encryption</h3>
+        <p>AES-256 at rest, TLS 1.3 in transit. Post-quantum cryptography ready.</p>
+      </div>
+      <div class="card">
+        <h3>SOC 2 / ISO 27001</h3>
+        <p>Aligned practices with continuous monitoring and third-party audits.</p>
+      </div>
+      <div class="card">
+        <h3>GDPR-Conscious</h3>
+        <p>Data residency controls, right to explanation, consent management.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:22px;" class="callout">
+      <strong>Security posture</strong>
+      <p>Encryption in transit and at rest • SOC 2 / ISO 27001 aligned practices • GDPR-conscious handling • Kubernetes namespace isolation • Cryptographic decision signing</p>
+    </div>
+
+    <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
+      <a class="btn primary" href="assets/pdf/security-compliance-brief.pdf">Download Security & Compliance Brief (PDF)</a>
+      <a class="btn ghost" href="assets/pdf/sample-decision-logs.pdf">View Sample Decision Logs (PDF)</a>
+    </div>
+  </div>
+</section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footerGrid">
+        <div>
+          <div class="brand" style="gap:10px;">
+            <div class="mark" aria-hidden="true"></div>
+            <span>MIZ OKI <small>3.5 — Verifiable Autonomous Decision Intelligence</small></span>
+          </div>
+          <p class="trustline" style="margin-top:14px; max-width: 760px;">
+            <strong>Agents propose. The Decision Control Plane authorizes. Every decision auditable. Every outcome feeds learning.</strong>
+          </p>
+          <small>© <span data-year></span> MIZ OKI. All rights reserved.</small>
         </div>
-        
-        <div class="footer-bottom">
-            <span>© 2026 MIZ OKI. All rights reserved.</span>
-            <span>Every decision is logged. Every action is auditable. Humans remain in control.</span>
+        <div>
+          <div class="footerLinks">
+            <a href="security.html">Security & Governance</a>
+            <a href="investor.html">Investor Overview</a>
+            <a href="sales-one-pager.html">Sales One-Pager</a>
+            <a href="demo-opener.html">Demo Opener Script</a>
+          </div>
+          <div style="margin-top:14px;" class="notice">
+            Every action is logged. Every decision is auditable. Humans remain in control.
+          </div>
         </div>
-    </footer>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>
