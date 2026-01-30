@@ -1,0 +1,65 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="50%" style="stop-color:#12121a"/>
+      <stop offset="100%" style="stop-color:#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="cyanGradC" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#4f8fff"/>
+    </linearGradient>
+    <filter id="glowC" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC1)"/>
+  
+  <!-- Decorative grid -->
+  <g opacity="0.05">
+    <rect x="40" y="40" width="1000" height="1270" rx="20" fill="none" stroke="#4f8fff" stroke-width="1"/>
+    <line x1="540" y1="40" x2="540" y2="1310" stroke="#4f8fff" stroke-width="1"/>
+    <line x1="40" y1="675" x2="1040" y2="675" stroke="#4f8fff" stroke-width="1"/>
+  </g>
+  
+  <!-- Top badge -->
+  <g transform="translate(540, 200)">
+    <rect x="-120" y="-25" width="240" height="50" rx="25" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1"/>
+    <text x="0" y="7" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="16" font-weight="500">MEDIA BUYING FRAMEWORK</text>
+  </g>
+  
+  <!-- Main title -->
+  <text x="540" y="420" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="72" font-weight="400">Unlocking</text>
+  <text x="540" y="510" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="72" font-weight="400">Meta's Algorithm</text>
+  <text x="540" y="600" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="72" font-weight="400">With the</text>
+  
+  <!-- ReLU Lens highlight -->
+  <g transform="translate(540, 720)">
+    <rect x="-200" y="-50" width="400" height="100" rx="12" fill="rgba(0,212,255,0.2)" stroke="url(#cyanGradC)" stroke-width="3" filter="url(#glowC)"/>
+    <text x="0" y="20" text-anchor="middle" fill="#00d4ff" font-family="monospace" font-size="56" font-weight="700">ReLU Lens</text>
+  </g>
+  
+  <!-- Subtitle -->
+  <text x="540" y="880" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="28">A threshold-aware playbook for</text>
+  <text x="540" y="925" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="28">stable Meta Ads performance</text>
+  
+  <!-- Visual element: ReLU curve preview -->
+  <g transform="translate(290, 1000)">
+    <path d="M 0 100 L 200 100 L 200 100 L 500 0" fill="none" stroke="url(#cyanGradC)" stroke-width="4" filter="url(#glowC)"/>
+    <circle cx="200" cy="100" r="8" fill="#00d4ff"/>
+  </g>
+  
+  <!-- Swipe indicator -->
+  <g transform="translate(540, 1250)">
+    <text x="0" y="0" text-anchor="middle" fill="#606070" font-family="system-ui, sans-serif" font-size="18">Swipe to learn ’</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

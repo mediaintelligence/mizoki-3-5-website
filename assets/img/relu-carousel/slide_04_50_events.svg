@@ -1,0 +1,80 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <linearGradient id="greenGradC" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+    <filter id="glowC4" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC4)"/>
+  
+  <!-- Slide number -->
+  <text x="80" y="80" fill="#606070" font-family="monospace" font-size="16">03</text>
+  
+  <!-- Title -->
+  <text x="540" y="150" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="44">The Magic Number</text>
+  
+  <!-- Big 50 -->
+  <g transform="translate(540, 400)">
+    <circle cx="0" cy="0" r="180" fill="none" stroke="url(#greenGradC)" stroke-width="8" filter="url(#glowC4)"/>
+    <circle cx="0" cy="0" r="150" fill="rgba(16,185,129,0.1)"/>
+    <text x="0" y="30" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="140" font-weight="700">50</text>
+    <text x="0" y="80" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="20">events per week</text>
+  </g>
+  
+  <!-- Subtitle -->
+  <text x="540" y="650" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="24">per ad set to exit Learning Phase</text>
+  
+  <!-- Math breakdown -->
+  <g transform="translate(140, 720)">
+    <rect x="0" y="0" width="380" height="120" rx="12" fill="rgba(79,143,255,0.1)" stroke="rgba(79,143,255,0.3)" stroke-width="1"/>
+    <text x="190" y="45" text-anchor="middle" fill="#4f8fff" font-family="monospace" font-size="42" font-weight="600">~7</text>
+    <text x="190" y="80" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">events per day</text>
+    <text x="190" y="105" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">50 ÷ 7 days</text>
+  </g>
+  
+  <g transform="translate(560, 720)">
+    <rect x="0" y="0" width="380" height="120" rx="12" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+    <text x="190" y="35" text-anchor="middle" fill="#a855f7" font-family="monospace" font-size="14">Daily Budget H</text>
+    <text x="190" y="70" text-anchor="middle" fill="#a855f7" font-family="monospace" font-size="28" font-weight="600">CPA × 7</text>
+    <text x="190" y="105" text-anchor="middle" fill="#606070" font-family="system-ui, sans-serif" font-size="14">e.g., $20 CPA ’ $140/day</text>
+  </g>
+  
+  <!-- Status comparison -->
+  <g transform="translate(140, 890)">
+    <rect x="0" y="0" width="380" height="100" rx="10" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2"/>
+    <text x="190" y="40" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="20" font-weight="600">Below 50</text>
+    <text x="190" y="70" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">"Learning Limited"</text>
+    <text x="190" y="90" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">Volatile, inefficient</text>
+  </g>
+  
+  <g transform="translate(560, 890)">
+    <rect x="0" y="0" width="380" height="100" rx="10" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="2"/>
+    <text x="190" y="40" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="20" font-weight="600">50+ events</text>
+    <text x="190" y="70" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Learning Stabilized</text>
+    <text x="190" y="90" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">Predictable, efficient</text>
+  </g>
+  
+  <!-- Key takeaway -->
+  <g transform="translate(140, 1050)">
+    <rect x="0" y="0" width="800" height="140" rx="12" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.3)" stroke-width="2"/>
+    <text x="400" y="50" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="18" font-weight="600">KEY INSIGHT</text>
+    <text x="400" y="90" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="22">This is your activation threshold.</text>
+    <text x="400" y="120" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="18">Budget each ad set to cross it.</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

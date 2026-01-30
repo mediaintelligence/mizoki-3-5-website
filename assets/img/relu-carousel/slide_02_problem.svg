@@ -1,0 +1,66 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC2)"/>
+  
+  <!-- Slide number -->
+  <text x="80" y="80" fill="#606070" font-family="monospace" font-size="16">01</text>
+  
+  <!-- Title -->
+  <text x="540" y="180" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="48">The Problem</text>
+  
+  <!-- Pain point visualization -->
+  <g transform="translate(140, 280)">
+    <!-- Flatline -->
+    <rect x="0" y="0" width="800" height="200" rx="12" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    
+    <text x="400" y="50" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="24" font-weight="600">"Why does this campaign feel dead..."</text>
+    
+    <!-- Flat graph line -->
+    <g transform="translate(100, 80)">
+      <line x1="0" y1="60" x2="600" y2="60" stroke="#ef4444" stroke-width="3" opacity="0.5"/>
+      <text x="300" y="120" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Days of flat results...</text>
+    </g>
+  </g>
+  
+  <!-- Arrow -->
+  <g transform="translate(540, 520)">
+    <line x1="0" y1="0" x2="0" y2="60" stroke="#606070" stroke-width="2"/>
+    <polygon points="-8,55 8,55 0,70" fill="#606070"/>
+  </g>
+  
+  <!-- Breakthrough -->
+  <g transform="translate(140, 620)">
+    <rect x="0" y="0" width="800" height="200" rx="12" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+    
+    <text x="400" y="50" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="24" font-weight="600">"...until suddenly it takes off?"</text>
+    
+    <!-- Breakout graph line -->
+    <g transform="translate(100, 80)">
+      <path d="M 0 60 L 200 60 Q 250 60 300 30 Q 350 0 400 -20 L 600 -40" fill="none" stroke="#10b981" stroke-width="3"/>
+      <text x="300" y="120" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Then sudden momentum...</text>
+    </g>
+  </g>
+  
+  <!-- Key insight -->
+  <g transform="translate(140, 900)">
+    <rect x="0" y="0" width="800" height="280" rx="16" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.3)" stroke-width="2"/>
+    
+    <text x="400" y="60" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="22" font-weight="600">You're not imagining it.</text>
+    
+    <text x="400" y="120" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="28" font-weight="500">Meta's delivery is</text>
+    <text x="400" y="165" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="36" font-weight="700">NON-LINEAR</text>
+    
+    <text x="400" y="230" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="18">It behaves like a threshold gate:</text>
+    <text x="400" y="260" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="18">below = stuck " above = momentum</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

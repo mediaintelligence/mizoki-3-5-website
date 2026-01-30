@@ -1,235 +1,145 @@
-# CLAUDE.md - AI Assistant Guide for MIZ OKI Website
+# CLAUDE.md - AI Assistant Context
 
 ## Project Overview
 
-This is the marketing and platform website for **MIZ OKI 3.5** — a Verifiable Autonomous Decision Intelligence platform. The website serves multiple purposes:
-- Marketing landing pages for the platform
-- Technical documentation and deep-dives
-- Blog content on AI/ML decision intelligence topics
-- Investor and sales materials
-- Platform login portal
+**MIZ OKI 3.5** is a Verifiable Autonomous Decision Intelligence Platform. This repository contains the marketing website deployed on Google Cloud Run.
 
-## Core Product Concept
+## Architecture
 
-MIZ OKI 3.5 implements a **7-Stage Autonomous Intelligence Pipeline** called **SRDPV-DAL**:
+- **Deployment**: Docker container on Google Cloud Run
+- **Web Server**: Nginx serving static HTML
+- **Domain**: mizoki3.com (Cloud Run custom domain)
+
+## Core Technology (7-Stage SRDPV-DAL Pipeline)
 
 ```
 SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN
 ```
 
-### Key Architectural Innovations
+Key innovations:
+- Decision Control Plane (DCP)
+- Validation & Arbitration Layer
+- Counterfactual Simulation Engine
+- Temporal-Causal Knowledge Graph (TCO-KG)
 
-1. **Decision Control Plane (DCP)** — Centralized authority that authorizes all autonomous agent proposals
-2. **Validation & Arbitration Layer (VAL)** — Multiple agents independently verify proposals
-3. **Counterfactual Simulation Engine (CSE)** — Simulates alternatives before execution
-4. **Temporal-Causal Knowledge Graph (TCO-KG)** — Decision memory and audit spine
-
-### The Core Thesis
-
-> "Decisions verified before execution—not explained after failure."
-
-Agents **propose**, but the Decision Control Plane **authorizes**. This separation is the fundamental architectural constraint that enables governed autonomy.
+---
 
 ## Repository Structure
 
 ```
 mizoki-website/
-├── index.html                  # Homepage - main marketing landing
-├── login.html                  # Platform login page (mizoki.mizoki3.com)
-├── how-it-works.html           # Technical deep-dive on SRDPV-DAL pipeline
-├── platform.html               # Architecture overview & four-layer stack
-├── security.html               # Quantum-resistant security, compliance
-├── industries.html             # Industry-specific templates
-├── pricing.html                # Enterprise, Growth, Pilot tiers
-├── case-studies.html           # Customer success stories
-├── resources.html              # Documentation hub
-├── roi.html                    # Interactive ROI calculator
-├── walkthrough.html            # 12-minute demo walkthrough
-├── investor.html               # Investor overview deck
-├── sales-one-pager.html        # Quick sales summary
-├── blogs.html                  # Redirects to blog subdomain
+├── index.html                    # Homepage
+├── how-it-works.html             # Technical deep dive
+├── platform.html                 # Architecture overview
+├── security.html                 # Security & compliance
+├── industries.html               # Industry templates
+├── pricing.html                  # Pricing tiers
+├── case-studies.html             # Customer success stories
+├── resources.html                # Documentation hub
+├── roi.html                      # ROI calculator
+├── walkthrough.html              # Demo request
+├── investor.html                 # Investor overview
+├── sales-one-pager.html          # Sales summary
 │
-├── blog/                       # Blog posts
-│   ├── index.html              # Blog listing page
+├── blog/                         # Thought leadership content
+│   ├── index.html                # Blog listing
 │   ├── decision-control-plane.html
-│   └── relu-lens-meta-algorithm.html
+│   └── relu-lens-meta-algorithm.html  # ReLU Lens article
 │
 ├── assets/
-│   ├── css/                    # Stylesheets (currently inline)
-│   ├── img/                    # Images and graphics
-│   └── pdf/                    # Downloadable PDFs (whitepapers, etc.)
+│   ├── css/                      # Stylesheets
+│   ├── img/
+│   │   ├── relu-article/         # LinkedIn article images (5 SVGs)
+│   │   ├── relu-carousel/        # LinkedIn carousel slides (8 SVGs)
+│   │   ├── preview.html          # Image preview page
+│   │   └── README.md             # Image kit documentation
+│   └── pdf/                      # Downloadable resources
 │
-├── Dockerfile                  # nginx:alpine container
-├── nginx.conf                  # Web server config with subdomain routing
-├── cloudbuild.yaml             # Google Cloud Build config
-├── deploy.sh                   # One-click Cloud Run deployment
-├── master-deploy.sh            # Multi-service deployment
-├── github-push.sh              # Git push helper
-├── README.md                   # User-facing documentation
-└── CLAUDE.md                   # This file
+├── Dockerfile                    # Container definition
+├── nginx.conf                    # Web server config
+├── cloudbuild.yaml               # Cloud Build config
+├── deploy.sh                     # One-click deploy to Cloud Run
+├── master-deploy.sh              # Full deployment (Cloud Run + GitHub)
+├── github-push.sh                # GitHub sync script
+└── README.md                     # Project documentation
 ```
 
-## Design System
+---
 
-### Color Palette (CSS Variables)
+## Deployment Commands
 
-```css
---bg-primary: #0a0a0f;         /* Deep black background */
---bg-secondary: #12121a;       /* Card backgrounds */
---bg-tertiary: #1a1a24;        /* Elevated surfaces */
---text-primary: #f0f0f5;       /* Main text */
---text-secondary: #9090a0;     /* Secondary text */
---text-muted: #606070;         /* Muted/disabled text */
---accent-cyan: #00d4ff;        /* Primary accent (CTAs, links) */
---accent-blue: #4f8fff;        /* Secondary accent */
---accent-purple: #a855f7;      /* REASON stage color */
---accent-green: #10b981;       /* VALIDATE/success */
---accent-orange: #f59e0b;      /* SENSE stage color */
---accent-red: #ef4444;         /* ACT stage/warnings */
---accent-pink: #f472b6;        /* LEARN stage color */
---border: rgba(255,255,255,0.08);
+### One-Click Master Deploy
+```bash
+./master-deploy.sh YOUR_GCP_PROJECT_ID https://github.com/YOUR_USERNAME/mizoki-website.git
 ```
 
-### Typography
-
-- **Headlines:** `'Instrument Serif'` — Elegant, editorial feel
-- **Body:** `'DM Sans'` — Clean, readable sans-serif
-- **Code/Technical:** `'JetBrains Mono'` — Monospace for code, versions, labels
-
-### Component Patterns
-
-1. **Navigation Bar** — Fixed, blur backdrop, contains:
-   - Logo with version badge
-   - Nav links (desktop only)
-   - CTA buttons: "Log in" (ghost) + primary action
-
-2. **Section Labels** — Monospace, uppercase, cyan color, small text
-
-3. **Cards** — Dark background, subtle border, hover glow effect
-
-4. **Buttons:**
-   - `.btn-primary` — Gradient cyan→blue, used for main CTAs
-   - `.btn-ghost` — Transparent with border, secondary actions
-
-5. **Pipeline Nodes** — Color-coded by stage, hover scales with glow
-
-## Domain Configuration
-
-| Domain | Service | Purpose |
-|--------|---------|---------|
-| `mizoki3.com` | mizoki-website | Main website homepage |
-| `www.mizoki3.com` | mizoki-website | Main website (www alias) |
-| `mizoki.mizoki3.com` | mizoki-website | Login portal (redirects to /login.html) |
-| `blog.mizoki3.com` | (external) | Blog platform |
-| `miz.mizoki3.com` | mizoki-docs-portal | Documentation portal |
-
-### Subdomain Routing (nginx.conf)
-
-The nginx config includes a `map` directive to detect the `mizoki.` subdomain and redirect to `/login.html`:
-
-```nginx
-map $host $is_mizoki_subdomain {
-    default 0;
-    "~^mizoki\.mizoki3\.com$" 1;
-    "~^mizoki\." 1;
-}
-
-# In server block:
-if ($is_mizoki_subdomain) {
-    rewrite ^/$ /login.html permanent;
-}
-```
-
-## Deployment
-
-### Google Cloud Run
-
-The site deploys to Cloud Run using the `deploy.sh` script:
-
+### Deploy to Cloud Run Only
 ```bash
 ./deploy.sh
 ```
 
-This will:
-1. Authenticate with gcloud
-2. Enable required APIs
-3. Build container with Cloud Build
-4. Deploy to Cloud Run (us-central1)
-5. Output the live URL
-
-### GitHub Repository
-
+### Push to GitHub Only
+```bash
+./github-push.sh
 ```
-https://github.com/mediaintelligence/mizoki-website
-```
-
-Always push changes to main branch. The deploy script commits changes before building.
-
-## Common Tasks
-
-### Adding a New Page
-
-1. Create `newpage.html` using existing page as template
-2. Update navigation in ALL HTML files (nav-cta section)
-3. Add to Dockerfile if in subdirectory
-4. Update this CLAUDE.md file structure section
-5. Commit and deploy
-
-### Adding a Blog Post
-
-1. Create new file in `blog/` directory
-2. Use existing blog post as template
-3. Update `blog/index.html` to include new post
-4. Commit and deploy
-
-### Updating Navigation
-
-The nav is inline in each HTML file. When updating:
-- Check ALL HTML files for nav-cta sections
-- Keep consistent: "Log in" (ghost) + primary CTA
-- Blog pages use `../` relative paths
-
-### Adding Assets
-
-1. Place files in `assets/css/`, `assets/img/`, or `assets/pdf/`
-2. Reference with relative paths: `assets/img/example.png`
-3. Commit and deploy
-
-## Key Metrics to Highlight
-
-These are the core value propositions used across the site:
-
-| Metric | Value | Description |
-|--------|-------|-------------|
-| Decision Velocity | 50-75× faster | Compared to manual processes |
-| Revenue Leakage | ↓35% | Reduction in missed opportunities |
-| Operational Costs | ↓41% | Cost reduction from automation |
-| Payback Period | 3.2 months | Typical time to ROI |
-| Automation Coverage | 89% | Decisions handled autonomously |
-| Query Latency | <100ms | Knowledge graph response time |
-| Decision Cycle | <60s | End-to-end decision time |
-
-## SEO & Meta
-
-Each page should include:
-- Unique `<title>` with "MIZ OKI 3.5" brand
-- `<meta name="description">` relevant to page content
-- Proper heading hierarchy (single h1, logical h2/h3)
-
-## Security Messaging
-
-The platform emphasizes:
-- **Quantum-resistant cryptography** (CRYSTALS-Kyber, CRYSTALS-Dilithium)
-- **Immutable audit logs** — Every decision is cryptographically signed
-- **Human-in-the-loop controls** — Full override capability
-- **Multi-tenant isolation** — Kubernetes namespace separation
-
-## Contact & Support
-
-- Sales: sales@mizoki.com
-- Documentation: resources.html
-- Demo requests: walkthrough.html
 
 ---
 
-*This file helps AI assistants understand the project structure, conventions, and context for making effective contributions.*
+## Recent Work (January 2026)
+
+### ReLU Lens LinkedIn Content Kit
+
+Created complete visual assets for the "Unlocking Meta's Ad Algorithm With the ReLU Lens" thought leadership content:
+
+**Article Images** (`assets/img/relu-article/`):
+| File | Purpose |
+|------|---------|
+| `01_relu_gate.svg` | ReLU gate concept - weak signals filtered, strong amplified |
+| `02_nonlinear_activation_curve.svg` | Threshold effect visualization |
+| `03_learning_50_events.svg` | 50 events/week learning phase target |
+| `04_compounding_feedback_loop.svg` | Flywheel momentum diagram |
+| `05_budget_dilution_vs_concentration.svg` | Budget strategy comparison |
+
+**Carousel Slides** (`assets/img/relu-carousel/`):
+| Slide | Content |
+|-------|---------|
+| `slide_01_cover.svg` | Title card |
+| `slide_02_problem.svg` | The problem - flatline then breakout |
+| `slide_03_relu_explained.svg` | What is ReLU? The gate concept |
+| `slide_04_50_events.svg` | The magic number: 50 events/week |
+| `slide_05_consolidate.svg` | Budget dilution vs concentration |
+| `slide_06_flywheel.svg` | Compounding feedback loop |
+| `slide_07_checklist.svg` | The 6-move ReLU Playbook |
+| `slide_08_cta.svg` | Closing CTA |
+
+**Supporting Files**:
+- `assets/img/preview.html` - Visual preview page for all images
+- `assets/img/README.md` - Comprehensive documentation for the image kit
+- `blog/relu-lens-meta-algorithm.html` - Full blog article with embedded images
+
+### Design System
+
+Brand colors used throughout:
+- Cyan: `#00d4ff`
+- Blue: `#4f8fff`
+- Purple: `#a855f7`
+- Green: `#10b981`
+- Orange: `#f59e0b`
+- Red: `#ef4444`
+- Background: `#0a0a0f` to `#12121a`
+
+---
+
+## Coding Guidelines
+
+1. **HTML**: Self-contained pages with inline CSS (no build step required)
+2. **Fonts**: JetBrains Mono (code), Instrument Serif (headings), DM Sans (body)
+3. **Images**: SVG preferred for scalability; include alt text for accessibility
+4. **Deployment**: Changes go live via `./deploy.sh` or `./master-deploy.sh`
+
+---
+
+## Contact
+
+- Website: mizoki3.com
+- Sales: sales@mizoki.com
