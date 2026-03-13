@@ -152,6 +152,33 @@
             margin-bottom: 3rem;
         }
 
+        .pipeline-correction {
+            padding: 0 2rem 1rem;
+        }
+        .pipeline-correction-card {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.10), rgba(0, 212, 255, 0.08));
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+        }
+        .pipeline-correction-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-green);
+            margin-bottom: 0.6rem;
+        }
+        .pipeline-correction-card p {
+            color: var(--text-primary);
+            font-size: 0.96rem;
+        }
+        .pipeline-correction-card strong {
+            color: var(--accent-cyan);
+        }
+
         .pipeline-overview {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
@@ -389,6 +416,13 @@
         <h1>How MIZ OKI 3.5 Works</h1>
         <p>A seven-stage autonomous intelligence pipeline with built-in validation, simulation, and governance. Every decision is proposed, challenged, simulated, and authorized before execution.</p>
     </header>
+
+    <section class="pipeline-correction">
+        <div class="pipeline-correction-card">
+            <div class="pipeline-correction-title">Pipeline Definition</div>
+            <p><strong>MIZ OKI 3.5 uses the full 7-stage SRDPV-DAL pipeline</strong>: SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN. This page reflects the complete seven-stage model (not a reduced 5-part flow).</p>
+        </div>
+    </section>
 
     <section class="section">
         <div class="section-container">
