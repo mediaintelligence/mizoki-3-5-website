@@ -131,7 +131,11 @@
         }
 
         .section { padding: 5rem 2rem; }
-        .section-container { max-width: 1100px; margin: 0 auto; }
+        .section-container,
+        .pipeline-correction-card {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
         .section-label {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
@@ -156,8 +160,6 @@
             padding: 0 2rem 1rem;
         }
         .pipeline-correction-card {
-            max-width: 1100px;
-            margin: 0 auto;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.10), rgba(0, 212, 255, 0.08));
             border: 1px solid rgba(16, 185, 129, 0.35);
             border-radius: 16px;
@@ -166,6 +168,7 @@
         .pipeline-correction-title {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.78rem;
+            text-transform: uppercase;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: var(--accent-green);
