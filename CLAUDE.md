@@ -90,6 +90,11 @@ mizoki-website/
 
 ## Recent Work (March 2026)
 
+### Boss Agent & MCP Integration
+- Integrated Boss Agent Skills and updated MCP-compatible interfaces.
+- Synchronized deployment and control planes across Cells 1-34.
+- Handled merging of sub-PRs for pipeline correction and UI optimization.
+
 ### Canonical Blog Routing via Flask
 Migrated legacy subdomain-dependent blogs to canonical main-domain paths internally using Python/Flask (`app.py`):
 - Stripped all meta-refresh `blogs.html` redirections to external domains, pointing them 301 to `/blog/`.
