@@ -131,8 +131,7 @@
         }
 
         .section { padding: 5rem 2rem; }
-        .section-container,
-        .pipeline-correction-card {
+        .section-container {
             max-width: 1100px;
             margin: 0 auto;
         }
@@ -165,7 +164,6 @@
             border-radius: 16px;
             padding: 1.5rem 2rem;
         }
-        .pipeline-correction-title {
         .pipeline-correction-title {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
@@ -421,9 +419,11 @@
     </header>
 
     <section class="pipeline-correction">
-        <div class="pipeline-correction-card">
-            <div class="pipeline-correction-title">Pipeline Definition</div>
-            <p><strong>MIZ OKI 3.5 uses the full 7-stage SRDPV-DAL pipeline</strong>: SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN. This page reflects the complete seven-stage model (not a reduced 5-part flow).</p>
+        <div class="section-container">
+            <div class="pipeline-correction-card">
+                <h2 class="pipeline-correction-title">Pipeline Definition</h2>
+                <p><strong>MIZ OKI 3.5 uses the full 7-stage SRDPV-DAL pipeline</strong>: SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN. This page reflects the complete seven-stage model (not a reduced 5-part flow).</p>
+            </div>
         </div>
     </section>
 
