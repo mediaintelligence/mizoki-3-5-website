@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — MIZ OKI 3.5</title>
+    <meta name="description" content="Research and field notes from MIZ OKI 3.5 on threshold-aware media buying, decision intelligence, and causal autonomous systems.">
+    <link rel="canonical" href="https://mizoki3.com/blog">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MIZ OKI 3.5 Blog">
+    <meta property="og:description" content="Research and field notes on threshold-aware media buying, decision intelligence, and causal autonomous systems.">
+    <meta property="og:url" content="https://mizoki3.com/blog">
+    <meta property="og:image" content="https://mizoki3.com/assets/img/blog/meta-relu/og_meta_relu_1200x627.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MIZ OKI 3.5 Blog">
+    <meta name="twitter:description" content="Research and field notes on threshold-aware media buying, decision intelligence, and causal autonomous systems.">
+    <meta name="twitter:image" content="https://mizoki3.com/assets/img/blog/meta-relu/og_meta_relu_1200x627.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --border: rgba(255,255,255,0.08);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(0, 212, 255, 0.14), transparent 28%),
+                radial-gradient(circle at 85% 8%, rgba(168, 85, 247, 0.14), transparent 30%),
+                linear-gradient(180deg, #09090d 0%, var(--bg-primary) 45%, #09090d 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+        }
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            padding: 0.35rem 0.7rem;
+            border: 1px solid rgba(0, 212, 255, 0.35);
+            border-radius: 999px;
+            background: rgba(0, 212, 255, 0.08);
+            display: inline-block;
+            margin-bottom: 1.1rem;
+        }
+        .page-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .page-header p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .headline-gradient {
+            background: linear-gradient(135deg, var(--text-primary), #b9ebff 45%, #d8c4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quick-stats {
+            max-width: 840px;
+            margin: 2rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.9rem;
+        }
+        .stat {
+            background: rgba(18, 18, 26, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.85rem;
+        }
+        .stat strong {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            display: block;
+        }
+        .stat span {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+        }
+
+        .blog-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem;
+        }
+
+        .featured-post {
+            background: linear-gradient(140deg, rgba(18, 18, 26, 0.9), rgba(23, 23, 34, 0.82));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+        }
+        .featured-image {
+            height: 300px;
+            background:
+                linear-gradient(135deg, rgba(10, 10, 15, 0.2), rgba(10, 10, 15, 0.72)),
+                url('/assets/img/blog/meta-relu/og_meta_relu_1200x627.png') center/cover no-repeat;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+        .featured-image-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin: 0 0 1.5rem 1.5rem;
+            padding: 0.45rem 0.65rem;
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 999px;
+            background: rgba(10, 10, 15, 0.65);
+        }
+        .featured-content {
+            padding: 2rem;
+        }
+        .post-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        .featured-content h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .featured-content h2 a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .featured-content h2 a:hover {
+            color: var(--accent-cyan);
+        }
+        .featured-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 700px) {
+            .posts-grid { grid-template-columns: 1fr; }
+        }
+        .post-card {
+            background: linear-gradient(155deg, rgba(18, 18, 26, 0.9), rgba(23, 23, 34, 0.72));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        .post-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+        }
+        .post-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        .post-card h3 a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .post-card h3 a:hover {
+            color: var(--accent-cyan);
+        }
+        .post-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .post-card .post-meta {
+            font-size: 0.8rem;
+        }
+
+        .newsletter-section {
+            background: linear-gradient(145deg, rgba(18, 18, 26, 0.9), rgba(22, 22, 34, 0.75));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+            box-shadow: 0 18px 40px rgba(4, 8, 20, 0.45);
+        }
+        .newsletter-section h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .newsletter-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 400px;
+            margin: 0 auto;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 980px) {
+            .nav-links,
+            .nav-cta .btn-ghost { display: none; }
+            .quick-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="/how-it-works.html">How It Works</a>
+                <a href="/platform.html">Platform</a>
+                <a href="/industries.html">Industries</a>
+                <a href="/pricing.html">Pricing</a>
+                <a href="/blog" class="active">Blog</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="/walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <span class="eyebrow">Editorial Hub</span>
+        <h1>MIZ OKI 3.5 <span class="headline-gradient">Journal</span></h1>
+        <p>Threshold-aware media buying, decision intelligence, and causal operating guidance for teams building above the activation line.</p>
+        <div class="quick-stats">
+            <div class="stat">
+                <strong>7-stage SRDPV-DAL</strong>
+                <span>Framework-guided reasoning from signal to action.</span>
+            </div>
+            <div class="stat">
+                <strong>Decision Control Plane</strong>
+                <span>Execution constraints, arbitration, and policy memory.</span>
+            </div>
+            <div class="stat">
+                <strong>Field Notes + Playbooks</strong>
+                <span>Applied strategy for marketers operating at scale.</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="blog-container">
+        <article class="featured-post">
+            <div class="featured-image">
+                <span class="featured-image-text">Featured Research</span>
+            </div>
+            <div class="featured-content">
+                <span class="post-tag">Threshold-Aware Media Buying</span>
+                <h2><a href="/blog/relu-lens-meta-algorithm">Unlocking Meta's Ad Algorithm With the ReLU Lens</a></h2>
+                <p>The canonical main-domain publication of our ReLU playbook for Meta advertisers: where signal density, learning stability, and decision intelligence intersect.</p>
+                <div class="post-meta">
+                    <div class="post-author">
+                        <div class="author-avatar">BM</div>
+                        <span>Boris Mizhen</span>
+                    </div>
+                    <span>•</span>
+                    <span>12 min read</span>
+                    <span>•</span>
+                    <span>January 2026</span>
+                </div>
+            </div>
+        </article>
+
+        <div class="posts-grid">
+            <article class="post-card">
+                <span class="post-tag">Architecture</span>
+                <h3><a href="/blog/decision-control-plane.html">Why Agents Need a Decision Control Plane</a></h3>
+                <p>Why autonomous systems need explicit arbitration between action proposal, validation, and approval.</p>
+                <div class="post-meta">
+                    <span>Boris Mizhen</span>
+                    <span>•</span>
+                    <span>8 min read</span>
+                </div>
+            </article>
+
+            <article class="post-card">
+                <span class="post-tag">Decision Intelligence</span>
+                <h3><a href="/blog/adc-decision-framework.html">How an Autonomous Decision Controller Thinks</a></h3>
+                <p>A plain-English walkthrough of the seven-stage reasoning loop behind disciplined autonomous execution.</p>
+                <div class="post-meta">
+                    <span>Boris Mizhen</span>
+                    <span>•</span>
+                    <span>10 min read</span>
+                </div>
+            </article>
+
+            <article class="post-card">
+                <span class="post-tag">Case Study</span>
+                <h3><a href="/case-studies.html">Learning Limited Reduction in Practice</a></h3>
+                <p>See how MIZ OKI 3.5 ties threshold-aware execution to measured CPA stability and faster learning cycles.</p>
+                <div class="post-meta">
+                    <span>MIZ OKI Team</span>
+                    <span>•</span>
+                    <span>6 min read</span>
+                </div>
+            </article>
+
+            <article class="post-card">
+                <span class="post-tag">Platform</span>
+                <h3><a href="/platform.html">How MIZ OKI 3.5 Operationalizes This</a></h3>
+                <p>See how the Decision Control Plane, validation layer, and causal graph operationalize media buying signals.</p>
+                <div class="post-meta">
+                    <span>MIZ OKI Team</span>
+                    <span>•</span>
+                    <span>9 min read</span>
+                </div>
+            </article>
+        </div>
+
+        <div class="newsletter-section">
+            <h2>Continue the Main-Domain Journey</h2>
+            <p>Move from threshold-aware insight into platform detail, ROI modeling, and a working MIZ OKI 3.5 walkthrough.</p>
+            <div class="newsletter-form">
+                <a href="/platform.html" class="btn btn-ghost">Explore Platform</a>
+                <a href="/roi.html" class="btn btn-ghost">Run ROI Model</a>
+                <a href="/walkthrough.html" class="btn btn-primary">Request Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

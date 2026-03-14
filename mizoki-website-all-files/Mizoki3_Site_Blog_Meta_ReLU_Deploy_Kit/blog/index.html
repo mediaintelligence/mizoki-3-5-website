@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MIZ OKI Blog</title>
+  <meta name="description" content="Insights, playbooks, and research from MIZ OKI." />
+  <link rel="canonical" href="https://mizoki3.com/blog/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZ OKI Blog" />
+  <meta property="og:description" content="Insights, playbooks, and research from MIZ OKI." />
+  <meta property="og:url" content="https://mizoki3.com/blog/" />
+  <meta property="og:image" content="https://mizoki3.com/assets/img/blog/meta-relu/og_meta_relu_1200x627.png" />
+
+  <style>
+    :root {
+      --max: 980px;
+      --pad: 18px;
+      --text: #0b0f14;
+      --muted: #556273;
+      --bg: #ffffff;
+      --line: #e6e8eb;
+      --link: #0b63ce;
+      --card: #f8fafc;
+    }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header { border-bottom: 1px solid var(--line); background: #fff; }
+    .nav {
+      max-width: calc(var(--max) + 320px);
+      margin: 0 auto;
+      padding: 14px var(--pad);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .brand { font-weight: 800; }
+    .brand a { color: inherit; text-decoration: none; }
+    .nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; }
+    .nav a:hover { color: var(--link); }
+    main { max-width: var(--max); margin: 0 auto; padding: 34px var(--pad) 70px; }
+    h1 { margin: 0 0 10px; font-size: 40px; letter-spacing: -0.02em; }
+    .lead { color: var(--muted); margin: 0 0 22px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--card);
+    }
+    .card h2 { font-size: 18px; margin: 0 0 8px; line-height: 1.25; }
+    .card p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+    .meta { color: var(--muted); font-size: 12px; }
+    .thumb {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      margin-bottom: 10px;
+      background: #fff;
+    }
+    footer { border-top: 1px solid var(--line); padding: 18px var(--pad); color: var(--muted); font-size: 13px; }
+    footer .inner { max-width: var(--max); margin: 0 auto; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="nav" aria-label="Primary">
+      <div class="brand"><a href="/">MIZ OKI</a></div>
+      <a href="/how-it-works.html">How It Works</a>
+      <a href="/platform.html">Platform</a>
+      <a href="/security.html">Security</a>
+      <a href="/industries.html">Industries</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/case-studies.html">Case Studies</a>
+      <a href="/resources.html">Resources</a>
+      <a href="/roi-calculator.html">ROI Calculator</a>
+      <a href="/blog/" style="color: var(--link);">Blog</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Blog</h1>
+    <p class="lead">Playbooks, research, and technical breakdowns from the MIZ OKI team.</p>
+
+    <div class="grid">
+      <article class="card">
+        <a href="/blog/meta-relu-gate-go-deep-before-wide/" style="text-decoration:none; color:inherit;">
+          <img class="thumb" src="/assets/img/blog/meta-relu/01_relu_gate.png" alt="ReLU gate illustration thumbnail" />
+          <h2>Meta’s Hidden ReLU Gate: The “Go Deep Before Wide” Playbook for Facebook &amp; Instagram Ads</h2>
+        </a>
+        <p>A practical, image-driven guide to Meta Ads’ threshold-style learning dynamics (ReLU-style gates) — and how to structure budgets, audiences, and creative so campaigns stabilize faster and scale cleaner.</p>
+        <div class="meta">Performance Marketing • 2026-01-26</div>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="inner">© 2026 MIZ OKI. All rights reserved.</div>
+  </footer>
+</body>
+</html>

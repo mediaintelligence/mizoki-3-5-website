@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Walkthrough — MIZ OKI 3.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 10rem 2rem 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: center;
+        }
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; padding-top: 8rem; }
+        }
+        .hero-content h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.25rem, 4vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+        .hero-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Demo Form */
+        .demo-form-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .form-header {
+            margin-bottom: 1.5rem;
+        }
+        .form-header h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 500px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+        .form-submit {
+            margin-top: 1.5rem;
+        }
+        .form-submit .btn {
+            width: 100%;
+            padding: 1rem;
+        }
+        .form-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Video Preview Section */
+        .video-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .video-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .video-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .video-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .video-header p {
+            color: var(--text-secondary);
+        }
+        .video-player {
+            aspect-ratio: 16/9;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .video-play-btn {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .video-play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px var(--glow-cyan);
+        }
+        .video-play-btn::after {
+            content: '▶';
+            font-size: 1.5rem;
+            color: var(--bg-primary);
+            margin-left: 4px;
+        }
+        .video-duration {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.8);
+            padding: 0.3rem 0.75rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .video-chapters {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        @media (max-width: 800px) {
+            .video-chapters { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .video-chapters { grid-template-columns: 1fr; }
+        }
+        .chapter-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chapter-card:hover {
+            border-color: var(--accent-cyan);
+        }
+        .chapter-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+        .chapter-title {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        /* What You'll See Section */
+        .agenda-section {
+            padding: 5rem 2rem;
+        }
+        .agenda-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .agenda-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .agenda-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .agenda-header p {
+            color: var(--text-secondary);
+        }
+        .agenda-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 800px) {
+            .agenda-grid { grid-template-columns: 1fr; }
+        }
+        .agenda-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .agenda-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        .agenda-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        .agenda-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .agenda-card ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        .agenda-card li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 0.3rem 0;
+        }
+        .agenda-card li::before {
+            content: '→';
+            color: var(--accent-cyan);
+        }
+
+        /* Testimonial */
+        .testimonial-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .testimonial-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .testimonial-quote {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+        .testimonial-quote::before {
+            content: '"';
+            color: var(--accent-cyan);
+        }
+        .testimonial-quote::after {
+            content: '"';
+            color: var(--accent-cyan);
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        .testimonial-info {
+            text-align: left;
+        }
+        .testimonial-name {
+            font-weight: 500;
+        }
+        .testimonial-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 2rem;
+        }
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .faq-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+        }
+        .faq-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .faq-question:hover {
+            background: var(--bg-tertiary);
+        }
+        .faq-question::after {
+            content: '+';
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+        .faq-item.open .faq-question::after {
+            content: '−';
+        }
+        .faq-answer {
+            display: none;
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: var(--bg-secondary);
+            text-align: center;
+        }
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-container h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-container p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-buttons .btn {
+            padding: 0.9rem 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            max-width: 280px;
+        }
+        .footer-col h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="how-it-works.html">How It Works</a>
+                <a href="platform.html">Platform</a>
+                <a href="security.html">Security</a>
+                <a href="industries.html">Industries</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="case-studies.html">Case Studies</a>
+                <a href="/blog/">Blog</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>See Verifiable Autonomous Decision Intelligence in Action</h1>
+            <p>In 30 minutes, we'll show you how MIZ OKI 3.5 transforms decision-making with the SRDPV-DAL pipeline, Decision Control Plane, and full validation before execution.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">30 min</div>
+                    <div class="hero-stat-label">Custom Demo</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">2-4 wks</div>
+                    <div class="hero-stat-label">To Production</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">63×</div>
+                    <div class="hero-stat-label">Faster Decisions</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-form-container">
+            <div class="form-header">
+                <h2>Request Your Demo</h2>
+                <p>Fill out the form and we'll schedule a custom walkthrough</p>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Work Email *</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Company *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Industry *</label>
+                    <select required>
+                        <option value="">Select your industry</option>
+                        <option value="media">Media Buying / Advertising</option>
+                        <option value="finance">Financial Services</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="retail">Retail</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>What decision-making challenges are you looking to solve?</label>
+                    <textarea placeholder="Tell us about your current pain points..."></textarea>
+                </div>
+                <div class="form-submit">
+                    <button type="submit" class="btn btn-primary">Request Demo</button>
+                </div>
+                <p class="form-note">We'll respond within 24 hours. No sales pressure, no obligation.</p>
+            </form>
+        </div>
+    </section>
+
+    <section class="video-section">
+        <div class="video-container">
+            <div class="video-header">
+                <h2>Watch the 12-Minute Overview</h2>
+                <p>See the platform in action before your custom demo</p>
+            </div>
+            <div class="video-player">
+                <div class="video-play-btn"></div>
+                <span class="video-duration">12:34</span>
+            </div>
+            <div class="video-chapters">
+                <div class="chapter-card">
+                    <div class="chapter-time">0:00</div>
+                    <div class="chapter-title">Platform Introduction</div>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-time">2:15</div>
+                    <div class="chapter-title">SRDPV-DAL Pipeline</div>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-time">5:30</div>
+                    <div class="chapter-title">Decision Control Plane</div>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-time">9:00</div>
+                    <div class="chapter-title">Live Demo Walkthrough</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7-Stage Pipeline Section -->
+    <section style="padding: 3rem 2rem;">
+        <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">The SRDPV-DAL Pipeline</div>
+            <h3 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 1.5rem; font-weight: 400; margin-bottom: 0.5rem;">Seven Stages of Verifiable Autonomous Decision Making</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Every decision flows through this complete pipeline with validation before execution</p>
+            <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem;">
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">📡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">SENSE</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">🧠</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">REASON</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">📋</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">PLAN</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">🔍</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">VALIDATE</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">⚡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">DECIDE</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">🚀</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">ACT</span></div>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+                <div style="text-align: center; padding: 0.4rem 0.8rem;"><span style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">📈</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;">LEARN</span></div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">↺ LEARN feeds outcomes back into SENSE — continuous improvement</p>
+        </div>
+    </section>
+
+    <section class="agenda-section">
+        <div class="agenda-container">
+            <div class="agenda-header">
+                <h2>What We'll Cover in Your Demo</h2>
+                <p>A personalized walkthrough tailored to your industry and challenges</p>
+            </div>
+            <div class="agenda-grid">
+                <div class="agenda-card">
+                    <div class="agenda-number">01</div>
+                    <h3>Your Decision Challenges</h3>
+                    <p>We start by understanding your current pain points and decision-making bottlenecks.</p>
+                    <ul>
+                        <li>Current decision latency</li>
+                        <li>Revenue leakage sources</li>
+                        <li>Team bandwidth constraints</li>
+                    </ul>
+                </div>
+                <div class="agenda-card">
+                    <div class="agenda-number">02</div>
+                    <h3>Platform Capabilities</h3>
+                    <p>See how the 7-stage SRDPV-DAL pipeline and Decision Control Plane work together.</p>
+                    <ul>
+                        <li>Live decision workflow</li>
+                        <li>Validation Layer in action</li>
+                        <li>Counterfactual simulations</li>
+                    </ul>
+                </div>
+                <div class="agenda-card">
+                    <div class="agenda-number">03</div>
+                    <h3>Your Implementation Path</h3>
+                    <p>A concrete roadmap from today to measurable results.</p>
+                    <ul>
+                        <li>2-4 week deployment timeline</li>
+                        <li>Integration requirements</li>
+                        <li>Custom ROI projections</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="testimonial-container">
+            <p class="testimonial-quote">The demo showed us exactly how MIZ OKI would handle our specific media buying challenges. Within 20 minutes, I understood how we could reduce Learning Limited campaigns by 70%. We signed within the week.</p>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">VP</div>
+                <div class="testimonial-info">
+                    <div class="testimonial-name">VP of Growth</div>
+                    <div class="testimonial-title">Fortune 500 DTC Brand</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="faq-container">
+            <div class="faq-header">
+                <h2>Demo FAQ</h2>
+            </div>
+
+            <div class="faq-item open">
+                <div class="faq-question">How long is the demo?</div>
+                <div class="faq-answer">
+                    The standard demo is 30 minutes: 10 minutes understanding your challenges, 15 minutes showing the platform, and 5 minutes discussing next steps. We can extend to 45-60 minutes for deeper technical dives.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Who should attend?</div>
+                <div class="faq-answer">
+                    We recommend including the primary decision-maker and anyone who would use the platform daily. Common attendees include: VP/Director of Operations, Head of Marketing/Growth, CTO/Technical Lead, and Finance/Analytics leads.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Can I see a demo with my own data?</div>
+                <div class="faq-answer">
+                    Yes! For qualified prospects, we can set up a proof-of-concept with your actual data. This typically happens after the initial demo and requires a brief technical discovery call to understand your data sources.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">What do I need to prepare?</div>
+                <div class="faq-answer">
+                    Nothing required, but it helps to have a rough idea of your annual revenue, number of decisions made monthly, current decision latency, and key pain points you're trying to solve.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Is there any obligation after the demo?</div>
+                <div class="faq-answer">
+                    None whatsoever. We believe in demonstrating value without pressure. If MIZ OKI isn't the right fit, we'll tell you honestly. Our goal is to help you understand whether autonomous decision intelligence makes sense for your organization.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to See the Platform?</h2>
+            <p>Schedule your demo or explore our resources at your own pace</p>
+            <div class="cta-buttons">
+                <a href="#" onclick="document.querySelector('.demo-form-container input').focus(); window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn btn-primary">Schedule Demo</a>
+                <a href="roi.html" class="btn btn-ghost">Calculate ROI First</a>
+                <a href="case-studies.html" class="btn btn-ghost">Read Case Studies</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+                    <p>Verifiable Autonomous Decision Intelligence. Decisions verified before execution—not explained after failure.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <a href="how-it-works.html">How It Works</a>
+                    <a href="platform.html">Architecture</a>
+                    <a href="security.html">Security</a>
+                    <a href="industries.html">Industries</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="case-studies.html">Case Studies</a>
+                <a href="/blog/">Blog</a>
+                    <a href="resources.html">Documentation</a>
+                    <a href="roi.html">ROI Calculator</a>
+                    <a href="#">API Reference</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+    </script>
+</body>
+</html>

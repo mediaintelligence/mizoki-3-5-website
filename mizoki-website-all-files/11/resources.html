@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources — MIZ OKI 3.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --border: rgba(255,255,255,0.08);
+            --glow-blue: rgba(79, 143, 255, 0.15);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a.active { color: var(--accent-cyan); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--glow-cyan);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, var(--glow-cyan) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .page-header p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search Bar */
+        .search-section {
+            padding: 0 2rem 3rem;
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .search-box {
+            display: flex;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+        .search-box input:focus {
+            outline: none;
+        }
+        .search-box button {
+            padding: 1rem 1.5rem;
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .search-box button:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        /* Resource Categories */
+        .categories-section {
+            padding: 2rem 2rem 4rem;
+        }
+        .categories-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        @media (max-width: 900px) {
+            .categories-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .categories-grid { grid-template-columns: 1fr; }
+        }
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .category-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+        }
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .category-card h3 {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .category-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Documentation Section */
+        .docs-section {
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .docs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            margin-bottom: 2rem;
+        }
+        .section-header h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+        }
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .docs-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .docs-grid { grid-template-columns: 1fr; }
+        }
+        .doc-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .doc-card:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .doc-type {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .doc-card h3 {
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .doc-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .doc-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Whitepapers Section */
+        .whitepapers-section {
+            padding: 4rem 2rem;
+        }
+        .whitepapers-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .whitepaper-card {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        @media (max-width: 700px) {
+            .whitepaper-card { grid-template-columns: 1fr; }
+        }
+        .whitepaper-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-4px);
+        }
+        .whitepaper-preview {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            aspect-ratio: 8.5/11;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .whitepaper-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .whitepaper-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(168, 85, 247, 0.15);
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            width: fit-content;
+            margin-bottom: 1rem;
+        }
+        .whitepaper-card h3 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        .whitepaper-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        .whitepaper-meta {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .whitepaper-cta {
+            margin-top: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-purple);
+            font-weight: 500;
+        }
+
+        /* API Reference Section */
+        .api-section {
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .api-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .api-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 800px) {
+            .api-hero { grid-template-columns: 1fr; }
+        }
+        .api-intro h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .api-intro p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .api-features {
+            list-style: none;
+        }
+        .api-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .api-features li::before {
+            content: '✓';
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        .api-code {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .api-code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border);
+        }
+        .api-code-lang {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+        }
+        .api-code-copy {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .api-code pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .api-code .comment { color: var(--text-muted); }
+        .api-code .keyword { color: var(--accent-purple); }
+        .api-code .string { color: var(--accent-green); }
+        .api-code .property { color: var(--accent-cyan); }
+        .api-endpoints {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        @media (max-width: 800px) {
+            .api-endpoints { grid-template-columns: 1fr; }
+        }
+        .endpoint-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .endpoint-method.get { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .endpoint-method.post { background: rgba(79, 143, 255, 0.2); color: var(--accent-blue); }
+        .endpoint-method.put { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .endpoint-method.delete { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .endpoint-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Video Tutorials */
+        .tutorials-section {
+            padding: 4rem 2rem;
+        }
+        .tutorials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .tutorials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .tutorials-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .tutorials-grid { grid-template-columns: 1fr; }
+        }
+        .tutorial-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .tutorial-card:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-4px);
+        }
+        .tutorial-thumbnail {
+            aspect-ratio: 16/9;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .tutorial-thumbnail::after {
+            content: '▶';
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 212, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--bg-primary);
+            padding-left: 4px;
+        }
+        .tutorial-duration {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.8);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-primary);
+        }
+        .tutorial-content {
+            padding: 1.25rem;
+        }
+        .tutorial-series {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .tutorial-card h3 {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .tutorial-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Newsletter */
+        .newsletter-section {
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .newsletter-container {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .newsletter-container h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .newsletter-container p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        @media (max-width: 500px) {
+            .newsletter-form { flex-direction: column; }
+        }
+        .newsletter-form input {
+            padding: 0.9rem 1.25rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            min-width: 300px;
+        }
+        .newsletter-form input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+        .newsletter-form button {
+            padding: 0.9rem 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            max-width: 280px;
+        }
+        .footer-col h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/11/" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="/11/how-it-works.html">How It Works</a>
+                <a href="/11/platform.html">Platform</a>
+                <a href="/11/security.html">Security</a>
+                <a href="/11/industries.html">Industries</a>
+                <a href="/11/pricing.html">Pricing</a>
+                <a href="/11/case-studies.html">Case Studies</a>
+                <a href="/blog/">Blog</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/11/roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="/11/walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1>Resources & Documentation</h1>
+            <p>Everything you need to understand, implement, and optimize MIZ OKI 3.5</p>
+        </div>
+    </section>
+
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation, guides, and resources...">
+                <button>Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories-section">
+        <div class="categories-container">
+            <div class="categories-grid">
+                <a href="#docs" class="category-card">
+                    <div class="category-icon">📚</div>
+                    <h3>Documentation</h3>
+                    <p>Technical guides and references</p>
+                </a>
+                <a href="#whitepapers" class="category-card">
+                    <div class="category-icon">📄</div>
+                    <h3>Whitepapers</h3>
+                    <p>Deep dives and research</p>
+                </a>
+                <a href="#api" class="category-card">
+                    <div class="category-icon">⚡</div>
+                    <h3>API Reference</h3>
+                    <p>Endpoints and SDKs</p>
+                </a>
+                <a href="#tutorials" class="category-card">
+                    <div class="category-icon">🎬</div>
+                    <h3>Video Tutorials</h3>
+                    <p>Step-by-step walkthroughs</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-section" id="docs">
+        <div class="docs-container">
+            <div class="section-header">
+                <h2>Documentation</h2>
+                <p>Technical guides for every stage of your journey</p>
+            </div>
+            <div class="docs-grid">
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Getting Started</div>
+                    <h3>Quick Start Guide</h3>
+                    <p>Deploy your first autonomous decision workflow in under 30 minutes</p>
+                    <div class="doc-meta">
+                        <span>15 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Architecture</div>
+                    <h3>SRDPV-DAL Pipeline Deep Dive</h3>
+                    <p>Complete technical reference for the 7-stage autonomous decision pipeline</p>
+                    <div class="doc-meta">
+                        <span>45 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Architecture</div>
+                    <h3>Decision Control Plane</h3>
+                    <p>How the DCP separates action proposal from authorization</p>
+                    <div class="doc-meta">
+                        <span>30 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Integration</div>
+                    <h3>Data Source Connectors</h3>
+                    <p>Connect your CRM, ERP, advertising platforms, and data warehouses</p>
+                    <div class="doc-meta">
+                        <span>25 min read</span>
+                        <span>Updated Dec 2025</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Configuration</div>
+                    <h3>Policy Governance Setup</h3>
+                    <p>Define authorization thresholds, risk limits, and compliance constraints</p>
+                    <div class="doc-meta">
+                        <span>35 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Operations</div>
+                    <h3>Monitoring & Observability</h3>
+                    <p>Track decision performance, audit logs, and system health</p>
+                    <div class="doc-meta">
+                        <span>20 min read</span>
+                        <span>Updated Dec 2025</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Advanced</div>
+                    <h3>Custom ADC Development</h3>
+                    <p>Build domain-specific Autonomous Decision Controllers</p>
+                    <div class="doc-meta">
+                        <span>60 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Advanced</div>
+                    <h3>Causal GraphRAG Tuning</h3>
+                    <p>Optimize causal discovery and confounder detection</p>
+                    <div class="doc-meta">
+                        <span>40 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+                <a href="#" class="doc-card">
+                    <div class="doc-type">Security</div>
+                    <h3>Quantum-Resistant Encryption</h3>
+                    <p>Implementation guide for CRYSTALS-Kyber and Dilithium</p>
+                    <div class="doc-meta">
+                        <span>25 min read</span>
+                        <span>Updated Jan 2026</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="whitepapers-section" id="whitepapers">
+        <div class="whitepapers-container">
+            <div class="section-header">
+                <h2>Whitepapers & Research</h2>
+                <p>In-depth analysis and technical foundations</p>
+            </div>
+
+            <a href="#" class="whitepaper-card">
+                <div class="whitepaper-preview">[PDF Preview]</div>
+                <div class="whitepaper-content">
+                    <div class="whitepaper-badge">Featured Research</div>
+                    <h3>Verifiable Autonomous Decision Intelligence: A New Paradigm</h3>
+                    <p>This foundational paper introduces the concept of separating action proposal from authorization in autonomous AI systems. We present the Decision Control Plane architecture and demonstrate how verified autonomy achieves 50-75× improvement in decision velocity while maintaining full auditability.</p>
+                    <div class="whitepaper-meta">
+                        <span>32 pages</span>
+                        <span>January 2026</span>
+                        <span>Boris Mizhen</span>
+                    </div>
+                    <div class="whitepaper-cta">Download PDF →</div>
+                </div>
+            </a>
+
+            <a href="#" class="whitepaper-card">
+                <div class="whitepaper-preview">[PDF Preview]</div>
+                <div class="whitepaper-content">
+                    <div class="whitepaper-badge">Technical Deep Dive</div>
+                    <h3>Temporal-Causal Knowledge Graphs for Enterprise Decision Memory</h3>
+                    <p>Traditional knowledge graphs store facts. The TCO-KG stores decisions—proposals, simulations, validations, and outcomes with temporal validity and causal confidence. This paper details the architecture and demonstrates 99.5% entity resolution accuracy.</p>
+                    <div class="whitepaper-meta">
+                        <span>28 pages</span>
+                        <span>December 2025</span>
+                        <span>Technical Team</span>
+                    </div>
+                    <div class="whitepaper-cta">Download PDF →</div>
+                </div>
+            </a>
+
+            <a href="#" class="whitepaper-card">
+                <div class="whitepaper-preview">[PDF Preview]</div>
+                <div class="whitepaper-content">
+                    <div class="whitepaper-badge">Industry Application</div>
+                    <h3>The ReLU Lens: Threshold-Aware Media Buying</h3>
+                    <p>Meta's advertising algorithms exhibit non-linear, threshold-driven behavior that mirrors ReLU activation functions. This paper presents a practical framework for threshold-aware media buying that reduces Learning Limited incidents by 68%.</p>
+                    <div class="whitepaper-meta">
+                        <span>18 pages</span>
+                        <span>January 2026</span>
+                        <span>Media Buying Team</span>
+                    </div>
+                    <div class="whitepaper-cta">Download PDF →</div>
+                </div>
+            </a>
+
+            <a href="#" class="whitepaper-card">
+                <div class="whitepaper-preview">[PDF Preview]</div>
+                <div class="whitepaper-content">
+                    <div class="whitepaper-badge">Security Architecture</div>
+                    <h3>Quantum-Resistant Security for Autonomous AI Systems</h3>
+                    <p>As quantum computing advances, today's encryption becomes tomorrow's vulnerability. This paper details our implementation of NIST-standardized post-quantum cryptography for securing autonomous decision systems.</p>
+                    <div class="whitepaper-meta">
+                        <span>24 pages</span>
+                        <span>November 2025</span>
+                        <span>Security Team</span>
+                    </div>
+                    <div class="whitepaper-cta">Download PDF →</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section class="api-section" id="api">
+        <div class="api-container">
+            <div class="api-hero">
+                <div class="api-intro">
+                    <h2>API Reference</h2>
+                    <p>Integrate MIZ OKI 3.5 into your existing systems with our comprehensive REST API. Full OpenAPI specification, SDKs for major languages, and real-time webhooks.</p>
+                    <ul class="api-features">
+                        <li>RESTful API with JSON responses</li>
+                        <li>OAuth 2.0 authentication</li>
+                        <li>Rate limiting with generous quotas</li>
+                        <li>Webhooks for real-time events</li>
+                        <li>SDKs for Python, Node.js, Go, Java</li>
+                        <li>OpenAPI 3.0 specification</li>
+                    </ul>
+                </div>
+                <div class="api-code">
+                    <div class="api-code-header">
+                        <span class="api-code-lang">Python</span>
+                        <button class="api-code-copy">Copy</button>
+                    </div>
+                    <pre><span class="keyword">from</span> mizoki <span class="keyword">import</span> Client
+
+<span class="comment"># Initialize client</span>
+client = Client(api_key=<span class="string">"your_api_key"</span>)
+
+<span class="comment"># Submit a decision request</span>
+decision = client.decisions.create(
+    <span class="property">domain</span>=<span class="string">"media_buying"</span>,
+    <span class="property">action_type</span>=<span class="string">"budget_adjustment"</span>,
+    <span class="property">parameters</span>={
+        <span class="string">"campaign_id"</span>: <span class="string">"camp_123"</span>,
+        <span class="string">"adjustment"</span>: <span class="string">"+15%"</span>
+    },
+    <span class="property">require_simulation</span>=<span class="keyword">True</span>
+)
+
+<span class="comment"># Check authorization status</span>
+<span class="keyword">if</span> decision.status == <span class="string">"authorized"</span>:
+    <span class="keyword">print</span>(f<span class="string">"Executing: {decision.id}"</span>)</pre>
+                </div>
+            </div>
+
+            <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">Core Endpoints</h3>
+            <div class="api-endpoints">
+                <div class="endpoint-card">
+                    <span class="endpoint-method post">POST</span>
+                    <div class="endpoint-path">/v1/decisions</div>
+                    <p class="endpoint-desc">Submit a new decision for validation and authorization</p>
+                </div>
+                <div class="endpoint-card">
+                    <span class="endpoint-method get">GET</span>
+                    <div class="endpoint-path">/v1/decisions/{id}</div>
+                    <p class="endpoint-desc">Retrieve decision status, validation results, and audit trail</p>
+                </div>
+                <div class="endpoint-card">
+                    <span class="endpoint-method get">GET</span>
+                    <div class="endpoint-path">/v1/simulations/{id}</div>
+                    <p class="endpoint-desc">Get counterfactual simulation results and comparisons</p>
+                </div>
+                <div class="endpoint-card">
+                    <span class="endpoint-method post">POST</span>
+                    <div class="endpoint-path">/v1/knowledge/query</div>
+                    <p class="endpoint-desc">Query the Temporal-Causal Knowledge Graph</p>
+                </div>
+                <div class="endpoint-card">
+                    <span class="endpoint-method get">GET</span>
+                    <div class="endpoint-path">/v1/audit/logs</div>
+                    <p class="endpoint-desc">Retrieve immutable audit logs for compliance</p>
+                </div>
+                <div class="endpoint-card">
+                    <span class="endpoint-method put">PUT</span>
+                    <div class="endpoint-path">/v1/policies/{id}</div>
+                    <p class="endpoint-desc">Update policy constraints and authorization thresholds</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="tutorials-section" id="tutorials">
+        <div class="tutorials-container">
+            <div class="section-header">
+                <h2>Video Tutorials</h2>
+                <p>Step-by-step guides from our implementation team</p>
+            </div>
+            <div class="tutorials-grid">
+                <a href="#" class="tutorial-card">
+                    <div class="tutorial-thumbnail">
+                        <span class="tutorial-duration">12:34</span>
+                    </div>
+                    <div class="tutorial-content">
+                        <div class="tutorial-series">Getting Started</div>
+                        <h3>Platform Overview & First Decision</h3>
+                        <p>Navigate the dashboard and submit your first autonomous decision</p>
+                    </div>
+                </a>
+                <a href="#" class="tutorial-card">
+                    <div class="tutorial-thumbnail">
+                        <span class="tutorial-duration">18:45</span>
+                    </div>
+                    <div class="tutorial-content">
+                        <div class="tutorial-series">Configuration</div>
+                        <h3>Setting Up Policy Constraints</h3>
+                        <p>Define authorization thresholds, risk limits, and escalation rules</p>
+                    </div>
+                </a>
+                <a href="#" class="tutorial-card">
+                    <div class="tutorial-thumbnail">
+                        <span class="tutorial-duration">24:12</span>
+                    </div>
+                    <div class="tutorial-content">
+                        <div class="tutorial-series">Integration</div>
+                        <h3>Connecting Data Sources</h3>
+                        <p>Integrate CRM, advertising platforms, and data warehouses</p>
+                    </div>
+                </a>
+                <a href="#" class="tutorial-card">
+                    <div class="tutorial-thumbnail">
+                        <span class="tutorial-duration">31:08</span>
+                    </div>
+                    <div class="tutorial-content">
+                        <div class="tutorial-series">Advanced</div>
+                        <h3>Understanding the Validation Layer</h3>
+                        <p>How Planner, Verifier, Risk, and Policy agents evaluate decisions</p>
+                    </div>
+                </a>
+                <a href="#" class="tutorial-card">
+                    <div class="tutorial-thumbnail">
+                        <span class="tutorial-duration">22:56</span>
+                    </div>
+                    <div class="tutorial-content">
+                        <div class="tutorial-series">Media Buying</div>
+                        <h3>ReLU-Aware Campaign Optimization</h3>
+                        <p>Apply threshold-aware strategies to your Meta campaigns</p>
+                    </div>
+                </a>
+                <a href="#" class="tutorial-card">
+                    <div class="tutorial-thumbnail">
+                        <span class="tutorial-duration">15:23</span>
+                    </div>
+                    <div class="tutorial-content">
+                        <div class="tutorial-series">Compliance</div>
+                        <h3>Audit Logs & Regulatory Reporting</h3>
+                        <p>Generate compliance reports and access decision audit trails</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter-section">
+        <div class="newsletter-container">
+            <h2>Stay Updated</h2>
+            <p>Get the latest MIZ OKI updates, technical insights, and industry research delivered to your inbox</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email">
+                <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/11/" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+                    <p>Verifiable Autonomous Decision Intelligence. Decisions verified before execution—not explained after failure.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <a href="/11/how-it-works.html">How It Works</a>
+                    <a href="/11/platform.html">Architecture</a>
+                    <a href="/11/security.html">Security</a>
+                    <a href="/11/industries.html">Industries</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="/11/case-studies.html">Case Studies</a>
+                <a href="/blog/">Blog</a>
+                    <a href="/11/resources.html">Documentation</a>
+                    <a href="/11/roi.html">ROI Calculator</a>
+                    <a href="#">API Reference</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified • GDPR Compliant • HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
