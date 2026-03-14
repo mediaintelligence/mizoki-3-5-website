@@ -94,6 +94,7 @@ mizoki-website/
 - Integrated Boss Agent Skills and updated MCP-compatible interfaces.
 - Synchronized deployment and control planes across Cells 1-34.
 - Handled merging of sub-PRs for pipeline correction and UI optimization.
+- Addressed Google Cloud networking by repointing the Global External HTTPS Load Balancer (`mizoki-lb`) to a new Serverless Network Endpoint Group (NEG) hooked to the canonical `mizoki-website` Cloud Run deployment, securing a single source of truth.
 
 ### Canonical Blog Routing via Flask
 Migrated legacy subdomain-dependent blogs to canonical main-domain paths internally using Python/Flask (`app.py`):

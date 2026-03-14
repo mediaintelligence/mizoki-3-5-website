@@ -11,6 +11,7 @@ Verifiable Autonomous Decision Intelligence Platform Website
 - Temporal-Causal Knowledge Graph (TCO-KG)
 
 **Recent Updates:**
+- Migrated domain infrastructure to point Google Cloud Global External Load Balancer (mizoki-lb) over to a native Serverless Network Endpoint Group (NEG) hooked to the updated Cloud Run service.
 - Integrated Boss Agent Skills and updated MCP-compatible interfaces across the 7-stage pipeline.
 - Synchronized deployment paths for end-to-end orchestration across Cells 1-34.
 - Restructured site to use a robust Python/Flask routing engine (`app.py`).
