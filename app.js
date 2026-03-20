@@ -210,26 +210,34 @@
   const navLinks = document.querySelectorAll('.nav-links a, .mobile-menu a');
 
   // Scroll effect on nav
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-  });
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+  }
 
   // Hamburger toggle
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileMenu.classList.toggle('open');
-    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
-  });
+  if (hamburger && mobileMenu) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+  }
 
   // Close mobile menu on link click
   document.querySelectorAll('.mobile-menu a').forEach(link => {
     link.addEventListener('click', () => {
-      hamburger.classList.remove('open');
-      mobileMenu.classList.remove('open');
+      if (hamburger) {
+        hamburger.classList.remove('open');
+      }
+      if (mobileMenu) {
+        mobileMenu.classList.remove('open');
+      }
       document.body.style.overflow = '';
     });
   });
@@ -252,7 +260,9 @@
       }
     });
   }
-  window.addEventListener('scroll', updateActiveLink);
+  if (sections.length) {
+    window.addEventListener('scroll', updateActiveLink);
+  }
 
   // ---- SCROLL REVEAL ----
   const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
@@ -353,7 +363,15 @@
   });
 
   // Run initial calculation
-  calculateROI();
+  const hasRoiCalculator = roiInputs.every(id => document.getElementById(id)) &&
+    document.getElementById('roi-out-leakage') &&
+    document.getElementById('roi-out-savings') &&
+    document.getElementById('roi-out-total') &&
+    document.getElementById('roi-out-payback');
+
+  if (hasRoiCalculator) {
+    calculateROI();
+  }
 
   // ---- BLOG ----
   function renderBlog() {
@@ -394,6 +412,8 @@
     const modal = document.getElementById('blogModal');
     const content = document.getElementById('blogModalContent');
 
+    if (!modal || !content) return;
+
     content.innerHTML = `
       <div class="blog-category"><span class="badge">${post.category}</span></div>
       <h2>${post.title}</h2>
@@ -415,14 +435,21 @@
 
   function closeBlogModal() {
     const modal = document.getElementById('blogModal');
+    if (!modal) return;
     modal.classList.remove('open');
     document.body.style.overflow = '';
   }
 
-  document.getElementById('blogModalClose').addEventListener('click', closeBlogModal);
-  document.getElementById('blogModal').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeBlogModal();
-  });
+  const blogModalClose = document.getElementById('blogModalClose');
+  const blogModal = document.getElementById('blogModal');
+  if (blogModalClose) {
+    blogModalClose.addEventListener('click', closeBlogModal);
+  }
+  if (blogModal) {
+    blogModal.addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeBlogModal();
+    });
+  }
 
   // Close modal on Escape key
   document.addEventListener('keydown', (e) => {
@@ -442,10 +469,12 @@
       loginPassword.type = type;
       // Toggle eye icon
       const eyeIcon = document.getElementById('eyeIcon');
-      if (type === 'text') {
-        eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-      } else {
-        eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      if (eyeIcon) {
+        if (type === 'text') {
+          eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        } else {
+          eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
       }
     });
   }
@@ -488,6 +517,7 @@
   // ---- SRPVDAL ANIMATION ----
   function animateSRPVDAL() {
     const nodes = document.querySelectorAll('.srpvdal-node circle:first-child');
+    if (!nodes.length) return;
     let current = 0;
 
     setInterval(() => {

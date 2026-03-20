@@ -1,8 +1,19 @@
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY *.html /usr/share/nginx/html/
-COPY *.css /usr/share/nginx/html/
-COPY assets/ /usr/share/nginx/html/assets/
-COPY app.js /usr/share/nginx/html/
+FROM python:3.13-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8080
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+RUN useradd --create-home --shell /usr/sbin/nologin appuser && chown -R appuser:appuser /app
+
+USER appuser
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--timeout", "60", "app:app"]

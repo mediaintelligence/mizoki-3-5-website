@@ -91,7 +91,8 @@ mizoki-website/
 ## Recent Work (March 2026)
 
 ### Boss Agent & MCP Integration
-- Integrated Boss Agent Skills and updated MCP-compatible interfaces.
+- Added a concrete Boss Agent runtime with MCP-style tool registration, skill memory, and decision traces in `mizoki_runtime/runtime.py`.
+- Exposed discovery and execution endpoints through Flask (`/api/mcp/*`, `/api/boss/*`).
 - Synchronized deployment and control planes across Cells 1-34.
 - Handled merging of sub-PRs for pipeline correction and UI optimization.
 - Addressed Google Cloud networking by repointing the Global External HTTPS Load Balancer (`mizoki-lb`) to a new Serverless Network Endpoint Group (NEG) hooked to the canonical `mizoki-website` Cloud Run deployment, securing a single source of truth.

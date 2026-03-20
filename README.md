@@ -12,7 +12,8 @@ Verifiable Autonomous Decision Intelligence Platform Website
 
 **Recent Updates:**
 - Migrated domain infrastructure to point Google Cloud Global External Load Balancer (mizoki-lb) over to a native Serverless Network Endpoint Group (NEG) hooked to the updated Cloud Run service.
-- Integrated Boss Agent Skills and updated MCP-compatible interfaces across the 7-stage pipeline.
+- Added a real Python-based Boss Agent runtime with MCP-style tool registration, skill memory, tool aliases, GraphRAG retrieval, and knowledge-graph-aware routing.
+- Exposed Boss/MCP capabilities through Flask JSON APIs for discovery, tool execution, skill learning, and decision traces.
 - Synchronized deployment paths for end-to-end orchestration across Cells 1-34.
 - Restructured site to use a robust Python/Flask routing engine (`app.py`).
 - Implemented canonical URL resolving for the corporate blog directly under `/blog/` on the main domain.
@@ -133,7 +134,10 @@ mizoki-website/
 │   ├── css/
 │   ├── img/
 │   └── pdf/
-├── app.py                  # Core Flask application and routing engine
+├── app.py                  # Core Flask application, page routing, and Boss/MCP APIs
+├── mizoki_runtime/
+│   ├── __init__.py
+│   └── runtime.py          # Boss agent runtime, MCP registry, GraphRAG, and KG integration
 ├── requirements.txt        # Python pip dependencies
 ├── Dockerfile              # Container definition (runs `app.py` with gunicorn)
 ├── cloudbuild.yaml         # Cloud Build deployment config
@@ -200,6 +204,18 @@ gcloud run services logs read mizoki-website --region us-central1 --limit=50
 - Documentation: [resources.html](resources.html)
 - Demo Request: [walkthrough.html](walkthrough.html)
 - Contact: sales@mizoki.com
+
+### Boss Agent and MCP APIs
+
+The Flask app now exposes a concrete Boss/MCP surface:
+
+- `GET /api/health`
+- `GET /api/mcp/tools`
+- `POST /api/mcp/call`
+- `GET /api/boss/discover`
+- `POST /api/boss/skills/learn`
+- `POST /api/boss/execute`
+- `GET /api/boss/traces`
 
 ---
 
