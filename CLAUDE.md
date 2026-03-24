@@ -57,6 +57,12 @@ mizoki-website/
 │   └── pdf/                      # Downloadable resources
 │
 ├── app.py                        # Python/Flask routing engine
+├── mizoki_runtime/
+│   ├── __init__.py
+│   └── runtime.py                # Boss runtime, MCP registry, GraphRAG, KG, and graph-native SRPVDAL loop
+├── tests/
+│   ├── test_app.py               # Flask API coverage
+│   └── test_runtime.py           # Boss/MCP runtime coverage
 ├── requirements.txt              # Python dependencies
 ├── Dockerfile                    # Container definition (Gunicorn)
 ├── nginx.conf                    # Legacy Nginx config (deprecated)
@@ -93,9 +99,17 @@ mizoki-website/
 ### Boss Agent & MCP Integration
 - Added a concrete Boss Agent runtime with MCP-style tool registration, skill memory, and decision traces in `mizoki_runtime/runtime.py`.
 - Exposed discovery and execution endpoints through Flask (`/api/mcp/*`, `/api/boss/*`).
+- Added a graph-native decision intelligence layer in `mizoki_runtime/runtime.py` that runs SRPVDAL with GraphRAG retrieval, KG grounding, counterfactual simulation, and subagent recommendations.
+- Added direct graph-native APIs at `/api/boss/graph/subagents`, `/api/boss/graph/context`, `/api/boss/graph/simulate`, and `/api/boss/graph/loop`.
+- Added loop-to-skill promotion through `skills.learn_from_loop` and `/api/boss/skills/learn-from-loop`.
 - Synchronized deployment and control planes across Cells 1-34.
 - Handled merging of sub-PRs for pipeline correction and UI optimization.
 - Addressed Google Cloud networking by repointing the Global External HTTPS Load Balancer (`mizoki-lb`) to a new Serverless Network Endpoint Group (NEG) hooked to the canonical `mizoki-website` Cloud Run deployment, securing a single source of truth.
+
+### Integration Note
+- Prior planning referenced `boss_agent_core.py` and external MCP registration blocks from a different repository shape.
+- In this repo, the actual Boss/KG/GraphRAG integration point is the Flask runtime in `mizoki_runtime/runtime.py` plus the API layer in `app.py`.
+- Any future graph-native or Boss-agent work should land there unless this repository gains the separate agent-service layout.
 
 ### Canonical Blog Routing via Flask
 Migrated legacy subdomain-dependent blogs to canonical main-domain paths internally using Python/Flask (`app.py`):

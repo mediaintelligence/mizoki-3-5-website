@@ -45,6 +45,18 @@ def _normalize_tokens(value: str) -> list[str]:
     return [token for token in tokens if token not in STOP_WORDS]
 
 
+def _contains_phrase(value: str, phrase: str) -> bool:
+    words = re.findall(r"[a-z0-9]+", phrase.lower())
+    if not words:
+        return False
+    pattern = r"\b" + r"[\W_]+".join(re.escape(word) for word in words) + r"\b"
+    return bool(re.search(pattern, value.lower()))
+
+
+def _contains_any_phrase(value: str, phrases: tuple[str, ...] | list[str]) -> bool:
+    return any(_contains_phrase(value, phrase) for phrase in phrases)
+
+
 def _strip_markup(raw_text: str) -> str:
     without_blocks = re.sub(r"(?is)<(script|style).*?>.*?</\1>", " ", raw_text)
     without_tags = re.sub(r"(?s)<[^>]+>", " ", without_blocks)
@@ -74,6 +86,22 @@ def _require_non_empty_string(value: Any, field_name: str) -> str:
     if not cleaned:
         raise ValueError(f"{field_name} must not be empty")
     return cleaned
+
+
+def _require_bounded_integer(
+    value: Any,
+    field_name: str,
+    *,
+    minimum: int = 1,
+    maximum: int | None = None,
+) -> int:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{field_name} must be an integer")
+    if value < minimum:
+        raise ValueError(f"{field_name} must be at least {minimum}")
+    if maximum is not None and value > maximum:
+        raise ValueError(f"{field_name} must be at most {maximum}")
+    return value
 
 
 def _clean_string_list(values: Any, field_name: str, minimum: int = 0) -> list[str]:
@@ -514,6 +542,69 @@ GRAPH_EDGES = (
     ("srpvdal", "contains", "learn"),
 )
 
+GRAPH_NATIVE_STAGE_ORDER = ("sense", "reason", "plan", "validate", "decide", "act", "learn")
+
+GRAPH_NATIVE_STAGE_KEYWORDS = {
+    "sense": ("sense", "observe", "ingest", "signal", "context"),
+    "reason": ("reason", "analyze", "diagnose", "why", "causal"),
+    "plan": ("plan", "strategy", "option", "roadmap"),
+    "validate": ("validate", "verify", "check", "guardrail", "policy"),
+    "decide": ("decide", "decision", "authorize", "approve"),
+    "act": ("act", "execute", "ship", "launch", "deploy"),
+    "learn": ("learn", "feedback", "improve", "memory"),
+}
+
+GRAPH_NATIVE_SUBAGENTS = (
+    {
+        "subagent_id": "subagent.sense_graph",
+        "stage": "sense",
+        "name": "Sense Graph Cell",
+        "responsibility": "Collect GraphRAG evidence, identify matching entities, and build the initial graph state.",
+        "preferred_tools": ("gndi.inspect_context", "graphrag.query", "kg.describe_entity"),
+        "triggers": ("sense", "context", "evidence", "signals", "graphrag"),
+    },
+    {
+        "subagent_id": "subagent.reason_causal",
+        "stage": "reason",
+        "name": "Reason Causal Cell",
+        "responsibility": "Traverse graph relationships and surface plausible drivers, dependencies, and explanations.",
+        "preferred_tools": ("gndi.run_decision_loop", "kg.list_neighbors", "decision.explain_pipeline"),
+        "triggers": ("reason", "causal", "why", "dependency", "explain"),
+    },
+    {
+        "subagent_id": "subagent.plan_orchestrator",
+        "stage": "plan",
+        "name": "Plan Orchestrator Cell",
+        "responsibility": "Turn evidence into graph-constrained candidate actions and tool chains.",
+        "preferred_tools": ("gndi.run_decision_loop", "graphrag.query", "tools.list"),
+        "triggers": ("plan", "strategy", "orchestrate", "next step", "tool chain"),
+    },
+    {
+        "subagent_id": "subagent.validate_guard",
+        "stage": "validate",
+        "name": "Validate Guard Cell",
+        "responsibility": "Stress-test plans against guardrails, evidence sufficiency, and counterfactual checks.",
+        "preferred_tools": ("gndi.simulate_action", "gndi.run_decision_loop", "decision.recent_traces"),
+        "triggers": ("validate", "simulate", "counterfactual", "risk", "policy"),
+    },
+    {
+        "subagent_id": "subagent.decide_control_plane",
+        "stage": "decide",
+        "name": "Decision Control Plane Cell",
+        "responsibility": "Select approve, defer, or escalate paths from the validated graph state.",
+        "preferred_tools": ("gndi.run_decision_loop", "decision.explain_pipeline"),
+        "triggers": ("decide", "authorize", "approve", "governance", "control plane"),
+    },
+    {
+        "subagent_id": "subagent.learn_memory",
+        "stage": "learn",
+        "name": "Learn Memory Cell",
+        "responsibility": "Distill traces into reusable knowledge, follow-up skills, and audit-ready memory.",
+        "preferred_tools": ("gndi.recent_loops", "skills.learn", "decision.recent_traces"),
+        "triggers": ("learn", "memory", "feedback", "trace", "improve"),
+    },
+)
+
 
 class SiteCorpus:
     def __init__(self, base_dir: Path) -> None:
@@ -685,6 +776,405 @@ class KnowledgeGraph:
         return {"entity_id": entity_id, "neighbors": neighbors}
 
 
+class GraphNativeDecisionIntelligence:
+    def __init__(self, corpus: SiteCorpus, knowledge_graph: KnowledgeGraph, trace_file: Path) -> None:
+        self._corpus = corpus
+        self._knowledge_graph = knowledge_graph
+        self._trace_file = trace_file
+        self._trace_file.parent.mkdir(parents=True, exist_ok=True)
+
+    def list_subagents(self) -> list[dict[str, Any]]:
+        return [deepcopy(subagent) for subagent in GRAPH_NATIVE_SUBAGENTS]
+
+    def recent_loops(self, limit: int = 5) -> list[dict[str, Any]]:
+        bounded_limit = _require_bounded_integer(limit, "limit", minimum=1, maximum=100)
+        traces = self._load_traces()
+        traces = traces[-bounded_limit:]
+        traces.reverse()
+        return traces
+
+    def latest_loop(self) -> dict[str, Any] | None:
+        loops = self._load_traces()
+        return loops[-1] if loops else None
+
+    def get_loop(self, trace_id: str) -> dict[str, Any]:
+        cleaned_trace_id = _require_non_empty_string(trace_id, "trace_id")
+        for trace in reversed(self._load_traces()):
+            if trace.get("trace_id") == cleaned_trace_id:
+                return trace
+        raise ValueError(f"unknown trace_id: {cleaned_trace_id}")
+
+    def build_context(self, intent: str, top_k: int = 3, constraints: list[str] | None = None) -> dict[str, Any]:
+        cleaned_intent = _require_non_empty_string(intent, "intent")
+        bounded_top_k = _require_bounded_integer(top_k, "top_k", minimum=1, maximum=10)
+        cleaned_constraints = _clean_string_list(constraints or [], "constraints")
+        stage_focus = self._detect_stage_focus(cleaned_intent)
+        retrieval = self._corpus.search(cleaned_intent, top_k=bounded_top_k)
+        matched_entities = self._knowledge_graph.search_entities(cleaned_intent, limit=5)
+
+        graph_brief: list[dict[str, Any]] = []
+        for entity in matched_entities[:3]:
+            description = self._knowledge_graph.describe_entity(entity["entity_id"], include_neighbors=True)
+            description["neighbors"] = description.get("neighbors", [])[:4]
+            graph_brief.append(description)
+
+        recommended_subagents = self._recommend_subagents(
+            cleaned_intent,
+            stage_focus,
+            matched_entities,
+            retrieval["matches"],
+        )
+        governance = self._build_governance_signals(
+            cleaned_intent,
+            cleaned_constraints,
+            matched_entities,
+            retrieval["matches"],
+        )
+        stage_path = [
+            {
+                "stage": stage,
+                "entity_id": stage,
+                "description": GRAPH_NODES[stage]["summary"],
+            }
+            for stage in GRAPH_NATIVE_STAGE_ORDER
+        ]
+
+        return {
+            "intent": cleaned_intent,
+            "constraints": cleaned_constraints,
+            "stage_focus": stage_focus or "full_loop",
+            "matched_entities": matched_entities,
+            "retrieval": retrieval,
+            "graph_brief": graph_brief,
+            "recommended_subagents": recommended_subagents,
+            "governance": governance,
+            "stage_path": stage_path,
+        }
+
+    def simulate_action(
+        self,
+        intent: str,
+        proposed_action: str = "",
+        constraints: list[str] | None = None,
+        top_k: int = 3,
+    ) -> dict[str, Any]:
+        context = self.build_context(intent, top_k=top_k, constraints=constraints)
+        candidates = self._build_candidate_actions(intent, "", proposed_action, context)
+        proposed = self._simulate_candidate(candidates[0], context)
+        baseline = self._simulate_candidate(candidates[1], context)
+        delta = round(proposed["predicted_value"] - baseline["predicted_value"], 2)
+        return {
+            "context": context,
+            "proposed": proposed,
+            "baseline": baseline,
+            "counterfactual_delta": delta,
+            "recommendation": "proceed" if delta > 0 and not proposed["needs_review"] else "review",
+        }
+
+    def run_decision_loop(
+        self,
+        intent: str,
+        goal: str = "",
+        proposed_action: str = "",
+        constraints: list[str] | None = None,
+        top_k: int = 3,
+    ) -> dict[str, Any]:
+        context = self.build_context(intent, top_k=top_k, constraints=constraints)
+        candidates = self._build_candidate_actions(intent, goal, proposed_action, context)
+        simulations = [self._simulate_candidate(candidate, context) for candidate in candidates]
+        best_simulation = max(simulations, key=lambda item: (item["predicted_value"] - item["risk_score"], item["confidence"]))
+
+        validation = {
+            "policy_checks": context["governance"]["policy_checks"],
+            "requires_review": any(simulation["needs_review"] for simulation in simulations),
+            "approved_candidates": [
+                simulation["candidate_id"] for simulation in simulations if not simulation["needs_review"]
+            ],
+            "blocked_candidates": [
+                simulation["candidate_id"] for simulation in simulations if simulation["needs_review"]
+            ],
+        }
+        if best_simulation["needs_review"]:
+            decision_status = "needs_review"
+        elif best_simulation["predicted_value"] >= 2.5:
+            decision_status = "approved"
+        else:
+            decision_status = "deferred"
+
+        act = {
+            "status": decision_status,
+            "chosen_candidate_id": best_simulation["candidate_id"],
+            "recommended_tool_chain": best_simulation["tool_chain"],
+            "assigned_subagents": [item["subagent_id"] for item in context["recommended_subagents"][:3]],
+        }
+        learn = {
+            "trace_summary": self._build_trace_summary(intent, best_simulation, context),
+            "recommended_skill_seed": self._build_skill_seed(intent, best_simulation, context),
+            "knowledge_graph_updates": [
+                f"link intent '{intent[:80]}' to stage '{context['stage_focus']}'",
+                f"store decision status '{decision_status}' with {len(context['matched_entities'])} matched entities",
+            ],
+        }
+
+        trace = {
+            "trace_id": f"gndi-{int(time.time() * 1000)}",
+            "timestamp": time.time(),
+            "intent": intent,
+            "goal": goal,
+            "proposed_action": proposed_action,
+            "context": context,
+            "sense": {
+                "retrieval_matches": len(context["retrieval"]["matches"]),
+                "graph_entities": len(context["matched_entities"]),
+            },
+            "reason": {
+                "stage_focus": context["stage_focus"],
+                "graph_brief": context["graph_brief"],
+            },
+            "plan": {
+                "candidates": candidates,
+            },
+            "validate": validation,
+            "decide": {
+                "status": decision_status,
+                "best_candidate": best_simulation,
+            },
+            "act": act,
+            "learn": learn,
+        }
+        with self._trace_file.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(trace) + "\n")
+        return trace
+
+    def _detect_stage_focus(self, intent: str) -> str:
+        if _contains_any_phrase(intent, ("decision loop", "full loop", "srpvdal loop")):
+            return ""
+        for stage, keywords in GRAPH_NATIVE_STAGE_KEYWORDS.items():
+            if _contains_any_phrase(intent, keywords):
+                return stage
+        return ""
+
+    def _recommend_subagents(
+        self,
+        intent: str,
+        stage_focus: str,
+        matched_entities: list[dict[str, Any]],
+        retrieval_matches: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        lowered_intent = intent.lower()
+        recommendations: list[dict[str, Any]] = []
+        for subagent in GRAPH_NATIVE_SUBAGENTS:
+            score = 0.0
+            reasons: list[str] = []
+            if stage_focus and subagent["stage"] == stage_focus:
+                score += 4
+                reasons.append("matches detected SRPVDAL stage")
+            searchable = " ".join(
+                (
+                    subagent["name"],
+                    subagent["responsibility"],
+                    " ".join(subagent["triggers"]),
+                )
+            ).lower()
+            keyword_matches = sum(1 for token in _normalize_tokens(intent) if token in searchable)
+            if keyword_matches:
+                score += keyword_matches * 1.5
+                reasons.append(f"matched {keyword_matches} subagent keywords")
+            if matched_entities and subagent["stage"] in {"reason", "plan", "validate", "decide"}:
+                score += 1
+                reasons.append("graph entities available")
+            if retrieval_matches and subagent["stage"] in {"sense", "reason", "plan"}:
+                score += 1
+                reasons.append("retrieval evidence available")
+            if any(tool_name.split(".", 1)[0] == "gndi" for tool_name in subagent["preferred_tools"]) and "graph" in lowered_intent:
+                score += 1
+                reasons.append("graph-native request detected")
+            recommendations.append(
+                {
+                    **deepcopy(subagent),
+                    "score": round(score, 2),
+                    "reasons": reasons,
+                }
+            )
+
+        recommendations.sort(key=lambda item: item["score"], reverse=True)
+        return recommendations[:4]
+
+    def _build_governance_signals(
+        self,
+        intent: str,
+        constraints: list[str],
+        matched_entities: list[dict[str, Any]],
+        retrieval_matches: list[dict[str, Any]],
+    ) -> dict[str, Any]:
+        live_action_requested = self._intent_implies_live_action(intent)
+        evidence_count = len(retrieval_matches)
+        entity_count = len(matched_entities)
+        policy_checks = [
+            {
+                "name": "evidence_sufficiency",
+                "status": "pass" if evidence_count > 0 else "warn",
+                "detail": f"{evidence_count} retrieval match(es) available.",
+            },
+            {
+                "name": "graph_grounding",
+                "status": "pass" if entity_count > 0 else "warn",
+                "detail": f"{entity_count} graph entity match(es) available.",
+            },
+        ]
+        if live_action_requested:
+            policy_checks.append(
+                {
+                    "name": "live_action_review",
+                    "status": "warn" if evidence_count == 0 else "pass",
+                    "detail": "Live-action language detected in the request.",
+                }
+            )
+        for constraint in constraints:
+            policy_checks.append(
+                {
+                    "name": f"constraint:{constraint.lower().replace(' ', '_')}",
+                    "status": "pass",
+                    "detail": f"Constraint '{constraint}' propagated into validation.",
+                }
+            )
+        return {
+            "live_action_requested": live_action_requested,
+            "requires_review": live_action_requested and evidence_count == 0,
+            "policy_checks": policy_checks,
+        }
+
+    def _build_candidate_actions(
+        self,
+        intent: str,
+        goal: str,
+        proposed_action: str,
+        context: dict[str, Any],
+    ) -> list[dict[str, Any]]:
+        stage_focus = context["stage_focus"]
+        supporting_entities = [entity["entity_id"] for entity in context["matched_entities"][:3]]
+        primary_summary = proposed_action.strip() or f"Run a graph-grounded {stage_focus.replace('_', ' ')} pass for the request."
+        candidates = [
+            {
+                "candidate_id": "candidate.graph_grounded_execution",
+                "mode": "execute",
+                "summary": primary_summary,
+                "goal": goal.strip() or intent,
+                "supporting_entities": supporting_entities,
+                "tool_chain": self._build_tool_chain(stage_focus, supporting_entities),
+            },
+            {
+                "candidate_id": "candidate.observe_and_refine",
+                "mode": "observe",
+                "summary": "Collect more GraphRAG evidence and refine the graph context before acting.",
+                "goal": "Increase grounding and reduce ambiguity.",
+                "supporting_entities": supporting_entities,
+                "tool_chain": ["gndi.inspect_context", "graphrag.query", "kg.describe_entity"],
+            },
+            {
+                "candidate_id": "candidate.escalate_control_plane",
+                "mode": "escalate",
+                "summary": "Escalate the request through the decision control plane with an audit-ready trace.",
+                "goal": "Require explicit approval before action.",
+                "supporting_entities": supporting_entities,
+                "tool_chain": ["gndi.run_decision_loop", "decision.explain_pipeline", "decision.recent_traces"],
+            },
+        ]
+        return candidates
+
+    def _build_tool_chain(self, stage_focus: str, supporting_entities: list[str]) -> list[str]:
+        tool_chain = ["gndi.inspect_context", "graphrag.query"]
+        if supporting_entities:
+            tool_chain.append("kg.describe_entity")
+        if stage_focus in {"reason", "validate", "decide", "full_loop"}:
+            tool_chain.append("decision.explain_pipeline")
+        if stage_focus in {"validate", "decide", "act"}:
+            tool_chain.append("gndi.simulate_action")
+        return tool_chain
+
+    def _simulate_candidate(self, candidate: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        evidence_count = len(context["retrieval"]["matches"])
+        entity_count = len(context["matched_entities"])
+        constraint_count = len(context["constraints"])
+        mode = candidate["mode"]
+
+        predicted_value = 1.0 + (evidence_count * 0.85) + (entity_count * 0.45)
+        if mode == "execute":
+            predicted_value += 1.1
+        elif mode == "observe":
+            predicted_value += 0.35
+        else:
+            predicted_value += 0.55
+
+        risk_score = constraint_count * 0.45
+        if mode == "execute" and context["governance"]["live_action_requested"]:
+            risk_score += 1.1
+        if evidence_count == 0 and mode != "observe":
+            risk_score += 0.9
+        if mode == "escalate":
+            risk_score += 0.15
+
+        confidence = max(0.2, min(0.96, 0.4 + (evidence_count * 0.08) + (entity_count * 0.04) - (risk_score * 0.07)))
+        needs_review = context["governance"]["requires_review"] or risk_score >= 1.6
+        return {
+            "candidate_id": candidate["candidate_id"],
+            "mode": mode,
+            "summary": candidate["summary"],
+            "tool_chain": list(candidate["tool_chain"]),
+            "predicted_value": round(predicted_value, 2),
+            "risk_score": round(risk_score, 2),
+            "confidence": round(confidence, 2),
+            "needs_review": needs_review,
+            "counterfactual_note": "Compared against the observe-and-refine baseline inside the graph-native loop.",
+        }
+
+    def _build_trace_summary(
+        self,
+        intent: str,
+        best_simulation: dict[str, Any],
+        context: dict[str, Any],
+    ) -> str:
+        return (
+            f"Intent '{intent[:72]}' routed through {context['stage_focus']} with "
+            f"{len(context['matched_entities'])} entity match(es), "
+            f"{len(context['retrieval']['matches'])} retrieval match(es), and "
+            f"decision status '{best_simulation['mode']}'."
+        )
+
+    def _build_skill_seed(
+        self,
+        intent: str,
+        best_simulation: dict[str, Any],
+        context: dict[str, Any],
+    ) -> dict[str, Any]:
+        focus_phrase = self._detect_stage_focus(intent) or context["stage_focus"]
+        return {
+            "name": _titleize_phrase(f"{focus_phrase} graph workflow", suffix="Skill"),
+            "description": "Suggested skill derived from a graph-native decision loop trace.",
+            "trigger_phrases": [focus_phrase, intent[:80]],
+            "preferred_tools": list(best_simulation["tool_chain"][:3]),
+        }
+
+    def _intent_implies_live_action(self, intent: str) -> bool:
+        return _contains_any_phrase(intent, ("deploy", "publish", "launch", "push", "change", "modify", "execute"))
+
+    def _load_traces(self) -> list[dict[str, Any]]:
+        if not self._trace_file.exists():
+            return []
+        traces: list[dict[str, Any]] = []
+        for line in self._trace_file.read_text(encoding="utf-8").splitlines():
+            stripped = line.strip()
+            if not stripped:
+                continue
+            try:
+                payload = json.loads(stripped)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                traces.append(payload)
+        return traces
+
+
 class SkillStore:
     def __init__(self, file_path: Path) -> None:
         self.file_path = file_path
@@ -840,6 +1330,8 @@ class ToolRegistry:
         for alias in aliases:
             if not isinstance(alias, dict):
                 continue
+            if not {"name", "description", "target_tool"}.issubset(alias):
+                continue
             if alias["name"] in self._definitions:
                 continue
             self.register_alias(
@@ -859,12 +1351,14 @@ class BossAgent:
         skill_store: SkillStore,
         corpus: SiteCorpus,
         knowledge_graph: KnowledgeGraph,
+        graph_decision: GraphNativeDecisionIntelligence,
         trace_file: Path,
     ) -> None:
         self.registry = registry
         self.skill_store = skill_store
         self.corpus = corpus
         self.knowledge_graph = knowledge_graph
+        self.graph_decision = graph_decision
         self.trace_file = trace_file
         self.trace_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -875,6 +1369,19 @@ class BossAgent:
             "graph": {
                 "entity_count": self.knowledge_graph.node_count,
                 "document_count": len(self.corpus.documents),
+            },
+            "graph_native": {
+                "subagents": self.graph_decision.list_subagents(),
+                "recent_loops": self.graph_decision.recent_loops(limit=3),
+            },
+            "capabilities": {
+                "skill_learning_tools": ["skills.learn", "skills.learn_from_loop"],
+                "tool_learning_tools": ["tools.register_alias"],
+                "routing_behaviors": [
+                    "graph-native context grounding",
+                    "counterfactual simulation selection",
+                    "skill-aware tool ranking",
+                ],
             },
         }
 
@@ -904,18 +1411,41 @@ class BossAgent:
         return stored.to_dict()
 
     def recent_traces(self, limit: int = 5) -> list[dict[str, Any]]:
-        if not self.trace_file.exists():
-            return []
-        lines = [line for line in self.trace_file.read_text(encoding="utf-8").splitlines() if line.strip()]
-        traces = [json.loads(line) for line in lines[-limit:]]
+        bounded_limit = _require_bounded_integer(limit, "limit", minimum=1, maximum=100)
+        traces = self._load_traces()
+        traces = traces[-bounded_limit:]
         traces.reverse()
         return traces
+
+    def learn_skill_from_loop(
+        self,
+        trace_id: str = "",
+        name: str = "",
+        description: str = "",
+    ) -> dict[str, Any]:
+        loop = self.graph_decision.get_loop(trace_id) if trace_id.strip() else self.graph_decision.latest_loop()
+        if loop is None:
+            raise ValueError("no graph-native loop traces available")
+        seed = loop.get("learn", {}).get("recommended_skill_seed", {})
+        trigger_phrases = seed.get("trigger_phrases", [])
+        preferred_tools = seed.get("preferred_tools", [])
+        skill_name = name.strip() or seed.get("name", "")
+        skill_description = description.strip() or seed.get("description", "")
+        if not skill_name or not skill_description or not trigger_phrases:
+            raise ValueError("selected loop trace does not contain a usable skill seed")
+        return self.learn_skill(
+            name=skill_name,
+            description=skill_description,
+            trigger_phrases=trigger_phrases,
+            preferred_tools=preferred_tools,
+            examples=[loop.get("intent", "")],
+        )
 
     def execute(self, intent: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
         if not intent.strip():
             raise ValueError("intent must not be empty")
 
-        context = self._build_context(intent)
+        context = self._build_context(intent, arguments or {})
         selection, candidates = self._select_tool(intent, arguments or {}, context)
         execution = self.registry.call(selection.tool_name, selection.arguments)
         trace = {
@@ -934,19 +1464,21 @@ class BossAgent:
             handle.write(json.dumps(trace) + "\n")
         return {
             "context": context,
+            "candidates": candidates,
             "selection": selection.to_dict(),
             "execution": execution,
         }
 
-    def _build_context(self, intent: str) -> dict[str, Any]:
-        entity_matches = self.knowledge_graph.search_entities(intent)
-        retrieval = self.corpus.search(intent, top_k=3)
-        skill_matches = [skill.to_dict() for skill in self.skill_store.match(intent)]
-        return {
-            "matched_entities": entity_matches,
-            "retrieval": retrieval,
-            "matched_skills": skill_matches,
-        }
+    def _build_context(self, intent: str, provided_arguments: dict[str, Any]) -> dict[str, Any]:
+        constraints = provided_arguments.get("constraints", [])
+        top_k = provided_arguments.get("top_k", 3)
+        if not isinstance(top_k, int):
+            top_k = 3
+        if not isinstance(constraints, list):
+            constraints = []
+        context = self.graph_decision.build_context(intent, top_k=top_k, constraints=constraints)
+        context["matched_skills"] = [skill.to_dict() for skill in self.skill_store.match(intent)]
+        return context
 
     def _extract_focus_phrase(self, intent: str) -> str:
         for pattern in (
@@ -964,19 +1496,38 @@ class BossAgent:
         return ""
 
     def _infer_preferred_tool(self, intent: str, context: dict[str, Any]) -> str | None:
-        lowered_intent = intent.lower()
-        if any(
-            keyword in lowered_intent
-            for keyword in ("pipeline", "stage", "decision control plane", "dcp", "govern", "authorize")
+        if _contains_any_phrase(intent, ("counterfactual", "simulate", "what if", "tradeoff")):
+            return "gndi.simulate_action"
+        if _contains_any_phrase(intent, ("subagent", "subagents", "specialist", "cell")):
+            return "gndi.list_subagents"
+        if (
+            _contains_any_phrase(intent, ("graph native", "graph-native", "decision loop", "run the loop"))
+            or (_contains_phrase(intent, "run") and any(_contains_phrase(intent, stage) for stage in GRAPH_NATIVE_STAGE_ORDER))
         ):
+            return "gndi.run_decision_loop"
+        if _contains_any_phrase(intent, ("graph context", "grounding", "context graph", "graph state")):
+            return "gndi.inspect_context"
+        if _contains_any_phrase(intent, ("pipeline", "stage", "decision control plane", "dcp", "govern", "authorize")):
             return "decision.explain_pipeline"
-        if any(keyword in lowered_intent for keyword in ("neighbor", "relationship", "relates")):
+        if _contains_any_phrase(intent, ("neighbor", "relationship", "relates")):
             return "kg.list_neighbors"
         if context["matched_entities"]:
             return "kg.describe_entity"
         if context["retrieval"]["matches"]:
             return "graphrag.query"
         return None
+
+    def _is_skill_learning_intent(self, intent: str) -> bool:
+        return _contains_any_phrase(
+            intent,
+            ("learn", "teach", "memorize", "new skill", "save as skill"),
+        )
+
+    def _is_loop_skill_learning_intent(self, intent: str) -> bool:
+        return _contains_any_phrase(intent, ("learn from loop", "learn from trace", "save loop as skill", "promote loop to skill"))
+
+    def _is_tool_registration_intent(self, intent: str) -> bool:
+        return _contains_any_phrase(intent, ("register tool", "new tool", "tool alias", "add tool", "register alias"))
 
     def _infer_skill_learning_arguments(
         self,
@@ -1030,17 +1581,17 @@ class BossAgent:
 
         if "target_tool" not in arguments:
             for tool in self.registry.list_tools():
-                if tool["name"].lower() in lowered_intent:
+                if _contains_phrase(intent, tool["name"]):
                     arguments["target_tool"] = tool["name"]
                     break
             else:
-                if "graphrag" in lowered_intent or "retrieval" in lowered_intent:
+                if _contains_any_phrase(intent, ("graphrag", "retrieval")):
                     arguments["target_tool"] = "graphrag.query"
-                elif "neighbor" in lowered_intent or "relationship" in lowered_intent:
+                elif _contains_any_phrase(intent, ("neighbor", "relationship")):
                     arguments["target_tool"] = "kg.list_neighbors"
-                elif "entity" in lowered_intent or "knowledge graph" in lowered_intent or "kg" in lowered_intent:
+                elif _contains_any_phrase(intent, ("entity", "knowledge graph", "kg")):
                     arguments["target_tool"] = "kg.describe_entity"
-                elif "pipeline" in lowered_intent or "dcp" in lowered_intent:
+                elif _contains_any_phrase(intent, ("pipeline", "dcp")):
                     arguments["target_tool"] = "decision.explain_pipeline"
 
         if "name" not in arguments:
@@ -1087,20 +1638,31 @@ class BossAgent:
 
         if tool_name == "graphrag.query":
             arguments.setdefault("query", intent)
+        elif tool_name == "gndi.inspect_context":
+            arguments.setdefault("intent", intent)
+        elif tool_name == "gndi.simulate_action":
+            arguments.setdefault("intent", intent)
+            arguments.setdefault("proposed_action", self._extract_focus_phrase(intent) or "Graph-grounded recommendation")
+        elif tool_name == "gndi.run_decision_loop":
+            arguments.setdefault("intent", intent)
+            arguments.setdefault("goal", self._extract_focus_phrase(intent) or intent)
         elif tool_name == "kg.describe_entity":
             if "entity_id" not in arguments and context["matched_entities"]:
                 arguments["entity_id"] = context["matched_entities"][0]["entity_id"]
         elif tool_name == "kg.list_neighbors":
             if "entity_id" not in arguments and context["matched_entities"]:
                 arguments["entity_id"] = context["matched_entities"][0]["entity_id"]
-        elif tool_name == "skills.learn":
+        elif tool_name == "skills.learn" and self._is_skill_learning_intent(intent) and not self._is_loop_skill_learning_intent(intent):
             arguments = self._infer_skill_learning_arguments(arguments, context, intent)
-        elif tool_name == "tools.register_alias":
+        elif tool_name == "skills.learn_from_loop" and self._is_loop_skill_learning_intent(intent):
+            latest_loop = self.graph_decision.latest_loop()
+            if latest_loop is not None:
+                arguments.setdefault("trace_id", latest_loop["trace_id"])
+        elif tool_name == "tools.register_alias" and self._is_tool_registration_intent(intent):
             arguments = self._infer_alias_arguments(arguments, intent)
         elif tool_name == "decision.explain_pipeline":
-            lowered_intent = intent.lower()
             for keyword, stage in stage_map.items():
-                if keyword in lowered_intent:
+                if _contains_phrase(intent, keyword):
                     arguments.setdefault("stage", stage)
                     break
             arguments.setdefault("focus", intent)
@@ -1123,7 +1685,6 @@ class BossAgent:
         context: dict[str, Any],
         complete: bool,
     ) -> tuple[float, list[str]]:
-        lowered_intent = intent.lower()
         tokens = set(_normalize_tokens(intent))
         searchable = " ".join((definition.name, definition.description, " ".join(definition.tags))).lower()
         reasons: list[str] = []
@@ -1138,29 +1699,81 @@ class BossAgent:
             score += 2.5
             reasons.append("retrieval candidates available")
 
+        if definition.name.startswith("gndi.") and context.get("recommended_subagents"):
+            score += 1.5
+            reasons.append("graph-native subagents available")
+
+        if definition.name == "gndi.inspect_context" and _contains_any_phrase(
+            intent, ("graph context", "grounding", "graph-native", "graph state")
+        ):
+            score += 5
+            reasons.append("graph context intent detected")
+
+        if definition.name == "gndi.simulate_action" and _contains_any_phrase(
+            intent, ("simulate", "counterfactual", "what if", "tradeoff")
+        ):
+            score += 6
+            reasons.append("counterfactual intent detected")
+
+        if definition.name == "gndi.run_decision_loop" and (
+            _contains_any_phrase(intent, ("graph native", "graph-native", "decision loop", "run the loop"))
+            or (_contains_phrase(intent, "run") and any(_contains_phrase(intent, stage) for stage in GRAPH_NATIVE_STAGE_ORDER))
+        ):
+            score += 6
+            reasons.append("graph-native decision loop intent detected")
+        if definition.name == "gndi.run_decision_loop" and self._is_loop_skill_learning_intent(intent) and self.graph_decision.latest_loop() is None:
+            score += 4
+            reasons.append("no prior loop trace available; generate one first")
+
+        if definition.name == "gndi.list_subagents" and _contains_any_phrase(
+            intent, ("subagent", "subagents", "specialist", "cell")
+        ):
+            score += 6
+            reasons.append("subagent discovery intent detected")
+
+        if definition.name == "gndi.recent_loops" and _contains_any_phrase(
+            intent, ("recent loops", "decision loops", "graph traces", "graph loop")
+        ):
+            score += 5
+            reasons.append("graph-native trace intent detected")
+
         if definition.name.startswith("kg.") and context["matched_entities"]:
             score += 2.5
             reasons.append("knowledge graph entity matched")
 
-        if definition.name == "decision.explain_pipeline" and any(word in lowered_intent for word in ("pipeline", "stage", "flow", "srpvdal", "dcp")):
+        if definition.name == "decision.explain_pipeline" and _contains_any_phrase(
+            intent, ("pipeline", "stage", "flow", "srpvdal", "dcp", "decision control plane", "explain")
+        ):
             score += 3
             reasons.append("pipeline explanation intent detected")
 
-        if definition.name == "tools.list" and any(word in lowered_intent for word in ("tool", "tools", "discover", "available")):
+        if definition.name == "tools.list" and _contains_any_phrase(intent, ("tool", "tools", "discover", "available")):
             score += 5
             reasons.append("tool discovery intent detected")
 
-        if definition.name == "skills.list" and any(word in lowered_intent for word in ("skill", "skills")) and "learn" not in lowered_intent:
+        if definition.name == "skills.list" and _contains_any_phrase(intent, ("skill", "skills")) and not self._is_skill_learning_intent(intent):
             score += 5
             reasons.append("skill discovery intent detected")
 
-        if definition.name == "skills.learn" and any(word in lowered_intent for word in ("learn", "teach", "memorize", "new skill")):
+        if definition.name == "skills.learn" and self._is_skill_learning_intent(intent) and not self._is_loop_skill_learning_intent(intent):
             score += 6
             reasons.append("skill learning intent detected")
 
-        if definition.name == "tools.register_alias" and any(word in lowered_intent for word in ("register tool", "new tool", "tool alias", "add tool")):
+        if definition.name == "skills.learn_from_loop" and self._is_loop_skill_learning_intent(intent):
+            if inferred_arguments.get("trace_id") or self.graph_decision.latest_loop() is not None:
+                score += 7
+                reasons.append("loop-to-skill learning intent detected")
+            else:
+                score -= 6
+                reasons.append("no graph-native loop trace available")
+
+        if definition.name == "tools.register_alias" and self._is_tool_registration_intent(intent):
             score += 6
             reasons.append("tool registration intent detected")
+
+        if definition.name == "decision.recent_traces" and _contains_any_phrase(intent, ("trace", "audit", "history")):
+            score += 4
+            reasons.append("audit intent detected")
 
         for skill in context["matched_skills"]:
             if definition.name in skill["preferred_tools"]:
@@ -1183,6 +1796,22 @@ class BossAgent:
             score += 0.25
 
         return score, reasons
+
+    def _load_traces(self) -> list[dict[str, Any]]:
+        if not self.trace_file.exists():
+            return []
+        traces: list[dict[str, Any]] = []
+        for line in self.trace_file.read_text(encoding="utf-8").splitlines():
+            stripped = line.strip()
+            if not stripped:
+                continue
+            try:
+                payload = json.loads(stripped)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                traces.append(payload)
+        return traces
 
     def _select_tool(
         self,
@@ -1237,6 +1866,11 @@ class BossRuntime:
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.corpus = SiteCorpus(self.base_dir)
         self.knowledge_graph = KnowledgeGraph(self.corpus)
+        self.graph_decision = GraphNativeDecisionIntelligence(
+            self.corpus,
+            self.knowledge_graph,
+            self.data_dir / "graph_native_loops.jsonl",
+        )
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
         self._register_tools()
@@ -1246,10 +1880,76 @@ class BossRuntime:
             skill_store=self.skill_store,
             corpus=self.corpus,
             knowledge_graph=self.knowledge_graph,
+            graph_decision=self.graph_decision,
             trace_file=self.data_dir / "boss_decision_log.jsonl",
         )
 
     def _register_tools(self) -> None:
+        self.registry.register(
+            ToolDefinition(
+                name="gndi.inspect_context",
+                description="Build graph-native context for an intent using GraphRAG retrieval, KG grounding, and subagent recommendations.",
+                category="graph_native",
+                parameters=(
+                    ToolParameter("intent", "string", "Natural language intent to ground in the graph.", required=True),
+                    ToolParameter("top_k", "integer", "Maximum number of retrieval matches to include.", default=3),
+                    ToolParameter("constraints", "array", "Optional validation constraints to propagate through the loop.", default=[]),
+                ),
+                tags=("graph-native", "context", "graphrag", "knowledge graph"),
+                handler=self._handle_graph_context,
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="gndi.simulate_action",
+                description="Run a counterfactual-style simulation for a proposed action using graph-native evidence and governance checks.",
+                category="graph_native",
+                parameters=(
+                    ToolParameter("intent", "string", "Natural language intent to evaluate.", required=True),
+                    ToolParameter("proposed_action", "string", "Optional action to compare against the observe baseline.", default=""),
+                    ToolParameter("constraints", "array", "Optional validation constraints.", default=[]),
+                    ToolParameter("top_k", "integer", "Maximum number of retrieval matches to include.", default=3),
+                ),
+                tags=("graph-native", "counterfactual", "simulate", "validation"),
+                handler=self._handle_graph_simulation,
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="gndi.run_decision_loop",
+                description="Execute the full graph-native SRPVDAL loop and return an audit-ready decision trace.",
+                category="graph_native",
+                parameters=(
+                    ToolParameter("intent", "string", "Natural language intent to route through the decision loop.", required=True),
+                    ToolParameter("goal", "string", "Optional desired outcome for the loop.", default=""),
+                    ToolParameter("proposed_action", "string", "Optional proposed action for the plan and validation stages.", default=""),
+                    ToolParameter("constraints", "array", "Optional validation constraints.", default=[]),
+                    ToolParameter("top_k", "integer", "Maximum number of retrieval matches to include.", default=3),
+                ),
+                tags=("graph-native", "srpvdal", "decision loop", "governance"),
+                handler=self._handle_graph_loop,
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="gndi.list_subagents",
+                description="List graph-native subagents and the tools they prefer for each SRPVDAL stage.",
+                category="graph_native",
+                parameters=(),
+                tags=("graph-native", "subagents", "orchestration"),
+                handler=lambda _: {"subagents": self.graph_decision.list_subagents()},
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="gndi.recent_loops",
+                description="Return recent graph-native decision loop traces.",
+                category="graph_native",
+                parameters=(ToolParameter("limit", "integer", "Maximum number of traces to return.", default=5),),
+                tags=("graph-native", "traces", "audit"),
+                handler=lambda payload: {"traces": self.graph_decision.recent_loops(limit=payload["limit"])},
+            )
+        )
         self.registry.register(
             ToolDefinition(
                 name="tools.list",
@@ -1314,6 +2014,26 @@ class BossRuntime:
                         trigger_phrases=payload["trigger_phrases"],
                         preferred_tools=payload["preferred_tools"],
                         examples=payload["examples"],
+                    )
+                },
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="skills.learn_from_loop",
+                description="Turn a graph-native decision loop trace into a reusable skill using the trace's recommended skill seed.",
+                category="system",
+                parameters=(
+                    ToolParameter("trace_id", "string", "Optional graph-native trace identifier. Defaults to the latest loop when omitted.", default=""),
+                    ToolParameter("name", "string", "Optional override for the learned skill name.", default=""),
+                    ToolParameter("description", "string", "Optional override for the learned skill description.", default=""),
+                ),
+                tags=("skills", "learn", "graph-native", "trace"),
+                handler=lambda payload: {
+                    "skill": self.boss.learn_skill_from_loop(
+                        trace_id=payload["trace_id"],
+                        name=payload["name"],
+                        description=payload["description"],
                     )
                 },
             )
@@ -1404,6 +2124,30 @@ class BossRuntime:
             "retrieval": retrieval,
         }
 
+    def _handle_graph_context(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.graph_decision.build_context(
+            payload["intent"],
+            top_k=payload["top_k"],
+            constraints=payload["constraints"],
+        )
+
+    def _handle_graph_simulation(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.graph_decision.simulate_action(
+            payload["intent"],
+            proposed_action=payload["proposed_action"],
+            constraints=payload["constraints"],
+            top_k=payload["top_k"],
+        )
+
+    def _handle_graph_loop(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.graph_decision.run_decision_loop(
+            payload["intent"],
+            goal=payload["goal"],
+            proposed_action=payload["proposed_action"],
+            constraints=payload["constraints"],
+            top_k=payload["top_k"],
+        )
+
     def health_snapshot(self) -> dict[str, Any]:
         return {
             "status": "healthy",
@@ -1411,6 +2155,8 @@ class BossRuntime:
             "skill_count": len(self.skill_store.all()),
             "document_count": len(self.corpus.documents),
             "graph_entity_count": self.knowledge_graph.node_count,
+            "graph_native_loop_count": len(self.graph_decision.recent_loops(limit=100)),
+            "graph_native_subagent_count": len(self.graph_decision.list_subagents()),
         }
 
     def list_tools(self) -> list[dict[str, Any]]:
@@ -1431,11 +2177,53 @@ class BossRuntime:
             examples=payload.get("examples", []),
         )
 
+    def learn_skill_from_loop(self, trace_id: str = "", name: str = "", description: str = "") -> dict[str, Any]:
+        return self.boss.learn_skill_from_loop(trace_id=trace_id, name=name, description=description)
+
     def execute(self, intent: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
         return self.boss.execute(intent, arguments)
 
     def recent_traces(self, limit: int = 5) -> list[dict[str, Any]]:
         return self.boss.recent_traces(limit=limit)
+
+    def graph_context(self, intent: str, top_k: int = 3, constraints: list[str] | None = None) -> dict[str, Any]:
+        return self.graph_decision.build_context(intent, top_k=top_k, constraints=constraints)
+
+    def simulate_graph_action(
+        self,
+        intent: str,
+        proposed_action: str = "",
+        constraints: list[str] | None = None,
+        top_k: int = 3,
+    ) -> dict[str, Any]:
+        return self.graph_decision.simulate_action(
+            intent,
+            proposed_action=proposed_action,
+            constraints=constraints,
+            top_k=top_k,
+        )
+
+    def run_decision_loop(
+        self,
+        intent: str,
+        goal: str = "",
+        proposed_action: str = "",
+        constraints: list[str] | None = None,
+        top_k: int = 3,
+    ) -> dict[str, Any]:
+        return self.graph_decision.run_decision_loop(
+            intent,
+            goal=goal,
+            proposed_action=proposed_action,
+            constraints=constraints,
+            top_k=top_k,
+        )
+
+    def list_subagents(self) -> list[dict[str, Any]]:
+        return self.graph_decision.list_subagents()
+
+    def recent_graph_loops(self, limit: int = 5) -> list[dict[str, Any]]:
+        return self.graph_decision.recent_loops(limit=limit)
 
 
 def create_runtime(base_dir: Path | None = None, data_dir: Path | None = None) -> BossRuntime:

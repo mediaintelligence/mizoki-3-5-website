@@ -286,6 +286,86 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def discover_boss_capabilities():
         return jsonify(get_runtime().discover())
 
+    @app.route("/api/boss/graph/subagents", methods=["GET"])
+    def list_graph_subagents():
+        return jsonify({"subagents": get_runtime().list_subagents()})
+
+    @app.route("/api/boss/graph/context", methods=["POST"])
+    def boss_graph_context():
+        payload = require_json_payload()
+        intent = payload.get("intent", "")
+        top_k = payload.get("top_k", 3)
+        constraints = payload.get("constraints", [])
+        if not isinstance(intent, str) or not intent.strip():
+            abort(400, description="Field 'intent' must be a non-empty string.")
+        if not isinstance(top_k, int):
+            abort(400, description="Field 'top_k' must be an integer.")
+        if not isinstance(constraints, list):
+            abort(400, description="Field 'constraints' must be an array.")
+        return jsonify(
+            {
+                "context": run_runtime_call(
+                    lambda: get_runtime().graph_context(intent, top_k=top_k, constraints=constraints)
+                )
+            }
+        )
+
+    @app.route("/api/boss/graph/simulate", methods=["POST"])
+    def boss_graph_simulation():
+        payload = require_json_payload()
+        intent = payload.get("intent", "")
+        proposed_action = payload.get("proposed_action", "")
+        top_k = payload.get("top_k", 3)
+        constraints = payload.get("constraints", [])
+        if not isinstance(intent, str) or not intent.strip():
+            abort(400, description="Field 'intent' must be a non-empty string.")
+        if not isinstance(proposed_action, str):
+            abort(400, description="Field 'proposed_action' must be a string.")
+        if not isinstance(top_k, int):
+            abort(400, description="Field 'top_k' must be an integer.")
+        if not isinstance(constraints, list):
+            abort(400, description="Field 'constraints' must be an array.")
+        return jsonify(
+            run_runtime_call(
+                lambda: get_runtime().simulate_graph_action(
+                    intent,
+                    proposed_action=proposed_action,
+                    constraints=constraints,
+                    top_k=top_k,
+                )
+            )
+        )
+
+    @app.route("/api/boss/graph/loop", methods=["POST"])
+    def boss_graph_loop():
+        payload = require_json_payload()
+        intent = payload.get("intent", "")
+        goal = payload.get("goal", "")
+        proposed_action = payload.get("proposed_action", "")
+        top_k = payload.get("top_k", 3)
+        constraints = payload.get("constraints", [])
+        if not isinstance(intent, str) or not intent.strip():
+            abort(400, description="Field 'intent' must be a non-empty string.")
+        if not isinstance(goal, str):
+            abort(400, description="Field 'goal' must be a string.")
+        if not isinstance(proposed_action, str):
+            abort(400, description="Field 'proposed_action' must be a string.")
+        if not isinstance(top_k, int):
+            abort(400, description="Field 'top_k' must be an integer.")
+        if not isinstance(constraints, list):
+            abort(400, description="Field 'constraints' must be an array.")
+        return jsonify(
+            run_runtime_call(
+                lambda: get_runtime().run_decision_loop(
+                    intent,
+                    goal=goal,
+                    proposed_action=proposed_action,
+                    constraints=constraints,
+                    top_k=top_k,
+                )
+            )
+        )
+
     @app.route("/api/boss/skills/learn", methods=["POST"])
     def learn_boss_skill():
         payload = require_json_payload()
@@ -294,6 +374,30 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
             if field not in payload:
                 abort(400, description=f"Missing required field: {field}")
         return jsonify({"skill": run_runtime_call(lambda: get_runtime().learn_skill(payload))})
+
+    @app.route("/api/boss/skills/learn-from-loop", methods=["POST"])
+    def learn_boss_skill_from_loop():
+        payload = require_json_payload()
+        trace_id = payload.get("trace_id", "")
+        name = payload.get("name", "")
+        description = payload.get("description", "")
+        if not isinstance(trace_id, str):
+            abort(400, description="Field 'trace_id' must be a string.")
+        if not isinstance(name, str):
+            abort(400, description="Field 'name' must be a string.")
+        if not isinstance(description, str):
+            abort(400, description="Field 'description' must be a string.")
+        return jsonify(
+            {
+                "skill": run_runtime_call(
+                    lambda: get_runtime().learn_skill_from_loop(
+                        trace_id=trace_id,
+                        name=name,
+                        description=description,
+                    )
+                )
+            }
+        )
 
     @app.route("/api/boss/execute", methods=["POST"])
     def execute_with_boss():

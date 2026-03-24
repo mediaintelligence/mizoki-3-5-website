@@ -14,6 +14,8 @@ Verifiable Autonomous Decision Intelligence Platform Website
 - Migrated domain infrastructure to point Google Cloud Global External Load Balancer (mizoki-lb) over to a native Serverless Network Endpoint Group (NEG) hooked to the updated Cloud Run service.
 - Added a real Python-based Boss Agent runtime with MCP-style tool registration, skill memory, tool aliases, GraphRAG retrieval, and knowledge-graph-aware routing.
 - Exposed Boss/MCP capabilities through Flask JSON APIs for discovery, tool execution, skill learning, and decision traces.
+- Added a graph-native decision intelligence layer that runs SRPVDAL against the in-repo knowledge graph and GraphRAG context, with subagent recommendations, counterfactual simulation, and audit-ready loop traces.
+- Added direct graph-native APIs under `/api/boss/graph/*` and new MCP tools under the `gndi.*` namespace.
 - Synchronized deployment paths for end-to-end orchestration across Cells 1-34.
 - Restructured site to use a robust Python/Flask routing engine (`app.py`).
 - Implemented canonical URL resolving for the corporate blog directly under `/blog/` on the main domain.
@@ -213,9 +215,32 @@ The Flask app now exposes a concrete Boss/MCP surface:
 - `GET /api/mcp/tools`
 - `POST /api/mcp/call`
 - `GET /api/boss/discover`
+- `GET /api/boss/graph/subagents`
+- `POST /api/boss/graph/context`
+- `POST /api/boss/graph/simulate`
+- `POST /api/boss/graph/loop`
 - `POST /api/boss/skills/learn`
+- `POST /api/boss/skills/learn-from-loop`
 - `POST /api/boss/execute`
 - `GET /api/boss/traces`
+
+### Graph-Native Decision Intelligence
+
+The original implementation plan in prior discussion targeted a different agent repository layout built around `boss_agent_core.py`. This repository does not contain that code. The actual integration surface here is:
+
+- `mizoki_runtime/runtime.py` for the Boss runtime, MCP registry, GraphRAG retrieval, knowledge graph, and graph-native decision loop
+- `app.py` for the Flask APIs that expose those runtime capabilities
+
+The graph-native runtime now adds:
+
+- `gndi.inspect_context` for GraphRAG + KG grounding with recommended subagents
+- `gndi.simulate_action` for counterfactual-style validation
+- `gndi.run_decision_loop` for full SRPVDAL execution with an audit trace
+- `gndi.list_subagents` for stage-specific orchestration visibility
+- `gndi.recent_loops` for recent graph-native traces
+- `skills.learn_from_loop` for promoting a graph-native decision trace into a reusable skill seed
+
+The Boss Agent uses the same graph-native context during normal `/api/boss/execute` routing, so GraphRAG and KG grounding are no longer isolated utilities. Tool selection now returns candidate rankings, graph-native context, and direct routing into `gndi.*` tools when the request implies simulation, governance, loop execution, or subagent discovery.
 
 ---
 
