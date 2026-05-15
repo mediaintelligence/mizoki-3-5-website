@@ -1,278 +1,56 @@
-# MIZ OKI 3.5 Website
+# MIZOKI3 — Site
 
-Verifiable Autonomous Decision Intelligence Platform Website
+Marketing site for **MIZOKI3 — Autonomous Strategic Intelligence Infrastructure**.
 
-**7-Stage SRDPV-DAL Pipeline:** SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN
+## Stack
 
-**Core Innovations:**
-- Decision Control Plane (DCP)
-- Validation & Arbitration Layer
-- Counterfactual Simulation Engine
-- Temporal-Causal Knowledge Graph (TCO-KG)
+Pure static HTML / CSS / JS. No build step required for browsing — the site runs as-is.
 
-**Recent Updates:**
-- Migrated domain infrastructure to point Google Cloud Global External Load Balancer (mizoki-lb) over to a native Serverless Network Endpoint Group (NEG) hooked to the updated Cloud Run service.
-- Added a real Python-based Boss Agent runtime with MCP-style tool registration, skill memory, tool aliases, GraphRAG retrieval, and knowledge-graph-aware routing.
-- Exposed Boss/MCP capabilities through Flask JSON APIs for discovery, tool execution, skill learning, and decision traces.
-- Added a graph-native decision intelligence layer that runs SRPVDAL against the in-repo knowledge graph and GraphRAG context, with subagent recommendations, counterfactual simulation, and audit-ready loop traces.
-- Added direct graph-native APIs under `/api/boss/graph/*` and new MCP tools under the `gndi.*` namespace.
-- Added review-driven routing fixes, validation hardening, resilient trace/alias loading, and loop-to-skill promotion so the Boss Agent can learn safely from graph-native traces without misrouting normal requests.
-- Synchronized deployment paths for end-to-end orchestration across Cells 1-34.
-- Restructured site to use a robust Python/Flask routing engine (`app.py`).
-- Implemented canonical URL resolving for the corporate blog directly under `/blog/` on the main domain.
-- Stripped legacy subdomains natively with automatic 301 handlers.
+```
+.
+├── index.html           # Hero, animated Nexus, brain, 5 domains, flywheel, category, positioning
+├── counsel.html         # Legal Intelligence
+├── estate.html          # Wealth, Trust & Tax Intelligence
+├── capital.html         # Banking & Financial Intelligence
+├── signal.html          # Autonomous Acquisition Intelligence
+├── risk.html            # Verification & Compliance Intelligence
+├── assets/
+│   ├── css/styles.css   # Shared dark cinematic theme
+│   └── js/nexus.js      # Animated SVG hero (vanilla JS, no deps)
+└── _build_domains.py    # Regenerates the 5 domain pages from a single template
+```
 
----
-
-## 🚀 One-Click Master Deployment
+## Local preview
 
 ```bash
-chmod +x master-deploy.sh
-./master-deploy.sh YOUR_GCP_PROJECT_ID https://github.com/YOUR_USERNAME/mizoki-website.git
+python3 -m http.server 8000
+# open http://localhost:8000
 ```
 
-This deploys:
-- ✅ Main website to Cloud Run
-- ✅ All 12 marketing pages
-- ✅ Blog with thought leadership
-- ✅ Pushes to GitHub
-- ✅ Configures custom domain
+## Editing domain pages
 
----
-
-## Quick Deploy to Google Cloud Run
-
-### Prerequisites
-
-1. **Google Cloud SDK** installed ([Install Guide](https://cloud.google.com/sdk/docs/install))
-2. **Google Cloud Project** with billing enabled
-3. **Docker** installed (optional - Cloud Build handles this)
-
-### One-Click Deployment
+The five domain pages share a template. Edit copy / lists in `_build_domains.py` and regenerate:
 
 ```bash
-# Clone or download this repository
-cd mizoki-website
-
-# Make deploy script executable
-chmod +x deploy.sh
-
-# Run the deployment
-./deploy.sh
+python3 _build_domains.py
 ```
 
-That's it! The script will:
-1. ✅ Authenticate with Google Cloud
-2. ✅ Enable required APIs (Cloud Build, Container Registry, Cloud Run)
-3. ✅ Initialize Git repository
-4. ✅ Build Docker container using Cloud Build
-5. ✅ Deploy to Cloud Run
-6. ✅ Output your live URL
+## Deployment
 
-### Manual Deployment (Alternative)
+The site is fully static, so any of the following work:
 
-If you prefer manual control:
+- **GitHub Pages** — enable Pages on `main`, set folder to root.
+- **Vercel / Netlify** — drag-and-drop or connect the repo, no build command.
+- **Cloudflare Pages** — same.
 
-```bash
-# Set your project
-export PROJECT_ID="your-project-id"
-gcloud config set project $PROJECT_ID
+## Design language
 
-# Enable APIs
-gcloud services enable cloudbuild.googleapis.com containerregistry.googleapis.com run.googleapis.com
-
-# Build and push image
-gcloud builds submit --tag gcr.io/$PROJECT_ID/mizoki-website
-
-# Deploy to Cloud Run
-gcloud run deploy mizoki-website \
-  --image gcr.io/$PROJECT_ID/mizoki-website \
-  --region us-central1 \
-  --platform managed \
-  --allow-unauthenticated \
-  --port 8080
-```
-
-### Custom Domain Setup
-
-After deployment, add your custom domain:
-
-```bash
-# Map custom domain
-gcloud run domain-mappings create \
-  --service mizoki-website \
-  --domain mizoki3.com \
-  --region us-central1
-
-# Follow the DNS verification steps provided
-```
-
-### Environment Configuration
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| REGION | us-central1 | GCP region for deployment |
-| MEMORY | 256Mi | Container memory allocation |
-| CPU | 1 | vCPU allocation |
-| MIN_INSTANCES | 0 | Minimum running instances (0 = scale to zero) |
-| MAX_INSTANCES | 10 | Maximum instances during load |
-
-### File Structure
-
-```
-mizoki-website/
-├── index.html              # Homepage
-├── how-it-works.html       # Technical deep dive
-├── platform.html           # Architecture overview
-├── security.html           # Security & compliance
-├── industries.html         # Industry templates
-├── pricing.html            # Pricing tiers
-├── case-studies.html       # Customer success stories
-├── resources.html          # Documentation hub
-├── roi.html                # ROI calculator
-├── walkthrough.html        # Demo request
-├── investor.html           # Investor overview
-├── sales-one-pager.html    # Sales summary
-├── assets/                 # Static assets
-│   ├── css/
-│   ├── img/
-│   └── pdf/
-├── app.py                  # Core Flask application, page routing, and Boss/MCP APIs
-├── mizoki_runtime/
-│   ├── __init__.py
-│   └── runtime.py          # Boss agent runtime, MCP registry, GraphRAG, and KG integration
-├── requirements.txt        # Python pip dependencies
-├── Dockerfile              # Container definition (runs `app.py` with gunicorn)
-├── cloudbuild.yaml         # Cloud Build deployment config
-├── deploy.sh               # One-click deploy script
-├── master-deploy.sh        # Advanced deploy and synchronization script
-└── README.md               # This file
-```
-
-### Monitoring & Logs
-
-```bash
-# View logs
-gcloud run services logs read mizoki-website --region us-central1
-
-# View metrics in console
-# https://console.cloud.google.com/run/detail/us-central1/mizoki-website/metrics
-```
-
-### Updating the Site
-
-After making changes:
-
-```bash
-# Simply re-run the deploy script
-./deploy.sh
-
-# Or manually
-gcloud builds submit --tag gcr.io/$PROJECT_ID/mizoki-website:v2
-gcloud run deploy mizoki-website --image gcr.io/$PROJECT_ID/mizoki-website:v2 --region us-central1
-```
-
-### Cost Estimate
-
-Cloud Run pricing (as of 2026):
-- **CPU**: $0.00002400/vCPU-second
-- **Memory**: $0.00000250/GiB-second
-- **Requests**: $0.40/million requests
-
-With scale-to-zero enabled, you only pay when the site is accessed. Typical cost for a marketing website: **$5-20/month**.
-
-### Troubleshooting
-
-**Build fails:**
-```bash
-# Check Cloud Build logs
-gcloud builds list --limit=5
-gcloud builds log BUILD_ID
-```
-
-**Deploy fails:**
-```bash
-# Check service status
-gcloud run services describe mizoki-website --region us-central1
-```
-
-**Site not loading:**
-```bash
-# Check container logs
-gcloud run services logs read mizoki-website --region us-central1 --limit=50
-```
-
-### Support
-
-- Documentation: [resources.html](resources.html)
-- Demo Request: [walkthrough.html](walkthrough.html)
-- Contact: sales@mizoki.com
-
-### Boss Agent and MCP APIs
-
-The Flask app now exposes a concrete Boss/MCP surface:
-
-- `GET /api/health`
-- `GET /api/mcp/tools`
-- `POST /api/mcp/call`
-- `GET /api/boss/discover`
-- `GET /api/boss/graph/subagents`
-- `POST /api/boss/graph/context`
-- `POST /api/boss/graph/simulate`
-- `POST /api/boss/graph/loop`
-- `POST /api/boss/skills/learn`
-- `POST /api/boss/skills/learn-from-loop`
-- `POST /api/boss/execute`
-- `GET /api/boss/traces`
-
-### Graph-Native Decision Intelligence
-
-The original implementation plan in prior discussion targeted a different agent repository layout built around `boss_agent_core.py`. This repository does not contain that code. The actual integration surface here is:
-
-- `mizoki_runtime/runtime.py` for the Boss runtime, MCP registry, GraphRAG retrieval, knowledge graph, and graph-native decision loop
-- `app.py` for the Flask APIs that expose those runtime capabilities
-
-The graph-native runtime now adds:
-
-- `gndi.inspect_context` for GraphRAG + KG grounding with recommended subagents
-- `gndi.simulate_action` for counterfactual-style validation
-- `gndi.run_decision_loop` for full SRPVDAL execution with an audit trace
-- `gndi.list_subagents` for stage-specific orchestration visibility
-- `gndi.recent_loops` for recent graph-native traces
-- `skills.learn_from_loop` for promoting a graph-native decision trace into a reusable skill seed
-
-The Boss Agent uses the same graph-native context during normal `/api/boss/execute` routing, so GraphRAG and KG grounding are no longer isolated utilities. Tool selection now returns candidate rankings, graph-native context, and direct routing into `gndi.*` tools when the request implies simulation, governance, loop execution, or subagent discovery.
-
-### Review-Driven Hardening
-
-After the initial graph-native integration, the runtime and API surface were reviewed and corrected so the behavior matches the intended Boss Agent standard:
-
-- Fixed substring-based routing bugs that could confuse `plan` with `plane`, causing incorrect SRPVDAL stage inference during DCP explanations.
-- Prevented the Boss Agent from overfiring `skills.learn` on ordinary explanation requests by gating skill and alias learning behind explicit learning intent.
-- Added bounded validation for `top_k` and trace limits so invalid client payloads fail clearly instead of silently degrading behavior.
-- Hardened persisted alias loading and JSONL trace loading so malformed records do not break runtime startup or trace inspection.
-- Added loop-aware learning behavior:
-  - `skills.learn_from_loop` can convert a graph-native loop trace into a reusable skill.
-  - When a user asks to learn from a loop but no loop exists yet, the Boss Agent now prefers running `gndi.run_decision_loop` first rather than selecting a guaranteed-failure path.
-- Expanded automated verification to cover:
-  - MCP registration completeness
-  - Boss routing correctness
-  - graph-native loop execution
-  - loop-to-skill promotion
-  - endpoint validation and failure handling
-
-Why this work was needed:
-
-- The prior plan assumed a separate agent-service codebase that is not present in this repository.
-- This repo’s real control plane is the Flask runtime in `mizoki_runtime/runtime.py` plus the HTTP surface in `app.py`.
-- Because of that, the integration work had to be implemented and then hardened here so the website repo exposes a working Boss Agent, not just a documented architecture.
-
-Verification performed during this work:
-
-- `python3 -m py_compile mizoki_runtime/runtime.py app.py`
-- `python3 -m unittest tests.test_runtime tests.test_app`
-- Current coverage for this work path: `25` passing tests
-
----
-
-© 2026 MIZ OKI. All rights reserved.
+- Dark, cinematic, technical
+- Inter (body) + JetBrains Mono (eyebrows / labels / code)
+- Cyan / violet gradient accent on the Nexus brand line
+- Per-domain accent colors:
+  - Counsel — cyan
+  - Estate — violet
+  - Capital — emerald
+  - Signal — amber
+  - Risk — rose

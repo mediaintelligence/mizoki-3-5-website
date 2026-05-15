@@ -1,167 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIZ OKI 3.5 — Autonomous Decision Intelligence</title>
-    <meta name="description" content="Cut decision time from weeks to minutes with threshold-aware decision intelligence. Governed autonomous execution for enterprise teams.">
-    
-    <link rel="stylesheet" href="base.css">
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Inline JS to handle nav scroll -->
-    <script>
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('nav');
-            if (window.scrollY > 20) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-        });
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — Autonomous Strategic Intelligence Infrastructure</title>
+  <meta name="description" content="One intelligence. Many domains. Shared causal memory. MIZOKI3 transforms fragmented enterprise, legal, financial, operational, and customer data into verified autonomous strategic action." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body class="theme-dark">
+<body>
 
-    <!-- ====== NAVIGATION ====== -->
-    <nav class="nav" id="nav">
-        <div class="nav-inner">
-            <a href="index.html" class="nav-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.968-.516"/><path d="M10.996 14.828A4 4 0 0 0 12 14.5"/></svg>
-                <div class="nav-logo-name">MIZ<span>OKI</span></div>
-            </a>
-            
-            <ul class="nav-links">
-                <li><a href="platform.html">Platform</a></li>
-                <li><a href="security.html">Governance</a></li>
-                <li><a href="case-studies.html">Case Studies</a></li>
-                <li><a href="pricing.html">Pricing</a></li>
-            </ul>
-            
-            <div class="nav-actions">
-                <a href="login.html" class="nav-links-hover" style="color:var(--text-300); font-weight:500; font-size:var(--text-sm); margin-right:16px;">Login</a>
-                <a href="index.html" class="btn btn-primary">Book Demo</a>
-                <div class="hamburger"><span></span><span></span><span></span></div>
-            </div>
-        </div>
+  <header class="site-header">
+    <nav class="nav">
+      <a href="index.html" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="counsel.html">Counsel</a></li>
+        <li><a href="estate.html">Estate</a></li>
+        <li><a href="capital.html">Capital</a></li>
+        <li><a href="signal.html">Signal</a></li>
+        <li><a href="risk.html">Risk</a></li>
+      </ul>
     </nav>
+  </header>
 
-    <main>
-        <!-- ====== HERO ====== -->
-        <section class="hero">
-            <div class="hero-glow-1"></div>
-            <div class="hero-glow-2"></div>
-            
-            <div class="hero-content">
-                <div class="hero-badge reveal">
-                    <div class="pulse"></div>
-                    <span style="color:var(--text-300); font-size:var(--text-sm); font-weight:600;">MIZ OKI 3.5 — Autonomous Decision Intelligence</span>
-                </div>
-                
-                <h1 class="reveal delay-1">
-                    Enterprise Decisions at the <br>
-                    <span class="text-gradient">Speed of Data.</span>
-                </h1>
-                
-                <p class="hero-sub reveal delay-2">
-                    Stop relying on slow analytics and black-box AI. MIZ OKI transforms fragmented signals into governed, autonomous actions—cutting decision latency by 75x while keeping your board in complete control.
-                </p>
-                
-                <div class="hero-form reveal delay-3">
-                    <input type="email" placeholder="Enter your work email" class="hero-input" />
-                    <button class="btn btn-primary" style="background:var(--bg-white); color:var(--bg-950); box-shadow:none;">
-                        <span>Get Started</span>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ====== METRICS STRIP ====== -->
-        <section class="metrics-strip text-white">
-            <div class="container metrics-grid">
-                <div class="reveal delay-1">
-                    <div class="metric-value">50-75<span>x</span></div>
-                    <div class="metric-label">Faster Decisions</div>
-                </div>
-                <div class="reveal delay-2">
-                    <div class="metric-value">18-35<span>%</span></div>
-                    <div class="metric-label">Revenue Leakage Prevented</div>
-                </div>
-                <div class="reveal delay-3">
-                    <div class="metric-value">3.2<span>mo</span></div>
-                    <div class="metric-label">Avg Payback Period</div>
-                </div>
-                <div class="reveal delay-4">
-                    <div class="metric-value">89<span>%</span></div>
-                    <div class="metric-label">Automation Coverage</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ====== MINI FEATURE LEAD-IN ====== -->
-        <section class="lead-in">
-            <div class="container reveal">
-                <h2>Not just another copilot.</h2>
-                <p>MIZ OKI is an execution engine. It doesn't just suggest actions—it verifies them against your policies and executes them safely in your existing systems.</p>
-                <a href="platform.html" style="font-weight:600; font-size:var(--text-lg); display:inline-flex; align-items:center; gap:8px;">
-                    Explore the Platform 
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <!-- ====== FOOTER ====== -->
-    <footer>
-        <div class="container footer-grid">
-            <div class="footer-brand">
-                <a href="index.html" class="footer-logo">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.968-.516"/><path d="M10.996 14.828A4 4 0 0 0 12 14.5"/></svg>
-                    MIZ<span>OKI</span>
-                </a>
-                <p class="footer-desc">The autonomous decision intelligence system for high-stakes enterprise environments. SENSE → REASON → PLAN → VERIFY → DECIDE → ACT → LEARN.</p>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="platform.html">Platform</a></li>
-                    <li><a href="security.html">Governance</a></li>
-                    <li><a href="case-studies.html">Case Studies</a></li>
-                    <li><a href="pricing.html">Pricing</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">API Reference</a></li>
-                    <li><a href="#">ROI Calculator</a></li>
-                </ul>
-            </div>
+  <!-- ==========================================================
+       HERO — Animated Nexus
+       ========================================================== -->
+  <section class="hero">
+    <div class="ambient-glow"></div>
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-eyebrow">MIZOKI3 System Architecture</div>
+        <h1>Autonomous Strategic<br/>Intelligence</h1>
+        <h2 class="hero-tag">One intelligence. Many domains.<br/><span>Shared causal memory.</span></h2>
+        <p class="hero-statement">
+          MIZOKI3 transforms fragmented enterprise, legal, financial, operational, and customer data
+          into verified autonomous strategic action through temporal-causal Knowledge Graphs,
+          SRPVDAL orchestration, continuously learning reasoning agents, and a Decision Control Plane
+          that separates proposal from authorization while refusing to act on correlation alone.
+        </p>
+        <div class="hero-cta">
+          <a href="#brain" class="btn btn-primary">Inside the Brain →</a>
+          <a href="#layers" class="btn btn-ghost">Explore Domains</a>
         </div>
-        
-        <div class="container footer-bottom">
-            <p>© 2026 MIZ OKI. All rights reserved.</p>
-            <div style="display:flex; gap:24px;">
-                <a href="#" style="color:var(--text-600); font-size:var(--text-sm);">Privacy</a>
-                <a href="#" style="color:var(--text-600); font-size:var(--text-sm);">Terms</a>
-            </div>
-        </div>
-    </footer>
+      </div>
+      <div class="hero-visual">
+        <canvas id="nexusCanvas"></canvas>
+      </div>
+    </div>
+  </section>
 
-    <!-- Reveal Intersect Observer Script -->
-    <script>
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-    </script>
+  <!-- ==========================================================
+       CORE PREMISE
+       ========================================================== -->
+  <section>
+    <div class="container">
+      <div class="eyebrow">Core Premise</div>
+      <h2 style="max-width: 22ch;">Not a suite of products. <span style="color: var(--text-2);">One intelligence — expressed through specialized domain layers.</span></h2>
+      <p class="lead" style="margin-top: 24px;">
+        Every division feeds the same brain. Every signal flows through a common Temporal-Causal Knowledge Graph.
+        Every action passes through the same Verification and Authorization Plane. Every decision becomes causal
+        memory the entire system continuously reasons over.
+      </p>
+      <p class="lead" style="color: var(--accent-purple); font-family: var(--mono); font-size: 16px; margin-top: 24px; letter-spacing: 0.04em; font-weight: 700;">
+        // The compounding moat: one brain, many lenses, shared memory.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       NEXUS — THE BRAIN
+       ========================================================== -->
+  <section id="brain">
+    <div class="container">
+      <div class="eyebrow">01 — Nexus</div>
+      <h2>The Brain.<br/><span style="color: var(--text-2);">The central nervous system beneath every division, agent, simulation, and autonomous decision.</span></h2>
+
+      <div style="margin-top: 80px;">
+        <h4>Temporal-Causal Knowledge Graph</h4>
+        <p class="lead">The continuously evolving memory and reasoning substrate of the enterprise. Not visualization — executable enterprise cognition.</p>
+        <div class="grid grid-4" style="margin-top: 32px;">
+          <div class="card"><span class="tag">Stores</span><h3 style="font-size: 16px; font-family: var(--mono); letter-spacing: 0.04em;">Entities &amp; Obligations</h3><p style="font-size: 13px;">Counterparties, agreements, fiduciary duties.</p></div>
+          <div class="card"><span class="tag">Stores</span><h3 style="font-size: 16px; font-family: var(--mono); letter-spacing: 0.04em;">Causal Relationships</h3><p style="font-size: 13px;">How signals propagate across the enterprise.</p></div>
+          <div class="card"><span class="tag">Stores</span><h3 style="font-size: 16px; font-family: var(--mono); letter-spacing: 0.04em;">Temporal States</h3><p style="font-size: 13px;">The shape of obligations across time.</p></div>
+          <div class="card"><span class="tag">Stores</span><h3 style="font-size: 16px; font-family: var(--mono); letter-spacing: 0.04em;">Verification History</h3><p style="font-size: 13px;">Every prior decision, simulation, and outcome.</p></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 100px;">
+        <h4>SRPVDAL Orchestration</h4>
+        <p class="lead">The autonomous reasoning pipeline. Every consequential action traverses this governed loop.</p>
+        <div class="pipeline">
+          <div class="pipeline-step"><div class="step-num">01</div><div class="step-name">Sense</div><div class="step-desc">Ingests operational signals, legal documents, financial telemetry, customer interactions, communication streams.</div></div>
+          <div class="pipeline-step"><div class="step-num">02</div><div class="step-name">Reason</div><div class="step-desc">Builds causal relationships, contradiction analysis, exposure pathways, probabilistic + causal models.</div></div>
+          <div class="pipeline-step"><div class="step-num">03</div><div class="step-name">Plan</div><div class="step-desc">Generates strategic pathways, negotiation options, allocation strategies, simulations.</div></div>
+          <div class="pipeline-step"><div class="step-num">04</div><div class="step-name">Validate</div><div class="step-desc">Cross-checks policies, regulations, risk thresholds, simulation confidence, contradiction states.</div></div>
+          <div class="pipeline-step"><div class="step-num">05</div><div class="step-name">Decide</div><div class="step-desc">Ranks action eligibility, confidence scores, risk-adjusted pathways, expected outcomes.</div></div>
+          <div class="pipeline-step"><div class="step-num">06</div><div class="step-name">Act</div><div class="step-desc">Executes workflows, recommendations, orchestration events, authorized autonomous actions.</div></div>
+          <div class="pipeline-step"><div class="step-num">07</div><div class="step-name">Learn</div><div class="step-desc">Records outcomes, simulation accuracy, operational drift, policy evolution.</div></div>
+        </div>
+        <p style="color: var(--accent-purple); font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; font-weight: 500;">// Every action improves future reasoning.</p>
+      </div>
+
+      <div style="margin-top: 100px;">
+        <div class="grid grid-3">
+          <div class="card">
+            <span class="tag">Decision Control Plane</span>
+            <h3 style="font-size: 22px;">Proposal ≠ Authorization.</h3>
+            <p style="font-size: 14px;">The DCP separates reasoning from execution authority. No autonomous action occurs without verification, simulation, policy clearance, risk arbitration, and causal eligibility.</p>
+            <div class="reinforces"><span>Foundation</span> of governed enterprise autonomy</div>
+          </div>
+          <div class="card">
+            <span class="tag">Verification &amp; Arbitration</span>
+            <h3 style="font-size: 22px;">Disagreement is intelligence.</h3>
+            <p style="font-size: 14px;">Independent Planner, Verifier, Risk, Policy, Simulation, and Compliance agents continuously evaluate proposed actions. The system measures confidence divergence, causal inconsistency, and hallucination probability before any authorization.</p>
+            <div class="reinforces"><span>Output</span> agreement metrics, not raw confidence</div>
+          </div>
+          <div class="card">
+            <span class="tag">Counterfactual Simulation</span>
+            <h3 style="font-size: 22px;">Reason against what could have been.</h3>
+            <p style="font-size: 14px;">Every consequential decision is simulated against alternative actions, delayed actions, no-action baselines, adversarial scenarios, regulatory shifts, and market volatility — creating compounding strategic intelligence.</p>
+            <div class="reinforces"><span>Engine</span> for compounding learning</div>
+          </div>
+        </div>
+        <div style="margin-top: 24px;" class="card">
+          <span class="tag">Decision Eligibility Layer</span>
+          <h3 style="font-size: 22px;">Refuses to act on correlation alone.</h3>
+          <p style="font-size: 14px; max-width: 80ch;">DEL programmatically prevents autonomous action based on correlation alone. Only causally grounded, policy-cleared, simulation-verified, risk-authorized decisions can become autonomous. This is the difference between predictive automation and governed strategic autonomy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       DOMAIN LAYERS
+       ========================================================== -->
+  <section id="layers">
+    <div class="container">
+      <div class="eyebrow">02 — Domain Layers</div>
+      <h2>Specialized Intelligence on a Shared Substrate.</h2>
+      <p class="lead">
+        These divisions are not separate products. They are specialized reasoning lenses operating on the
+        same Nexus brain. Each consumes domain-specific signals, contributes memory to the graph, and
+        improves every other layer through shared causal intelligence.
+      </p>
+
+      <div class="grid grid-3" style="margin-top: 64px;">
+
+        <a href="counsel.html" class="card counsel domain-card">
+          <span class="tag">Counsel · Legal Intelligence</span>
+          <h3>Convert legal complexity into verified strategic position.</h3>
+          <p style="font-size: 14px;">Contracts, amendments, litigation filings, discovery, fiduciary documentation — converted to exposure mapping, contradiction detection, litigation pathway analysis, and obligation propagation graphs.</p>
+          <div class="reinforces">Reinforces <span>Risk · Estate · Capital · Nexus</span></div>
+        </a>
+
+        <a href="estate.html" class="card estate domain-card">
+          <span class="tag">Estate · Wealth, Trust &amp; Tax</span>
+          <h3>Make multi-generational wealth structures legible and defensible.</h3>
+          <p style="font-size: 14px;">Trusts, amendments, tax positions, ownership hierarchies, fiduciary communications — turned into restructuring intelligence, succession simulations, beneficiary-conflict mapping, and liquidity forecasting.</p>
+          <div class="reinforces">Reinforces <span>Counsel · Capital · Risk</span></div>
+        </a>
+
+        <a href="capital.html" class="card capital domain-card">
+          <span class="tag">Capital · Banking &amp; Financial</span>
+          <h3>Give the enterprise causal foresight over capital.</h3>
+          <p style="font-size: 14px;">Banking relationships, loan agreements, covenant structures, treasury telemetry, capital stack composition — modeled as covenant-breach forecasting, liquidity stress, refinancing intelligence, and negotiation leverage.</p>
+          <div class="reinforces">Reinforces <span>Estate · Counsel · Signal · Risk</span></div>
+        </a>
+
+        <a href="signal.html" class="card signal domain-card">
+          <span class="tag">Signal · Autonomous Acquisition</span>
+          <h3>Replace correlation-based marketing with causal autonomous acquisition.</h3>
+          <p style="font-size: 14px;">Meta, Google, CRM, journey telemetry, engagement, conversion, retention — converted to causal attribution, churn forecasting, lifetime-value prediction, autonomous bid optimization, and budget reallocation intelligence.</p>
+          <div class="reinforces">Reinforces <span>Capital · Risk · Counsel · Nexus</span></div>
+        </a>
+
+        <a href="risk.html" class="card risk domain-card">
+          <span class="tag">Risk · Verification &amp; Compliance</span>
+          <h3>The conscience, verifier, and governance of the entire system.</h3>
+          <p style="font-size: 14px;">Cross-agent verification, hallucination detection, contradiction arbitration, policy enforcement, regulatory compliance, authorization scoring, tail-risk simulation, confidence arbitration. Every consequential output passes through Risk.</p>
+          <div class="reinforces">Reinforces <span>Every layer. Authorizes every action.</span></div>
+        </a>
+
+        <div class="card" style="background: transparent; border-style: dashed; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+          <span class="tag">Pattern</span>
+          <h3 style="font-size: 20px;">Shared substrate. Specialized lenses.</h3>
+          <p style="font-size: 13px; color: var(--text-2);">A signal entering one layer reshapes reasoning across every other. The architecture is the moat.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       FLYWHEEL
+       ========================================================== -->
+  <section id="flywheel">
+    <div class="container">
+      <div class="eyebrow">03 — The Flywheel</div>
+      <h2>Why MIZOKI3 compounds.</h2>
+      <p class="lead">A single signal can improve the entire enterprise reasoning substrate.</p>
+
+      <div class="cascade" style="margin-top: 40px;">
+        <div><span class="ent">A clause inside a counterparty email</span> <span class="arrow">→</span> updates <span class="layer">Counsel</span></div>
+        <div><span class="arrow">→</span> modifies fiduciary exposure inside <span class="layer">Estate</span></div>
+        <div><span class="arrow">→</span> recalibrates liquidity and covenant risk inside <span class="layer">Capital</span></div>
+        <div><span class="arrow">→</span> changes negotiation leverage back inside <span class="layer">Counsel</span></div>
+        <div><span class="arrow">→</span> alters enterprise authorization thresholds inside <span class="layer">Risk</span></div>
+        <div><span class="arrow">→</span> improves simulation priors inside <span class="layer">Nexus</span></div>
+        <div><span class="arrow">→</span> permanently upgrades <span class="ent">every future decision</span>.</div>
+      </div>
+
+      <p style="margin-top: 32px; font-family: var(--mono); color: var(--accent-purple); font-size: 14px; letter-spacing: 0.06em; font-weight: 500;">
+        // Compounding strategic intelligence. Not isolated outputs. A continuously evolving cognition system.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       CATEGORY
+       ========================================================== -->
+  <section>
+    <div class="container">
+      <div class="eyebrow">04 — The Category</div>
+      <h2>A new category of enterprise software.</h2>
+
+      <div class="category-grid">
+        <div class="cat-col isnt">
+          <h4>// MIZOKI3 IS NOT</h4>
+          <ul>
+            <li>Workflow automation</li>
+            <li>RAG infrastructure</li>
+            <li>Legal AI software</li>
+            <li>CRM augmentation</li>
+            <li>Isolated agents</li>
+            <li>Enterprise copilots</li>
+            <li>Document intelligence</li>
+          </ul>
+        </div>
+        <div class="cat-col is">
+          <h4>// MIZOKI3 DEFINES</h4>
+          <ul>
+            <li>Reasoning</li>
+            <li>Verification</li>
+            <li>Simulation</li>
+            <li>Orchestration</li>
+            <li>Memory</li>
+            <li>Authorization</li>
+            <li>Continuous strategic learning</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 64px; font-size: clamp(28px, 3vw, 40px); max-width: 26ch; letter-spacing: -0.02em;">
+        Autonomous Decision Infrastructure — a governed enterprise cognition layer across legal, financial, operational, estate, customer, and enterprise systems.
+      </h3>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       FINAL POSITIONING
+       ========================================================== -->
+  <section>
+    <div class="container">
+      <div class="positioning">
+        <div class="brand-line">// MIZOKI3</div>
+        <h2>Autonomous Strategic Intelligence Infrastructure.</h2>
+        <p>
+          MIZOKI3 transforms fragmented enterprise, legal, financial, operational, and customer data into
+          verified autonomous strategic action through temporal-causal Knowledge Graphs, SRPVDAL orchestration,
+          continuously learning reasoning agents, and a Decision Control Plane that separates proposal from
+          authorization while refusing to act on correlation alone.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       FOOTER
+       ========================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">MIZOKI3</div>
+          <div class="footer-tag">// One intelligence. Many domains. Shared causal memory.</div>
+        </div>
+        <div class="footer-col">
+          <h5>Domains</h5>
+          <ul>
+            <li><a href="counsel.html">Counsel</a></li>
+            <li><a href="estate.html">Estate</a></li>
+            <li><a href="capital.html">Capital</a></li>
+            <li><a href="signal.html">Signal</a></li>
+            <li><a href="risk.html">Risk</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Architecture</h5>
+          <ul>
+            <li><a href="index.html#brain">Nexus</a></li>
+            <li><a href="index.html#brain">SRPVDAL</a></li>
+            <li><a href="index.html#brain">Decision Control Plane</a></li>
+            <li><a href="index.html#flywheel">Flywheel</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© MIZOKI3 · MediaIntelligence.ai</span>
+        <span>// Autonomous Decision Infrastructure</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/nexus.js"></script>
 </body>
 </html>

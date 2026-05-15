@@ -128,53 +128,45 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def index():
         return serve_page("index.html")
 
+    @app.route("/counsel")
+    @app.route("/counsel.html")
+    def counsel():
+        return serve_page("counsel.html")
+
+    @app.route("/estate")
+    @app.route("/estate.html")
+    def estate():
+        return serve_page("estate.html")
+
+    @app.route("/capital")
+    @app.route("/capital.html")
+    def capital():
+        return serve_page("capital.html")
+
+    @app.route("/signal")
+    @app.route("/signal.html")
+    def signal():
+        return serve_page("signal.html")
+
+    @app.route("/risk")
+    @app.route("/risk.html")
+    def risk():
+        return serve_page("risk.html")
+
     @app.route("/how-it-works.html")
-    def how_it_works():
-        return serve_page("how-it-works.html")
-
     @app.route("/platform.html")
-    def platform():
-        return serve_page("platform.html")
-
     @app.route("/security.html")
-    def security():
-        return serve_page("security.html")
-
     @app.route("/industries.html")
-    def industries():
-        return serve_page("industries.html")
-
     @app.route("/pricing.html")
-    def pricing():
-        return serve_page("pricing.html")
-
     @app.route("/case-studies.html")
-    def case_studies():
-        return serve_page("case-studies.html")
-
     @app.route("/resources.html")
-    def resources():
-        return serve_page("resources.html")
-
     @app.route("/roi.html")
-    def roi():
-        return serve_page("roi.html")
-
     @app.route("/walkthrough.html")
-    def walkthrough():
-        return serve_page("walkthrough.html")
-
     @app.route("/investor.html")
-    def investor():
-        return serve_page("investor.html")
-
     @app.route("/sales-one-pager.html")
-    def sales_one_pager():
-        return serve_page("sales-one-pager.html")
-
     @app.route("/demo-opener.html")
-    def demo_opener():
-        return serve_page("demo-opener.html")
+    def legacy_marketing_page():
+        return redirect(url_for("home"), code=301)
 
     @app.route("/blogs")
     @app.route("/blogs/")
@@ -222,7 +214,7 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def login_page():
         if "user" in session:
             return redirect(EXTERNAL_DASHBOARD_URL)
-        return serve_page("login.html")
+        return redirect(EXTERNAL_LOGIN_URL, code=302)
 
     @app.route("/login", methods=["POST"])
     def login():
