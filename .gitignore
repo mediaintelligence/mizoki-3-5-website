@@ -24,3 +24,10 @@ build/
 
 # Docker
 .docker/
+
+# Local Claude Code settings
+.claude/
+
+# Scratch / non-website content (legal docs, generated PDFs, working notes)
+tmp/
+output/
