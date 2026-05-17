@@ -1,0 +1,87 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC7)"/>
+  
+  <!-- Slide number -->
+  <text x="80" y="80" fill="#606070" font-family="monospace" font-size="16">06</text>
+  
+  <!-- Title -->
+  <text x="540" y="130" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="44">The ReLU Playbook</text>
+  <text x="540" y="175" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="20">6 moves to cross the threshold</text>
+  
+  <!-- Checklist items -->
+  <g transform="translate(100, 230)">
+    <!-- Item 1 -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="880" height="100" rx="12" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="25" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="2"/>
+      <text x="50" y="58" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="20" font-weight="700">1</text>
+      <text x="100" y="40" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20" font-weight="500">Choose achievable optimization goals</text>
+      <text x="100" y="70" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Start with goals you can actually feed (ATC before Purchase)</text>
+    </g>
+    
+    <!-- Item 2 -->
+    <g transform="translate(0, 120)">
+      <rect x="0" y="0" width="880" height="100" rx="12" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="25" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="2"/>
+      <text x="50" y="58" text-anchor="middle" fill="#a855f7" font-family="system-ui, sans-serif" font-size="20" font-weight="700">2</text>
+      <text x="100" y="40" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20" font-weight="500">Consolidate budget</text>
+      <text x="100" y="70" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Fewer ad sets = More events per ad set = Faster learning</text>
+    </g>
+    
+    <!-- Item 3 -->
+    <g transform="translate(0, 240)">
+      <rect x="0" y="0" width="880" height="100" rx="12" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="25" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2"/>
+      <text x="50" y="58" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="20" font-weight="700">3</text>
+      <text x="100" y="40" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20" font-weight="500">Fix signal quality first</text>
+      <text x="100" y="70" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Server-side events + Conversions API + proper deduplication</text>
+    </g>
+    
+    <!-- Item 4 -->
+    <g transform="translate(0, 360)">
+      <rect x="0" y="0" width="880" height="100" rx="12" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="25" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="2"/>
+      <text x="50" y="58" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="20" font-weight="700">4</text>
+      <text x="100" y="40" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20" font-weight="500">Front-load intent, not traffic</text>
+      <text x="100" y="70" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Creative that pre-qualifies ’ more conversions per click</text>
+    </g>
+    
+    <!-- Item 5 -->
+    <g transform="translate(0, 480)">
+      <rect x="0" y="0" width="880" height="100" rx="12" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="25" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2"/>
+      <text x="50" y="58" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="20" font-weight="700">5</text>
+      <text x="100" y="40" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20" font-weight="500">Stop resetting learning</text>
+      <text x="100" y="70" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Significant edits restart dynamics ’ create stable learning windows</text>
+    </g>
+    
+    <!-- Item 6 -->
+    <g transform="translate(0, 600)">
+      <rect x="0" y="0" width="880" height="100" rx="12" fill="rgba(79,143,255,0.1)" stroke="rgba(79,143,255,0.3)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="25" fill="rgba(79,143,255,0.2)" stroke="#4f8fff" stroke-width="2"/>
+      <text x="50" y="58" text-anchor="middle" fill="#4f8fff" font-family="system-ui, sans-serif" font-size="20" font-weight="700">6</text>
+      <text x="100" y="40" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20" font-weight="500">Test thresholds scientifically</text>
+      <text x="100" y="70" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Budget stair-steps + controlled A/B ’ find your activation point</text>
+    </g>
+  </g>
+  
+  <!-- Summary -->
+  <g transform="translate(100, 980)">
+    <rect x="0" y="0" width="880" height="180" rx="16" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.4)" stroke-width="2"/>
+    <text x="440" y="50" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="20" font-weight="600">THE GOAL</text>
+    <text x="440" y="95" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="24">Work WITH the system's learning physics:</text>
+    <text x="440" y="140" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="18">concentrate signal " improve quality " reduce noise</text>
+    <text x="440" y="165" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="18">stabilize learning windows " scale what's activated</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

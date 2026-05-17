@@ -1,4 +1,4 @@
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
@@ -6,28 +6,28 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
-*.swo
 
-# Logs
-*.log
-npm-debug.log*
-
-# Dependencies (if any added later)
+# Dependencies
 node_modules/
 vendor/
 
-# Build artifacts
+# Build
 dist/
 build/
 
-# Environment files
+# Environment
 .env
-.env.local
-.env.*.local
+.env.*
+
+# Logs
+*.log
 
 # Docker
 .docker/
 
-# Misc
-*.bak
-*.tmp
+# Local Claude Code settings
+.claude/
+
+# Scratch / non-website content (legal docs, generated PDFs, working notes)
+tmp/
+output/

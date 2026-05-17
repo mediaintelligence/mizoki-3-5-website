@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How an Autonomous Decision Controller (ADC) Thinks — MIZ OKI</title>
+    <meta name="description" content="A plain-English guide to the 7 alerts that power real intelligence. Learn how an ADC thinks through decisions the same way a disciplined human expert would.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-blue: #4f8fff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --border: rgba(255,255,255,0.08);
+            --glow-cyan: rgba(0, 212, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-version {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+
+        .article-header {
+            padding: 10rem 2rem 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: var(--accent-cyan);
+        }
+        .post-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        .article-header h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .article-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--bg-primary);
+        }
+        .author-info {
+            flex: 1;
+        }
+        .author-name {
+            font-weight: 500;
+        }
+        .article-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem;
+        }
+        .article-content p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+        .article-content h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin: 3rem 0 1.5rem;
+            color: var(--text-primary);
+        }
+        .article-content h3 {
+            font-size: 1.25rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .article-content h4 {
+            font-size: 1.1rem;
+            margin: 2rem 0 0.75rem;
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .article-content strong {
+            color: var(--text-primary);
+        }
+        .article-content ul, .article-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+        .article-content blockquote {
+            border-left: 3px solid var(--accent-cyan);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+        .article-content code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        .article-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        .callout {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .callout-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.05));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .highlight-box p {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0;
+        }
+
+        .pipeline-visual {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .pipeline-stages {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .pipeline-stage {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .pipeline-arrow {
+            color: var(--text-muted);
+        }
+
+        .alert-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .alert-card.sense { border-left: 4px solid var(--accent-cyan); }
+        .alert-card.reason { border-left: 4px solid var(--accent-blue); }
+        .alert-card.plan { border-left: 4px solid var(--accent-purple); }
+        .alert-card.validate { border-left: 4px solid var(--accent-orange); }
+        .alert-card.decide { border-left: 4px solid var(--accent-green); }
+        .alert-card.act { border-left: 4px solid #ef4444; }
+        .alert-card.learn { border-left: 4px solid #ec4899; }
+
+        .alert-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .alert-title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .alert-subtitle {
+            font-style: italic;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+        .alert-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .alert-card p:last-child {
+            margin-bottom: 0;
+        }
+        .alert-card ul {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .alert-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        .genius-note {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(79, 143, 255, 0.05));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+        }
+        .genius-note p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+        .genius-note strong {
+            color: var(--accent-purple);
+        }
+
+        .check-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .check-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .check-list li::before {
+            content: '\2713';
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .cta-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin: 4rem 0;
+        }
+        .cta-section h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="../how-it-works.html">How It Works</a>
+                <a href="../platform.html">Platform</a>
+                <a href="../industries.html">Industries</a>
+                <a href="../pricing.html">Pricing</a>
+                <a href="index.html">Blog</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="../roi.html" class="btn btn-ghost">ROI Calculator</a>
+                <a href="../walkthrough.html" class="btn btn-primary">Get Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <article>
+        <header class="article-header">
+            <div class="breadcrumb">
+                <a href="index.html">Blog</a> / Architecture
+            </div>
+            <span class="post-tag">Architecture</span>
+            <h1>How an Autonomous Decision Controller (ADC) Thinks</h1>
+            <p class="article-subtitle">A plain-English guide to the 7 alerts that power real intelligence</p>
+            <div class="article-meta">
+                <div class="author-avatar">BM</div>
+                <div class="author-info">
+                    <div class="author-name">Boris Mizhen</div>
+                    <div class="article-date">February 2026 &bull; 10 min read</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="article-content">
+            <p>Most software today can <strong>report</strong> what happened. Some can <strong>predict</strong> what might happen.</p>
+
+            <p>Very few systems can safely <strong>decide and act</strong>.</p>
+
+            <p>An Autonomous Decision Controller (ADC) is designed to do exactly that&mdash;by thinking through decisions the same way a disciplined human expert would, but faster, more consistently, and with perfect memory.</p>
+
+            <p>This document explains the <strong>7 alerts (or stages)</strong> of an ADC in simple terms, and how they work together with the rest of the system to create a <strong>true, traceable decision engine</strong>.</p>
+
+            <p>No technical background required.</p>
+
+            <hr>
+
+            <h2>The Big Idea (Before the Details)</h2>
+
+            <p>Think of the ADC as a <strong>highly trained decision professional</strong> that never sleeps:</p>
+
+            <ul>
+                <li>It <strong>notices</strong> what's happening</li>
+                <li><strong>Understands</strong> what it means</li>
+                <li><strong>Plans</strong> possible responses</li>
+                <li><strong>Checks itself</strong> for mistakes</li>
+                <li><strong>Chooses</strong> carefully</li>
+                <li><strong>Acts</strong> safely</li>
+                <li><strong>Learns</strong> permanently</li>
+            </ul>
+
+            <p>Each of those steps has its own <strong>alert</strong>, so the system never skips ahead or acts blindly.</p>
+
+            <div class="highlight-box">
+                <p><strong>This is the opposite of "black-box AI."</strong></p>
+            </div>
+
+            <div class="pipeline-visual">
+                <div class="pipeline-stages">
+                    <span class="pipeline-stage">SENSE</span>
+                    <span class="pipeline-arrow">&rarr;</span>
+                    <span class="pipeline-stage">REASON</span>
+                    <span class="pipeline-arrow">&rarr;</span>
+                    <span class="pipeline-stage">PLAN</span>
+                    <span class="pipeline-arrow">&rarr;</span>
+                    <span class="pipeline-stage">VALIDATE</span>
+                    <span class="pipeline-arrow">&rarr;</span>
+                    <span class="pipeline-stage">DECIDE</span>
+                    <span class="pipeline-arrow">&rarr;</span>
+                    <span class="pipeline-stage">ACT</span>
+                    <span class="pipeline-arrow">&rarr;</span>
+                    <span class="pipeline-stage">LEARN</span>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2>The 7 ADC Alerts &mdash; One by One</h2>
+
+            <div class="alert-card sense">
+                <div class="alert-number">Alert 1</div>
+                <div class="alert-title">SENSE Alert</div>
+                <div class="alert-subtitle">"Something changed. Pay attention."</div>
+
+                <p><strong>What this means in human terms:</strong> The system noticed something unusual, important, or new.</p>
+
+                <p>Examples:</p>
+                <ul>
+                    <li>A sudden drop in performance</li>
+                    <li>A spike in customer interest</li>
+                    <li>A change in market conditions</li>
+                    <li>A signal disappearing due to privacy limits</li>
+                </ul>
+
+                <p>This does <strong>not</strong> mean a decision is made. It simply means:</p>
+
+                <blockquote>"Something may matter. Let's look closer."</blockquote>
+
+                <div class="genius-note">
+                    <p><strong>Why this is genius:</strong> Most systems either ignore weak signals or overreact to noise. The ADC records the signal <em>without panicking</em>.</p>
+                </div>
+            </div>
+
+            <div class="alert-card reason">
+                <div class="alert-number">Alert 2</div>
+                <div class="alert-title">REASON Alert</div>
+                <div class="alert-subtitle">"What is actually going on?"</div>
+
+                <p>Now the system tries to <strong>understand</strong>, not just observe.</p>
+
+                <p>It asks:</p>
+                <ul>
+                    <li>Is this pattern real or random?</li>
+                    <li>Has this happened before?</li>
+                    <li>What does our past experience say?</li>
+                </ul>
+
+                <p>This is where <strong>correlation</strong> lives: patterns, similar situations, probabilities.</p>
+
+                <div class="callout">
+                    <div class="callout-title">Important</div>
+                    <p>At this stage, the system is <strong>not allowed to act</strong>. It is gathering understanding, not authority.</p>
+                </div>
+            </div>
+
+            <div class="alert-card plan">
+                <div class="alert-number">Alert 3</div>
+                <div class="alert-title">PLAN Alert</div>
+                <div class="alert-subtitle">"What could we do about it?"</div>
+
+                <p>Here the ADC imagines <strong>possible actions</strong>, the same way a human strategist would.</p>
+
+                <p>Examples:</p>
+                <ul>
+                    <li>Increase spend</li>
+                    <li>Reduce exposure</li>
+                    <li>Wait and observe</li>
+                    <li>Test a small change</li>
+                    <li>Do nothing</li>
+                </ul>
+
+                <p>No action is taken yet. This is about <strong>options</strong>, not decisions.</p>
+
+                <div class="genius-note">
+                    <p><strong>Why this matters:</strong> Most software jumps straight from "pattern detected" to "action executed." The ADC explicitly separates <em>thinking</em> from <em>doing</em>.</p>
+                </div>
+            </div>
+
+            <div class="alert-card validate">
+                <div class="alert-number">Alert 4</div>
+                <div class="alert-title">VALIDATE Alert</div>
+                <div class="alert-subtitle">"Would this action actually cause the outcome we want?"</div>
+
+                <p>This is the most important step&mdash;and the one most systems skip.</p>
+
+                <p>Here the ADC asks a critical question:</p>
+
+                <blockquote>"If we take this action, will it actually cause improvement&mdash;or would the outcome happen anyway?"</blockquote>
+
+                <p>This is <strong>causal reasoning</strong>, not guesswork.</p>
+
+                <p>It uses:</p>
+                <ul>
+                    <li>Past experiments</li>
+                    <li>Counterfactuals ("what would have happened otherwise?")</li>
+                    <li>Measured uplift</li>
+                    <li>Risk bounds</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p>If causation cannot be established, the system <strong>refuses to act automatically</strong>.<br><strong>This is where safety lives.</strong></p>
+                </div>
+            </div>
+
+            <div class="alert-card decide">
+                <div class="alert-number">Alert 5</div>
+                <div class="alert-title">DECIDE Alert</div>
+                <div class="alert-subtitle">"Are we justified in acting?"</div>
+
+                <p>Only after validation does the ADC decide:</p>
+
+                <ul>
+                    <li>Should we act at all?</li>
+                    <li>How big should the action be?</li>
+                    <li>Should this require human approval?</li>
+                </ul>
+
+                <p>Possible outcomes:</p>
+                <ul>
+                    <li>Recommend only</li>
+                    <li>Require approval</li>
+                    <li>Execute autonomously</li>
+                </ul>
+
+                <p>Every decision is <strong>policy-checked</strong> and <strong>logged</strong>.</p>
+
+                <div class="callout">
+                    <div class="callout-title">Key Principle</div>
+                    <p>Nothing is silent. Nothing is hidden.</p>
+                </div>
+            </div>
+
+            <div class="alert-card act">
+                <div class="alert-number">Alert 6</div>
+                <div class="alert-title">ACT Alert</div>
+                <div class="alert-subtitle">"We are acting&mdash;carefully."</div>
+
+                <p>If and only if all prior alerts are satisfied, the ADC executes the decision.</p>
+
+                <p>Key protections:</p>
+                <ul>
+                    <li>Actions are bounded (no runaway changes)</li>
+                    <li>Execution is reversible</li>
+                    <li>Every action has a rollback plan</li>
+                </ul>
+
+                <div class="genius-note">
+                    <p>The system behaves like a <strong>professional operator</strong>, not an impulsive algorithm.</p>
+                </div>
+            </div>
+
+            <div class="alert-card learn">
+                <div class="alert-number">Alert 7</div>
+                <div class="alert-title">LEARN Alert</div>
+                <div class="alert-subtitle">"What did we learn from this?"</div>
+
+                <p>After action, the ADC waits and measures:</p>
+
+                <ul>
+                    <li>Did the outcome improve?</li>
+                    <li>By how much?</li>
+                    <li>Under what conditions?</li>
+                </ul>
+
+                <p>This learning is written into the <strong>Knowledge Graph</strong>, meaning:</p>
+                <ul>
+                    <li>The system remembers forever</li>
+                    <li>Future decisions get smarter</li>
+                    <li>Past mistakes are not repeated</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>This is how intelligence compounds.</strong></p>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2>How the Rest of the Software Fits In</h2>
+
+            <h3>The Knowledge Graph (KG)</h3>
+
+            <p>Think of the KG as the system's <strong>long-term memory and notebook</strong>.</p>
+
+            <p>It stores:</p>
+            <ul>
+                <li>Observations (what happened)</li>
+                <li>Causal links (what caused what)</li>
+                <li>Decisions (why actions were taken)</li>
+                <li>Outcomes (what worked and what didn't)</li>
+            </ul>
+
+            <p>Without the KG:</p>
+            <ul>
+                <li>Learning disappears</li>
+                <li>Explanations vanish</li>
+                <li>Trust erodes</li>
+            </ul>
+
+            <p>With the KG:</p>
+            <blockquote>Every decision can be explained, audited, and improved.</blockquote>
+
+            <hr>
+
+            <h3>Correlation + Causation (Working Together)</h3>
+
+            <ul>
+                <li><strong>Correlation</strong> helps the system notice patterns quickly</li>
+                <li><strong>Causation</strong> decides whether acting is justified</li>
+            </ul>
+
+            <p>The ADC never confuses the two.</p>
+
+            <p>That separation is intentional&mdash;and rare.</p>
+
+            <hr>
+
+            <h3>Alerts as Guardrails, Not Alarms</h3>
+
+            <p>These alerts are not "warnings." They are <strong>checkpoints</strong>.</p>
+
+            <p>They ensure:</p>
+            <ul>
+                <li>No step is skipped</li>
+                <li>No action is unjustified</li>
+                <li>No learning is lost</li>
+            </ul>
+
+            <p>This is why the system remains stable even when:</p>
+            <ul>
+                <li>Signals disappear</li>
+                <li>Privacy rules change</li>
+                <li>Markets shift suddenly</li>
+            </ul>
+
+            <hr>
+
+            <h2>Why This Design Is Unusually Powerful</h2>
+
+            <p>Most platforms:</p>
+            <ul>
+                <li>React to signals</li>
+                <li>Optimize metrics</li>
+                <li>Hope outcomes follow</li>
+            </ul>
+
+            <p>An ADC:</p>
+            <ul>
+                <li>Reasons about actions</li>
+                <li>Proves impact</li>
+                <li>Learns continuously</li>
+            </ul>
+
+            <p>Or simply:</p>
+
+            <div class="highlight-box">
+                <p><strong>Others predict behavior.<br>The ADC governs decisions.</strong></p>
+            </div>
+
+            <hr>
+
+            <h2>Final Takeaway</h2>
+
+            <p>You are not looking at "AI software."</p>
+
+            <p>You are looking at:</p>
+            <ul class="check-list">
+                <li>A decision professional</li>
+                <li>With perfect memory</li>
+                <li>Built-in discipline</li>
+                <li>And the ability to explain itself</li>
+            </ul>
+
+            <p>The 7 alerts exist to ensure the system:</p>
+            <ul class="check-list">
+                <li>Thinks before acting</li>
+                <li>Acts only when justified</li>
+                <li>Learns every time</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>That is the genius of the design.</strong></p>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to See the ADC in Action?</h2>
+                <p>MIZ OKI 3.5 implements this 7-stage decision framework to deliver autonomous decision intelligence that's safe, explainable, and continuously improving.</p>
+                <div class="cta-buttons">
+                    <a href="../walkthrough.html" class="btn btn-primary">Get Demo</a>
+                    <a href="../platform.html" class="btn btn-ghost">Explore Platform</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <span>&copy; 2026 MIZ OKI. All rights reserved.</span>
+                <span>SOC 2 Type II Certified &bull; GDPR Compliant &bull; HIPAA Ready</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

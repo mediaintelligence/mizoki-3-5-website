@@ -1,0 +1,104 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <filter id="glowC5" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC5)"/>
+  
+  <!-- Slide number -->
+  <text x="80" y="80" fill="#606070" font-family="monospace" font-size="16">04</text>
+  
+  <!-- Title -->
+  <text x="540" y="130" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="40">Stop Diluting Your Budget</text>
+  <text x="540" y="175" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="20">Most advertisers accidentally stay below threshold</text>
+  
+  <!-- BAD example -->
+  <g transform="translate(140, 230)">
+    <rect x="0" y="0" width="800" height="320" rx="12" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="2"/>
+    
+    <text x="400" y="40" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="22" font-weight="600">DILUTED (Bad)</text>
+    
+    <!-- Budget bar -->
+    <rect x="50" y="70" width="700" height="30" rx="6" fill="rgba(79,143,255,0.3)"/>
+    <text x="400" y="90" text-anchor="middle" fill="#4f8fff" font-family="monospace" font-size="12">$500/day total</text>
+    
+    <!-- Split boxes -->
+    <g transform="translate(50, 120)">
+      <rect x="0" y="0" width="130" height="60" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+      <text x="65" y="25" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="11">Ad Set 1</text>
+      <text x="65" y="45" text-anchor="middle" fill="#9090a0" font-family="monospace" font-size="10">$50/day</text>
+      
+      <rect x="142" y="0" width="130" height="60" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+      <text x="207" y="25" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="11">Ad Set 2</text>
+      <text x="207" y="45" text-anchor="middle" fill="#9090a0" font-family="monospace" font-size="10">$50/day</text>
+      
+      <rect x="284" y="0" width="130" height="60" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+      <text x="349" y="25" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="11">Ad Set 3</text>
+      <text x="349" y="45" text-anchor="middle" fill="#9090a0" font-family="monospace" font-size="10">$50/day</text>
+      
+      <rect x="426" y="0" width="130" height="60" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+      <text x="491" y="25" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="11">Ad Set 4</text>
+      <text x="491" y="45" text-anchor="middle" fill="#9090a0" font-family="monospace" font-size="10">$50/day</text>
+      
+      <rect x="568" y="0" width="130" height="60" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+      <text x="633" y="25" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="11">Ad Set 5</text>
+      <text x="633" y="45" text-anchor="middle" fill="#9090a0" font-family="monospace" font-size="10">$50/day</text>
+    </g>
+    
+    <text x="400" y="210" text-anchor="middle" fill="#606070" font-family="system-ui, sans-serif" font-size="14">+ 5 more ad sets...</text>
+    
+    <!-- Result -->
+    <text x="400" y="260" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">~2-3 events/day each = ~15-20/week</text>
+    <text x="400" y="295" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="18" font-weight="600">ALL "Learning Limited"</text>
+  </g>
+  
+  <!-- GOOD example -->
+  <g transform="translate(140, 590)">
+    <rect x="0" y="0" width="800" height="320" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="2"/>
+    
+    <text x="400" y="40" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="22" font-weight="600">CONCENTRATED (Good)</text>
+    
+    <!-- Budget bar -->
+    <rect x="50" y="70" width="700" height="30" rx="6" fill="rgba(79,143,255,0.3)"/>
+    <text x="400" y="90" text-anchor="middle" fill="#4f8fff" font-family="monospace" font-size="12">$500/day total</text>
+    
+    <!-- Concentrated boxes -->
+    <g transform="translate(50, 120)">
+      <rect x="75" y="0" width="250" height="80" rx="8" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2" filter="url(#glowC5)"/>
+      <text x="200" y="35" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="16" font-weight="500">Ad Set 1</text>
+      <text x="200" y="60" text-anchor="middle" fill="#f0f0f5" font-family="monospace" font-size="18" font-weight="600">$250/day</text>
+      
+      <rect x="375" y="0" width="250" height="80" rx="8" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2" filter="url(#glowC5)"/>
+      <text x="500" y="35" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="16" font-weight="500">Ad Set 2</text>
+      <text x="500" y="60" text-anchor="middle" fill="#f0f0f5" font-family="monospace" font-size="18" font-weight="600">$250/day</text>
+    </g>
+    
+    <text x="400" y="230" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="14">Only 2 concentrated ad sets</text>
+    
+    <!-- Result -->
+    <text x="400" y="270" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">~12+ events/day each = ~84+/week</text>
+    <text x="400" y="305" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="18" font-weight="600">Learning STABILIZED</text>
+  </g>
+  
+  <!-- Key takeaway -->
+  <g transform="translate(140, 960)">
+    <rect x="0" y="0" width="800" height="140" rx="12" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.3)" stroke-width="2"/>
+    <text x="400" y="50" text-anchor="middle" fill="#a855f7" font-family="system-ui, sans-serif" font-size="24" font-weight="600">THE RELU MOVE</text>
+    <text x="400" y="95" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="26">Go DEEP before going WIDE</text>
+    <text x="400" y="125" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="16">Fewer ad sets = Faster learning per ad set</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

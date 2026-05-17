@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | MIZ OKI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #e0e0e0;
+            --accent-color: #00d4ff;
+            --highlight-color: #ff9f1c;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: var(--bg-color);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            color: var(--text-color);
+        }
+
+        #neuro-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 120px 40px 60px;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 0.3em;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--accent-color);
+            margin-bottom: 50px;
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            color: var(--bg-color);
+            background-color: var(--highlight-color);
+            box-shadow: 0 0 15px rgba(255, 159, 28, 0.4);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .btn-submit:hover {
+            background-color: #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+        }
+
+        .contact-alt {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-alt p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .contact-alt a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .contact-alt a:hover {
+            color: var(--highlight-color);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            nav { padding: 15px 20px; }
+            .nav-links { gap: 20px; }
+            .nav-links a { font-size: 0.85rem; }
+            .content { padding: 100px 20px 40px; }
+            .contact-form { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="neuro-grid"></canvas>
+
+    <nav>
+        <a href="/" class="logo">MIZ OKI</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/intelligence">Intelligence</a>
+            <a href="/vision">Vision</a>
+            <a href="/contact" class="active">Contact</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div class="contact-container">
+            <h1>Initialize Protocol</h1>
+            <p class="subtitle">Ready to transform your decision infrastructure?</p>
+
+            <form class="contact-form" action="https://formspree.io/f/placeholder" method="POST">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" placeholder="Your organization">
+                </div>
+
+                <div class="form-group">
+                    <label for="interest">Area of Interest</label>
+                    <select id="interest" name="interest">
+                        <option value="demo">Request a Demo</option>
+                        <option value="pilot">Pilot Program</option>
+                        <option value="enterprise">Enterprise Solution</option>
+                        <option value="partnership">Partnership</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Tell us about your decision intelligence needs..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Transmit Request</button>
+            </form>
+
+            <div class="contact-alt">
+                <p>Prefer direct contact?</p>
+                <p><a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('neuro-grid');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#00d4ff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor((width * height) / 15000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - distance / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+        resize();
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>

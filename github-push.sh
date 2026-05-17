@@ -14,7 +14,7 @@
 #
 #######################################################################
 
-set -e
+set -euo pipefail
 
 # Colors
 GREEN='\033[0;32m'
@@ -49,15 +49,19 @@ REPO_URL="$1"
 
 echo -e "${GREEN}✓ Repository URL: ${REPO_URL}${NC}"
 
-# Add remote origin
+# Add or update remote origin
 echo -e "\n${CYAN}[1/3] Adding remote origin...${NC}"
-git remote remove origin 2>/dev/null || true
-git remote add origin "$REPO_URL"
+if git remote get-url origin >/dev/null 2>&1; then
+    git remote set-url origin "$REPO_URL"
+else
+    git remote add origin "$REPO_URL"
+fi
 echo -e "${GREEN}✓ Remote added${NC}"
 
 # Push to GitHub
 echo -e "\n${CYAN}[2/3] Pushing to GitHub...${NC}"
-git push -u origin main --force
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+git push -u origin "$CURRENT_BRANCH"
 echo -e "${GREEN}✓ Code pushed${NC}"
 
 # Get the web URL

@@ -1,0 +1,90 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+    <filter id="glow3" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bgGrad3)"/>
+  
+  <!-- Title -->
+  <text x="600" y="55" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600">The Learning Phase Target</text>
+  <text x="600" y="90" text-anchor="middle" fill="#9090a0" font-family="system-ui, -apple-system, sans-serif" font-size="18">~50 optimization events per ad set per week</text>
+  
+  <!-- Central big number -->
+  <g transform="translate(600, 280)">
+    <circle cx="0" cy="0" r="120" fill="none" stroke="url(#greenGrad)" stroke-width="6" filter="url(#glow3)"/>
+    <circle cx="0" cy="0" r="100" fill="rgba(16,185,129,0.1)"/>
+    <text x="0" y="20" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="80" font-weight="700">50</text>
+    <text x="0" y="55" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">events/week</text>
+  </g>
+  
+  <!-- Math breakdown -->
+  <g transform="translate(150, 420)">
+    <!-- Daily breakdown -->
+    <rect x="0" y="0" width="250" height="100" rx="12" fill="rgba(79,143,255,0.1)" stroke="rgba(79,143,255,0.3)" stroke-width="1"/>
+    <text x="125" y="35" text-anchor="middle" fill="#4f8fff" font-family="monospace" font-size="28" font-weight="600">~7</text>
+    <text x="125" y="60" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">events per day</text>
+    <text x="125" y="82" text-anchor="middle" fill="#606070" font-family="system-ui, sans-serif" font-size="12">50 ÷ 7 days</text>
+  </g>
+  
+  <g transform="translate(475, 420)">
+    <!-- Budget formula -->
+    <rect x="0" y="0" width="250" height="100" rx="12" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+    <text x="125" y="30" text-anchor="middle" fill="#a855f7" font-family="monospace" font-size="14">Daily Budget =</text>
+    <text x="125" y="58" text-anchor="middle" fill="#a855f7" font-family="monospace" font-size="18" font-weight="600">CPA × 7</text>
+    <text x="125" y="82" text-anchor="middle" fill="#606070" font-family="system-ui, sans-serif" font-size="12">e.g., $20 CPA ’ $140/day</text>
+  </g>
+  
+  <g transform="translate(800, 420)">
+    <!-- Time window -->
+    <rect x="0" y="0" width="250" height="100" rx="12" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+    <text x="125" y="35" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="28" font-weight="600">7 days</text>
+    <text x="125" y="60" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">learning window</text>
+    <text x="125" y="82" text-anchor="middle" fill="#606070" font-family="system-ui, sans-serif" font-size="12">after last significant edit</text>
+  </g>
+  
+  <!-- Status indicators -->
+  <g transform="translate(200, 180)">
+    <rect x="0" y="0" width="200" height="70" rx="10" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2"/>
+    <text x="100" y="32" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Below 50 events</text>
+    <text x="100" y="52" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="12">"Learning Limited"</text>
+  </g>
+  
+  <g transform="translate(800, 180)">
+    <rect x="0" y="0" width="200" height="70" rx="10" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="2"/>
+    <text x="100" y="32" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="600">50+ events</text>
+    <text x="100" y="52" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="12">Learning stabilized</text>
+  </g>
+  
+  <!-- Arrows -->
+  <g transform="translate(400, 215)">
+    <line x1="0" y1="0" x2="80" y2="50" stroke="#606070" stroke-width="2"/>
+    <polygon points="75,42 90,55 70,55" fill="#606070"/>
+  </g>
+  <g transform="translate(800, 215)">
+    <line x1="0" y1="0" x2="-80" y2="50" stroke="#606070" stroke-width="2"/>
+    <polygon points="-75,42 -90,55 -70,55" fill="#606070"/>
+  </g>
+  
+  <!-- Bottom insight -->
+  <rect x="200" y="565" width="800" height="70" rx="10" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+  <text x="600" y="595" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="15">Meta's system needs sufficient signal to stop guessing.</text>
+  <text x="600" y="618" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="15" font-weight="500">Budget your ad sets to hit ~50 events/week minimum.</text>
+  
+  <!-- MIZ OKI branding -->
+  <text x="1150" y="650" text-anchor="end" fill="#606070" font-family="monospace" font-size="12">MIZ OKI 3.5</text>
+</svg>

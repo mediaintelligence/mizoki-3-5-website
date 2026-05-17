@@ -1,0 +1,95 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradC3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <linearGradient id="cyanGradC3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#4f8fff"/>
+    </linearGradient>
+    <filter id="glowC3" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="url(#bgGradC3)"/>
+  
+  <!-- Slide number -->
+  <text x="80" y="80" fill="#606070" font-family="monospace" font-size="16">02</text>
+  
+  <!-- Title -->
+  <text x="540" y="150" text-anchor="middle" fill="#f0f0f5" font-family="Georgia, serif" font-size="44">What is ReLU?</text>
+  <text x="540" y="200" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="20">(Rectified Linear Unit)</text>
+  
+  <!-- ReLU Graph -->
+  <g transform="translate(140, 280)">
+    <rect x="0" y="0" width="800" height="400" rx="12" fill="rgba(30,30,40,0.5)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    
+    <!-- Grid -->
+    <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
+      <line x1="100" y1="50" x2="100" y2="350"/>
+      <line x1="200" y1="50" x2="200" y2="350"/>
+      <line x1="300" y1="50" x2="300" y2="350"/>
+      <line x1="400" y1="50" x2="400" y2="350"/>
+      <line x1="500" y1="50" x2="500" y2="350"/>
+      <line x1="600" y1="50" x2="600" y2="350"/>
+      <line x1="700" y1="50" x2="700" y2="350"/>
+    </g>
+    
+    <!-- Axes -->
+    <line x1="50" y1="200" x2="750" y2="200" stroke="#606070" stroke-width="2"/>
+    <line x1="400" y1="50" x2="400" y2="350" stroke="#606070" stroke-width="2"/>
+    
+    <!-- ReLU curve -->
+    <path d="M 50 200 L 400 200 L 700 50" fill="none" stroke="url(#cyanGradC3)" stroke-width="6" filter="url(#glowC3)"/>
+    
+    <!-- Threshold point -->
+    <circle cx="400" cy="200" r="12" fill="#00d4ff" filter="url(#glowC3)"/>
+    
+    <!-- Labels -->
+    <text x="200" y="250" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="16">Below threshold</text>
+    <text x="200" y="275" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="14">output = 0</text>
+    
+    <text x="600" y="100" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="16">Above threshold</text>
+    <text x="600" y="125" text-anchor="middle" fill="#10b981" font-family="system-ui, sans-serif" font-size="14">output grows</text>
+    
+    <text x="400" y="380" text-anchor="middle" fill="#00d4ff" font-family="monospace" font-size="16">THRESHOLD</text>
+  </g>
+  
+  <!-- Formula -->
+  <g transform="translate(340, 720)">
+    <rect x="0" y="0" width="400" height="80" rx="10" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="2"/>
+    <text x="200" y="50" text-anchor="middle" fill="#00d4ff" font-family="monospace" font-size="32" font-weight="600">f(x) = max(0, x)</text>
+  </g>
+  
+  <!-- Key points -->
+  <g transform="translate(140, 850)">
+    <text x="0" y="0" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="24" font-weight="500">How Meta's algorithm behaves:</text>
+    
+    <g transform="translate(0, 50)">
+      <rect x="0" y="0" width="800" height="60" rx="8" fill="rgba(239,68,68,0.1)"/>
+      <text x="30" y="38" fill="#ef4444" font-family="system-ui, sans-serif" font-size="20">Below threshold ’ Weak signals filtered (no delivery)</text>
+    </g>
+    
+    <g transform="translate(0, 130)">
+      <rect x="0" y="0" width="800" height="60" rx="8" fill="rgba(16,185,129,0.1)"/>
+      <text x="30" y="38" fill="#10b981" font-family="system-ui, sans-serif" font-size="20">Above threshold ’ Strong signals amplified (momentum)</text>
+    </g>
+  </g>
+  
+  <!-- Bottom note -->
+  <g transform="translate(140, 1120)">
+    <rect x="0" y="0" width="800" height="100" rx="10" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+    <text x="400" y="40" text-anchor="middle" fill="#a855f7" font-family="system-ui, sans-serif" font-size="16" font-weight="500">Think of it as a gate:</text>
+    <text x="400" y="75" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="20">You can be "close" and still get punished...</text>
+  </g>
+  
+  <!-- Branding -->
+  <text x="540" y="1320" text-anchor="middle" fill="#606070" font-family="monospace" font-size="14">MIZ OKI 3.5</text>
+</svg>

@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industries | MIZ OKI 3.5</title>
+    <meta name="description" content="Industry-specific autonomous decision intelligence for Media Buying, Financial Services, Retail, Healthcare, and Manufacturing.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --bg-card: #0f0f16;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-cyan: #00d4ff;
+            --accent-blue: #4f8fff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --accent-pink: #f472b6;
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-accent: rgba(0,212,255,0.3);
+            --glow-cyan: 0 0 30px rgba(0,212,255,0.15);
+            --gradient-hero: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(79,143,255,0.05) 50%, rgba(168,85,247,0.03) 100%);
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 4px;
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-cyan);
+        }
+        
+        .nav-cta {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .btn-ghost:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-cyan);
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 5rem;
+            background: var(--gradient-hero);
+            text-align: center;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .page-header h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-header .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Industry Navigation */
+        .industry-nav {
+            position: sticky;
+            top: 72px;
+            z-index: 100;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 2rem;
+        }
+        
+        .industry-nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .industry-nav-btn {
+            padding: 0.5rem 1.25rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .industry-nav-btn:hover,
+        .industry-nav-btn.active {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0,212,255,0.1);
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 6rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+        }
+        
+        /* Industry Section */
+        .industry-section {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .industry-section:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+        
+        .industry-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .industry-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.25rem;
+            flex-shrink: 0;
+        }
+        
+        .industry-icon.media { background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(79,143,255,0.15)); }
+        .industry-icon.finance { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.15)); }
+        .industry-icon.retail { background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(168,85,247,0.15)); }
+        .industry-icon.healthcare { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.15)); }
+        .industry-icon.manufacturing { background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.15)); }
+        
+        .industry-header-content h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
+        .industry-header-content p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* Industry Grid */
+        .industry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        
+        /* Use Cases */
+        .use-cases {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .use-case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.75rem;
+            transition: all 0.3s;
+        }
+        
+        .use-case-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateX(4px);
+        }
+        
+        .use-case-card h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.75rem;
+        }
+        
+        .use-case-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* Feature Highlight */
+        .feature-highlight {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .feature-highlight h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+        }
+        
+        .highlight-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.25rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .highlight-features {
+            list-style: none;
+        }
+        
+        .highlight-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .highlight-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .highlight-features li::before {
+            content: "→";
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+        
+        /* Media Buying Special Section */
+        .relu-callout {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(79,143,255,0.05));
+            border: 1px solid var(--border-accent);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+        }
+        
+        .relu-callout h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .relu-callout p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .relu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .relu-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+        
+        .relu-item h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+        
+        .relu-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+        
+        /* Template Section */
+        .templates-section {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .templates-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .templates-header h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .templates-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .template-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .template-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: var(--glow-cyan);
+        }
+        
+        .template-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+        
+        .template-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .template-includes {
+            list-style: none;
+            font-size: 0.85rem;
+        }
+        
+        .template-includes li {
+            padding: 0.4rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .template-includes li::before {
+            content: "✓";
+            color: var(--accent-green);
+            font-size: 0.75rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--gradient-hero);
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 4rem;
+        }
+        
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            max-width: 300px;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 4rem;
+        }
+        
+        .footer-column h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-column a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--accent-cyan);
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .industry-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .relu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .industry-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .highlight-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/11/" class="logo">
+                MIZ OKI
+                <span class="logo-badge">3.5</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/11/">Home</a></li>
+                <li><a href="/11/how-it-works.html">How It Works</a></li>
+                <li><a href="/11/platform.html">Platform</a></li>
+                <li><a href="/11/security.html">Security</a></li>
+                <li><a href="/11/industries.html" class="active">Industries</a></li>
+                <li><a href="/11/pricing.html">Pricing</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/11/walkthrough.html" class="btn btn-ghost">12-Min Walkthrough</a>
+                <a href="/11/roi.html" class="btn btn-primary">Estimate ROI</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1>Industry Solutions</h1>
+        <p class="subtitle">
+            Pre-configured templates with industry-specific causal models, compliance frameworks, 
+            and agent configurations. Deploy in weeks, not months.
+        </p>
+    </header>
+
+    <!-- 7-Stage Pipeline Overview -->
+    <section style="padding: 3rem 2rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-subtle);">
+        <div style="max-width: 1100px; margin: 0 auto; text-align: center;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">The SRDPV-DAL Pipeline</div>
+            <h2 style="font-family: 'Instrument Serif', serif; font-size: 1.75rem; font-weight: 400; margin-bottom: 0.5rem;">Seven Stages. Full Validation. Every Decision.</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Each industry template runs the same 7-stage autonomous decision pipeline</p>
+            <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem;">
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">SENSE</span></div>
+                <span style="color: var(--text-muted);">→</span>
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">🧠</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">REASON</span></div>
+                <span style="color: var(--text-muted);">→</span>
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📋</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">PLAN</span></div>
+                <span style="color: var(--text-muted);">→</span>
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">🔍</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">VALIDATE</span></div>
+                <span style="color: var(--text-muted);">→</span>
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">⚡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">DECIDE</span></div>
+                <span style="color: var(--text-muted);">→</span>
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">🚀</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">ACT</span></div>
+                <span style="color: var(--text-muted);">→</span>
+                <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📈</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">LEARN</span></div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">↺ LEARN feeds outcomes back into SENSE — continuous improvement from real results</p>
+        </div>
+    </section>
+
+    <!-- Industry Navigation -->
+    <div class="industry-nav">
+        <div class="industry-nav-inner">
+            <a href="#media-buying" class="industry-nav-btn active">📺 Media Buying</a>
+            <a href="#finance" class="industry-nav-btn">💰 Financial Services</a>
+            <a href="#retail" class="industry-nav-btn">🛒 Retail & Commerce</a>
+            <a href="#healthcare" class="industry-nav-btn">🏥 Healthcare</a>
+            <a href="#manufacturing" class="industry-nav-btn">🏭 Manufacturing</a>
+        </div>
+    </div>
+
+    <!-- Media Buying Section -->
+    <section id="media-buying" class="industry-section">
+        <div class="container">
+            <div class="industry-header">
+                <div class="industry-icon media">📺</div>
+                <div class="industry-header-content">
+                    <div class="section-label" style="color: var(--accent-cyan);">Media Buying & Advertising</div>
+                    <h2>Autonomous Ad Optimization</h2>
+                    <p>Threshold-aware media buying that works with platform algorithms, not against them.</p>
+                </div>
+            </div>
+            
+            <div class="industry-grid">
+                <div class="use-cases">
+                    <div class="use-case-card">
+                        <h4>Learning Phase Protection</h4>
+                        <p>
+                            Automatically detect when campaigns approach Meta's ~50 event/week threshold. 
+                            Consolidate ad sets and protect learning stability before performance degrades.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Budget Threshold Discovery</h4>
+                        <p>
+                            Identify minimum viable budgets for stable delivery using controlled stair-step 
+                            testing. Find the activation point where CPM/CPA efficiency improves.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Signal Quality Optimization</h4>
+                        <p>
+                            Monitor Event Match Quality, pixel/CAPI deduplication, and conversion windows. 
+                            Ensure the algorithm receives clean, high-intent signals.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Creative Performance Analysis</h4>
+                        <p>
+                            Causal analysis of creative angle → CTR → conversion pathways. 
+                            Distinguish correlation from causation in creative testing.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="feature-highlight">
+                    <h3>Media Buying Results</h3>
+                    <div class="highlight-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">-35%</div>
+                            <div class="stat-label">CPA Reduction</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">+22%</div>
+                            <div class="stat-label">ROAS Improvement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">3.2x</div>
+                            <div class="stat-label">Faster Optimization</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">89%</div>
+                            <div class="stat-label">Automation Rate</div>
+                        </div>
+                    </div>
+                    <ul class="highlight-features">
+                        <li>Multi-platform support: Meta, Google, TikTok, LinkedIn</li>
+                        <li>Conversions API integration with proper deduplication</li>
+                        <li>Attribution modeling with causal confidence scoring</li>
+                        <li>Creative fatigue detection and rotation recommendations</li>
+                        <li>Budget reallocation with counterfactual simulation</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- ReLU Lens Callout -->
+            <div class="relu-callout">
+                <h3>The ReLU Lens: Threshold-Aware Media Buying</h3>
+                <p>
+                    Meta's ad delivery behaves non-linearly—like a ReLU activation function. 
+                    Below certain thresholds, effort feels invisible. Above them, learning compounds. 
+                    MIZ OKI 3.5 helps you identify and cross these thresholds systematically.
+                </p>
+                <div class="relu-grid">
+                    <div class="relu-item">
+                        <h4>Signal Volume</h4>
+                        <p>Ensure ~50+ optimization events/week per ad set to exit learning phase.</p>
+                    </div>
+                    <div class="relu-item">
+                        <h4>Signal Quality</h4>
+                        <p>Clean tracking = voltage. Noisy instrumentation fails to activate learning.</p>
+                    </div>
+                    <div class="relu-item">
+                        <h4>Structure Consolidation</h4>
+                        <p>Fewer, stronger learning loops. Stop diluting budget across fragmented ad sets.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Financial Services Section -->
+    <section id="finance" class="industry-section">
+        <div class="container">
+            <div class="industry-header">
+                <div class="industry-icon finance">💰</div>
+                <div class="industry-header-content">
+                    <div class="section-label" style="color: var(--accent-green);">Financial Services</div>
+                    <h2>Risk-Aware Portfolio Intelligence</h2>
+                    <p>Causal analysis and counterfactual simulation for high-stakes financial decisions.</p>
+                </div>
+            </div>
+            
+            <div class="industry-grid">
+                <div class="use-cases">
+                    <div class="use-case-card">
+                        <h4>Portfolio Rebalancing</h4>
+                        <p>
+                            Autonomous rebalancing proposals with Monte Carlo simulation of volatility 
+                            and tail scenarios. Execute within predefined risk envelopes.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Risk Exposure Modeling</h4>
+                        <p>
+                            Temporal causal models identify factor exposures and regime change indicators. 
+                            Stress test against historical and hypothetical scenarios.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Fraud Detection</h4>
+                        <p>
+                            Knowledge graph pattern matching identifies anomalous transactions with 
+                            explainable causal pathways. Reduce false positives by 60%+.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Credit Decision Automation</h4>
+                        <p>
+                            Causal reasoning over applicant profiles with full auditability. 
+                            Regulatory-ready explainability for every decision.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="feature-highlight">
+                    <h3>Financial Services Results</h3>
+                    <div class="highlight-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">-41%</div>
+                            <div class="stat-label">Risk Exposure</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">+18%</div>
+                            <div class="stat-label">Portfolio Returns</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">60%</div>
+                            <div class="stat-label">Fewer False Positives</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><100ms</div>
+                            <div class="stat-label">Decision Latency</div>
+                        </div>
+                    </div>
+                    <ul class="highlight-features">
+                        <li>SOX and regulatory compliance built-in</li>
+                        <li>Real-time market data integration</li>
+                        <li>Scenario simulation with 1000+ Monte Carlo runs</li>
+                        <li>Audit trail for regulatory examination</li>
+                        <li>Human escalation for high-risk decisions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Retail Section -->
+    <section id="retail" class="industry-section">
+        <div class="container">
+            <div class="industry-header">
+                <div class="industry-icon retail">🛒</div>
+                <div class="industry-header-content">
+                    <div class="section-label" style="color: var(--accent-purple);">Retail & Commerce</div>
+                    <h2>Demand Intelligence at Scale</h2>
+                    <p>From demand forecasting to dynamic pricing, autonomous decisions across the retail value chain.</p>
+                </div>
+            </div>
+            
+            <div class="industry-grid">
+                <div class="use-cases">
+                    <div class="use-case-card">
+                        <h4>Demand Forecasting</h4>
+                        <p>
+                            Causal models identify true demand drivers vs. spurious correlations. 
+                            Account for promotions, seasonality, and external factors.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Dynamic Pricing</h4>
+                        <p>
+                            Real-time price optimization with counterfactual simulation of 
+                            competitor response and demand elasticity.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Inventory Optimization</h4>
+                        <p>
+                            Autonomous reorder decisions balancing stockout risk against 
+                            carrying costs. Multi-location optimization.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Customer Churn Prevention</h4>
+                        <p>
+                            Identify causal drivers of churn, not just correlates. 
+                            Personalized intervention recommendations with ROI simulation.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="feature-highlight">
+                    <h3>Retail Results</h3>
+                    <div class="highlight-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">-28%</div>
+                            <div class="stat-label">Inventory Waste</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">+15%</div>
+                            <div class="stat-label">Margin Improvement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">-35%</div>
+                            <div class="stat-label">Stockout Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2.1x</div>
+                            <div class="stat-label">Forecast Accuracy</div>
+                        </div>
+                    </div>
+                    <ul class="highlight-features">
+                        <li>Multi-channel inventory visibility</li>
+                        <li>Promotion effectiveness measurement</li>
+                        <li>Supplier performance optimization</li>
+                        <li>Customer lifetime value modeling</li>
+                        <li>Seasonal pattern learning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Healthcare Section -->
+    <section id="healthcare" class="industry-section">
+        <div class="container">
+            <div class="industry-header">
+                <div class="industry-icon healthcare">🏥</div>
+                <div class="industry-header-content">
+                    <div class="section-label" style="color: var(--accent-red);">Healthcare</div>
+                    <h2>Compliance-Aware Clinical Intelligence</h2>
+                    <p>Autonomous decision support with full HIPAA compliance and clinical governance.</p>
+                </div>
+            </div>
+            
+            <div class="industry-grid">
+                <div class="use-cases">
+                    <div class="use-case-card">
+                        <h4>Resource Allocation</h4>
+                        <p>
+                            Optimize staffing, bed allocation, and equipment utilization 
+                            based on predicted patient flow and acuity.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Clinical Pathway Optimization</h4>
+                        <p>
+                            Causal analysis of treatment pathways identifies interventions 
+                            that improve outcomes, not just correlates.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Readmission Risk Prediction</h4>
+                        <p>
+                            Identify causal risk factors for readmission with explainable 
+                            reasoning for clinical teams.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Supply Chain Management</h4>
+                        <p>
+                            Autonomous inventory decisions for pharmaceuticals and supplies 
+                            with expiration tracking and demand forecasting.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="feature-highlight">
+                    <h3>Healthcare Results</h3>
+                    <div class="highlight-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">-22%</div>
+                            <div class="stat-label">Readmission Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">+31%</div>
+                            <div class="stat-label">Resource Efficiency</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">-18%</div>
+                            <div class="stat-label">Supply Waste</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">100%</div>
+                            <div class="stat-label">HIPAA Compliant</div>
+                        </div>
+                    </div>
+                    <ul class="highlight-features">
+                        <li>HIPAA-compliant data handling</li>
+                        <li>Clinical decision support integration</li>
+                        <li>EHR connectivity (Epic, Cerner, etc.)</li>
+                        <li>Explainable recommendations for clinicians</li>
+                        <li>Human-in-the-loop for clinical decisions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Manufacturing Section -->
+    <section id="manufacturing" class="industry-section">
+        <div class="container">
+            <div class="industry-header">
+                <div class="industry-icon manufacturing">🏭</div>
+                <div class="industry-header-content">
+                    <div class="section-label" style="color: var(--accent-orange);">Manufacturing</div>
+                    <h2>Predictive Operations Intelligence</h2>
+                    <p>From predictive maintenance to supply chain optimization, autonomous decisions on the factory floor.</p>
+                </div>
+            </div>
+            
+            <div class="industry-grid">
+                <div class="use-cases">
+                    <div class="use-case-card">
+                        <h4>Predictive Maintenance</h4>
+                        <p>
+                            Causal models identify true failure precursors. Schedule maintenance 
+                            based on actual condition, not arbitrary intervals.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Production Scheduling</h4>
+                        <p>
+                            Autonomous scheduling decisions balancing throughput, quality, 
+                            and resource constraints with counterfactual simulation.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Quality Control</h4>
+                        <p>
+                            Root cause analysis using causal discovery. Identify process 
+                            parameters that actually drive defects.
+                        </p>
+                    </div>
+                    <div class="use-case-card">
+                        <h4>Supply Chain Resilience</h4>
+                        <p>
+                            Autonomous supplier selection and order allocation with 
+                            disruption scenario simulation.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="feature-highlight">
+                    <h3>Manufacturing Results</h3>
+                    <div class="highlight-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">-45%</div>
+                            <div class="stat-label">Unplanned Downtime</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">+12%</div>
+                            <div class="stat-label">OEE Improvement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">-28%</div>
+                            <div class="stat-label">Defect Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">3.8mo</div>
+                            <div class="stat-label">Payback Period</div>
+                        </div>
+                    </div>
+                    <ul class="highlight-features">
+                        <li>IoT sensor integration</li>
+                        <li>MES/ERP connectivity</li>
+                        <li>Digital twin integration</li>
+                        <li>Multi-plant coordination</li>
+                        <li>Energy optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Templates Section -->
+    <section class="templates-section">
+        <div class="container">
+            <div class="templates-header">
+                <div class="section-label" style="color: var(--accent-cyan); text-align: center;">Rapid Deployment</div>
+                <h2>Industry Templates</h2>
+                <p>
+                    Pre-configured causal models, agent configurations, and compliance frameworks. 
+                    Deploy in weeks, not months.
+                </p>
+            </div>
+            
+            <div class="templates-grid">
+                <div class="template-card">
+                    <h3>Media Buying Template</h3>
+                    <p>
+                        Complete attribution modeling, platform integrations, and threshold-aware 
+                        optimization for Meta, Google, and programmatic.
+                    </p>
+                    <ul class="template-includes">
+                        <li>Multi-platform connectors</li>
+                        <li>Attribution models</li>
+                        <li>Learning phase detection</li>
+                        <li>Creative analysis agents</li>
+                        <li>Budget optimization rules</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Financial Services Template</h3>
+                    <p>
+                        Risk models, fraud patterns, and compliance frameworks for banking, 
+                        insurance, and asset management.
+                    </p>
+                    <ul class="template-includes">
+                        <li>Market data integrations</li>
+                        <li>Risk factor models</li>
+                        <li>Fraud detection patterns</li>
+                        <li>Regulatory compliance rules</li>
+                        <li>Audit trail configuration</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Retail Template</h3>
+                    <p>
+                        Demand forecasting, pricing strategies, and inventory optimization 
+                        for omnichannel retail.
+                    </p>
+                    <ul class="template-includes">
+                        <li>POS/ecommerce connectors</li>
+                        <li>Demand forecasting models</li>
+                        <li>Pricing optimization agents</li>
+                        <li>Inventory rules</li>
+                        <li>Customer journey models</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Healthcare Template</h3>
+                    <p>
+                        HIPAA-compliant clinical decision support with EHR integration 
+                        and outcome prediction models.
+                    </p>
+                    <ul class="template-includes">
+                        <li>EHR connectors (Epic, Cerner)</li>
+                        <li>Clinical pathway models</li>
+                        <li>HIPAA compliance rules</li>
+                        <li>Resource optimization agents</li>
+                        <li>Outcome prediction models</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Manufacturing Template</h3>
+                    <p>
+                        Predictive maintenance, quality control, and production scheduling 
+                        for discrete and process manufacturing.
+                    </p>
+                    <ul class="template-includes">
+                        <li>IoT/sensor connectors</li>
+                        <li>Equipment failure models</li>
+                        <li>Quality control agents</li>
+                        <li>Scheduling optimization</li>
+                        <li>Supply chain models</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Custom Template</h3>
+                    <p>
+                        Start from scratch with our template builder. Configure your own 
+                        causal models, agents, and compliance rules.
+                    </p>
+                    <ul class="template-includes">
+                        <li>Template builder wizard</li>
+                        <li>Custom connector framework</li>
+                        <li>Agent configuration tools</li>
+                        <li>Policy editor</li>
+                        <li>Dedicated onboarding support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready for Your Industry?</h2>
+            <p>
+                See how MIZ OKI 3.5 can transform decision-making in your organization. 
+                Start with an ROI estimate or schedule a walkthrough.
+            </p>
+            <div class="cta-buttons">
+                <a href="/11/walkthrough.html" class="btn btn-ghost">12-Minute Walkthrough</a>
+                <a href="/11/roi.html" class="btn btn-primary">Estimate Your ROI</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="/11/" class="logo">
+                    MIZ OKI
+                    <span class="logo-badge">3.5</span>
+                </a>
+                <p>
+                    Verifiable autonomous decision intelligence. 
+                    Decisions verified before execution—not explained after failure.
+                </p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="/11/how-it-works.html">How It Works</a></li>
+                        <li><a href="/11/platform.html">Architecture</a></li>
+                        <li><a href="/11/security.html">Security</a></li>
+                        <li><a href="/11/pricing.html">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/11/case-studies.html">Case Studies</a>
+                <a href="/blog/">Blog</a></li>
+                        <li><a href="/11/resources.html">Documentation</a></li>
+                        <li><a href="/11/walkthrough.html">Walkthrough</a></li>
+                        <li><a href="/11/roi.html">ROI Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/11/investor.html">Investors</a></li>
+                        <li><a href="/11/sales-one-pager.html">Sales</a></li>
+                        <li><a href="/11/demo-opener.html">Demo</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <span>© 2026 MIZ OKI. All rights reserved.</span>
+            <span>Every decision is logged. Every action is auditable. Humans remain in control.</span>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for industry navigation
+        document.querySelectorAll('.industry-nav-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 150; // Account for sticky nav
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const targetRect = target.getBoundingClientRect().top;
+                    const targetPosition = targetRect - bodyRect - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                }
+                
+                // Update active state
+                document.querySelectorAll('.industry-nav-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Update active nav on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.industry-section');
+            const navBtns = document.querySelectorAll('.industry-nav-btn');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('href') === '#' + current) {
+                    btn.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

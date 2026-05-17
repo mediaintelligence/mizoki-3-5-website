@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MIZOKI3 — Autonomous Decision Intelligence for the Enterprise</title>
+<meta name="description" content="One Brain. Many Lenses. Shared Memory. MIZOKI3 is governed autonomous decision intelligence powered by a Temporal-Causal Knowledge Graph." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   MIZOKI3 — Editorial site
+   Images are the heroes. Chrome is the connective tissue.
+   ========================================================= */
+:root{
+  --bg-0:        #03050d;
+  --bg-1:        #060a1a;
+  --bg-2:        #0a1230;
+  --ink:         #e6ecff;
+  --ink-2:       #aab4d4;
+  --ink-3:       #7e8aae;
+  --ink-4:       #4d597a;
+
+  --cyan:        #4cc9ff;
+  --azure:       #2e7bff;
+  --violet:      #8a5cff;
+  --violet-hot:  #b58aff;
+  --magenta:     #d156ff;
+  --amber:       #f5b14a;
+  --emerald:     #3ee0c1;
+  --crimson:     #ff5a7a;
+
+  --grad-brand:  linear-gradient(135deg, #4cc9ff 0%, #8a5cff 55%, #d156ff 100%);
+  --grad-cool:   linear-gradient(135deg, #00e1ff 0%, #2e7bff 100%);
+  --grad-warm:   linear-gradient(135deg, #b58aff 0%, #d156ff 100%);
+
+  --glass:       rgba(13, 22, 56, 0.55);
+  --glass-2:     rgba(20, 32, 78, 0.4);
+  --hairline:    rgba(140, 170, 255, 0.14);
+  --hairline-2:  rgba(140, 170, 255, 0.32);
+
+  --display:     'Sora', system-ui, sans-serif;
+  --body:        'Familjen Grotesk', system-ui, sans-serif;
+  --mono:        'JetBrains Mono', ui-monospace, monospace;
+
+  --container:   1400px;
+  --container-narrow: 920px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body{
+  background: var(--bg-0);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ambient field */
+body::before{
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(1100px 700px at 8% 4%,  rgba(76, 201, 255, 0.14), transparent 60%),
+    radial-gradient(1000px 800px at 96% 20%, rgba(138, 92, 255, 0.18), transparent 60%),
+    radial-gradient(900px  900px at 50% 110%, rgba(46, 123, 255, 0.14), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after{
+  content: "";
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(140,170,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140,170,255,0.035) 1px, transparent 1px);
+  background-size: 90px 90px;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 78%);
+}
+
+main, header, footer, section, aside { position: relative; z-index: 1; }
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+h1 { font-size: clamp(2.8rem, 7vw, 5.6rem); font-weight: 300; }
+h2 { font-size: clamp(2rem, 4.5vw, 3.6rem); font-weight: 300; }
+h3 { font-size: clamp(1.4rem, 2.2vw, 2rem); font-weight: 400; }
+p  { color: var(--ink-2); font-size: 1.04rem; }
+a  { color: inherit; text-decoration: none; }
+
+.gradient-text{
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow{
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.eyebrow::before{
+  content: "";
+  width: 28px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan));
+}
+
+.container{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 36px;
+}
+.container.narrow{ max-width: var(--container-narrow); }
+
+/* =========================================================
+   NAV
+   ========================================================= */
+header.nav{
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 18px 0;
+  backdrop-filter: blur(20px) saturate(1.4);
+  background: rgba(3, 5, 13, 0.6);
+  border-bottom: 1px solid var(--hairline);
+}
+.nav-inner{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo{
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: 1.45rem;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo .mark{
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  background: var(--grad-brand);
+  position: relative;
+  box-shadow: 0 0 24px rgba(138, 92, 255, 0.45);
+}
+.logo .mark::after{
+  content: "";
+  position: absolute; inset: 5px;
+  border-radius: 3px;
+  background: var(--bg-0);
+}
+.logo .three{
+  background: var(--grad-warm);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 500;
+}
+.nav-links{
+  display: flex; gap: 32px;
+  list-style: none;
+}
+.nav-links a{
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a:hover{ color: var(--ink); }
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-family: var(--body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: all 0.3s cubic-bezier(.2,.7,.2,1);
+  cursor: pointer;
+  border: none;
+}
+.btn-primary{
+  background: var(--grad-brand);
+  color: #0a0a14;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.1) inset, 0 12px 36px -10px rgba(138, 92, 255, 0.55);
+}
+.btn-primary:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.18) inset, 0 20px 46px -10px rgba(138, 92, 255, 0.8);
+}
+.btn-ghost{
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--hairline-2);
+}
+.btn-ghost:hover{ border-color: var(--cyan); color: var(--cyan); }
+.btn .arrow{
+  display: inline-block;
+  transition: transform 0.3s;
+}
+.btn:hover .arrow{ transform: translateX(4px); }
+
+/* =========================================================
+   CHAPTER SECTION FRAMEWORK
+   Each image is a "chapter" with a numbered intro
+   ========================================================= */
+section.chapter{
+  padding: 130px 0 80px;
+  position: relative;
+}
+section.chapter.first{ padding-top: 0; }
+section.chapter.tight{ padding-top: 60px; }
+
+.chapter-head{
+  margin-bottom: 56px;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.chapter-meta{
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.chapter-meta .num{
+  display: block;
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: 2.6rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  background: var(--grad-cool);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+.chapter-meta .tag{
+  display: block;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-3);
+}
+
+.chapter-title h2{
+  margin-bottom: 24px;
+  max-width: 14ch;
+}
+.chapter-title .lede{
+  font-size: 1.15rem;
+  color: var(--ink-2);
+  max-width: 62ch;
+  margin-bottom: 24px;
+}
+.chapter-title .meta-row{
+  display: flex; gap: 32px; flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+}
+.chapter-title .meta-row span strong{
+  color: var(--ink);
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+/* Image plate -- the centerpiece of every chapter */
+.plate{
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bg-1);
+  border: 1px solid var(--hairline-2);
+  box-shadow:
+    0 60px 160px -40px rgba(0,0,0,0.75),
+    0 0 0 1px rgba(76, 201, 255, 0.06),
+    0 0 120px -30px rgba(138, 92, 255, 0.35);
+  transition: transform 0.6s cubic-bezier(.2,.7,.2,1), box-shadow 0.6s;
+}
+.plate::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+  z-index: 2;
+  pointer-events: none;
+}
+.plate:hover{
+  transform: translateY(-4px);
+  box-shadow:
+    0 80px 200px -40px rgba(0,0,0,0.85),
+    0 0 0 1px rgba(76, 201, 255, 0.12),
+    0 0 160px -20px rgba(138, 92, 255, 0.45);
+}
+.plate img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.plate-caption{
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 24px;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--glass-2);
+}
+.plate-caption .ref{
+  color: var(--cyan);
+}
+
+/* Pull row beneath a plate (key facts pulled from the image) */
+.pull-row{
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 0;
+  background: var(--glass);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.pull-row .cell{
+  padding: 22px 24px;
+  position: relative;
+}
+.pull-row .cell:not(:last-child)::after{
+  content: "";
+  position: absolute;
+  right: 0; top: 18%;
+  height: 64%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--hairline-2), transparent);
+}
+.pull-row .cell .v{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.6rem;
+  background: var(--grad-cool);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.pull-row .cell:nth-child(even) .v{
+  background: var(--grad-warm);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pull-row .cell .l{
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* =========================================================
+   HERO (chapter 00 — opens the story)
+   ========================================================= */
+.hero{
+  padding: 140px 0 100px;
+  position: relative;
+}
+.hero-eyebrow{ margin-bottom: 32px; }
+.hero h1{ margin-bottom: 28px; max-width: 18ch; }
+.hero h1 .sub{
+  display: block;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 300;
+  color: var(--ink-2);
+  letter-spacing: -0.005em;
+  margin-top: 14px;
+}
+.hero-tag{
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+.hero-tag span{
+  position: relative;
+}
+.hero-tag span::after{
+  content: "·";
+  margin-left: 22px;
+  color: var(--violet);
+}
+.hero-tag span:last-child::after{ display: none; }
+
+.hero-lede{
+  font-size: 1.2rem;
+  max-width: 64ch;
+  margin-bottom: 44px;
+}
+.hero-ctas{
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+
+.hero-plate-wrap{
+  margin-top: 80px;
+  position: relative;
+}
+.hero-plate-wrap .plate{
+  border-radius: 24px;
+}
+/* Floating tickets that hint at the system */
+.ticket{
+  position: absolute;
+  background: var(--glass);
+  border: 1px solid var(--hairline-2);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+  z-index: 5;
+  white-space: nowrap;
+}
+.ticket .dot{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 10px var(--emerald);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot{ 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.ticket.t1{ top: -22px; left: 5%; }
+.ticket.t2{ bottom: -22px; right: 8%; }
+.ticket.t3{ top: 45%; right: -14px; transform: translateY(-50%); }
+
+/* =========================================================
+   PULL QUOTE — connective tissue between sections
+   ========================================================= */
+.pull-quote{
+  padding: 100px 0;
+  text-align: center;
+}
+.pull-quote blockquote{
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  max-width: 28ch;
+  margin: 0 auto;
+  color: var(--ink);
+}
+.pull-quote blockquote em{
+  font-style: normal;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pull-quote .cite{
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 28px;
+  display: inline-block;
+  position: relative;
+  padding: 0 30px;
+}
+.pull-quote .cite::before,
+.pull-quote .cite::after{
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 18px; height: 1px;
+  background: var(--hairline-2);
+}
+.pull-quote .cite::before{ left: 0; }
+.pull-quote .cite::after{ right: 0; }
+
+/* =========================================================
+   CELLS INTRO STRIP (mini grid)
+   ========================================================= */
+.cells-strip{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+.cells-strip a{
+  padding: 18px 18px;
+  background: var(--glass-2);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.cells-strip a::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: currentColor;
+  opacity: 0.7;
+}
+.cells-strip a:hover{
+  transform: translateY(-2px);
+  border-color: var(--hairline-2);
+  background: var(--glass);
+}
+.cells-strip a.legal   { color: var(--cyan); }
+.cells-strip a.estate  { color: var(--violet-hot); }
+.cells-strip a.media   { color: var(--magenta); }
+.cells-strip a.risk    { color: var(--crimson); }
+.cells-strip a.nexus   { color: var(--violet); }
+.cells-strip a .n{
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: currentColor;
+}
+.cells-strip a .t{
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 0.98rem;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.cells-strip a .s{
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+
+/* =========================================================
+   CTA
+   ========================================================= */
+.cta-section{ padding: 120px 0 100px; }
+.cta-card{
+  padding: 90px 60px;
+  background: var(--glass);
+  border: 1px solid var(--hairline-2);
+  border-radius: 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-card::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(600px 300px at 25% 0%, rgba(76, 201, 255, 0.2), transparent 60%),
+    radial-gradient(600px 300px at 75% 100%, rgba(138, 92, 255, 0.2), transparent 60%);
+  pointer-events: none;
+}
+.cta-card > *{ position: relative; }
+.cta-card .eyebrow{ margin-bottom: 24px; justify-content: center; }
+.cta-card .eyebrow::after{
+  content: "";
+  width: 28px; height: 1px;
+  background: linear-gradient(90deg, var(--violet), transparent);
+}
+.cta-card h2{ margin-bottom: 22px; font-weight: 300; }
+.cta-card p{
+  max-width: 60ch;
+  margin: 0 auto 36px;
+  font-size: 1.1rem;
+}
+.cta-card .actions{
+  display: flex; gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+footer{
+  padding: 60px 0 36px;
+  border-top: 1px solid var(--hairline);
+}
+.footer-grid{
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 48px;
+}
+.footer-brand p{
+  font-size: 0.9rem;
+  color: var(--ink-3);
+  max-width: 360px;
+  margin-top: 18px;
+}
+.footer-col h5{
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 18px;
+}
+.footer-col ul{ list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a{
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  transition: color 0.2s;
+}
+.footer-col ul li a:hover{ color: var(--cyan); }
+.footer-bottom{
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom .signature{ display: flex; gap: 22px; flex-wrap: wrap; }
+
+/* =========================================================
+   REVEAL
+   ========================================================= */
+.reveal{ opacity: 0; transform: translateY(28px); transition: opacity 0.9s cubic-bezier(.2,.7,.2,1), transform 0.9s cubic-bezier(.2,.7,.2,1); }
+.reveal.in{ opacity: 1; transform: translateY(0); }
+.stagger > *{ transition-delay: calc(var(--i, 0) * 90ms); }
+
+/* =========================================================
+   SIDE INDEX (sticky chapter nav, desktop only)
+   ========================================================= */
+.side-index{
+  position: fixed;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.side-index a{
+  display: block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--hairline-2);
+  position: relative;
+  transition: all 0.3s;
+}
+.side-index a:hover{ background: var(--cyan); transform: scale(1.4); }
+.side-index a.active{
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+}
+.side-index a::after{
+  content: attr(data-label);
+  position: absolute;
+  left: 18px; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.side-index a:hover::after,
+.side-index a.active::after{ opacity: 1; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 1200px){
+  .side-index{ display: none; }
+  .chapter-head{ grid-template-columns: 1fr; gap: 32px;}
+  .chapter-meta{ display: flex; align-items: baseline; gap: 18px; }
+  .chapter-meta .num{ margin-bottom: 0; font-size: 1.8rem; }
+  .chapter-meta .tag{ padding-top: 0; border-top: 0; border-left: 1px solid var(--hairline); padding-left: 18px;}
+  .pull-row{ grid-template-columns: repeat(2, 1fr); }
+  .pull-row .cell:nth-child(2)::after{ display: none;}
+  .cells-strip{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px){
+  .container{ padding: 0 22px; }
+  section.chapter{ padding: 80px 0 50px; }
+  .hero{ padding: 110px 0 70px; }
+  .nav-links{ display: none; }
+  .ticket{ display: none; }
+  .pull-quote{ padding: 70px 0; }
+  .cells-strip{ grid-template-columns: 1fr; }
+  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 36px; }
+  .cta-card{ padding: 56px 28px; }
+  .chapter-title .meta-row{ gap: 18px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     NAV
+     ========================================================= -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#top">
+      <span class="mark"></span>
+      <span>MIZOKI<span class="three">3</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#ch-01">Decoded</a></li>
+      <li><a href="#ch-02">The Loop</a></li>
+      <li><a href="#ch-03">Architecture</a></li>
+      <li><a href="#ch-05">Knowledge Graph</a></li>
+      <li><a href="#ch-06">Domains</a></li>
+      <li><a href="#ch-11">Nexus</a></li>
+    </ul>
+    <a class="btn btn-primary" href="#cta">Request Demo <span class="arrow">→</span></a>
+  </div>
+</header>
+
+<!-- =========================================================
+     SIDE INDEX
+     ========================================================= -->
+<nav class="side-index" aria-label="Chapter index">
+  <a href="#top"   data-label="Hero"></a>
+  <a href="#ch-01" data-label="01 · Decoded"></a>
+  <a href="#ch-02" data-label="02 · The Loop"></a>
+  <a href="#ch-03" data-label="03 · Framework"></a>
+  <a href="#ch-04" data-label="04 · Architecture"></a>
+  <a href="#ch-05" data-label="05 · Knowledge Graph"></a>
+  <a href="#ch-06" data-label="06 · Domains"></a>
+  <a href="#ch-07" data-label="07 · Legal"></a>
+  <a href="#ch-08" data-label="08 · Estate"></a>
+  <a href="#ch-09" data-label="09 · Media"></a>
+  <a href="#ch-10" data-label="10 · Risk"></a>
+  <a href="#ch-11" data-label="11 · Nexus"></a>
+  <a href="#cta"   data-label="Demo"></a>
+</nav>
+
+<main id="top">
+
+<!-- =========================================================
+     HERO  (uses image 01-hero.png)
+     ========================================================= -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow eyebrow reveal">A Field Guide to MIZOKI3</div>
+
+    <h1 class="reveal">
+      Autonomous<br/>
+      Decision Intelligence
+      <span class="sub">for the modern enterprise.</span>
+    </h1>
+
+    <div class="hero-tag reveal">
+      <span>One Brain</span>
+      <span>Many Lenses</span>
+      <span>Shared Memory</span>
+    </div>
+
+    <p class="hero-lede reveal">
+      MIZOKI3 turns fragmented enterprise signals into threshold-aware actions —
+      not just reports, dashboards, or another chatbot. Temporal-causal reasoning,
+      governed autonomy, outcomes that compound. What follows is the system in eleven plates.
+    </p>
+
+    <div class="hero-ctas reveal">
+      <a class="btn btn-primary" href="#cta">Request Demo <span class="arrow">→</span></a>
+      <a class="btn btn-ghost" href="#ch-01">Begin Walkthrough</a>
+    </div>
+
+    <div class="hero-plate-wrap reveal">
+      <div class="ticket t1"><span class="dot"></span>Confidence 92.7% · Health 99.8%</div>
+      <div class="ticket t2"><span class="dot"></span>Active Decisions 128 · Learn Velocity ↑37.4%</div>
+      <div class="ticket t3"><span class="dot"></span>Governed Autonomy</div>
+
+      <figure class="plate">
+        <img src="assets/01-hero.png" alt="MIZOKI3 — Autonomous Decision Intelligence for the Enterprise. Temporal-Causal Knowledge Graph at the center; seven canonical functions (Sense, Reason, Plan, Validate, Decide, Act, Learn); domain cells: Legal, Estate, Capital, Media Acquisition, Risk, Nexus." />
+        <figcaption class="plate-caption">
+          <span>Plate 00 — The System at a Glance</span>
+          <span class="ref">↘ Temporal · Causal · Versioned</span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 01 — Decoded (uses 02-editorial.png)
+     ========================================================= -->
+<section id="ch-01" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">01</span>
+        <span class="tag">The Briefing</span>
+      </div>
+      <div class="chapter-title">
+        <h2>MIZOKI3, <span class="gradient-text">decoded.</span></h2>
+        <p class="lede">
+          The site frames MIZOKI3 as a governed system for turning fragmented enterprise signals into threshold-aware actions — not just reports, dashboards, or a chatbot. Below is the long-form briefing: the canonical loop, the knowledge graph, the science underneath, and the questions a board should be asking before trusting autonomy.
+        </p>
+        <div class="meta-row">
+          <span><strong>Read time</strong> 6 min</span>
+          <span><strong>Form</strong> Editorial Infographic</span>
+          <span><strong>Topic</strong> mizoki3.com</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/02-editorial.png" alt="MIZ OKI 3.5 — Autonomous Decision Intelligence, decoded. A long-form editorial covering the 7-step SRPVDAL canonical loop, the knowledge graph, the public platform claim, research lens, outcomes to verify, the responsible-autonomy mental model, and board-level questions." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 01 — Editorial Infographic</span>
+        <span class="ref">↘ Long-form briefing</span>
+      </figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     PULL QUOTE
+     ========================================================= -->
+<aside class="pull-quote">
+  <div class="container narrow">
+    <blockquote class="reveal">
+      The decisive design question isn't <em>"can AI act?"</em> —<br/>
+      it's <em>"what conditions must be true before it is allowed to?"</em>
+    </blockquote>
+    <div class="cite reveal">Governing Principle · MIZOKI3</div>
+  </div>
+</aside>
+
+<!-- =========================================================
+     CHAPTER 02 — The Canonical Loop (03-canonical-loop.png)
+     ========================================================= -->
+<section id="ch-02" class="chapter tight">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">02</span>
+        <span class="tag">The Canonical Loop</span>
+      </div>
+      <div class="chapter-title">
+        <h2>Seven cognitive functions. <span class="gradient-text">One intelligent system.</span></h2>
+        <p class="lede">
+          MIZOKI3 processes signals continuously. Each gate narrows uncertainty before committing resources. Sense → Reason → Plan → Validate → Decide → Act → Learn. Governance is not a separate "clear" layer — it is embedded across the loop as the DCP, V&amp;A, and DEL.
+        </p>
+        <div class="meta-row">
+          <span><strong>Steps</strong> 7</span>
+          <span><strong>Governance</strong> 3 layers, always-on</span>
+          <span><strong>Memory</strong> Temporal-causal</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/03-canonical-loop.png" alt="The Canonical Orchestration Loop. Seven cognitive functions arranged in a circular loop around the Intelligence Core (Temporal-Causal Knowledge Graph). Governed Autonomy framed as three layers: DCP, Verification &amp; Arbitration, DEL." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 02 — The Canonical Loop</span>
+        <span class="ref">↘ Built-in governance. Always on.</span>
+      </figcaption>
+    </figure>
+
+    <div class="pull-row reveal stagger">
+      <div class="cell" style="--i:0"><div class="v">7</div><div class="l">Cognitive Functions</div></div>
+      <div class="cell" style="--i:1"><div class="v">3</div><div class="l">Governance Layers</div></div>
+      <div class="cell" style="--i:2"><div class="v">1</div><div class="l">Shared Memory</div></div>
+      <div class="cell" style="--i:3"><div class="v">0</div><div class="l">Rip-and-Replace</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 03 — Orchestration Framework (04-orchestration-framework.png)
+     ========================================================= -->
+<section id="ch-03" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">03</span>
+        <span class="tag">Orchestration Framework</span>
+      </div>
+      <div class="chapter-title">
+        <h2>The cycle, <span class="gradient-text">governed.</span></h2>
+        <p class="lede">
+          The same loop, expressed as the engineering framework. A Temporal-Causal Knowledge Graph at the center supplies shared memory, context, and causal reasoning to every step. Governance, verification, and authorization are embedded across the loop — not separated as an extra layer.
+        </p>
+        <div class="meta-row">
+          <span><strong>DCP</strong> Policies, guardrails, boundaries</span>
+          <span><strong>V&amp;A</strong> Verification &amp; arbitration</span>
+          <span><strong>DEL</strong> Eligibility &amp; compliance</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/04-orchestration-framework.png" alt="MIZOKI3 Orchestration Framework — Canonical Autonomous Decision Loop. Seven hexagonal stages encircle the Temporal-Causal Knowledge Graph. The three governance pillars are presented horizontally: Decision Control Plane (DCP), Verification &amp; Arbitration Layer, Decision Eligibility Layer (DEL)." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 03 — Canonical Autonomous Decision Loop</span>
+        <span class="ref">↘ Governance embedded</span>
+      </figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 04 — Full Architecture (05-ai-orchestration.png)
+     ========================================================= -->
+<section id="ch-04" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">04</span>
+        <span class="tag">Inputs · Outcomes</span>
+      </div>
+      <div class="chapter-title">
+        <h2>From signals <span class="gradient-text">to outcomes that compound.</span></h2>
+        <p class="lede">
+          The full architecture. Enterprise data, customer signals, systems, market feeds, policies, and historical outcomes feed the loop. The loop produces business results, customer value, operational efficiency, risk &amp; compliance assurance, auditability, and continuous improvement. Everything is traceable, explainable, and aligned to enterprise policy.
+        </p>
+        <div class="meta-row">
+          <span><strong>Inputs</strong> 6 context streams</span>
+          <span><strong>Outcomes</strong> 6 measurable impacts</span>
+          <span><strong>Audit</strong> Replayable, immutable</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/05-ai-orchestration.png" alt="AI Orchestration Framework — Full architecture. Inputs (Enterprise Data, User &amp; Customer Signals, Systems &amp; APIs, Market &amp; External Signals, Policies &amp; Rules, Historical Outcomes) feed the canonical loop. Outcomes (Business Results, Customer Value, Operational Efficiency, Risk &amp; Compliance Assurance, Auditability &amp; Transparency, Continuous Improvement) flow from it. Internal Governance &amp; Control is embedded: DCP, V&amp;A, DEL." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 04 — Full Architecture (Inputs → Loop → Outcomes)</span>
+        <span class="ref">↘ All actions traceable</span>
+      </figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     PULL QUOTE
+     ========================================================= -->
+<aside class="pull-quote">
+  <div class="container narrow">
+    <blockquote class="reveal">
+      Memory is what turns a model into a system. <em>Temporal. Causal. Versioned.</em>
+    </blockquote>
+    <div class="cite reveal">On the Knowledge Graph</div>
+  </div>
+</aside>
+
+<!-- =========================================================
+     CHAPTER 05 — Knowledge Graph (06-knowledge-graph.png)
+     ========================================================= -->
+<section id="ch-05" class="chapter tight">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">05</span>
+        <span class="tag">The Memory</span>
+      </div>
+      <div class="chapter-title">
+        <h2>The Temporal-Causal <span class="gradient-text">Knowledge Graph.</span></h2>
+        <p class="lede">
+          One memory. Many lenses. Shared truth. The graph sequences events, models relationships, infers causes, evaluates impact, and tracks evolution across versions. Every decision is replayable from inputs to outcome — with lineage, audit, and privacy-by-design baked in.
+        </p>
+        <div class="meta-row">
+          <span><strong>Temporal</strong> t-3 → t+1</span>
+          <span><strong>Causal</strong> Cause → Effect → Impact</span>
+          <span><strong>Versioned</strong> v3.2 ← v2.8</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/06-knowledge-graph.png" alt="The MIZOKI3 Temporal-Causal Knowledge Graph — Shared Memory: unified, contextual, governed. Sub-systems include Signal Intelligence, Causal Intelligence, Cross-Domain Intelligence, and the Operations / Unified Knowledge / Insight &amp; Action layers. Pipeline shown bottom: Ingest → Normalize → Correlate → Reason → Validate → Decide → Act → Learn." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 05 — Memory of the System</span>
+        <span class="ref">↘ Shared. Connected. Evolving.</span>
+      </figcaption>
+    </figure>
+
+    <div class="pull-row reveal stagger">
+      <div class="cell" style="--i:0"><div class="v">Unified</div><div class="l">One Memory</div></div>
+      <div class="cell" style="--i:1"><div class="v">Versioned</div><div class="l">Rewind · Replay</div></div>
+      <div class="cell" style="--i:2"><div class="v">Causal</div><div class="l">Beyond Correlation</div></div>
+      <div class="cell" style="--i:3"><div class="v">Governed</div><div class="l">Audit · Lineage · Privacy</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 06 — Domains intro
+     ========================================================= -->
+<section id="ch-06" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">06</span>
+        <span class="tag">Specialized Cells</span>
+      </div>
+      <div class="chapter-title">
+        <h2>One brain. <span class="gradient-text">Many lenses.</span></h2>
+        <p class="lede">
+          Domain-tuned reasoning that shares a single memory. Each cell brings depth; the graph brings unity. The next four plates walk through Legal, Estate, Media Acquisition, and Risk — each one a fully expressed intelligence built on top of MIZOKI3.
+        </p>
+      </div>
+    </div>
+
+    <div class="cells-strip reveal stagger">
+      <a href="#ch-07" class="legal" style="--i:0">
+        <span class="n">07 / LEGAL</span>
+        <span class="t">Legal Intelligence</span>
+        <span class="s">Contracts · Obligations · Evidence</span>
+      </a>
+      <a href="#ch-08" class="estate" style="--i:1">
+        <span class="n">08 / ESTATE</span>
+        <span class="t">Estate Intelligence</span>
+        <span class="s">Trusts · Succession · Ownership</span>
+      </a>
+      <a href="#ch-09" class="media" style="--i:2">
+        <span class="n">09 / MEDIA</span>
+        <span class="t">Media Acquisition</span>
+        <span class="s">Omni-source · Causal · Real-time</span>
+      </a>
+      <a href="#ch-10" class="risk" style="--i:3">
+        <span class="n">10 / RISK</span>
+        <span class="t">Risk Intelligence</span>
+        <span class="s">Anticipate · Simulate · Resilient</span>
+      </a>
+      <a href="#ch-11" class="nexus" style="--i:4">
+        <span class="n">11 / NEXUS</span>
+        <span class="t">Cross-Domain</span>
+        <span class="s">Orchestration · Universal Gateway</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 07 — Legal (07-legal.png)
+     ========================================================= -->
+<section id="ch-07" class="chapter tight">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">07</span>
+        <span class="tag">Legal Intelligence</span>
+      </div>
+      <div class="chapter-title">
+        <h2>Contracts, obligations, evidence — <span class="gradient-text">reasoned and governed.</span></h2>
+        <p class="lede">
+          Autonomous legal and strategic intelligence built for modern enterprises. The MIZOKI3 brain unifies legal knowledge, contracts, obligations, rules, and evidence relationships into a governed intelligence layer that reasons, validates, and supports better decisions — autonomously.
+        </p>
+        <div class="meta-row">
+          <span><strong>Capabilities</strong> Contracts · Obligations · Case Reasoning · Risk Flags</span>
+          <span><strong>Compliance</strong> Role-based · Audit-ready · Encrypted</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/07-legal.png" alt="MIZOKI3 Legal Intelligence. A brain-graph visual showing capabilities: Contracts, Obligations, Compliance, Case Reasoning, Evidence Relationships, Risk Flags. Modules below include Matter Context, Document Intelligence, Policy &amp; Control Mapping, Decision Support, Outcomes &amp; Precedents, Audit &amp; Explainability. Secure. Private. Compliant." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 07 — Legal Intelligence</span>
+        <span class="ref">↘ Secure · Private · Compliant</span>
+      </figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 08 — Estate (08-estate.png)
+     ========================================================= -->
+<section id="ch-08" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">08</span>
+        <span class="tag">Estate Intelligence</span>
+      </div>
+      <div class="chapter-title">
+        <h2>Intelligence for <span class="gradient-text">what matters most.</span></h2>
+        <p class="lede">
+          MIZOKI3 Estate Intelligence unifies people, purpose, and assets into one living model of trust, governance, ownership, and succession. Family stakeholders, trusts and entities, assets and holdings — all expressed as a single decision-ready graph with full ownership and control lines.
+        </p>
+        <div class="meta-row">
+          <span><strong>Modules</strong> Asset Maps · Trusts · Succession · Holdings · Governance</span>
+          <span><strong>Health</strong> Governance 92% · Structure 98% · Readiness 87%</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/08-estate.png" alt="MIZOKI3 Estate Intelligence. The canonical loop wrapped around the Temporal-Causal Knowledge Graph. Estate Intelligence Layer modules: Asset Maps, Trusts, Entities, Ownership, Relationships, Governance, Liabilities, Cash Flows. Estate Structure Map shows Family &amp; Stakeholders, Trusts &amp; Entities (Dynasty, Family, Charitable, HoldCo, OpCo, SPV), and Assets &amp; Holdings. Estate Health: 92%, 98%, 87%, Low concentration risk, Strong liquidity." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 08 — Estate Intelligence</span>
+        <span class="ref">↘ Clarity in complexity · Enduring legacy</span>
+      </figcaption>
+    </figure>
+
+    <div class="pull-row reveal stagger">
+      <div class="cell" style="--i:0"><div class="v">92<span style="font-size:.7em;color:var(--ink-3);">%</span></div><div class="l">Governance Strength</div></div>
+      <div class="cell" style="--i:1"><div class="v">98<span style="font-size:.7em;color:var(--ink-3);">%</span></div><div class="l">Structure Integrity</div></div>
+      <div class="cell" style="--i:2"><div class="v">87<span style="font-size:.7em;color:var(--ink-3);">%</span></div><div class="l">Succession Readiness</div></div>
+      <div class="cell" style="--i:3"><div class="v">Low</div><div class="l">Concentration Risk</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 09 — Media Acquisition (09-media-acquisition.png)
+     ========================================================= -->
+<section id="ch-09" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">09</span>
+        <span class="tag">Media Acquisition</span>
+      </div>
+      <div class="chapter-title">
+        <h2>Autonomous, omni-source, <span class="gradient-text">always optimizing.</span></h2>
+        <p class="lede">
+          Acquisition decisions powered by unified signals, causal reasoning, and real-time intent. Ingest search, social, video, display, email, web, and programmatic streams into a single decision surface — then deploy intelligent actions across audience, budget, creative, attribution, and growth loops.
+        </p>
+        <div class="meta-row">
+          <span><strong>Live</strong> Total spend $3.72M · Conversions 184.6K</span>
+          <span><strong>Performance</strong> ROAS 4.71x · CPA −18.6%</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/09-media-acquisition.png" alt="MIZOKI3 Media Acquisition Intelligence. Omni-source signal ingestion (search, social, video, display, email, web behavior, programmatic) feeding the intelligence core. Intelligent acquisition actions (audience selection, budget allocation, creative optimization, signal amplification, attribution, growth loops). Live metrics: spend $3.72M, conversions 184.6K, CPA $20.18, ROAS 4.71x, LTV/CAC 3.82x, engagement 6.71%." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 09 — Media Acquisition Intelligence</span>
+        <span class="ref">↘ One Intelligence · Every Channel · Every Decision</span>
+      </figcaption>
+    </figure>
+
+    <div class="pull-row reveal stagger">
+      <div class="cell" style="--i:0"><div class="v">4.71<span style="font-size:.65em;color:var(--ink-3);">x</span></div><div class="l">ROAS</div></div>
+      <div class="cell" style="--i:1"><div class="v">+38.6<span style="font-size:.65em;color:var(--ink-3);">%</span></div><div class="l">Conversion Lift</div></div>
+      <div class="cell" style="--i:2"><div class="v">−27.4<span style="font-size:.65em;color:var(--ink-3);">%</span></div><div class="l">Cost Efficiency</div></div>
+      <div class="cell" style="--i:3"><div class="v">8.24<span style="font-size:.65em;color:var(--ink-3);">M</span></div><div class="l">Active Audiences</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CHAPTER 10 — Risk (10-risk.png)
+     ========================================================= -->
+<section id="ch-10" class="chapter">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">10</span>
+        <span class="tag">Risk Intelligence</span>
+      </div>
+      <div class="chapter-title">
+        <h2>Anticipate threats. Strengthen controls. <span class="gradient-text">Resilient outcomes.</span></h2>
+        <p class="lede">
+          MIZOKI3 unifies risk, controls, and intelligence in a governed loop — to anticipate threats, simulate futures, strengthen controls, and deliver measurable resilience. Risk Intelligence, Exposures, Scenario Simulation, Control Layers, Resilience, Anomaly Detection — all under the same memory.
+        </p>
+        <div class="meta-row">
+          <span><strong>Monitoring</strong> 1,248 risks · 3,672 exposures · 512 scenarios</span>
+          <span><strong>Resilience Index</strong> 92.7% · Controls active 98.8%</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/10-risk.png" alt="MIZOKI3 Risk Intelligence. Capabilities arranged around the brain-graph: Risk Intelligence, Exposures, Scenario Simulation, Control Layers, Resilience, Anomaly Detection, Governed Autonomy. Risk landscape map; risks monitored 1,248; exposures 3,672; scenarios run 512; controls active 98.8%; resilience index 92.7%. Sub-panels: Risk Heatmap, Exposure Map, Scenario Branches, Control Effectiveness, Vulnerabilities, Validation &amp; Eligibility, Resilience Over Time." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 10 — Risk Intelligence</span>
+        <span class="ref">↘ Anticipate · Reduce · Strengthen · Endure</span>
+      </figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     PULL QUOTE
+     ========================================================= -->
+<aside class="pull-quote">
+  <div class="container narrow">
+    <blockquote class="reveal">
+      Specialized cells bring depth.<br/>
+      <em>One graph brings unity.</em>
+    </blockquote>
+    <div class="cite reveal">On Cross-Domain Orchestration</div>
+  </div>
+</aside>
+
+<!-- =========================================================
+     CHAPTER 11 — Nexus (11-nexus.png)
+     ========================================================= -->
+<section id="ch-11" class="chapter tight">
+  <div class="container">
+
+    <div class="chapter-head reveal">
+      <div class="chapter-meta">
+        <span class="num">11</span>
+        <span class="tag">Nexus</span>
+      </div>
+      <div class="chapter-title">
+        <h2>Cross-domain orchestration. <span class="gradient-text">Universal intelligence.</span></h2>
+        <p class="lede">
+          Nexus is the orchestration core and universal gateway that connects every domain, every agent, and every insight. Multi-agent orchestration. Shared memory layer. Cross-domain insights. Network effects that compound. One brain. Many lenses. Infinite outcomes.
+        </p>
+        <div class="meta-row">
+          <span><strong>Capabilities</strong> Real-time orchestration · Adaptive allocation · Continuous learning</span>
+          <span><strong>Cells</strong> Analytics · Strategy · Execution · + more</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="plate reveal">
+      <img src="assets/11-nexus.png" alt="MIZOKI3 Nexus — Cross-Domain Orchestration. Universal Intelligence. The Nexus Orchestration Core / Universal Gateway connects Legal, Estate, Capital, Media Acquisition, Risk, DCP, Nexus Intelligence, and more domains. Capabilities: real-time orchestration, adaptive resource allocation, context-aware execution, continuous learning loop. Specialized cells: Analytics, Strategy, Execution. Outcomes: smarter decisions, faster execution, lower risk, compound advantage." loading="lazy"/>
+      <figcaption class="plate-caption">
+        <span>Plate 11 — Nexus · Orchestration Core</span>
+        <span class="ref">↘ Unified platform · Unlimited possibilities</span>
+      </figcaption>
+    </figure>
+
+    <div class="pull-row reveal stagger">
+      <div class="cell" style="--i:0"><div class="v">Smarter</div><div class="l">Decisions</div></div>
+      <div class="cell" style="--i:1"><div class="v">Faster</div><div class="l">Execution</div></div>
+      <div class="cell" style="--i:2"><div class="v">Lower</div><div class="l">Risk</div></div>
+      <div class="cell" style="--i:3"><div class="v">Compound</div><div class="l">Advantage</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CTA
+     ========================================================= -->
+<section id="cta" class="cta-section">
+  <div class="container">
+    <div class="cta-card reveal">
+      <div class="eyebrow">Built for serious operators</div>
+      <h2>Move from <span class="gradient-text">dashboards to decisions.</span></h2>
+      <p>
+        See MIZOKI3 reason across your enterprise signals in real time — with governance, lineage, and replayable audit by default. We'll walk you through a working deployment, end to end.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="mailto:ceo@mediaintelligence.ai">Request a Demo <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="mailto:ceo@mediaintelligence.ai">Talk to an Architect</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="#top">
+          <span class="mark"></span>
+          <span>MIZOKI<span class="three">3</span></span>
+        </a>
+        <p>Autonomous Decision Intelligence for the enterprise. One brain. Many lenses. Shared memory. Built and operated by Media Intelligence.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#ch-02">The Canonical Loop</a></li>
+          <li><a href="#ch-03">Orchestration Framework</a></li>
+          <li><a href="#ch-04">Architecture</a></li>
+          <li><a href="#ch-05">Knowledge Graph</a></li>
+          <li><a href="#ch-11">Nexus</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Intelligence Cells</h5>
+        <ul>
+          <li><a href="#ch-07">Legal</a></li>
+          <li><a href="#ch-08">Estate</a></li>
+          <li><a href="#ch-09">Media Acquisition</a></li>
+          <li><a href="#ch-10">Risk</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">Media Intelligence</a></li>
+          <li><a href="#">Trust &amp; Security</a></li>
+          <li><a href="#">Research</a></li>
+          <li><a href="mailto:ceo@mediaintelligence.ai">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Media Intelligence · MIZOKI3 Platform</div>
+      <div class="signature">
+        <span>Governed Autonomy</span>
+        <span>·</span>
+        <span>SOC 2 · Audit-Ready</span>
+        <span>·</span>
+        <span>Built on GCP</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- =========================================================
+     SCRIPTS
+     ========================================================= -->
+<script>
+// Reveal-on-scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Active side-index dot
+const sections = document.querySelectorAll('section[id], main#top');
+const dots = document.querySelectorAll('.side-index a');
+const setActive = () => {
+  let current = 'top';
+  const y = window.scrollY + window.innerHeight * 0.4;
+  sections.forEach(s => {
+    if (y >= s.offsetTop) current = s.id || 'top';
+  });
+  dots.forEach(d => {
+    d.classList.toggle('active', d.getAttribute('href') === '#' + current);
+  });
+};
+window.addEventListener('scroll', setActive, { passive: true });
+setActive();
+</script>
+
+</body>
+</html>

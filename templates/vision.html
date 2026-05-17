@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision | MIZ OKI - Tremendous Proportions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #e0e0e0;
+            --accent-color: #00d4ff;
+            --highlight-color: #ff9f1c;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: var(--bg-color);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            color: var(--text-color);
+        }
+
+        #neuro-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            padding: 120px 40px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .hero-section h1 {
+            font-size: 4.5rem;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 0.3em;
+            background: linear-gradient(135deg, var(--accent-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .hero-section .subtitle {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .manifesto {
+            margin: 60px 0;
+        }
+
+        .manifesto-block {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--highlight-color);
+            padding: 40px;
+            margin-bottom: 40px;
+            font-size: 1.4rem;
+            line-height: 1.8;
+        }
+
+        .manifesto-block strong {
+            color: var(--accent-color);
+        }
+
+        .manifesto-block.accent {
+            border-left-color: var(--accent-color);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .quote-section {
+            text-align: center;
+            padding: 80px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 60px 0;
+        }
+
+        .quote-section blockquote {
+            font-size: 2.2rem;
+            font-style: italic;
+            color: var(--accent-color);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .quote-section cite {
+            display: block;
+            margin-top: 20px;
+            font-size: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-style: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .pillars {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .pillar {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 159, 28, 0.05);
+            border: 1px solid rgba(255, 159, 28, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .pillar:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 159, 28, 0.1);
+        }
+
+        .pillar .number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--highlight-color);
+            opacity: 0.3;
+            line-height: 1;
+        }
+
+        .pillar h3 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 20px 0 15px;
+            color: var(--accent-color);
+        }
+
+        .pillar p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .future-section {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .future-section h2 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+
+        .future-section p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        .btn-main {
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-color);
+            background-color: var(--highlight-color);
+            box-shadow: 0 0 20px rgba(255, 159, 28, 0.4);
+        }
+
+        .btn-main:hover {
+            background-color: #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2.8rem; }
+            nav { padding: 15px 20px; }
+            .nav-links { gap: 20px; }
+            .nav-links a { font-size: 0.85rem; }
+            .content { padding: 100px 20px 40px; }
+            .pillars { grid-template-columns: 1fr; }
+            .manifesto-block { padding: 25px; font-size: 1.2rem; }
+            .quote-section blockquote { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="neuro-grid"></canvas>
+
+    <nav>
+        <a href="/" class="logo">MIZ OKI</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/intelligence">Intelligence</a>
+            <a href="/vision" class="active">Vision</a>
+            <a href="/contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div class="hero-section">
+            <h1>Tremendous Proportions</h1>
+            <p class="subtitle">The future of enterprise intelligence is not incremental. It is exponential.</p>
+        </div>
+
+        <div class="manifesto">
+            <div class="manifesto-block">
+                <p>We are building for a world where <strong>decisions verified before execution</strong> is the standard, not the exception. Where autonomous systems don't just report what happened, but actively shape what will happen.</p>
+            </div>
+
+            <div class="manifesto-block accent">
+                <p>The era of human bottlenecks in decision chains is ending. Not because humans are obsolete, but because <strong>humans deserve to focus on what matters</strong> &mdash; strategy, creativity, and judgment that no algorithm can replicate.</p>
+            </div>
+
+            <div class="manifesto-block">
+                <p>MIZ OKI exists to handle the rest. The millions of micro-decisions that compound into macro outcomes. The patterns too subtle for human perception. The speed that markets now demand.</p>
+            </div>
+        </div>
+
+        <div class="quote-section">
+            <blockquote>"Agents propose. The Decision Control Plane authorizes. This separation is the fundamental constraint that enables governed autonomy."</blockquote>
+            <cite>The MIZ OKI Architecture Principle</cite>
+        </div>
+
+        <div class="pillars">
+            <div class="pillar">
+                <div class="number">I</div>
+                <h3>Velocity</h3>
+                <p>50-75x faster than manual processes. Decisions in seconds, not days.</p>
+            </div>
+            <div class="pillar">
+                <div class="number">II</div>
+                <h3>Verifiability</h3>
+                <p>Every decision cryptographically signed. Complete audit archaeology.</p>
+            </div>
+            <div class="pillar">
+                <div class="number">III</div>
+                <h3>Autonomy</h3>
+                <p>89% automation coverage with human override at every layer.</p>
+            </div>
+        </div>
+
+        <div class="future-section">
+            <h2>Join the Shift</h2>
+            <p>The organizations that thrive in the next decade will be those that embrace autonomous intelligence now. Not as a tool, but as a fundamental operating principle.</p>
+            <a class="btn-main" href="/contact">Begin Your Transformation</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('neuro-grid');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#00d4ff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor((width * height) / 15000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - distance / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+        resize();
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>

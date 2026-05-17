@@ -1,0 +1,129 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#4f8fff"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="100%" style="stop-color:#f97316"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bgGrad)"/>
+  
+  <!-- Grid pattern -->
+  <g opacity="0.1">
+    <line x1="0" y1="337" x2="1200" y2="337" stroke="#4f8fff" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="675" stroke="#4f8fff" stroke-width="1"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="60" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600">The ReLU Gate</text>
+  <text x="600" y="95" text-anchor="middle" fill="#9090a0" font-family="system-ui, -apple-system, sans-serif" font-size="18">Weak signals filtered " Strong signals amplified</text>
+  
+  <!-- Gate visualization -->
+  <!-- Left side: Weak signals (filtered) -->
+  <g transform="translate(150, 200)">
+    <!-- Weak signal arrows -->
+    <g opacity="0.4">
+      <line x1="0" y1="50" x2="150" y2="50" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4"/>
+      <polygon points="140,45 155,50 140,55" fill="#ef4444"/>
+    </g>
+    <g opacity="0.3">
+      <line x1="0" y1="120" x2="130" y2="120" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+      <polygon points="120,116 135,120 120,124" fill="#ef4444"/>
+    </g>
+    <g opacity="0.2">
+      <line x1="0" y1="190" x2="110" y2="190" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+      <polygon points="100,186 115,190 100,194" fill="#ef4444"/>
+    </g>
+    <g opacity="0.25">
+      <line x1="0" y1="260" x2="120" y2="260" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+      <polygon points="110,256 125,260 110,264" fill="#ef4444"/>
+    </g>
+    
+    <!-- Label -->
+    <text x="75" y="340" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="16" font-weight="500">Weak Signals</text>
+    <text x="75" y="365" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">Below threshold</text>
+  </g>
+  
+  <!-- Gate (center) -->
+  <g transform="translate(400, 180)">
+    <!-- Gate structure -->
+    <rect x="0" y="0" width="400" height="300" rx="20" fill="none" stroke="url(#cyanGrad)" stroke-width="3" filter="url(#glow)"/>
+    
+    <!-- Threshold line -->
+    <line x1="0" y1="150" x2="400" y2="150" stroke="#00d4ff" stroke-width="2" stroke-dasharray="10,5" opacity="0.6"/>
+    <text x="200" y="140" text-anchor="middle" fill="#00d4ff" font-family="monospace" font-size="14">THRESHOLD</text>
+    
+    <!-- Gate symbol -->
+    <text x="200" y="80" text-anchor="middle" fill="#f0f0f5" font-family="monospace" font-size="24" font-weight="600">ReLU GATE</text>
+    
+    <!-- Formula -->
+    <text x="200" y="200" text-anchor="middle" fill="#9090a0" font-family="monospace" font-size="16">f(x) = max(0, x)</text>
+    
+    <!-- Filtered indicator (bottom) -->
+    <g transform="translate(100, 230)">
+      <rect x="0" y="0" width="80" height="40" rx="6" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="1"/>
+      <text x="40" y="26" text-anchor="middle" fill="#ef4444" font-family="system-ui, sans-serif" font-size="12" font-weight="500">FILTERED</text>
+    </g>
+    
+    <!-- Amplified indicator (top) -->
+    <g transform="translate(220, 230)">
+      <rect x="0" y="0" width="80" height="40" rx="6" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="1"/>
+      <text x="40" y="26" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="12" font-weight="500">AMPLIFIED</text>
+    </g>
+  </g>
+  
+  <!-- Right side: Strong signals (amplified) -->
+  <g transform="translate(850, 200)">
+    <!-- Strong signal arrows -->
+    <g filter="url(#glowStrong)">
+      <line x1="0" y1="50" x2="180" y2="50" stroke="url(#cyanGrad)" stroke-width="6"/>
+      <polygon points="170,40 195,50 170,60" fill="#00d4ff"/>
+    </g>
+    <g filter="url(#glow)">
+      <line x1="0" y1="120" x2="200" y2="120" stroke="url(#cyanGrad)" stroke-width="5"/>
+      <polygon points="190,112 215,120 190,128" fill="#00d4ff"/>
+    </g>
+    <g filter="url(#glow)">
+      <line x1="0" y1="190" x2="220" y2="190" stroke="url(#cyanGrad)" stroke-width="5"/>
+      <polygon points="210,182 235,190 210,198" fill="#00d4ff"/>
+    </g>
+    <g filter="url(#glowStrong)">
+      <line x1="0" y1="260" x2="250" y2="260" stroke="url(#cyanGrad)" stroke-width="7"/>
+      <polygon points="240,248 270,260 240,272" fill="#00d4ff"/>
+    </g>
+    
+    <!-- Label -->
+    <text x="125" y="340" text-anchor="middle" fill="#00d4ff" font-family="system-ui, sans-serif" font-size="16" font-weight="500">Strong Signals</text>
+    <text x="125" y="365" text-anchor="middle" fill="#9090a0" font-family="system-ui, sans-serif" font-size="14">Above threshold</text>
+  </g>
+  
+  <!-- Bottom insight -->
+  <rect x="300" y="580" width="600" height="60" rx="10" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
+  <text x="600" y="618" text-anchor="middle" fill="#f0f0f5" font-family="system-ui, sans-serif" font-size="16">Meta's algorithm behaves like a gate: <tspan fill="#00d4ff">cross the threshold</tspan> to activate delivery</text>
+  
+  <!-- MIZ OKI branding -->
+  <text x="1150" y="650" text-anchor="end" fill="#606070" font-family="monospace" font-size="12">MIZ OKI 3.5</text>
+</svg>
