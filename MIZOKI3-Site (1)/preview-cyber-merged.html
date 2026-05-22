@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MIZOKI3 // Autonomous Strategic Intelligence Infrastructure</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+        colors: {
+          cyberBg: '#02040a',
+          cyberPanel: '#07101d',
+          cyberCyan: '#22d3ee',      // System / Nexus
+          cyberPurple: '#a855f7',    // Counsel
+          cyberEmerald: '#34d399',   // Estate
+          cyberBlue: '#34a6ff',      // Capital
+          cyberGold: '#fbbf24',      // Signal
+          cyberRed: '#f87171',       // Risk
+          cyberIndigo: '#6366f1'
+        },
+        boxShadow: {
+          'neon-cyan':    '0 0 20px rgba(34,211,238,0.25)',
+          'neon-purple':  '0 0 20px rgba(168,85,247,0.25)',
+          'neon-emerald': '0 0 20px rgba(52,211,153,0.20)',
+          'neon-blue':    '0 0 20px rgba(52,166,255,0.25)',
+          'neon-gold':    '0 0 20px rgba(251,191,36,0.20)',
+          'neon-red':     '0 0 20px rgba(248,113,113,0.25)',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #02040a; }
+  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+  @keyframes scan {
+    0%   { transform: translateY(-100%); opacity: 0; }
+    15%  { opacity: 0.8; }
+    85%  { opacity: 0.8; }
+    100% { transform: translateY(100%); opacity: 0; }
+  }
+  .animate-scan { animation: scan 5s ease-in-out infinite; }
+
+  @keyframes orbit-cw  { to { transform: rotate(360deg); } }
+  @keyframes orbit-ccw { to { transform: rotate(-360deg); } }
+  .animate-orbit-cw  { animation: orbit-cw 45s linear infinite; }
+  .animate-orbit-ccw { animation: orbit-ccw 60s linear infinite; }
+
+  .glow-cyan   { background: radial-gradient(circle, rgba(34,211,238,0.15) 0%, transparent 70%); }
+  .glow-purple { background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%); }
+  .glow-blue   { background: radial-gradient(circle, rgba(52,166,255,0.12) 0%, transparent 70%); }
+  .glow-gold   { background: radial-gradient(circle, rgba(251,191,36,0.10) 0%, transparent 75%); }
+</style>
+</head>
+<body class="bg-cyberBg text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden antialiased">
+
+<div class="fixed inset-0 pointer-events-none z-0">
+  <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#111827_1px,transparent_1px),linear-gradient(to_bottom,#111827_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_65%,transparent_100%)] opacity-20"></div>
+  <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full glow-cyan filter blur-[120px] opacity-75"></div>
+  <div class="absolute bottom-[-15%] right-[-10%] w-[60%] h-[60%] rounded-full glow-purple filter blur-[150px] opacity-60"></div>
+  <div class="absolute top-[40%] right-[10%] w-[45%] h-[45%] rounded-full glow-gold filter blur-[130px] opacity-40"></div>
+</div>
+
+<header class="sticky top-0 z-50 border-b border-white/5 bg-cyberBg/75 backdrop-blur-xl">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <div class="p-1.5 rounded-lg border border-cyan-500/20 bg-cyan-950/30 text-cyberCyan group-hover:border-cyan-400 transition-all duration-300">
+        <i data-lucide="network" class="w-6 h-6"></i>
+      </div>
+      <span class="text-xl font-black tracking-widest text-white">MIZOKI<span class="text-cyberCyan">3</span></span>
+    </div>
+    <nav class="hidden lg:flex items-center space-x-9 text-xs font-bold tracking-[0.2em] text-slate-400 uppercase">
+      <a href="#engine" class="hover:text-cyberCyan transition-colors">The Engine</a>
+      <a href="#lenses" class="hover:text-cyberCyan transition-colors">Ecosystem</a>
+      <a href="#extended" class="hover:text-cyberCyan transition-colors">Extensibility</a>
+      <a href="#sandbox" class="hover:text-cyberCyan transition-colors">Sandbox</a>
+      <a href="#demo" class="hover:text-cyberCyan transition-colors">Replay</a>
+    </nav>
+    <div class="flex items-center space-x-4">
+      <a href="mailto:hello@mizoki3.com" class="px-5 py-2.5 text-xs font-black uppercase tracking-widest text-black bg-gradient-to-r from-cyberGold via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 shadow-neon-gold">
+        Request Pilot
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="relative z-10">
+
+  <!-- ========== HERO ========== -->
+  <section class="relative min-h-[calc(100vh-80px)] flex items-center py-20 px-6 border-b border-white/5">
+    <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-16 items-center">
+
+      <div class="lg:col-span-6 space-y-8">
+        <div class="inline-flex items-center space-x-3 px-3.5 py-1.5 text-xs font-bold tracking-widest border rounded-full text-cyberCyan border-cyan-500/30 bg-cyan-950/40 backdrop-blur-md">
+          <span class="flex h-2.5 w-2.5 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyberCyan opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyberCyan"></span>
+          </span>
+          <span>VERIFIABLE AUTONOMY ONLINE</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.05]">
+          One Intelligence.<br />
+          Many Domains.<br />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyberCyan via-blue-400 to-cyberPurple">
+            Shared Causal Memory.
+          </span>
+        </h1>
+
+        <p class="text-slate-300 text-lg md:text-xl leading-relaxed max-w-2xl">
+          MIZOKI3 unifies legal, financial, operational, and customer intelligence — and every other corporate division — into a single autonomous decision system. Built on a Temporal-Causal Knowledge Graph and governed by a Decision Control Plane that separates proposal from authorization and refuses to act on correlation alone.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <a href="#demo" class="w-full sm:w-auto flex items-center justify-center px-8 py-4 text-sm font-bold text-black uppercase tracking-widest bg-white hover:bg-slate-100 transition-all rounded-xl duration-300 shadow-[0_4px_30px_rgba(255,255,255,0.15)]">
+            <span>Watch the Veto</span>
+            <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+          </a>
+          <a href="#sandbox" class="w-full sm:w-auto flex items-center justify-center px-8 py-4 text-sm font-bold text-white uppercase tracking-widest border border-white/10 bg-white/[0.02] hover:bg-white/[0.07] transition-all rounded-xl duration-300">
+            <i data-lucide="play" class="mr-2 w-4 h-4 text-cyberGold fill-cyberGold"></i>
+            <span>Open Sandbox</span>
+          </a>
+        </div>
+
+        <!-- Posture footprints — ACCURATE claims only (no certs) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-white/5">
+          <div class="border-l-2 border-cyberCyan/50 pl-4">
+            <b class="block text-2xl font-black text-white">5 + 8</b>
+            <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Ecosystem Lenses</span>
+          </div>
+          <div class="border-l-2 border-cyberGold/50 pl-4">
+            <b class="block text-2xl font-black text-white">7 Stages</b>
+            <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">SRPVDAL Pipeline</span>
+          </div>
+          <div class="border-l-2 border-cyberPurple/50 pl-4">
+            <b class="block text-2xl font-black text-white">32 Cells</b>
+            <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Micro-Engine Mesh</span>
+          </div>
+          <div class="border-l-2 border-cyberEmerald/50 pl-4">
+            <b class="block text-2xl font-black text-white">100% Trace</b>
+            <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Replayable Audit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Diagram: 5 division nodes + DCP gate around the NEXUS brain -->
+      <div class="lg:col-span-6 relative flex justify-center">
+        <div class="relative w-full max-w-[520px] aspect-square rounded-[2rem] border border-white/10 bg-gradient-to-b from-slate-950 to-cyberBg p-8 overflow-hidden shadow-2xl">
+
+          <div class="absolute top-0 inset-x-0 h-10 border-b border-white/5 bg-black/40 flex items-center justify-between px-6 font-mono text-[9px] text-slate-500 tracking-widest z-10">
+            <div class="flex items-center space-x-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyberCyan animate-pulse"></span>
+              <span>TCKG // NEXUS_CORE_ACTIVE</span>
+            </div>
+            <span>NODES: 14,291</span>
+          </div>
+          <div class="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-cyberCyan to-transparent animate-scan z-10 pointer-events-none"></div>
+
+          <div class="relative w-full h-full flex items-center justify-center pt-8">
+            <div class="absolute w-[280px] h-[280px] border border-dashed border-white/5 rounded-full animate-orbit-cw"></div>
+            <div class="absolute w-[360px] h-[360px] border border-dashed border-cyan-500/10 rounded-full animate-orbit-ccw"></div>
+
+            <!-- NEXUS core -->
+            <div class="z-10 relative flex flex-col items-center justify-center w-36 h-36 rounded-full border border-cyberCyan/40 bg-black/60 shadow-neon-cyan text-center p-4">
+              <i data-lucide="network" class="w-7 h-7 text-cyberCyan mb-1.5 animate-pulse"></i>
+              <span class="font-mono text-[10px] text-cyberCyan tracking-wider font-bold">NEXUS</span>
+              <span class="font-mono text-[8px] text-slate-500 uppercase tracking-widest mt-0.5">The Brain</span>
+            </div>
+
+            <!-- COUNSEL (top) -->
+            <div class="absolute top-12 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2 bg-slate-900/90 border border-cyberPurple/40 px-3 py-1.5 rounded-xl text-xs font-bold text-cyberPurple cursor-pointer hover:border-cyberPurple transition-all">
+              <i data-lucide="scale" class="w-3.5 h-3.5"></i><span>Counsel</span>
+            </div>
+            <!-- ESTATE (upper-left) -->
+            <div class="absolute top-24 left-6 z-20 flex items-center space-x-2 bg-slate-900/90 border border-cyberEmerald/40 px-3 py-1.5 rounded-xl text-xs font-bold text-cyberEmerald cursor-pointer hover:border-cyberEmerald transition-all">
+              <i data-lucide="landmark" class="w-3.5 h-3.5"></i><span>Estate</span>
+            </div>
+            <!-- CAPITAL (upper-right) -->
+            <div class="absolute top-24 right-6 z-20 flex items-center space-x-2 bg-slate-900/90 border border-cyberBlue/40 px-3 py-1.5 rounded-xl text-xs font-bold text-cyberBlue cursor-pointer hover:border-cyberBlue transition-all">
+              <i data-lucide="banknote" class="w-3.5 h-3.5"></i><span>Capital</span>
+            </div>
+            <!-- SIGNAL (lower-left) -->
+            <div class="absolute bottom-20 left-6 z-20 flex items-center space-x-2 bg-slate-900/90 border border-cyberGold/40 px-3 py-1.5 rounded-xl text-xs font-bold text-cyberGold cursor-pointer hover:border-cyberGold transition-all">
+              <i data-lucide="radar" class="w-3.5 h-3.5"></i><span>Signal</span>
+            </div>
+            <!-- RISK (lower-right) -->
+            <div class="absolute bottom-20 right-6 z-20 flex items-center space-x-2 bg-slate-900/90 border border-cyberRed/40 px-3 py-1.5 rounded-xl text-xs font-bold text-cyberRed cursor-pointer hover:border-cyberRed transition-all">
+              <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i><span>Risk</span>
+            </div>
+            <!-- DCP Gate (bottom-center, separate authority) -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2 bg-slate-900/90 border border-white/30 px-3 py-1.5 rounded-xl text-xs font-bold text-white cursor-pointer hover:border-white transition-all">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i><span>DCP Gate</span>
+            </div>
+          </div>
+
+          <div class="absolute bottom-4 inset-x-6 grid grid-cols-3 gap-2 font-mono text-[9px] text-slate-500 tracking-wider">
+            <div class="border-t border-white/5 pt-2"><span>DCP STATUS</span><b class="block text-cyberEmerald mt-0.5">ACTIVE-GATE</b></div>
+            <div class="border-t border-white/5 pt-2"><span>CAUSAL EDGES</span><b class="block text-white mt-0.5">8,412,983</b></div>
+            <div class="border-t border-white/5 pt-2"><span>VERIFY RATE</span><b class="block text-cyberCyan mt-0.5">100% PASS</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PREMISE: Correlation vs Causation ========== -->
+  <section class="py-32 px-6 border-b border-white/5 bg-[#010206]">
+    <div class="max-w-7xl mx-auto">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-black tracking-[0.3em] text-cyberCyan uppercase block mb-3">The Premise</span>
+        <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">You cannot run a $10B enterprise on correlation.</h2>
+        <p class="text-slate-400 text-sm md:text-base leading-relaxed mt-4">
+          Standard generative AI predicts the next token by semantic similarity. That's correlation — which guarantees hallucination. MIZOKI3 runs on causation: every legal clause and financial covenant becomes executable enterprise physics, a constraint the system cannot violate, not a suggestion it might ignore.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 items-stretch">
+        <div class="p-8 md:p-10 border border-cyberRed/15 bg-cyberRed/[0.01] rounded-3xl">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-cyberRed/10 border border-cyberRed/20 text-cyberRed rounded-full mb-6">
+            <span>Correlation AI</span>
+          </div>
+          <h3 class="text-2xl font-black text-white mb-4">Predicts what looks likely</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-8">Pattern-matches plausible output. Fluent, confident, and structurally unable to know when it is wrong.</p>
+          <div class="space-y-4 text-sm">
+            <div class="flex items-start space-x-3 text-slate-300"><div class="p-1 rounded bg-cyberRed/10 border border-cyberRed/25 text-cyberRed flex-shrink-0 mt-0.5"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><span><b>Correlation trap:</b> Finds statistical pairings without knowing causal mechanism.</span></div>
+            <div class="flex items-start space-x-3 text-slate-300"><div class="p-1 rounded bg-cyberRed/10 border border-cyberRed/25 text-cyberRed flex-shrink-0 mt-0.5"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><span><b>Disconnected agents:</b> Scattered silos with no shared memory or global state.</span></div>
+            <div class="flex items-start space-x-3 text-slate-300"><div class="p-1 rounded bg-cyberRed/10 border border-cyberRed/25 text-cyberRed flex-shrink-0 mt-0.5"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><span><b>Blind execution:</b> Fires API payloads with no non-bypass validation gate.</span></div>
+          </div>
+        </div>
+        <div class="p-8 md:p-10 border border-cyberCyan/20 bg-cyan-950/[0.04] rounded-3xl shadow-neon-cyan">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-cyberCyan/10 border border-cyberCyan/20 text-cyberCyan rounded-full mb-6">
+            <span>MIZOKI3 — Causal</span>
+          </div>
+          <h3 class="text-2xl font-black text-white mb-4">Proves what is permitted</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-8">Reasons over a governed causal graph. Every action is checked against covenants, policy, and lineage before it executes.</p>
+          <div class="space-y-4 text-sm">
+            <div class="flex items-start space-x-3 text-slate-300"><div class="p-1 rounded bg-cyberCyan/10 border border-cyberCyan/25 text-cyberCyan flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><span><b>Causal integration:</b> Shared operational memory traces systems, agreements, timelines, outcomes.</span></div>
+            <div class="flex items-start space-x-3 text-slate-300"><div class="p-1 rounded bg-cyberCyan/10 border border-cyberCyan/25 text-cyberCyan flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><span><b>Counterfactual simulation:</b> Model alternatives against structural and financial criteria before executing.</span></div>
+            <div class="flex items-start space-x-3 text-slate-300"><div class="p-1 rounded bg-cyberCyan/10 border border-cyberCyan/25 text-cyberCyan flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><span><b>Decision Control Plane:</b> Mandatory gate separates action proposals from API payloads.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SRPVDAL ENGINE: 7-stage clickable inspector ========== -->
+  <section id="engine" class="py-32 px-6 border-b border-white/5">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-20 gap-6">
+        <div>
+          <span class="text-xs font-black tracking-[0.3em] text-cyberCyan uppercase block mb-3">The Engine</span>
+          <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">The SRPVDAL Loop</h2>
+        </div>
+        <p class="text-slate-400 max-w-lg text-sm md:text-base leading-relaxed">
+          Click a stage to inspect what happens during a real decision — the live trace below follows Capital decision ACT-991: a proposed $5.0M Q3 distribution against covenant COV-01.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+        <div class="lg:col-span-5 space-y-3 flex flex-col justify-center">
+          <button onclick="selectEngineStage(0)" id="stage-btn-0" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 bg-cyan-950/20 border-cyan-500/40 shadow-neon-cyan">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-cyberCyan text-black">S</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-white">01. Sense</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberCyan/10 text-cyberCyan border border-cyan-500/20 uppercase">Observe</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-cyberCyan"></i>
+          </button>
+          <button onclick="selectEngineStage(1)" id="stage-btn-1" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5">R</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-slate-400">02. Reason</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase">Infer</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-slate-700"></i>
+          </button>
+          <button onclick="selectEngineStage(2)" id="stage-btn-2" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5">P</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-slate-400">03. Plan</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase">Propose</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-slate-700"></i>
+          </button>
+          <button onclick="selectEngineStage(3)" id="stage-btn-3" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5">V</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-slate-400">04. Validate</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase">Stress-Test</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-slate-700"></i>
+          </button>
+          <button onclick="selectEngineStage(4)" id="stage-btn-4" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5">D</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-slate-400">05. Decide</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase">Arbitrate</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-slate-700"></i>
+          </button>
+          <button onclick="selectEngineStage(5)" id="stage-btn-5" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5">A</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-slate-400">06. Act</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase">Execute</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-slate-700"></i>
+          </button>
+          <button onclick="selectEngineStage(6)" id="stage-btn-6" class="engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]">
+            <div class="tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5">L</div>
+            <div class="flex-1"><div class="flex items-center justify-between"><span class="font-bold text-sm tracking-wide text-slate-400">07. Learn</span><span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase">Compound</span></div></div>
+            <i data-lucide="chevron-right" class="w-4 h-4 ml-2 text-slate-700"></i>
+          </button>
+        </div>
+
+        <div class="lg:col-span-7 relative border border-white/10 rounded-3xl bg-gradient-to-b from-slate-950 to-[#030306] p-8 flex flex-col justify-between overflow-hidden min-h-[500px]">
+          <div class="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-cyberCyan/60 to-transparent animate-scan pointer-events-none"></div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-4 font-mono text-[10px] text-slate-500 tracking-widest">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-cyberCyan animate-pulse"></span>
+              <span id="inspector-node-title">NODE_MONITOR // SENSE_01</span>
+            </div>
+            <span class="text-cyberCyan">ACT-991 / VERIFIED_TRACE</span>
+          </div>
+          <div class="my-auto py-8">
+            <div class="flex items-center space-x-4 mb-6">
+              <div id="inspector-icon" class="p-3 bg-cyan-950/60 border border-cyberCyan/30 rounded-2xl text-cyberCyan shadow-neon-cyan transition-all duration-300">
+                <i data-lucide="eye" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span id="inspector-step" class="font-mono text-xs text-cyberCyan block tracking-widest uppercase">Phase 01 // Observe</span>
+                <h3 id="inspector-name" class="text-2xl font-black tracking-wide text-white">Sense Module</h3>
+              </div>
+            </div>
+            <p id="inspector-desc" class="text-slate-300 text-base leading-relaxed max-w-xl mb-6">
+              Counsel cell ingests Credit Agreement Amendment AMEND-842 and treasury telemetry. The graph absorbs the new covenant terms as executable constraints — not advisory text.
+            </p>
+            <div class="p-4 rounded-xl bg-black/40 border border-white/5 font-mono text-xs text-slate-400 overflow-x-auto">
+              <div class="flex justify-between items-center mb-2 text-[10px] text-slate-600 border-b border-white/5 pb-2">
+                <span>SIMULATED_JSON_PAYLOAD</span>
+                <span class="text-cyberCyan">OK</span>
+              </div>
+              <pre id="inspector-json" class="text-[11px] leading-relaxed text-slate-300 font-medium select-all">{
+  "source": "counsel.ingest",
+  "document_id": "AMEND-842",
+  "doc_type": "Credit_Agreement_Amendment",
+  "extracted_covenants": ["COV-01"],
+  "binding": true
+}</pre>
+            </div>
+          </div>
+          <div class="border-t border-white/5 pt-6 grid grid-cols-3 gap-6 font-mono text-[11px]">
+            <div><span class="text-slate-500 uppercase tracking-wider block mb-1">Stage Latency</span><b id="indicator-latency" class="text-cyberCyan text-sm font-bold">142ms</b></div>
+            <div><span class="text-slate-500 uppercase tracking-wider block mb-1">Causal Confidence</span><b id="indicator-confidence" class="text-cyberGold text-sm font-bold">94.2%</b></div>
+            <div><span class="text-slate-500 uppercase tracking-wider block mb-1">DCP Gate</span><b class="text-cyberEmerald text-sm font-bold flex items-center"><i data-lucide="shield-check" class="w-3.5 h-3.5 mr-1"></i> SECURE</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ECOSYSTEM: 5 flagship cells (Counsel, Estate, Capital, Signal, Risk) ========== -->
+  <section id="lenses" class="py-32 px-6 border-b border-white/5 bg-[#030307]">
+    <div class="max-w-7xl mx-auto">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-black tracking-[0.3em] text-cyberCyan uppercase block mb-3">The Ecosystem</span>
+        <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">One Brain. Many Lenses.</h2>
+        <p class="text-slate-400 text-sm md:text-base leading-relaxed mt-4">
+          Five flagship domain cells operate over a unified Temporal-Causal Knowledge Graph. Each is a lens on the same Nexus — a Counsel ingestion changes Estate exposure in the same query path. Specialization without fragmentation.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap border-b border-white/5 mb-12 gap-2">
+        <button onclick="selectDomainCell('counsel')" id="cell-btn-counsel" class="cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 border-cyberPurple text-white bg-white/[0.02]">Counsel</button>
+        <button onclick="selectDomainCell('estate')"  id="cell-btn-estate"  class="cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300">Estate</button>
+        <button onclick="selectDomainCell('capital')" id="cell-btn-capital" class="cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300">Capital</button>
+        <button onclick="selectDomainCell('signal')"  id="cell-btn-signal"  class="cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300">Signal</button>
+        <button onclick="selectDomainCell('risk')"    id="cell-btn-risk"    class="cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300">Risk</button>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-12 items-center bg-black/40 border border-white/5 p-8 md:p-12 rounded-3xl backdrop-blur-sm shadow-xl">
+        <div class="lg:col-span-6 space-y-6">
+          <span id="domain-cell-tag" class="text-xs font-mono uppercase tracking-widest block">// LEGAL_INTELLIGENCE_CELL</span>
+          <h3 id="domain-cell-title" class="text-2xl md:text-3xl font-black text-white">MIZOKI3 Counsel</h3>
+          <p id="domain-cell-tagline" class="text-cyberGold text-xs font-bold uppercase tracking-wider">Legal Intelligence</p>
+          <p id="domain-cell-desc" class="text-slate-300 text-sm md:text-base leading-relaxed">
+            Unifies legal knowledge, contracts, obligations, rules, and evidence relationships into a governed intelligence layer that reasons, validates, and supports better decisions — autonomously.
+          </p>
+          <div class="space-y-3 font-mono text-xs text-slate-400 pt-4 border-t border-white/5">
+            <div class="flex items-center"><span id="domain-bullet-1" class="w-1.5 h-1.5 bg-cyberPurple rounded-full mr-3"></span><span id="domain-cell-feat1">Contract & agreement analysis</span></div>
+            <div class="flex items-center"><span id="domain-bullet-2" class="w-1.5 h-1.5 bg-cyberPurple rounded-full mr-3"></span><span id="domain-cell-feat2">Litigation intelligence & strategy</span></div>
+            <div class="flex items-center"><span id="domain-bullet-3" class="w-1.5 h-1.5 bg-cyberPurple rounded-full mr-3"></span><span id="domain-cell-feat3">Regulatory & compliance mapping</span></div>
+          </div>
+        </div>
+        <div class="lg:col-span-6 border border-white/10 bg-slate-950 p-6 rounded-2xl font-mono text-xs text-slate-400 flex flex-col justify-between min-h-[300px] shadow-2xl">
+          <div class="space-y-4">
+            <div class="flex justify-between text-[10px] text-slate-600 border-b border-white/5 pb-2">
+              <span>SHARED_MEMORY_VERIFICATION</span>
+              <span class="text-cyberEmerald">ONLINE</span>
+            </div>
+            <div class="space-y-2 text-[11px] leading-relaxed">
+              <div class="text-slate-500">Connecting to Nexus core...</div>
+              <div class="text-cyberCyan">&gt; CONNECTED TO NEXUS // SHARED CAUSAL MEMORY</div>
+              <div id="domain-terminal-action" class="text-slate-300">&gt; Mapping AMEND-842 → COV-01 → Capital exposure...</div>
+              <div class="text-cyberEmerald">&gt; Cross-domain ripple verified. Estate + Capital cells updated.</div>
+            </div>
+          </div>
+          <div class="border-t border-white/5 pt-4 text-[10px] text-slate-500 flex justify-between">
+            <span id="domain-terminal-id">CELL_ID: COUNSEL_CELL_04</span>
+            <span>VER: 3.4.1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== EXTENSIBILITY: 8 extended ecosystems + room to grow ========== -->
+  <section id="extended" class="py-32 px-6 border-b border-white/5">
+    <div class="max-w-7xl mx-auto">
+      <div class="max-w-3xl mb-12">
+        <span class="text-xs font-black tracking-[0.3em] text-cyberPurple uppercase block mb-3">Extensible by Design</span>
+        <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">Beyond the Five. Same Substrate.</h2>
+        <p class="text-slate-400 text-sm md:text-base leading-relaxed mt-4">
+          The five flagship cells are not the ceiling. Adding a new domain doesn't add a new tool — it adds a new lens to the graph already running everything else. Same Nexus, same DCP gate, new specialization.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="users" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">People & HR</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Talent, retention & org-design intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="shopping-cart" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">Procurement</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Vendor, sourcing & spend intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="truck" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">Supply Chain</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Logistics, inventory & disruption intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="server" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">IT & Security</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Infrastructure, threat & access intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="settings-2" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">Operations</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Process, throughput & efficiency intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="flask-conical" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">R&D & Product</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Innovation pipeline & roadmap intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="leaf" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">ESG & Sustainability</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Impact, reporting & compliance intelligence.</div>
+        </div>
+        <div class="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all">
+          <i data-lucide="line-chart" class="w-5 h-5 text-cyberCyan mb-3"></i>
+          <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberCyan mb-1">Investor Relations</div>
+          <div class="text-slate-400 text-xs leading-relaxed">Capital-markets & stakeholder intelligence.</div>
+        </div>
+      </div>
+
+      <!-- "Other opportunities" — open-ended frame -->
+      <div class="mt-6 p-6 rounded-xl border border-dashed border-cyberGold/30 bg-cyberGold/[0.03] flex items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <i data-lucide="plus-circle" class="w-6 h-6 text-cyberGold"></i>
+          <div>
+            <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-cyberGold mb-1">Custom Cell</div>
+            <div class="text-slate-300 text-sm">Your domain isn't on this list? The substrate is the same. Custom cells inherit the Nexus, the DCP, and the V&A — they just bring their own ontology.</div>
+          </div>
+        </div>
+        <a href="mailto:hello@mizoki3.com" class="hidden md:inline-flex shrink-0 items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyberGold border border-cyberGold/30 rounded-lg hover:bg-cyberGold/10 transition-all">
+          Propose a Cell <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ARCHITECTURE: 3 governance pillars ========== -->
+  <section class="py-32 px-6 border-b border-white/5 bg-[#010206]">
+    <div class="max-w-7xl mx-auto">
+      <div class="max-w-2xl mb-20">
+        <span class="text-xs font-black tracking-[0.3em] text-cyberCyan uppercase block mb-3">Fiduciary-Grade Posture</span>
+        <h2 class="text-3xl md:text-5xl font-black text-white">Built on Google Cloud. Owned by You.</h2>
+        <p class="text-slate-400 text-sm md:text-base leading-relaxed mt-4">
+          Delivered as Terraform. Zero-trust VPC. Customer-managed encryption. Reasoning isolated to current-generation Claude on Vertex AI. Provisioned in your own GCP project — no shared brain, no data egress.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-8 border border-white/5 bg-white/[0.01] rounded-3xl relative">
+          <div class="absolute top-0 left-8 w-12 h-[1.5px] bg-cyberCyan"></div>
+          <i data-lucide="lock-keyhole" class="w-8 h-8 text-cyberCyan mb-6"></i>
+          <h4 class="text-lg font-bold text-white mb-3">Sealed Perimeter</h4>
+          <p class="text-sm text-slate-400 leading-relaxed">Every Cloud Run cell runs ingress=INTERNAL_ONLY in a private subnet. No public endpoint to the reasoning loop.</p>
+        </div>
+        <div class="p-8 border border-white/5 bg-white/[0.01] rounded-3xl relative">
+          <div class="absolute top-0 left-8 w-12 h-[1.5px] bg-cyberGold"></div>
+          <i data-lucide="key-round" class="w-8 h-8 text-cyberGold mb-6"></i>
+          <h4 class="text-lg font-bold text-white mb-3">Owned, Not Rented</h4>
+          <p class="text-sm text-slate-400 leading-relaxed">You hold the Cloud KMS keys. 90-day rotation. CMEK on BigQuery, GCS, Pub/Sub, and the Neo4j boot disk.</p>
+        </div>
+        <div class="p-8 border border-white/5 bg-white/[0.01] rounded-3xl relative">
+          <div class="absolute top-0 left-8 w-12 h-[1.5px] bg-cyberPurple"></div>
+          <i data-lucide="history" class="w-8 h-8 text-cyberPurple mb-6"></i>
+          <h4 class="text-lg font-bold text-white mb-3">No Training Leakage</h4>
+          <p class="text-sm text-slate-400 leading-relaxed">Reasoning routes through Claude on Vertex AI under IAM scope. Your contracts and telemetry never train foundation models.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== EXECUTION SANDBOX ========== -->
+  <section id="sandbox" class="py-32 px-6 border-b border-white/5">
+    <div class="max-w-7xl mx-auto">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-black tracking-[0.3em] text-cyberCyan uppercase block mb-3">Interactive Playground</span>
+        <h2 class="text-3xl md:text-5xl font-black text-white">Execution Sandbox</h2>
+        <p class="text-slate-400 text-sm md:text-base leading-relaxed mt-4">
+          Pick a scenario and press Execute. Watch the SRPVDAL loop fire, the V&A layer arbitrate, and the DCP gate authorize — or refuse to authorize — in real time.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+        <div class="lg:col-span-5 p-8 border border-white/10 bg-slate-950/60 rounded-3xl flex flex-col justify-between">
+          <div class="space-y-6">
+            <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">// CONTROL_DASHBOARD</span>
+            <h3 class="text-xl font-black text-white">Select Scenario</h3>
+            <div class="space-y-3">
+              <button onclick="activateSandboxScenario('covenant')" id="scenario-btn-covenant" class="scenario-btn w-full text-left p-4 rounded-xl border border-cyberCyan bg-cyan-950/20 text-white transition-all duration-300">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-bold text-sm">Capital Covenant Breach</span>
+                  <span class="text-[9px] font-mono text-cyberBlue bg-cyberBlue/10 border border-cyberBlue/20 px-2 py-0.5 rounded uppercase">Capital</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-normal">ACT-991: Capital proposes a $5.0M Q3 distribution against AMEND-842 covenant COV-01 (min liquidity $10.0M).</p>
+              </button>
+              <button onclick="activateSandboxScenario('amendment')" id="scenario-btn-amendment" class="scenario-btn w-full text-left p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-slate-400 transition-all duration-300">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-bold text-sm text-slate-300">Counsel Amendment Ingestion</span>
+                  <span class="text-[9px] font-mono text-cyberPurple bg-cyberPurple/10 border border-cyberPurple/20 px-2 py-0.5 rounded uppercase">Counsel</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-normal">New credit-agreement amendment auto-routes to Capital + Estate, re-binding exposure within the same query path.</p>
+              </button>
+              <button onclick="activateSandboxScenario('signal')" id="scenario-btn-signal" class="scenario-btn w-full text-left p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-slate-400 transition-all duration-300">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-bold text-sm text-slate-300">Signal Channel Rebalance</span>
+                  <span class="text-[9px] font-mono text-cyberGold bg-cyberGold/10 border border-cyberGold/20 px-2 py-0.5 rounded uppercase">Signal</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-normal">Causal attribution shifts $250K acquisition budget under margin pressure — DCP authorizes within thresholds.</p>
+              </button>
+            </div>
+          </div>
+          <div class="pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-3">
+            <button onclick="triggerSandboxSimulation()" id="simulate-run-btn" class="flex-1 py-3 text-xs font-black text-black bg-cyberCyan rounded-xl tracking-widest uppercase hover:bg-cyan-400 transition-all duration-300 shadow-neon-cyan flex items-center justify-center">
+              <i data-lucide="play" class="w-3.5 h-3.5 mr-2 fill-current"></i>
+              <span>Execute Simulation</span>
+            </button>
+            <button onclick="resetSandboxTerminal()" class="px-5 py-3 text-xs font-bold text-slate-400 border border-white/10 rounded-xl hover:bg-white/5 transition-all duration-300 uppercase tracking-wider">Reset</button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 relative border border-white/10 rounded-3xl bg-slate-950 flex flex-col justify-between p-8 overflow-hidden min-h-[480px] shadow-2xl">
+          <div class="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-cyberCyan/60 to-transparent animate-scan pointer-events-none"></div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-4 font-mono text-[10px] text-slate-500 tracking-widest">
+            <div class="flex items-center space-x-2">
+              <span id="sandbox-pulsar" class="w-2 h-2 rounded-full bg-cyberCyan animate-pulse"></span>
+              <span id="sandbox-terminal-title">SANDBOX // READY</span>
+            </div>
+            <span id="sandbox-status-text" class="text-cyberCyan">READY_TO_RUN</span>
+          </div>
+          <div id="sandbox-log-box" class="my-auto py-6 font-mono text-[11px] leading-relaxed text-slate-300 space-y-2 h-64 overflow-y-auto">
+            <div class="text-slate-500">System initialized. Selected scenario: <b class="text-cyberCyan">Capital Covenant Breach (ACT-991)</b>.</div>
+            <div class="text-slate-500">&gt;_ Press Execute Simulation to begin trace.</div>
+          </div>
+          <div class="border-t border-white/5 pt-6 grid grid-cols-3 gap-6 font-mono text-[11px] text-slate-500">
+            <div><span>OUTCOME</span><b id="sandbox-conf-val" class="block text-slate-400 text-sm font-bold mt-1">--</b></div>
+            <div><span>DEL SCORE</span><b id="sandbox-lat-val" class="block text-slate-400 text-sm font-bold mt-1">--</b></div>
+            <div><span>DCP GATE</span><b class="block text-cyberEmerald text-sm font-bold mt-1 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-cyberEmerald mr-1.5"></span> NOMINAL</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FLIGHT RECORDER: ACT-991 specific timeline ========== -->
+  <section id="demo" class="py-32 px-6 bg-[#020308]">
+    <div class="max-w-5xl mx-auto text-center space-y-8">
+      <span class="text-xs font-black tracking-[0.3em] text-cyberGold uppercase block mb-3">The Flight Recorder</span>
+      <h2 class="text-4xl sm:text-6xl font-black text-white leading-[1.1]">Every Decision is Replayable.</h2>
+      <p class="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+        Watch ACT-991 unfold: a $5.0M Q3 distribution proposed, cross-checked against AMEND-842 / COV-01, vetoed before execution, and re-routed to a covenant-preserving alternative — in under five seconds.
+      </p>
+
+      <div class="relative max-w-3xl mx-auto text-left pt-12">
+        <div class="absolute left-[21px] top-12 bottom-12 w-[1px] bg-gradient-to-b from-cyberBlue via-cyberRed to-cyberEmerald"></div>
+
+        <!-- T-05s -->
+        <div class="relative flex items-start gap-6 mb-8">
+          <div class="z-10 w-11 h-11 rounded-full border border-cyberBlue/40 bg-black/80 flex items-center justify-center shadow-neon-blue">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyberBlue"></span>
+          </div>
+          <div class="flex-1 p-6 border border-white/10 bg-slate-950/40 rounded-2xl">
+            <div class="flex flex-wrap items-center justify-between mb-2">
+              <span class="font-mono text-xs text-slate-500">T - 05s</span>
+              <span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberBlue/10 text-cyberBlue uppercase border border-cyberBlue/20">Signal Ingested</span>
+            </div>
+            <h4 class="text-base font-black text-white mb-2">Capital cell proposes ACT-991</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Distribute $5.0M to equity. Treasury reserves recorded at $12.0M. Counsel cell flagged AMEND-842 / COV-01 active.</p>
+          </div>
+        </div>
+
+        <!-- T-04s -->
+        <div class="relative flex items-start gap-6 mb-8">
+          <div class="z-10 w-11 h-11 rounded-full border border-cyberPurple/40 bg-black/80 flex items-center justify-center shadow-neon-purple">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyberPurple"></span>
+          </div>
+          <div class="flex-1 p-6 border border-white/10 bg-slate-950/40 rounded-2xl">
+            <div class="flex flex-wrap items-center justify-between mb-2">
+              <span class="font-mono text-xs text-slate-500">T - 04s</span>
+              <span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberPurple/10 text-cyberPurple uppercase border border-cyberPurple/20">Paths Simulated</span>
+            </div>
+            <h4 class="text-base font-black text-white mb-2">CSE counterfactuals · cross-domain check</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Counterfactual Simulation Engine runs 4 scenarios. Counsel + Estate cells engaged. Option A vs Option B modeled.</p>
+          </div>
+        </div>
+
+        <!-- T-03s -->
+        <div class="relative flex items-start gap-6 mb-8">
+          <div class="z-10 w-11 h-11 rounded-full border border-cyberGold/40 bg-black/80 flex items-center justify-center shadow-neon-gold">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyberGold"></span>
+          </div>
+          <div class="flex-1 p-6 border border-white/10 bg-slate-950/40 rounded-2xl">
+            <div class="flex flex-wrap items-center justify-between mb-2">
+              <span class="font-mono text-xs text-slate-500">T - 03s</span>
+              <span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberGold/10 text-cyberGold uppercase border border-cyberGold/20">V&A Conflict</span>
+            </div>
+            <h4 class="text-base font-black text-white mb-2">$12.0M − $5.0M = $7.0M  ·  COV-01 floor $10.0M</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Verification & Arbitration layer detects causal inconsistency. Projected post-action liquidity breaches the covenant minimum by $3.0M.</p>
+          </div>
+        </div>
+
+        <!-- T-02s -->
+        <div class="relative flex items-start gap-6 mb-8">
+          <div class="z-10 w-11 h-11 rounded-full border border-cyberRed/40 bg-black/80 flex items-center justify-center shadow-neon-red">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyberRed"></span>
+          </div>
+          <div class="flex-1 p-6 border border-white/10 bg-slate-950/40 rounded-2xl">
+            <div class="flex flex-wrap items-center justify-between mb-2">
+              <span class="font-mono text-xs text-slate-500">T - 02s</span>
+              <span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberRed/10 text-cyberRed uppercase border border-cyberRed/20">Eligibility Failed</span>
+            </div>
+            <h4 class="text-base font-black text-white mb-2">DEL score 0.31 · below 0.80 threshold</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Decision Eligibility Layer scores Option A at 0.31. Projected breach −$3.0M at probability 0.97. Insufficient for autonomous authorization.</p>
+          </div>
+        </div>
+
+        <!-- T-01s -->
+        <div class="relative flex items-start gap-6 mb-8">
+          <div class="z-10 w-11 h-11 rounded-full border border-cyberRed/60 bg-black/80 flex items-center justify-center shadow-neon-red">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyberRed"></span>
+          </div>
+          <div class="flex-1 p-6 border border-cyberRed/30 bg-cyberRed/[0.04] rounded-2xl">
+            <div class="flex flex-wrap items-center justify-between mb-2">
+              <span class="font-mono text-xs text-slate-500">T - 01s</span>
+              <span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberRed/15 text-cyberRed uppercase border border-cyberRed/30">DCP — Vetoed</span>
+            </div>
+            <h4 class="text-base font-black text-white mb-2">Authorization withheld · Option A blocked</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Decision Control Plane refuses the distribution before any API payload fires. The covenant is not a suggestion — it's a hard constraint.</p>
+          </div>
+        </div>
+
+        <!-- T-00s -->
+        <div class="relative flex items-start gap-6">
+          <div class="z-10 w-11 h-11 rounded-full border border-cyberEmerald/60 bg-black/80 flex items-center justify-center shadow-neon-emerald">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyberEmerald"></span>
+          </div>
+          <div class="flex-1 p-6 border border-cyberEmerald/30 bg-cyberEmerald/[0.04] rounded-2xl">
+            <div class="flex flex-wrap items-center justify-between mb-2">
+              <span class="font-mono text-xs text-slate-500">T + 00s</span>
+              <span class="text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberEmerald/15 text-cyberEmerald uppercase border border-cyberEmerald/30">Re-routed</span>
+            </div>
+            <h4 class="text-base font-black text-white mb-2">Option B executed · covenant preserved</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Distribution deferred one quarter. Liquidity held at $12.0M. Pattern written to Nexus memory — future Capital proposals weigh COV-01 binding before generation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-12">
+        <a href="mailto:hello@mizoki3.com" class="inline-flex items-center gap-2 px-10 py-4 text-xs font-black uppercase tracking-widest text-black bg-cyberCyan hover:bg-cyan-400 rounded-xl transition-all duration-300 shadow-neon-cyan">
+          Request Architecture Briefing <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="border-t border-white/5 bg-[#010103] py-12 px-6">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 font-mono text-xs text-slate-500 tracking-wider">
+    <div class="flex items-center space-x-3">
+      <i data-lucide="network" class="w-5 h-5 text-cyberCyan"></i>
+      <span>MIZOKI<span class="text-cyberCyan">3</span> · Autonomous Strategic Intelligence Infrastructure</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyberEmerald"></span>Customer-Managed Encryption</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyberEmerald"></span>Zero-Trust Deployment</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyberEmerald"></span>Audit-Ready by Default</span>
+    </div>
+    <div class="text-right">
+      <div>&copy; 2026 MIZOKI3, Inc.</div>
+      <div class="text-slate-600">Miami · Connecticut · hello@mizoki3.com</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.onload = function () { lucide.createIcons(); };
+
+  /* ============================================================
+     SRPVDAL INSPECTOR — wired to ACT-991 (Capital → V&A → veto)
+     ============================================================ */
+  const engineStages = [
+    { node:"NODE_MONITOR // SENSE_01", step:"Phase 01 // Observe", name:"Sense", icon:"eye",
+      desc:"Counsel cell ingests Credit Agreement Amendment AMEND-842 and treasury telemetry. The graph absorbs new covenant terms as executable constraints — not advisory text.",
+      latency:"142ms", confidence:"94.2%",
+      json:`{\n  "source": "counsel.ingest",\n  "document_id": "AMEND-842",\n  "doc_type": "Credit_Agreement_Amendment",\n  "extracted_covenants": ["COV-01"],\n  "binding": true\n}` },
+    { node:"NODE_MONITOR // REASON_02", step:"Phase 02 // Infer", name:"Reason", icon:"brain-circuit",
+      desc:"Counsel reasons over COV-01 and binds it as a hard liquidity floor for all Capital actions through FY-end. The constraint propagates to Estate's exposure model in the same query path.",
+      latency:"165ms", confidence:"95.8%",
+      json:`{\n  "constraint": "COV-01",\n  "binding_class": "hard_floor",\n  "minimum_liquidity_usd": 10000000,\n  "scope": ["Capital", "Estate"],\n  "validity": "through_FY_end"\n}` },
+    { node:"NODE_MONITOR // PLAN_03", step:"Phase 03 // Propose", name:"Plan", icon:"git-merge",
+      desc:"Capital cell drafts ACT-991: distribute $5.0M to equity in Q3. Two options modeled — Option A: distribute now. Option B: defer one quarter. Plans are blueprints, not API calls.",
+      latency:"110ms", confidence:"93.1%",
+      json:`{\n  "act_id": "ACT-991",\n  "proposer": "capital",\n  "amount_usd": 5000000,\n  "options": ["A_distribute_now", "B_defer_one_quarter"],\n  "fired_to_api": false\n}` },
+    { node:"NODE_MONITOR // VALIDATE_04", step:"Phase 04 // Stress-Test", name:"Validate", icon:"shield-check",
+      desc:"Counterfactual Simulation Engine runs 4 scenarios against COV-01. Option A projects post-action liquidity at $7.0M against the $10.0M floor — a $3.0M breach at probability 0.97.",
+      latency:"185ms", confidence:"97.0%",
+      json:`{\n  "engine": "CSE_v4",\n  "scenarios_modeled": 4,\n  "option_A_post_liquidity_usd": 7000000,\n  "covenant_floor_usd": 10000000,\n  "projected_breach_usd": -3000000,\n  "breach_probability": 0.97\n}` },
+    { node:"NODE_MONITOR // DECIDE_05", step:"Phase 05 // Arbitrate", name:"Decide", icon:"layers",
+      desc:"Decision Eligibility Layer scores Option A at 0.31 — below the 0.80 authorization threshold. V&A flags causal inconsistency. The Decision Control Plane refuses Option A.",
+      latency:"95ms", confidence:"99.4%",
+      json:`{\n  "del_score_option_A": 0.31,\n  "del_threshold": 0.80,\n  "va_verdict": "CONFLICT_DETECTED",\n  "dcp_action": "VETOED",\n  "selected_option": "B_defer_one_quarter"\n}` },
+    { node:"NODE_MONITOR // ACT_06", step:"Phase 06 // Execute", name:"Act", icon:"zap",
+      desc:"Option B fires through the secured Capital API. Distribution deferred one quarter. Liquidity held at $12.0M. Covenant preserved. The transaction is signed, logged, and immutable.",
+      latency:"210ms", confidence:"100%",
+      json:`{\n  "executed_option": "B_defer_one_quarter",\n  "post_action_liquidity_usd": 12000000,\n  "covenant_status": "PRESERVED",\n  "transaction_hash": "tx_0x9fA4b29...",\n  "response_status": 200\n}` },
+    { node:"NODE_MONITOR // LEARN_07", step:"Phase 07 // Compound", name:"Learn", icon:"activity",
+      desc:"Outcome written to Nexus shared memory. Causal weight reinforced: distributions under covenant pressure default to defer-and-recheck. Future Capital proposals weigh COV-01 binding before generation.",
+      latency:"155ms", confidence:"96.5%",
+      json:`{\n  "pattern_id": "covenant_pressure_defer",\n  "weight_delta": "+0.18",\n  "future_proposals_check_covenants_first": true,\n  "memory_persisted": true\n}` },
+  ];
+
+  function selectEngineStage(index) {
+    const buttons = document.querySelectorAll('.engine-tab-btn');
+    buttons.forEach((btn, idx) => {
+      const iconBox = btn.querySelector('.tab-icon-box');
+      const textLabel = btn.querySelector('.font-bold');
+      const badge = btn.querySelector('.font-mono');
+      const chevron = btn.querySelector('[data-lucide="chevron-right"]');
+      if (idx === index) {
+        btn.className = "engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 bg-cyan-950/20 border-cyan-500/40 shadow-neon-cyan";
+        if (iconBox) iconBox.className = "tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-cyberCyan text-black";
+        if (textLabel) textLabel.className = "font-bold text-sm tracking-wide text-white";
+        if (badge) badge.className = "text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-cyberCyan/10 text-cyberCyan border border-cyan-500/20 uppercase";
+        if (chevron) chevron.style.color = "#22d3ee";
+      } else {
+        btn.className = "engine-tab-btn w-full flex items-center p-4 rounded-2xl border text-left transition-all duration-300 border-white/5 bg-white/[0.01] hover:bg-white/[0.03]";
+        if (iconBox) iconBox.className = "tab-icon-box flex items-center justify-center w-10 h-10 rounded-xl mr-4 font-mono text-sm font-bold bg-slate-900 text-slate-400 border border-white/5";
+        if (textLabel) textLabel.className = "font-bold text-sm tracking-wide text-slate-400";
+        if (badge) badge.className = "text-[9px] font-mono tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-500 uppercase";
+        if (chevron) chevron.style.color = "#334155";
+      }
+    });
+    const s = engineStages[index];
+    document.getElementById('inspector-node-title').innerText = s.node;
+    document.getElementById('inspector-step').innerText = s.step;
+    document.getElementById('inspector-name').innerText = s.name;
+    document.getElementById('inspector-desc').innerText = s.desc;
+    document.getElementById('inspector-json').innerText = s.json;
+    document.getElementById('indicator-latency').innerText = s.latency;
+    document.getElementById('indicator-confidence').innerText = s.confidence;
+    document.getElementById('inspector-icon').innerHTML = `<i data-lucide="${s.icon}" class="w-6 h-6"></i>`;
+    lucide.createIcons();
+  }
+
+  /* ============================================================
+     DOMAIN CELLS — 5 flagship ecosystems (Counsel/Estate/Capital/Signal/Risk)
+     ============================================================ */
+  const domainCells = {
+    counsel: {
+      tag:"// LEGAL_INTELLIGENCE_CELL", title:"MIZOKI3 Counsel", tagline:"Legal Intelligence", color:"bg-cyberPurple",
+      desc:"Unifies legal knowledge, contracts, obligations, rules, and evidence relationships into a governed intelligence layer that reasons, validates, and supports better decisions — autonomously.",
+      features:["Contract & agreement analysis","Litigation intelligence & strategy","Regulatory & compliance mapping"],
+      action:"&gt; Mapping AMEND-842 → COV-01 → Capital exposure...",
+      id:"CELL_ID: COUNSEL_CELL_04"
+    },
+    estate: {
+      tag:"// WEALTH_TRUST_CELL", title:"MIZOKI3 Estate", tagline:"Wealth, Trust & Tax Intelligence", color:"bg-cyberEmerald",
+      desc:"Unifies family, stakeholders, trusts, entities, holdings, and ownership lines into one model of trust, governance, and succession — surfacing concentration risk and control gaps in real time.",
+      features:["Trust & estate structure mapping","Tax exposure & scenario modeling","Multi-generational simulations"],
+      action:"&gt; Modeling fiduciary ownership paths...",
+      id:"CELL_ID: ESTATE_CELL_12"
+    },
+    capital: {
+      tag:"// FINANCIAL_BANKING_CELL", title:"MIZOKI3 Capital", tagline:"Financial & Banking Intelligence", color:"bg-cyberBlue",
+      desc:"Maps treasury telemetry directly against the covenants Counsel ingests — forecasting liquidity stress before a mathematical breach occurs. Capital proposes; it never authorizes alone.",
+      features:["Covenant & obligation monitoring","Liquidity & cash flow forecasting","Capital allocation optimization"],
+      action:"&gt; Forecasting liquidity vs COV-01 floor (proposal ACT-991)...",
+      id:"CELL_ID: CAPITAL_CELL_07"
+    },
+    signal: {
+      tag:"// ACQUISITION_CUSTOMER_CELL", title:"MIZOKI3 Signal", tagline:"Acquisition & Customer Intelligence", color:"bg-cyberGold",
+      desc:"Acquisition decisions powered by unified signals, causal reasoning, and real-time intent. Search, social, video, display, email — fused into one decision surface that learns and compounds.",
+      features:["Causal attribution (not correlation)","Churn & LTV forecasting","Autonomous budget reallocation"],
+      action:"&gt; Recalculating causal lift across 7 channels...",
+      id:"CELL_ID: SIGNAL_CELL_15"
+    },
+    risk: {
+      tag:"// VERIFICATION_COMPLIANCE_CELL", title:"MIZOKI3 Risk", tagline:"Verification & Compliance Intelligence", color:"bg-cyberRed",
+      desc:"Every consequential output passes through cross-agent verification, hallucination arbitration, and policy gating before authorization. Risk holds the veto over every other division.",
+      features:["Cross-agent verification & arbitration","Counterfactual & stress testing","Audit functions & audit trails"],
+      action:"&gt; V&A engaged on ACT-991 · breach probability 0.97...",
+      id:"CELL_ID: RISK_CELL_22"
+    }
+  };
+
+  const cellBorderColors = {
+    counsel: 'border-cyberPurple',
+    estate:  'border-cyberEmerald',
+    capital: 'border-cyberBlue',
+    signal:  'border-cyberGold',
+    risk:    'border-cyberRed',
+  };
+
+  function selectDomainCell(cellKey) {
+    document.querySelectorAll('.cell-tab-btn').forEach(btn => {
+      if (btn.id === `cell-btn-${cellKey}`) {
+        btn.className = `cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 ${cellBorderColors[cellKey]} text-white bg-white/[0.02]`;
+      } else {
+        btn.className = "cell-tab-btn px-5 py-4 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300";
+      }
+    });
+    const c = domainCells[cellKey];
+    const tagEl = document.getElementById('domain-cell-tag');
+    tagEl.innerText = c.tag;
+    tagEl.className = `text-xs font-mono uppercase tracking-widest block ${
+      cellKey==='counsel'?'text-cyberPurple':
+      cellKey==='estate' ?'text-cyberEmerald':
+      cellKey==='capital'?'text-cyberBlue':
+      cellKey==='signal' ?'text-cyberGold':'text-cyberRed'
+    }`;
+    document.getElementById('domain-cell-title').innerText = c.title;
+    document.getElementById('domain-cell-tagline').innerText = c.tagline;
+    document.getElementById('domain-cell-desc').innerText = c.desc;
+    document.getElementById('domain-cell-feat1').innerText = c.features[0];
+    document.getElementById('domain-cell-feat2').innerText = c.features[1];
+    document.getElementById('domain-cell-feat3').innerText = c.features[2];
+    document.getElementById('domain-terminal-action').innerHTML = c.action;
+    document.getElementById('domain-terminal-id').innerText = c.id;
+    ['domain-bullet-1','domain-bullet-2','domain-bullet-3'].forEach(id => {
+      document.getElementById(id).className = `w-1.5 h-1.5 ${c.color} rounded-full mr-3`;
+    });
+  }
+
+  /* ============================================================
+     SANDBOX — 3 scenarios, ACT-991 is the headline
+     ============================================================ */
+  let activeScenario = 'covenant';
+  const scenarios = {
+    covenant: {
+      title:"SANDBOX // ACT-991 VETOED + RE-ROUTED",
+      outcome:"VETOED → Defer",
+      del:"0.31 / 0.80",
+      logs:[
+        '<span class="text-slate-500">&gt; Triggering Capital proposal ACT-991.</span>',
+        '<span class="text-cyberBlue">&gt; Capital: distribute $5.0M to equity Q3. Reserves $12.0M.</span>',
+        '<span class="text-cyberPurple">&gt; Counsel: AMEND-842 binds COV-01 (min liquidity $10.0M).</span>',
+        '<span class="text-slate-400">&gt; CSE: 4 counterfactuals simulated. Cross-domain check: Estate + Counsel.</span>',
+        '<span class="text-cyberGold">&gt; V&A: post-action liquidity $7.0M  ·  COV-01 floor $10.0M  ·  breach −$3.0M @ p=0.97</span>',
+        '<span class="text-cyberRed">&gt; DEL: 0.31  ·  BELOW threshold 0.80</span>',
+        '<span class="text-cyberRed font-bold">&gt; DCP: ACTION VETOED. Authorization withheld.</span>',
+        '<span class="text-cyberEmerald">&gt; Re-route → Option B (defer one quarter). Liquidity held at $12.0M.</span>',
+        '<span class="text-emerald-400">&gt; Learn: pattern reinforced — Capital weighs covenant binding before generation.</span>'
+      ]
+    },
+    amendment: {
+      title:"SANDBOX // AMEND-842 INGESTED + PROPAGATED",
+      outcome:"AUTHORIZED",
+      del:"0.92 / 0.80",
+      logs:[
+        '<span class="text-slate-500">&gt; Counsel: ingesting Credit Agreement Amendment AMEND-842.</span>',
+        '<span class="text-cyberPurple">&gt; Counsel: extracted covenant COV-01 → min liquidity $10.0M, scope Capital + Estate.</span>',
+        '<span class="text-slate-400">&gt; Nexus: rewriting causal edges across the unified graph.</span>',
+        '<span class="text-cyberBlue">&gt; Capital: exposure model rebound. Future proposals will weigh COV-01.</span>',
+        '<span class="text-cyberEmerald">&gt; Estate: trust-level distribution constraints inherited.</span>',
+        '<span class="text-cyberCyan">&gt; V&A: no conflict. DEL 0.92.</span>',
+        '<span class="text-emerald-400">&gt; DCP: ingestion authorized. Memory persisted. Single query path, three cells updated.</span>'
+      ]
+    },
+    signal: {
+      title:"SANDBOX // SIGNAL CHANNEL REBALANCE AUTHORIZED",
+      outcome:"AUTHORIZED",
+      del:"0.88 / 0.80",
+      logs:[
+        '<span class="text-slate-500">&gt; Signal: causal attribution refresh across 7 acquisition channels.</span>',
+        '<span class="text-cyberGold">&gt; Signal: ROAS slippage detected on channel 3 — margin −1.5%.</span>',
+        '<span class="text-slate-400">&gt; CSE: simulating 3 budget reallocation plans · $250K shift modeled.</span>',
+        '<span class="text-cyberCyan">&gt; V&A: causal lift confirmed at p=0.91. No covenant conflict.</span>',
+        '<span class="text-cyberEmerald">&gt; DEL: 0.88. DCP authorizes the reallocation.</span>',
+        '<span class="text-cyberBlue">&gt; Act: budget shifted via platform APIs. Cryptographic receipt logged.</span>',
+        '<span class="text-emerald-400">&gt; Learn: channel-3 attribution weight decayed. Memory updated.</span>'
+      ]
+    }
+  };
+
+  function activateSandboxScenario(key) {
+    activeScenario = key;
+    document.querySelectorAll('.scenario-btn').forEach(btn => {
+      if (btn.id === `scenario-btn-${key}`) {
+        btn.className = "scenario-btn w-full text-left p-4 rounded-xl border border-cyberCyan bg-cyan-950/20 text-white transition-all duration-300";
+        const text = btn.querySelector('.font-bold');
+        if (text) text.className = "font-bold text-sm text-white";
+      } else {
+        btn.className = "scenario-btn w-full text-left p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-slate-400 transition-all duration-300";
+        const text = btn.querySelector('.font-bold');
+        if (text) text.className = "font-bold text-sm text-slate-300";
+      }
+    });
+    const logBox = document.getElementById('sandbox-log-box');
+    logBox.innerHTML = `<div class="text-slate-500">Selected scenario: <b class="text-cyberCyan">${key}</b>. Ready for execution trace.</div>`;
+    document.getElementById('sandbox-conf-val').innerText = "--";
+    document.getElementById('sandbox-lat-val').innerText = "--";
+    document.getElementById('sandbox-status-text').innerText = "READY_TO_RUN";
+    document.getElementById('sandbox-status-text').className = "text-cyberCyan";
+    document.getElementById('sandbox-pulsar').className = "w-2 h-2 rounded-full bg-cyberCyan animate-pulse";
+  }
+
+  function triggerSandboxSimulation() {
+    const btn = document.getElementById('simulate-run-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>Simulating...</span>';
+    const logBox = document.getElementById('sandbox-log-box');
+    logBox.innerHTML = '';
+    const sc = scenarios[activeScenario];
+    let i = 0;
+    document.getElementById('sandbox-status-text').innerText = "EXECUTING_LOOP";
+    document.getElementById('sandbox-status-text').className = "text-cyberGold";
+    document.getElementById('sandbox-pulsar').className = "w-2 h-2 rounded-full bg-cyberGold animate-ping";
+
+    const interval = setInterval(() => {
+      if (i < sc.logs.length) {
+        logBox.innerHTML += `<div>${sc.logs[i]}</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
+        i++;
+      } else {
+        clearInterval(interval);
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5 mr-2 fill-current"></i><span>Execute Simulation</span>';
+        lucide.createIcons();
+        document.getElementById('sandbox-terminal-title').innerText = sc.title;
+        document.getElementById('sandbox-conf-val').innerText = sc.outcome;
+        document.getElementById('sandbox-lat-val').innerText = sc.del;
+        const isVeto = activeScenario === 'covenant';
+        document.getElementById('sandbox-status-text').innerText = isVeto ? "VETOED + RE-ROUTED" : "CYCLE_SUCCESS";
+        document.getElementById('sandbox-status-text').className = isVeto ? "text-cyberRed" : "text-cyberEmerald";
+        document.getElementById('sandbox-pulsar').className = `w-2 h-2 rounded-full ${isVeto ? 'bg-cyberRed' : 'bg-cyberEmerald'} animate-pulse`;
+      }
+    }, 700);
+  }
+
+  function resetSandboxTerminal() { activateSandboxScenario(activeScenario); }
+</script>
+
+</body>
+</html>

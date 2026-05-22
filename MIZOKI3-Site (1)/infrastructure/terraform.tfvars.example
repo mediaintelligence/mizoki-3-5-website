@@ -1,0 +1,17 @@
+# MIZOKI3 infrastructure — example variables.
+# Copy this file to terraform.tfvars and fill in your values:
+#   cp terraform.tfvars.example terraform.tfvars
+
+# The GCP project that will host the MIZOKI3 Nexus.
+project_id = "your-gcp-project-id"
+
+# Primary region for all regional resources.
+region = "us-central1"
+
+# Claude models approved for reasoning on Vertex AI.
+# CURRENT generations only — never add deprecated models (claude-3.x).
+approved_claude_models = [
+  "claude-opus-4-7",   # Primary  — most capable
+  "claude-opus-4-6",   # Fallback
+  "claude-sonnet-4-6", # High-throughput tier
+]
