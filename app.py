@@ -198,7 +198,10 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
 
     @app.route("/blog/<path:filename>")
     def blog_post(filename: str):
-        return send_from_directory(BASE_DIR / "blog", filename)
+        blog_dir = BASE_DIR / "blog"
+        if not (blog_dir / filename).is_file() and (blog_dir / f"{filename}.html").is_file():
+            filename = f"{filename}.html"
+        return send_from_directory(blog_dir, filename)
 
     @app.route("/11/")
     @app.route("/11/index.html")

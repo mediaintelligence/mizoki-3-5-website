@@ -4,6 +4,33 @@
 
 **MIZ OKI 3.5** is a Verifiable Autonomous Decision Intelligence Platform. This repository contains the marketing website deployed on Google Cloud Run.
 
+---
+
+## Positioning & Messaging (CANONICAL — read before touching copy)
+
+The metaphor is a **nervous system**, never a "brain." MIZOKI3 gives a business a
+real-time, mathematical understanding of *every* part of itself — a living graph of
+metrics, relationships, and **prediction**. It senses the whole organization at once
+and acts the moment something changes. It **replaces the CRM and the linear,
+backwards-looking analytics stack** (which only record what already happened) with a
+forward-looking, predictive system.
+
+**Say:** nervous system · real-time understanding · living/mathematical graph of
+metrics and prediction · senses across the whole organization · adapts to your
+business · replaces the CRM and backwards-looking dashboards · reflex arc (for SRPVDAL).
+
+**Never say:** "brain," "one brain," "the brain of your business." No "Living Brain"
+visualizer.
+
+**Divisions are NOT the product.** The system is unlimited and adaptive — it grows a
+decision controller for whatever domains a business actually has (3, 40, or entirely
+its own). The five lenses (Counsel / Estate / Capital / Signal / Risk) are **only the
+structures of customers we've onboarded so far** — they are *example deployments*, not
+a fixed offering or a list to fit into. Always frame them as examples; never imply the
+platform ships as five departments.
+
+Canonical hero line: **"A nervous system for your business."**
+
 ## Architecture
 
 - **Deployment**: Docker container on Google Cloud Run
@@ -29,7 +56,7 @@ Key innovations:
 
 ```
 mizoki-website/
-├── index.html                    # Homepage — MIZOKI3.com five-division design
+├── index.html                    # Homepage — MIZOKI3.com adaptive nervous-system design
 │                                 # (Flywheel, bento cards, Live Nexus Snapshot,
 │                                 # Counterfactual Sim Engine, DEL gauge, CTA)
 ├── how-it-works.html             # Legacy — 301s to / via app.py
@@ -66,7 +93,7 @@ mizoki-website/
 │   ├── public/console/index.html
 │   └── infrastructure/main.tf
 │
-├── blog/                         # Thought leadership content
+├── blog/                        # Thought leadership content
 │   ├── index.html                # Blog listing
 │   ├── decision-control-plane.html
 │   └── relu-lens-meta-algorithm.html  # ReLU Lens article
@@ -179,6 +206,43 @@ Bookkeeping addendum to the 2026-05-22 "Decision OS Homepage + React Sibling Pro
 - Branch merged into `main` (post-merge head `487ee4e`) and deleted.
 - This bookkeeping addendum lands separately via branch `claude/docs-homepage-provenance-2026-06` cut from `main` at `41d52ec`. A first attempt to re-use `claude/add-monitoring-dashboard-ENme0` (PR #3) hit a structural conflict — the recreated branch predated the Cell 27 entry that landed on main in the interim, and git couldn't reconcile the duplicate H3.
 
+### Messaging Correction + Homepage Rebuild to the Nervous-System Positioning (2026-06-02)
+
+Per direct founder correction, two framing errors that had propagated through the live
+site and this file were fixed:
+
+- **"Brain" → "nervous system."** The product is a living nervous system that gives the
+  business real-time understanding of every part of itself — a mathematical graph of
+  metrics and prediction — and **replaces the CRM and the linear, backwards-looking
+  analytics** stack. The old "One brain. Your business." hero and the "Living Brain"
+  visualizer language are retired. See the new **Positioning & Messaging** section at the
+  top of this file (now canonical).
+- **Divisions are example deployments, not the product.** Counsel/Estate/Capital/Signal/
+  Risk are only the structures of currently-onboarded customers. The system is unlimited
+  and adapts to any business. The homepage divisions section is reframed as
+  "Example deployments — current customers," with copy stating there is no list to fit into.
+
+**New `index.html`** (single-file, inline CSS + vanilla JS, no build step — drop-in to the
+Flask static server like the rest of the repo):
+- Hero: *"A nervous system for your business."* with an animated knowledge-graph canvas.
+- Thesis section contrasts the **CRM era (linear, backwards-looking)** vs **a living nervous
+  system (real-time, predictive)**.
+- Interactive **7-stage SRPVDAL "reflex arc"** that runs the ACT-991 covenant-breach decision
+  ($5.0M distribution → liquidity-floor breach → VETOED → safe Option B) with a live immutable trace.
+- Animated **DEL eligibility gauge** (87, "Eligible for Autonomous Action").
+- **Adaptive divisions** section (five shown as example deployments only) + governance cards
+  mapped to the Terraform (CMEK, VPC isolation, HITL, immutable ledger).
+- Honors the brand system: Instrument Serif (display) / DM Sans (body) / JetBrains Mono
+  (labels), dark-ink palette. Institutional "decision terminal" aesthetic.
+
+**Known drift to reconcile:** the Drive mirror of `index.html` (May-22 "Decision OS" build)
+lags the deployed `mizoki3.com`, which had already moved to a cleaner "One brain. Your
+business." page. Both are now superseded by this nervous-system rebuild. Deploy path
+unchanged: replace `index.html`, run `python3 -m unittest tests.test_app`, then `./deploy.sh`
+(or push to `main` for WIF auto-deploy).
+
+---
+
 ## Recent Work (May 2026)
 
 ### Slotted React Apps + Sweep of Redundant Files / Services (2026-05-24)
@@ -214,7 +278,7 @@ Bookkeeping addendum to the 2026-05-22 "Decision OS Homepage + React Sibling Pro
 
 - Tailwind via CDN + lucide icons + Inter / JetBrains Mono (no build step — still drop-in to the Flask static server).
 - Title: *"MIZOKI3 // The Decision OS for Autonomous Enterprise Cognition"*.
-- Hero with animated TCO-KG "Living Brain" visualizer and live telemetry pill.
+- Hero with animated TCO-KG nervous-system visualizer and live telemetry pill.
 - Status Quo vs. MIZOKI3 paradigm comparison.
 - Interactive **7-stage SRPVDAL inspector** (Sense → Reason → Plan → Validate → Decide → Act → Learn) with per-stage payload and metrics.
 - Decision Control Plane authorization scorecard.
@@ -251,11 +315,11 @@ Added `__pycache__/`, `*.py[cod]`, `*.pyo` to `.gitignore` and removed 7 previou
 
 ### Homepage Rebuild to Five-Division MIZOKI3 Design (2026-05-18)
 Full rebuild of `index.html` to match the official MIZOKI3.com mockups:
-- Hero: "One Intelligence. Many Domains. Shared Causal Memory." with a NEXUS "Brain" SVG showing five division nodes orbiting the core.
+- Hero: "One Intelligence. Many Domains. Shared Causal Memory." with a NEXUS nervous-system SVG showing example-customer division nodes signaling across the graph. (NOTE 2026-06-02: "brain" metaphor retired — see Positioning & Messaging.)
 - MIZOKI3 Flywheel: five-step compounding loop (Signal Enters → Graph Updates → Cross-Domain Impact → Better Decisions → Lasting Memory) with live stats strip.
 - SRPVDAL Orchestration: seven-stage iconed loop.
 - Decision Control Plane summary panel that deep-links into the standalone `/console`.
-- One-Brain-Five-Lenses bento: COUNSEL, ESTATE, CAPITAL, SIGNAL, RISK. Replaces the old per-cell narrative.
+- One-System-Many-Lenses bento: COUNSEL, ESTATE, CAPITAL, SIGNAL, RISK — shown as example customer deployments, not a fixed five-part product. Replaces the old per-cell narrative.
 - Live Nexus Snapshot: Acme Holdings entity graph + recent-activity feed.
 - Governance: Counterfactual Simulation Engine chart + Decision Eligibility Layer score gauge (87 → "Eligible for Autonomous Action").
 - Use cases, demo flow, CTA, footer.
@@ -348,7 +412,7 @@ To rotate the trust: delete and recreate the WIF provider in GCP, or revoke the 
 ### Why These Changes Were Made
 - The initial task history mixed this website repository with a different multi-agent Python service layout.
 - The real goal here was not to document graph-native decision intelligence conceptually, but to make the local Boss runtime actually usable, discoverable, and safe.
-- The review phase therefore focused on closing the gap between “tools exist” and “the Boss Agent uses them correctly with the right parameters and the right sequencing.”
+- The review phase therefore focused on closing the gap between “tools exist"” and “the Boss Agent uses them correctly with the right parameters and the right sequencing.”
 
 ### Current Verification Standard
 - `python3 -m py_compile mizoki_runtime/runtime.py app.py`
