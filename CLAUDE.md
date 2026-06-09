@@ -118,6 +118,45 @@ mizoki-website/
 
 ---
 
+## Recent Work (June 2026)
+
+### Homepage Merge — Provenance Note (2026-06-09)
+
+Bookkeeping addendum to the 2026-05-22 "Decision OS Homepage + React Sibling Project" entry below. Records how the rebuilt `index.html` (the commit referenced there as `6c95d5a`) was actually assembled — source material, merge rules, verification — none of which was captured the first time. No functional change to the live site.
+
+**Source material — three competing drafts that fed the merge**:
+
+1. **React/Lucide draft** (≈225 lines, single React component). Cinematic dark background, knowledge-graph blob backdrop, four-quadrant industry section. Built around five SRPVDAL stages, not seven. No interactivity beyond an auto-cycling loop.
+2. **Plain-HTML draft** (≈100 lines, single self-contained file). Tight and declarative. Twelve sections: hero with TCKG visualizer + concentric nodes, status-quo vs paradigm, full 7-stage SRPVDAL loop, Decision Control Plane scorecard, replay timeline, media wedge, divisions grid, demo CTA. Zero JS handlers.
+3. **Interactive-HTML draft** (≈900 lines, Tailwind CDN + lucide + JetBrains Mono / Inter). Richest of the three: animated TCO-KG hero, clickable 7-stage SRPVDAL inspector with per-stage JSON payload, tabbed domain cells (four — Counsel/Estate/Risk/Media), execution sandbox terminal with three live-trace scenarios.
+
+**Merge rules applied**:
+
+- Took the visual identity, dependency stack (Tailwind CDN + lucide + Inter + JetBrains Mono), and interactivity scaffold from draft 3.
+- Took the section roster, hero structural framing, and replay-timeline content from draft 2.
+- Took the multi-tier blur backdrop and divisions framing from draft 1.
+- **Renamed draft-3 domain cells from four to five** to match this repo's canonical five-division naming (Counsel / Estate / Capital / Signal / Risk). Draft 3 had "Media Acquisition" — collapsed into Signal per the May 18 consolidation. Added a Capital cell that none of the three drafts had.
+- Wired all domain links to existing Flask routes (`/counsel`, `/estate`, `/capital`, `/signal`, `/risk`), the live-console pill to `/console`, and the demo CTA to `mailto:hello@mizoki3.com`.
+- Stripped any `pilot@mizoki3.com` / `sales@mizoki.com` slip-throughs in favor of the canonical `hello@mizoki3.com`.
+
+**Verification done before the original push**:
+
+- Python `HTMLParser` structural check on the assembled file — stack balanced, no unclosed tags. (`<br />` / `<meta />` raise XHTML-style warnings only; not actual structural errors.)
+- Every JS handler (`selectEngineStage`, `selectDomainCell`, `activateSandboxScenario`, `triggerSandboxSimulation`, `resetSandboxTerminal`, `triggerDemoToast`) was traced against the DOM IDs it touches — all targets present.
+- Every lucide icon name used (28 distinct: `globe-lock`, `network`, `scale`, `landmark`, `trending-up`, `radio-tower`, `shield-alert`, `shield-check`, `eye`, `brain-circuit`, `git-merge`, `layers`, `zap`, `activity`, `history`, `database`, `clock`, `gauge`, `bar-chart-3`, `rotate-cw`, `file-check`, `terminal`, `rewind`, `play`, `arrow-right`, `info`, `chevron-right`, `x`, `check`) was checked against the lucide.dev catalog.
+- No Flask route, runtime, or test file touched. `tests/test_app.py` and `tests/test_runtime.py` unaffected; the 25-test baseline holds.
+
+**Lifecycle on `claude/add-monitoring-dashboard-ENme0`**:
+
+- Branch first created off `main` at `4efddc2`.
+- Commit `6c95d5a` pushed to that branch with the merged `index.html` (88KB / ~1340 lines).
+- Branch merged into `main` (post-merge head `487ee4e`) and deleted in a parallel session that wrote the 2026-05-22 entry below.
+- Branch re-created off the new `main` for this bookkeeping CLAUDE.md update.
+
+**Branch-name caveat**: the branch is named `claude/add-monitoring-dashboard-ENme0`, prescribed by the session harness. The content has no monitoring-dashboard relevance — it's a homepage rebuild. Rename the branch before any future audit if the mismatch is confusing.
+
+---
+
 ## Recent Work (May 2026)
 
 ### Slotted React Apps + Sweep of Redundant Files / Services (2026-05-24)
