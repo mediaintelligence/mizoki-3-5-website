@@ -432,6 +432,54 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
             )
         )
 
+    @app.route("/api/boss/programmatic/ingest", methods=["POST"])
+    def boss_programmatic_ingest():
+        payload = require_json_payload()
+        events = payload.get("events")
+        if not isinstance(events, list):
+            abort(400, description="Field 'events' must be an array of bidstream records.")
+        return jsonify(run_runtime_call(lambda: get_runtime().ingest_bidstream(events)))
+
+    @app.route("/api/boss/programmatic/run", methods=["POST"])
+    def boss_programmatic_run():
+        payload = require_json_payload()
+        events = payload.get("events")
+        objective = payload.get("objective", "")
+        constraints = payload.get("constraints", [])
+        budget = payload.get("budget")
+        auto_execute = payload.get("auto_execute", False)
+        max_actions = payload.get("max_actions", 3)
+        if not isinstance(events, list):
+            abort(400, description="Field 'events' must be an array of bidstream records.")
+        if not isinstance(objective, str):
+            abort(400, description="Field 'objective' must be a string.")
+        if not isinstance(constraints, list):
+            abort(400, description="Field 'constraints' must be an array.")
+        if budget is not None and (isinstance(budget, bool) or not isinstance(budget, (int, float))):
+            abort(400, description="Field 'budget' must be a number.")
+        if not isinstance(auto_execute, bool):
+            abort(400, description="Field 'auto_execute' must be a boolean.")
+        if not isinstance(max_actions, int) or isinstance(max_actions, bool):
+            abort(400, description="Field 'max_actions' must be an integer.")
+        return jsonify(
+            run_runtime_call(
+                lambda: get_runtime().run_programmatic_pipeline(
+                    events,
+                    objective=objective,
+                    constraints=constraints,
+                    budget=budget,
+                    auto_execute=auto_execute,
+                    max_actions=max_actions,
+                )
+            )
+        )
+
+    @app.route("/api/boss/programmatic/runs", methods=["GET"])
+    def boss_programmatic_runs():
+        limit = request.args.get("limit", default=5, type=int)
+        limit = max(1, min(limit, 25))
+        return jsonify({"runs": get_runtime().recent_programmatic_runs(limit=limit)})
+
     @app.route("/api/boss/skills/learn", methods=["POST"])
     def learn_boss_skill():
         payload = require_json_payload()

@@ -145,6 +145,42 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn("at least 1", response.get_json()["error"])
 
+    def test_programmatic_pipeline_and_runs_endpoints(self) -> None:
+        events = [
+            {
+                "exchange": "openx",
+                "seat": "seat-1",
+                "buyer_id": "buyer-1",
+                "bid_price": 1.5,
+                "bid_floor": 0.5,
+                "outcome": "win" if index < 10 else "loss",
+                "clearing_price": 1.0,
+                "revenue": 0.0,
+                "currency": "USD",
+            }
+            for index in range(30)
+        ]
+
+        run_response = self.client.post(
+            "/api/boss/programmatic/run",
+            json={"events": events, "objective": "Reduce wasted spend."},
+        )
+        self.assertEqual(200, run_response.status_code)
+        run_payload = run_response.get_json()
+        self.assertIn("trace_id", run_payload)
+        self.assertEqual("validate", run_payload["validate"]["gate"])
+        self.assertEqual(30, run_payload["sense"]["ingested_event_count"])
+
+        runs_response = self.client.get("/api/boss/programmatic/runs")
+        self.assertEqual(200, runs_response.status_code)
+        runs_payload = runs_response.get_json()
+        self.assertTrue(any(run["trace_id"] == run_payload["trace_id"] for run in runs_payload["runs"]))
+
+    def test_programmatic_ingest_endpoint_validates_events(self) -> None:
+        response = self.client.post("/api/boss/programmatic/ingest", json={"events": "nope"})
+        self.assertEqual(400, response.status_code)
+        self.assertIn("must be an array", response.get_json()["error"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -36,3 +36,8 @@ __pycache__/
 # Scratch / non-website content (legal docs, generated PDFs, working notes)
 tmp/
 output/
+
+# Boss runtime data artifacts (decision logs, loop/run traces, learned skills,
+# tool aliases) — generated at runtime under data/, keep only data/.gitkeep
+data/*.jsonl
+data/*.json

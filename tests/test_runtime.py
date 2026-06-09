@@ -30,6 +30,9 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "graphrag.query",
                 "kg.describe_entity",
                 "kg.list_neighbors",
+                "programmatic.ingest_bidstream",
+                "programmatic.recent_runs",
+                "programmatic.run_pipeline",
                 "skills.learn",
                 "skills.learn_from_loop",
                 "skills.list",
@@ -167,6 +170,92 @@ class BossRuntimeTestCase(unittest.TestCase):
     def test_graph_native_context_rejects_invalid_top_k(self) -> None:
         with self.assertRaises(ValueError):
             self.runtime.graph_context("Explain the platform.", top_k=0)
+
+    def test_programmatic_pipeline_runs_full_srpvdal_and_persists(self) -> None:
+        events = _seat_events("seat-waste", "openx", total=30, wins=10, revenue_per_win=0.0)
+        trace = self.runtime.run_programmatic_pipeline(events, objective="Cut wasted spend.")
+
+        for stage in ("sense", "reason", "plan", "validate", "decide", "act", "learn"):
+            self.assertIn(stage, trace)
+        self.assertEqual(30, trace["sense"]["ingested_event_count"])
+        self.assertEqual(4, len(trace["sense"]["sinks"]))
+        self.assertTrue(
+            any(anomaly["type"] == "spend_no_return" for anomaly in trace["reason"]["anomalies"])
+        )
+        self.assertTrue(any(item["type"].startswith("suppress") for item in trace["plan"]["candidates"]))
+        self.assertEqual("validate", trace["validate"]["gate"])
+        # auto_execute defaults to False, so approved actions wait for sign-off.
+        self.assertEqual("needs_approval", trace["decide"]["status"])
+        self.assertTrue(all(action["status"] == "pending_approval" for action in trace["act"]["actions"]))
+
+        runs = self.runtime.recent_programmatic_runs(limit=5)
+        self.assertEqual(1, len(runs))
+        self.assertEqual(trace["trace_id"], runs[0]["trace_id"])
+
+    def test_programmatic_safety_gate_blocks_unsafe_scaling(self) -> None:
+        # A seat with both a consent gap and a low win rate yields a suppress plan
+        # (safe) and an increase-bid plan (scales spend on non-consented supply).
+        events = _seat_events(
+            "seat-risky", "ssp-x", total=30, wins=3, revenue_per_win=4.0, consent=False
+        )
+        trace = self.runtime.run_programmatic_pipeline(events)
+
+        results = {item["action_id"]: item for item in trace["validate"]["results"]}
+        blocked_types = {results[action_id]["type"] for action_id in trace["validate"]["blocked"]}
+        self.assertIn("increase_bid", blocked_types)
+        self.assertTrue(trace["validate"]["passed"])  # the suppress plan still clears the gate
+        consent_anomalies = [a for a in trace["reason"]["anomalies"] if a["type"] == "consent_gap"]
+        self.assertTrue(consent_anomalies)
+
+    def test_programmatic_auto_execute_approves_scale_opportunity(self) -> None:
+        events = _seat_events("seat-star", "openx", total=30, wins=10, revenue_per_win=4.0)
+        trace = self.runtime.run_programmatic_pipeline(events, auto_execute=True)
+
+        self.assertEqual("approved", trace["decide"]["status"])
+        self.assertTrue(trace["act"]["executed"])
+        executed = [action for action in trace["act"]["actions"] if action["status"] == "executed"]
+        self.assertTrue(executed)
+        self.assertTrue(all(action["rollback"]["available"] for action in executed))
+
+    def test_programmatic_ingest_only_runs_sense_stage(self) -> None:
+        events = _seat_events("seat-a", "openx", total=12, wins=4, revenue_per_win=2.0)
+        sense = self.runtime.ingest_bidstream(events)
+        self.assertEqual(12, sense["ingested_event_count"])
+        self.assertIn("openx", sense["coverage"]["exchanges"])
+        self.assertEqual(4, len(sense["sinks"]))
+
+    def test_programmatic_rejects_empty_or_invalid_events(self) -> None:
+        with self.assertRaises(ValueError):
+            self.runtime.run_programmatic_pipeline([])
+        with self.assertRaises(ValueError):
+            self.runtime.ingest_bidstream("not-a-list")
+
+
+def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):
+    event = {
+        "exchange": exchange,
+        "seat": seat,
+        "buyer_id": "buyer-1",
+        "bid_price": bid,
+        "bid_floor": floor,
+        "outcome": outcome,
+        "currency": "USD",
+        "consent": {"gdpr": 0} if consent else {"gdpr": 1},
+    }
+    if outcome == "win":
+        event["clearing_price"] = clearing
+        event["revenue"] = revenue
+    return event
+
+
+def _seat_events(seat, exchange, *, total, wins, revenue_per_win, consent=True):
+    events = []
+    for index in range(total):
+        if index < wins:
+            events.append(_bid_event(seat, exchange, "win", revenue=revenue_per_win, consent=consent))
+        else:
+            events.append(_bid_event(seat, exchange, "loss", consent=consent))
+    return events
 
 
 if __name__ == "__main__":
