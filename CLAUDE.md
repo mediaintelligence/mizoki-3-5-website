@@ -139,9 +139,12 @@ Added a **graph-native programmatic intelligence cell (Cell 27)** so OpenRTB bid
 - MCP tools: `programmatic.ingest_bidstream`, `programmatic.run_pipeline`, `programmatic.recent_runs` (registered in the `programmatic` category; discoverable via `/api/mcp/tools` and `/api/boss/discover`).
 - Flask endpoints: `POST /api/boss/programmatic/ingest`, `POST /api/boss/programmatic/run`, `GET /api/boss/programmatic/runs`.
 - KG grounding: new entities `programmatic_intelligence` (Cell 27) and `openrtb_bidstream`, wired into `sense`/`srpvdal`/`decision_control_plane`/`validation_arbitration`.
-- Policy thresholds are overridable per run via the `constraints` channel (e.g. `"min_roas=2"`, `"target_roas=4"`). Optional `budget` cap drives the VALIDATE budget check.
+- Discovery + health: `/api/boss/discover` gains a `programmatic` block (cell id, sinks, tools, recent runs); `health_snapshot()` adds `programmatic_run_count`.
+- Policy thresholds are overridable per run via the `constraints` channel (e.g. `"min_roas=2"`, `"target_roas=4"`). Optional `budget` cap drives the VALIDATE budget check. `auto_execute` (default off) and `max_actions` (default 3) bound the ACT stage.
 
-**Verification:** `python3 -m unittest tests.test_runtime tests.test_app` — now **32 passing tests** (added 7: full-pipeline + persistence, safety-gate blocks unsafe scaling, auto-execute approves a scale opportunity, ingest-only SENSE, empty/invalid-event rejection, plus the two API tests). Run traces persist to `data/programmatic_runs.jsonl`.
+**Repository hygiene:** added `data/*.jsonl` and `data/*.json` to `.gitignore` so the Boss runtime's generated artifacts (decision logs, graph-native loop traces, the new `programmatic_runs.jsonl`, learned skills, tool aliases) no longer pollute `git status` — only `data/.gitkeep` stays tracked. Mirrors the May-2026 bytecode-hygiene precedent.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` and `python3 -m unittest tests.test_runtime tests.test_app` — now **32 passing tests** (added 7: full-pipeline + persistence, safety-gate blocks unsafe scaling, auto-execute approves a scale opportunity, ingest-only SENSE, empty/invalid-event rejection, plus the two API tests). Also smoke-tested the live API path end-to-end via `app.test_client()`: a waste signal produced `spend_no_return` anomalies → suppress plans → validated `pass` → DECIDE `approved` → ACT `executed` with rollback tokens + provenance → LEARN reward signal. Shipped on branch `claude/openrtb-srpvdal-alignment-607lkw` (commit `65c9b62`). Run traces persist to `data/programmatic_runs.jsonl`.
 
 ## Recent Work (May 2026)
 
