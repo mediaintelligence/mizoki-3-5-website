@@ -120,6 +120,32 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Cell 27 — Programmatic Intelligence: OpenRTB Bidstream → SRPVDAL Alignment (2026-06-09)
+
+Added a **graph-native programmatic intelligence cell (Cell 27)** so OpenRTB bidstream signals enter the platform at the SENSE stage and flow through the *entire* SRPVDAL spiral instead of being routed straight into decisioning. The **VALIDATE stage is the hard safety gate** — no optimization reaches ACT without clearing it.
+
+**Where it lives:** `mizoki_runtime/runtime.py`, class `ProgrammaticIntelligenceCell` (deterministic, no external services — the bidstream "sinks", DSP/budget APIs, and backtests are modeled in-process so the pipeline is reproducible and unit-testable).
+
+**Per-stage behavior:**
+- **SENSE** — `ingest_bidstream()` normalizes loosely OpenRTB-shaped records (requests, win/loss notices, buyer IDs, exchange/seat metadata, floors, currency, consent) into canonical auction/impression events with full provenance, then fans them out to the `bigquery`, `knowledge_graph`, `event_store`, and `audit_log` sinks. Consent is evaluated (GDPR/TCF + US-privacy opt-out).
+- **REASON** — per-exchange/seat aggregation (win rate, ROAS, CPM, floor pressure), identity resolution, anomaly detection (`consent_gap`, `spend_no_return`, `low_roas`, `low_win_rate`, `floor_pressure`), opportunities, insights, predictions.
+- **PLAN** — candidate action objects (`increase_bid`, `decrease_bid`, `adjust_bid_to_floor`, `suppress_seat/exchange`, `reallocate_budget`, `expand_inventory`, `modify_audience`) each carrying `expected_roas_lift` + `confidence`, plus a `hold` baseline.
+- **VALIDATE** — policy checks (budget, brand-safety, consent/legal), KG historical-conflict check, and a simulation/backtest check; every plan labeled `pass` / `escalate` / `fail`. Scaling spend on non-consented supply is a hard `fail`.
+- **DECIDE** — ranks validated plans by `expected_roas_lift × confidence` net of risk/cost, selects the top N, emits a reasoning chain + `requires_approval` flag. Defaults to **needs_approval** unless `auto_execute=True` and nothing escalated.
+- **ACT** — executes approved low-risk actions against the mapped API surface with a rollback token + provenance record; otherwise holds them `pending_approval`. Audit log always written.
+- **LEARN** — measures realized vs. expected lift, emits a reward signal, proposes policy/threshold updates, and feeds KG/agent-memory updates (incl. a recommended skill seed).
+
+**Surfaces:**
+- MCP tools: `programmatic.ingest_bidstream`, `programmatic.run_pipeline`, `programmatic.recent_runs` (registered in the `programmatic` category; discoverable via `/api/mcp/tools` and `/api/boss/discover`).
+- Flask endpoints: `POST /api/boss/programmatic/ingest`, `POST /api/boss/programmatic/run`, `GET /api/boss/programmatic/runs`.
+- KG grounding: new entities `programmatic_intelligence` (Cell 27) and `openrtb_bidstream`, wired into `sense`/`srpvdal`/`decision_control_plane`/`validation_arbitration`.
+- Discovery + health: `/api/boss/discover` gains a `programmatic` block (cell id, sinks, tools, recent runs); `health_snapshot()` adds `programmatic_run_count`.
+- Policy thresholds are overridable per run via the `constraints` channel (e.g. `"min_roas=2"`, `"target_roas=4"`). Optional `budget` cap drives the VALIDATE budget check. `auto_execute` (default off) and `max_actions` (default 3) bound the ACT stage.
+
+**Repository hygiene:** added `data/*.jsonl` and `data/*.json` to `.gitignore` so the Boss runtime's generated artifacts (decision logs, graph-native loop traces, the new `programmatic_runs.jsonl`, learned skills, tool aliases) no longer pollute `git status` — only `data/.gitkeep` stays tracked. Mirrors the May-2026 bytecode-hygiene precedent.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` and `python3 -m unittest tests.test_runtime tests.test_app` — now **32 passing tests** (added 7: full-pipeline + persistence, safety-gate blocks unsafe scaling, auto-execute approves a scale opportunity, ingest-only SENSE, empty/invalid-event rejection, plus the two API tests). Also smoke-tested the live API path end-to-end via `app.test_client()`: a waste signal produced `spend_no_return` anomalies → suppress plans → validated `pass` → DECIDE `approved` → ACT `executed` with rollback tokens + provenance → LEARN reward signal. Shipped on branch `claude/openrtb-srpvdal-alignment-607lkw` (commit `65c9b62`). Run traces persist to `data/programmatic_runs.jsonl`.
+
 ### Homepage Merge — Provenance Note (2026-06-09)
 
 Bookkeeping addendum to the 2026-05-22 "Decision OS Homepage + React Sibling Project" entry below. Records how the rebuilt `index.html` (the commit referenced there as `6c95d5a`) was actually assembled — source material, merge rules, verification — none of which was captured the first time. No functional change to the live site.
@@ -154,8 +180,6 @@ Bookkeeping addendum to the 2026-05-22 "Decision OS Homepage + React Sibling Pro
 - Branch re-created off the new `main` for this bookkeeping CLAUDE.md update.
 
 **Branch-name caveat**: the branch is named `claude/add-monitoring-dashboard-ENme0`, prescribed by the session harness. The content has no monitoring-dashboard relevance — it's a homepage rebuild. Rename the branch before any future audit if the mismatch is confusing.
-
----
 
 ## Recent Work (May 2026)
 
