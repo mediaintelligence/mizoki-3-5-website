@@ -147,6 +147,22 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### /4/ Slot Replaced with "Decision Ledger" v4 Sandbox Site (2026-06-12)
+
+Replaced the old `/4/` React slot with the 16-page static "Decision Ledger" site from
+`mizoki3-site-v4-sandbox.zip` (unzipped source kept at `site/`, untracked). All
+root-absolute internal links (`href="/..."`, og/canonical `https://mizoki3.com/...`,
+sitemap/feed/robots URLs) were rewritten to `/4/`-prefixed so the slot is
+self-contained — links no longer escape to the main site. The login form's
+`action="/auth/login"` was left as-is (backend still unwired, per the kit's DEPLOY.md).
+
+**Flask change:** `app4_asset()` in `app.py` now resolves directory-style pages —
+`/4/counsel/`, `/4/blog/<slug>/` serve their own `index.html` before the SPA-style
+fallback to the slot root. Other slots (`/1`–`/3`) untouched.
+
+**Verification:** py_compile clean, 32 unittest pass, test_client smoke of 22 routes
+(all `/4/` pages + root + `/console` + `/1` + `/3`) all 200 with correct page bodies.
+
 ### Diverged-Branch Reconciliation + Cloud Run Deploy (2026-06-12)
 
 Brought local and `origin/main` back in sync and shipped to production. Going in, the

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /login/
+Sitemap: https://mizoki3.com/4/sitemap.xml

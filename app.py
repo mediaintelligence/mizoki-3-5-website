@@ -282,9 +282,13 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def app4_asset(filename: str):
         static_dir = BASE_DIR / "4"
         target = static_dir / filename
-        if not target.is_file():
-            return send_from_directory(static_dir, "index.html")
-        return send_from_directory(static_dir, filename)
+        if target.is_file():
+            return send_from_directory(static_dir, filename)
+        # Directory-style pages (counsel/index.html, blog/<slug>/index.html)
+        page = target / "index.html"
+        if page.is_file():
+            return send_from_directory(static_dir, f"{filename.rstrip('/')}/index.html")
+        return send_from_directory(static_dir, "index.html")
 
     @app.route("/login", methods=["GET"])
     @app.route("/login.html", methods=["GET"])
