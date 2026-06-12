@@ -147,6 +147,42 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Diverged-Branch Reconciliation + Cloud Run Deploy (2026-06-12)
+
+Brought local and `origin/main` back in sync and shipped to production. Going in, the
+branch had **diverged**: local was 1 commit ahead (`58f7315` *Ship nervous-system
+homepage + canonical positioning docs*) and remote was 4 ahead (the Cell 27 work +
+the 2026-06-09 homepage-provenance docs). The apparent "two homepages" scare turned out
+to be a non-issue.
+
+**Key finding — the homepage was never in conflict.** `index.html` was **byte-identical**
+on both sides (same blob SHA `d6f728ae`, 590 lines). The local "homepage rebuild" commit
+and the remote one had converged on the same nervous-system `index.html`; the deployed
+site already carried it. The only files local `58f7315` uniquely added/changed were
+`POSITIONING_AND_MESSAGING.md`, doc edits in `CLAUDE.md`, and a small `app.py`/blog touch.
+
+**Reconciliation method — rebase, not merge:**
+
+- Stashed the dirty working-tree junk (the `mizoki3-final-*.zip` deletions + `Noah_gemini/`
+  deletions) into stash `deploy-zip-junk` so only real content rebased. Untracked
+  `files/` and `mizoki3-complete-site*.zip` were left alone — none of it deploys.
+- `git rebase origin/main`: `app.py` auto-merged clean; the **only conflict was in
+  `CLAUDE.md`**, and it was purely additive — HEAD's 2026-06-09 entries (Cell 27 +
+  homepage provenance) vs. local's 2026-06-02 messaging-correction entry. Resolved by
+  **keeping both**, newest-first. Result landed as `c437821`.
+
+**Verification before push:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` clean;
+`python3 -m unittest tests.test_app tests.test_runtime` → **32 passing**.
+
+**Deploy:** pushed `7b12eb9..c437821` to `main` → WIF auto-deploy workflow
+(`deploy-cloudrun.yml`, run `27429133149`) built + rolled a new Cloud Run revision green
+in ~1 min. Live smoke test 200 on `/`, `/console`, `/blog`, `/1`, `/3`.
+
+**Loose ends flagged (not addressed this session):** stash `deploy-zip-junk` still holds
+the zip/`Noah_gemini` deletions; untracked `files/` + `mizoki3-complete-site*.zip` remain
+in the tree. GitHub Dependabot reports **28 vulnerabilities (6 high, 18 moderate, 4 low)**
+on the default branch — unrelated to this deploy.
+
 ### Cell 27 — Programmatic Intelligence: OpenRTB Bidstream → SRPVDAL Alignment (2026-06-09)
 
 Added a **graph-native programmatic intelligence cell (Cell 27)** so OpenRTB bidstream signals enter the platform at the SENSE stage and flow through the *entire* SRPVDAL spiral instead of being routed straight into decisioning. The **VALIDATE stage is the hard safety gate** — no optimization reaches ACT without clearing it.
