@@ -128,30 +128,48 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def index():
         return serve_page("index.html")
 
+    def serve_dir_page(dirname: str):
+        return send_from_directory(BASE_DIR / dirname, "index.html")
+
     @app.route("/counsel")
+    @app.route("/counsel/")
     @app.route("/counsel.html")
     def counsel():
-        return serve_page("counsel.html")
+        return serve_dir_page("counsel")
 
     @app.route("/estate")
+    @app.route("/estate/")
     @app.route("/estate.html")
     def estate():
-        return serve_page("estate.html")
+        return serve_dir_page("estate")
 
     @app.route("/capital")
+    @app.route("/capital/")
     @app.route("/capital.html")
     def capital():
-        return serve_page("capital.html")
+        return serve_dir_page("capital")
 
     @app.route("/signal")
+    @app.route("/signal/")
     @app.route("/signal.html")
     def signal():
-        return serve_page("signal.html")
+        return serve_dir_page("signal")
 
     @app.route("/risk")
+    @app.route("/risk/")
     @app.route("/risk.html")
     def risk():
-        return serve_page("risk.html")
+        return serve_dir_page("risk")
+
+    @app.route("/privacy")
+    @app.route("/privacy/")
+    def privacy():
+        return serve_dir_page("privacy")
+
+    @app.route("/terms")
+    @app.route("/terms/")
+    def terms():
+        return serve_dir_page("terms")
 
     @app.route("/how-it-works.html")
     @app.route("/platform.html")
@@ -199,8 +217,14 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     @app.route("/blog/<path:filename>")
     def blog_post(filename: str):
         blog_dir = BASE_DIR / "blog"
-        if not (blog_dir / filename).is_file() and (blog_dir / f"{filename}.html").is_file():
-            filename = f"{filename}.html"
+        if (blog_dir / filename).is_file():
+            return send_from_directory(blog_dir, filename)
+        # Directory-style articles (blog/<slug>/index.html)
+        slug = filename.rstrip("/")
+        if (blog_dir / slug / "index.html").is_file():
+            return send_from_directory(blog_dir, f"{slug}/index.html")
+        if (blog_dir / f"{filename}.html").is_file():
+            return send_from_directory(blog_dir, f"{filename}.html")
         return send_from_directory(blog_dir, filename)
 
     @app.route("/11/")
@@ -552,30 +576,10 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def not_found(_error):
         if request.path.startswith("/api/"):
             return jsonify({"error": "Not found"}), 404
-        return (
-            """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>404 - Page Not Found</title>
-                <link rel="stylesheet" href="/assets/css/styles.css"/>
-                <style>
-                    .error-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
-                </style>
-            </head>
-            <body>
-                <div class="error-page">
-                    <div>
-                        <h1 style="font-size: 4rem; color: var(--accent);">404</h1>
-                        <p style="color: var(--muted);">Page not found</p>
-                        <a href="/" class="btn primary" style="margin-top: 1rem;">Go Home</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """,
-            404,
-        )
+        page = BASE_DIR / "404.html"
+        if page.is_file():
+            return send_from_directory(BASE_DIR, "404.html"), 404
+        return "Page not found", 404
 
     @app.errorhandler(500)
     def internal_error(_error):

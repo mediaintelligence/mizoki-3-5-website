@@ -147,6 +147,29 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### "Decision Ledger" Promoted to Site Root — mizoki3.com (2026-06-12)
+
+Immediately after landing in `/4/` (entry below), the founder directed the Decision
+Ledger site to run as the **main site**. The pristine un-rewritten `site/` copy (root-
+absolute links) was promoted to the repo root: new `index.html` (ledger v3 homepage),
+division dossiers as directories (`counsel/`, `estate/`, `capital/`, `signal/`, `risk/`
+— old flat `counsel.html` etc. deleted), `privacy/`, `terms/`, `404.html`, robots/
+sitemap/favicons/og-image, and the four new blog articles + new `blog/index.html` +
+`feed.xml` merged into `blog/` (legacy `relu-lens-meta-algorithm.html` and
+`decision-control-plane.html` kept and still routed).
+
+**Flask changes (`app.py`):** division routes serve `<dir>/index.html` via new
+`serve_dir_page()`; new `/privacy` + `/terms` routes; `blog_post()` resolves
+directory-style slugs before `.html` fallback; 404 handler now serves the ledger
+`404.html` ("This page was vetoed."). `/login` intentionally **kept** as the redirect
+to the command-center UI (the kit's login shell posts to an unwired `/auth/login`);
+the v4 `login/` page was not copied to root. The `/4/` slot remains as the sandbox
+duplicate.
+
+**Verification:** py_compile clean, 32 unittest pass, 23-route smoke all PASS
+(divisions ± trailing slash, new + legacy blog slugs, policies, feeds, statics,
+slots, 404 body, login redirect).
+
 ### /4/ Slot Replaced with "Decision Ledger" v4 Sandbox Site (2026-06-12)
 
 Replaced the old `/4/` React slot with the 16-page static "Decision Ledger" site from

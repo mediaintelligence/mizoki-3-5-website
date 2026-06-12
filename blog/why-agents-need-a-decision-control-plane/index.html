@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Journal — MIZOKI3</title>
-<meta name="description" content="Decision intelligence, governed autonomy, and causal operating guidance from the team building MIZOKI3.">
-<link rel="canonical" href="https://mizoki3.com/blog/">
+<title>Why Agents Need a Decision Control Plane — MIZOKI3 Journal</title>
+<meta name="description" content="Autonomy without explicit arbitration between proposal, validation, and approval is just hope with an API key.">
+<link rel="canonical" href="https://mizoki3.com/blog/why-agents-need-a-decision-control-plane/">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#F4F6F7">
-<meta property="og:title" content="Journal — MIZOKI3">
-<meta property="og:description" content="Decision intelligence, governed autonomy, and causal operating guidance from the team building MIZOKI3.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://mizoki3.com/blog/">
+<meta property="og:title" content="Why Agents Need a Decision Control Plane — MIZOKI3 Journal">
+<meta property="og:description" content="Autonomy without explicit arbitration between proposal, validation, and approval is just hope with an API key.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://mizoki3.com/blog/why-agents-need-a-decision-control-plane/">
 <meta property="og:image" content="https://mizoki3.com/og-image.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -397,53 +397,28 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
   </div>
 </nav>
 
-<header class="bhero ruled">
-  <div class="wrap">
-    <div class="art">
-      <div class="folio">&sect;07<span class="sub">JOURNAL</span></div>
-      <div>
-        <div class="filing"><span class="fno">&sect;07</span><span class="sep">/</span><span>THE JOURNAL</span><span class="sep">/</span><span>FIELD NOTES &amp; ARCHITECTURE</span></div>
-        <h1 style="font-size:clamp(44px,5.6vw,76px)">Notes from the <em>nervous system.</em></h1>
-        <p class="lede">Decision intelligence, governed autonomy, and causal operating guidance — written by the people building MIZOKI3.</p>
-      </div>
-    </div>
-    <div class="feature reveal">
-      <div class="fmain">
-        <div class="fk">FEATURED &middot; DECISION INTELLIGENCE</div>
-        <h3>Anatomy of a Veto</h3>
-        <p>ACT-991, stage by stage: how a $5.0M capital move gets caught, stamped, and re-routed before it can touch the business.</p>
-        <div class="byline"><b>Boris Mizhen</b> &middot; 9 min read &middot; June 2026</div>
-        <div class="cta-row" style="margin-top:26px"><a class="btn primary" href="/blog/anatomy-of-a-veto/">READ THE TRACE &rarr;</a></div>
-      </div>
-      <div class="fside">
-        <div class="th">IMMUTABLE DECISION TRACE &middot; ACT-991</div>
-        <div class="ln"><span class="ts">14:32:01</span><span>sense &middot; context assembled</span></div>
-        <div class="ln"><span class="ts">14:32:03</span><span>reason &middot; reallocate $5.0M &rarr; reserve</span></div>
-        <div class="ln"><span class="ts">14:32:05</span><span>validate &middot; liquidity floor <span class="vt">FLAG</span></span></div>
-        <div class="ln"><span class="ts">14:32:05</span><span>decide &middot; DCP verdict: <span class="vt">VETOED</span></span></div>
-        <div class="ln"><span class="ts">14:32:06</span><span>act &middot; Option B <span class="pz">executed</span></span></div>
-        <div class="ln"><span class="ts">14:32:06</span><span>learn &middot; skill promoted</span></div>
-      </div>
-    </div>
-    <div class="postlist reveal">
-      <a class="post" href="/blog/nervous-system-not-brain/">
-        <div class="pk">POSITIONING</div>
-        <div><h4>A Nervous System, Not a Brain</h4><div class="pd">Why the metaphor matters: brains deliberate in one place; nervous systems sense, reflex, and act everywhere at once.</div></div>
-        <div class="pm">Boris Mizhen &middot; 7 min read &middot; June 2026</div>
-      </a>
-      <a class="post" href="/blog/why-agents-need-a-decision-control-plane/">
-        <div class="pk">ARCHITECTURE</div>
-        <div><h4>Why Agents Need a Decision Control Plane</h4><div class="pd">Autonomy without explicit arbitration between proposal, validation, and approval is just hope with an API key.</div></div>
-        <div class="pm">Boris Mizhen &middot; 8 min read &middot; May 2026</div>
-      </a>
-      <a class="post" href="/blog/how-an-autonomous-decision-controller-thinks/">
-        <div class="pk">ENGINE</div>
-        <div><h4>How an Autonomous Decision Controller Thinks</h4><div class="pd">SRPVDAL in plain English: the seven-stage reasoning loop behind disciplined autonomous execution.</div></div>
-        <div class="pm">Boris Mizhen &middot; 10 min read &middot; April 2026</div>
-      </a>
+<article class="article">
+  <div class="awrap">
+    <a class="crumb" href="/blog/">&larr; JOURNAL</a>
+    <div class="ak">ARCHITECTURE</div>
+    <h1>Why Agents Need a Decision Control Plane</h1>
+    <div class="std"><b>Boris Mizhen</b> &middot; 8 min read &middot; May 2026 &middot; DOC. MZK3-J-WHY-</div>
+    <div class="prose">
+<p>Every serious conversation about agentic AI eventually hits the same wall: who decided the agent could do that? If the honest answer is "the same model that proposed it," you don't have governance — you have a single point of judgment grading its own homework.</p>
+<h2>Separate the powers</h2>
+<p>The Decision Control Plane exists to make four roles explicit and non-collapsible. <strong>Propose:</strong> context-aware controllers suggest an action. <strong>Validate:</strong> counterfactual simulations run the action against contracts, policies, and legal frameworks — constraints the proposer doesn't get to reinterpret. <strong>Authorize:</strong> deterministic policy and human-in-the-loop keys decide whether it may execute. <strong>Act:</strong> secure, immutable execution with a tamper-evident trail.</p>
+<p class="pull">The entity that wants the action is never the entity that approves it.</p>
+<h2>Deterministic where it counts</h2>
+<p>Models are probabilistic; policy must not be. The control plane applies deterministic rules at the authorization boundary — eligibility scoring per decision, per domain, with a hard threshold. An action scoring below the line isn't "discouraged." It is structurally incapable of executing. That's what makes autonomy defensible to a board, an auditor, or a regulator: the veto isn't a behavior the model learned. It's an architecture the model lives inside.</p>
+<h2>The audit trail is the product</h2>
+<p>When an autonomous action moves capital or touches a contract, the question is never just "did it work?" It's "can we defend it?" Every proposal, simulation, score, veto, and execution is appended to an immutable ledger. Defensibility isn't a feature added after the fact — it's the exhaust of the architecture itself.</p>
+</div>
+    <div class="backrow">
+      <a class="btn primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request">SCHEDULE EXECUTIVE BRIEFING</a>
+      &nbsp;&nbsp;<a class="btn" href="/blog/">&larr; ALL ENTRIES</a>
     </div>
   </div>
-</header>
+</article>
 
 <footer>
   <div class="wrap">
