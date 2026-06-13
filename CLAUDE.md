@@ -147,6 +147,33 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Decision Ledger Site Deployed to Cloud Run / mizoki3.com (2026-06-12)
+
+Shipped the two pending Decision Ledger commits (the `/4/` sandbox replacement
+`d8c1ad1` and the root promotion `3dd848a` — both entries below) to production.
+Local `main` was 2 ahead of `origin/main` with nothing dirty besides untracked
+junk (`site/`, `files/`, several `mizoki3-complete-site*.zip` — none deploy, all
+left alone).
+
+**Process:** re-ran the verification standard (py_compile clean, 32 unittest
+pass), pushed `c206d13..3dd848a` to `main` → WIF auto-deploy workflow
+(`deploy-cloudrun.yml`, run `27432720438`) built and rolled the new
+`mizoki-website` Cloud Run revision green in ~45s.
+
+**Live smoke (mizoki3.com):** all 200 — `/` (title *"MIZOKI3 — A Nervous System
+for Your Business"*), the five division directories ± trailing slash, `/blog/`,
+`/blog/feed.xml`, `/privacy`, `/terms`, `/console`, slots `/1` `/3` `/4/`,
+`/sitemap.xml`. Unknown paths 404 with the ledger "This page was vetoed." body.
+Note: the feed lives at `/blog/feed.xml` only — there is intentionally no root
+`/feed.xml` (it 404s).
+
+**Loose ends flagged (not addressed):** (1) GitHub Actions warns the deploy
+workflow's actions (`actions/checkout@v4`, `google-github-actions/auth@v2`,
+`google-github-actions/setup-gcloud@v2`) run on Node 20, which GitHub forces to
+Node 24 starting **2026-06-16** — bump them in `deploy-cloudrun.yml` soon.
+(2) The 28 Dependabot vulnerabilities (6 high) on the default branch remain
+outstanding. (3) The untracked zips/`site/`/`files/` clutter remains in the tree.
+
 ### "Decision Ledger" Promoted to Site Root — mizoki3.com (2026-06-12)
 
 Immediately after landing in `/4/` (entry below), the founder directed the Decision
