@@ -147,6 +147,54 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Homepage Strategic Upgrades — Executable Simulation + Schema Inspector + Dynamic Gating (2026-06-13)
+
+Turned the homepage (`index.html`) into a **physical demonstration of the system's deterministic
+physics** to kill the "is this just a static script / ChatGPT wrapper?" sales friction. Three
+interactive upgrades, all built in the canonical single-file vanilla-JS `index.html` (no build
+step) — **not** in a React `src/App.jsx`. (The task brief referenced replacing `src/App.jsx`, but
+the only `App.jsx` files in this repo live under the untracked scratch `Noah_gemini/` tree and
+never deploy; the production homepage that serves on `mizoki3.com` is the Flask static
+`index.html`, so the upgrades landed there to actually ship.)
+
+1. **Executable Causal Simulation (§02 reflex arc).** The old auto-playing static ACT-991 trace is
+   now an input-driven SRPVDAL state machine. Controls: **transaction amount** ($0.5M–$10.0M),
+   **liquidity / fiduciary floor** ($1.0M–$5.0M), **domain cell** (Counsel / Estate / Capital /
+   Signal / Risk), and a **legal-compliance toggle** (covenants clear ↔ covenant breach). "RUN
+   DIAGNOSTIC SIMULATION" runs a deterministic local model — `post = $6.0M reserve − amount`;
+   liquidity breach if `post < floor`; DEL score `= 62 + marginPct·1.1 − (amount/pool)·6 −
+   (legal ? 0 : 45)`, clamped 0–100 — then dynamically rebuilds the 7-stage trace + ledger with the
+   real numbers and animates it. Hard constraints (legal fail or floor breach) force a VETO
+   regardless of score; otherwise ≥80 ELIGIBLE, ≥60 OPERATOR GATE, else VETO. On veto it re-routes
+   to a computed **Option B = pool − floor** (the largest transaction that holds the floor). Default
+   inputs reproduce ACT-991 (Capital · $5.0M · floor $2.0M · clear → VETO, score 39, Option B $4.0M).
+2. **Interactive Graph Schema Inspector (hero).** The hero "EXHIBIT A" graph gained five clickable/
+   hoverable domain nodes + a TCKG core. Selecting a node isolates it (dims the rest) and prints its
+   Cypher-style relationship schema into a dark inspection overlay — e.g. Capital shows
+   `(Reserve)-[:FUNDS]->(Distribution)`, `(Covenant)-[:GOVERNS]->(Reserve)`,
+   `(Reserve)-[:EXPOSES]->(Risk.Limit)`. Every domain carries one cross-domain edge (e.g.
+   `(Clause)-[:LINKS]->(Capital.Covenant)`) to make the **shared substrate** visible. Core node
+   clears the selection.
+3. **Dynamic Visual Gating.** Upgrades 1+3 are the same wiring — moving the sliders/toggle reactively
+   flips the terminal between VETOED / OPERATOR GATE / ELIGIBLE with matching stamp + state colors,
+   so a buyer can physically trigger the DCP veto. All three states are reachable (verified the GATE
+   band is not a dead zone). The pre-existing §03 DEL-gauge sandbox (abstract confidence/policy/risk
+   sliders) is left untouched as a complementary demo.
+
+**Implementation notes:** new CSS for `.dnode/.dcore/.schema-ov` (hero inspector) and
+`.sim-inputs/.sim-dom/.sim-toggle/.sim-run` (sim console) + a `.stamp.gate` amber stamp and
+`.tl.gate` trace dot. The old static `STAGES` array / `startPlay` auto-player was replaced by the
+sim-engine IIFE; the pipeline IntersectionObserver now fires one auto-run (`runEl._auto`) when the
+section scrolls into view instead of looping. Honors `prefers-reduced-motion` (renders final state
+without animation). No `app.py`, runtime, route, or test changes.
+
+**Verification:** `python3 -m py_compile` clean; **32 unittest pass**; `node --check` on the extracted
+homepage script clean; `app.test_client()` smoke of `/` → 200 with all new IDs/markers present
+(`sim-run`, `schema-ov`, `dnode`, domain `data-k`s, "EXECUTABLE CAUSAL SIMULATION", "▸ INSPECT
+NODES"); HTMLParser structural balance check passes; model probed in node to confirm
+veto/gate/eligible verdicts match intended inputs. Shipped on branch
+`claude/mizoki3-strategic-upgrades-s1almy`.
+
 ### Decision Ledger Site Deployed to Cloud Run / mizoki3.com (2026-06-12)
 
 Shipped the two pending Decision Ledger commits (the `/4/` sandbox replacement

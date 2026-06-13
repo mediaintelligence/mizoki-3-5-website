@@ -322,6 +322,67 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 .sb-trace b.veto{color:var(--veto)} .sb-trace b.gate{color:var(--warn)} .sb-trace b.ok{color:var(--pass)}
 @media(max-width:900px){.sb-body{grid-template-columns:1fr}.sb-controls{border-right:0;border-bottom:1px solid var(--rule)}}
 
+/* ---------- hero schema inspector ---------- */
+.nodes-ov{position:absolute;inset:0;pointer-events:none;z-index:3}
+.dnode{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;color:var(--teal2);
+  background:rgba(251,252,252,.9);border:1px solid var(--rule2);padding:5px 9px;border-radius:2px;
+  display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all .2s}
+.dnode .pip{width:6px;height:6px;border-radius:50%;background:var(--teal);flex:none}
+.dnode:hover,.dnode:focus-visible{border-color:var(--teal);box-shadow:0 0 0 3px var(--wash);outline:none}
+.dnode.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dnode.sel .pip{background:var(--cy)}
+.dnode.dim{opacity:.34}
+.dcore{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.16em;color:var(--paper);
+  background:var(--teal);border:0;padding:6px 11px;border-radius:2px}
+.dcore:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.schema-ov{position:absolute;left:14px;right:14px;bottom:12px;z-index:4;background:var(--dark);color:var(--dtext);
+  border:1px solid var(--dline);padding:13px 16px;font-family:var(--mono);
+  transform:translateY(8px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.schema-ov.show{opacity:1;transform:none}
+.schema-ov .sh{display:flex;justify-content:space-between;font-size:9.5px;letter-spacing:.16em;color:#5E7780;margin-bottom:10px}
+.schema-ov .sh b{color:var(--cy);font-weight:700}
+.schema-ov .edge{font-size:11.5px;color:#A9BDC4;padding:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.schema-ov .edge .rel{color:var(--cy)}
+.schema-ov .live{margin-top:9px;padding-top:8px;border-top:1px solid var(--dline);font-size:9px;letter-spacing:.14em;color:#5E7780}
+
+/* ---------- executable simulation inputs ---------- */
+.sim-inputs{padding:22px 24px;border-bottom:1px solid var(--dline);background:#0B161B;
+  display:grid;grid-template-columns:1fr 1fr;gap:18px 28px;align-items:end}
+.sim-field .row{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;color:#7E97A0;text-transform:uppercase;margin-bottom:10px}
+.sim-field .row output{color:var(--cy);font-weight:700;letter-spacing:.04em}
+.sim-field input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--dline);outline:none}
+.sim-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--dark);border:2px solid var(--cy);cursor:pointer}
+.sim-field input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--dark);border:2px solid var(--cy);cursor:pointer}
+.sim-field input[type=range]:focus-visible{outline:2px solid var(--cy);outline-offset:4px}
+.sim-domains{display:flex;flex-wrap:wrap;gap:6px}
+.sim-dom{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;padding:7px 11px;cursor:pointer;
+  border:1px solid var(--dline);background:transparent;color:#8FA6AE;transition:all .2s}
+.sim-dom:hover{border-color:#2C4750;color:var(--dtext)}
+.sim-dom.on{background:var(--cy);border-color:var(--cy);color:#06262C;font-weight:700}
+.sim-dom:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.sim-toggle{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:9px 14px;cursor:pointer;width:100%;
+  border:1px solid var(--dline);background:transparent;color:#8FA6AE;display:flex;align-items:center;gap:9px;transition:all .2s}
+.sim-toggle .dotk{width:8px;height:8px;border-radius:50%;background:#41D695;flex:none}
+.sim-toggle.on{color:#41D695;border-color:#1F4536}
+.sim-toggle.off{color:#FF6B7C;border-color:#3A2630}
+.sim-toggle.off .dotk{background:#FF6B7C}
+.sim-toggle:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.sim-run{grid-column:1/-1;font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.14em;
+  padding:14px;cursor:pointer;background:var(--cy);border:0;color:#06262C;transition:background .2s}
+.sim-run:hover{background:#6CE8FA}
+.sim-run:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sim-run.running{background:#2C4750;color:#8FA6AE;cursor:progress}
+.sim-readout{grid-column:1/-1;font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:#7E97A0;padding-top:2px}
+.sim-readout b{color:var(--dtext);font-weight:600}
+.sim-readout b.breach{color:#FF6B7C}
+.stamp.gate{color:#E0A92E;border-color:#E0A92E}
+.tl.gate.on .dt{background:#E0A92E}
+@media(max-width:680px){.sim-inputs{grid-template-columns:1fr}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
@@ -362,7 +423,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
         <div class="attest"><span>REAL-TIME</span><span>PREDICTIVE</span><span>DEFENSIBLE</span></div>
       </div>
       <div class="plate" id="plate">
-        <div class="plate-h"><span>EXHIBIT A — ORGANIZATIONAL GRAPH</span><span>LIVE</span></div>
+        <div class="plate-h"><span>EXHIBIT A — ORGANIZATIONAL GRAPH</span><span>▸ INSPECT NODES</span></div>
         <div class="plate-b">
           <svg class="fallback" viewBox="0 0 560 430" fill="none" aria-hidden="true">
             <g stroke="#0C7C8F" stroke-opacity=".3">
@@ -381,6 +442,15 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
             <circle cx="280" cy="215" r="13" stroke="#0C7C8F" stroke-opacity=".5"/>
           </svg>
           <canvas id="graph"></canvas>
+          <div class="nodes-ov" id="nodes-ov">
+            <button class="dnode" type="button" data-k="Counsel" style="left:22%;top:19%"><span class="pip"></span>COUNSEL</button>
+            <button class="dnode" type="button" data-k="Capital" style="left:75%;top:19%"><span class="pip"></span>CAPITAL</button>
+            <button class="dnode" type="button" data-k="Risk" style="left:83%;top:45%"><span class="pip"></span>RISK</button>
+            <button class="dnode" type="button" data-k="Estate" style="left:17%;top:45%"><span class="pip"></span>ESTATE</button>
+            <button class="dnode" type="button" data-k="Signal" style="left:50%;top:63%"><span class="pip"></span>SIGNAL</button>
+            <button class="dcore" id="dcore" type="button">TCKG CORE</button>
+          </div>
+          <div class="schema-ov" id="schema-ov" aria-live="polite"></div>
         </div>
         <div class="plate-f"><span>NODES SENSED <b>48,213</b></span><span>SIGNALS/24H <b>1,294</b></span><span>IN FLIGHT <b>312</b></span></div>
       </div>
@@ -433,10 +503,30 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
       <div>
         <div class="reveal">
           <h2>Every signal travels <em>one governed pathway.</em></h2>
-          <p class="sec-lede">When the nervous system senses something that demands action, the signal moves through seven governed stages — SRPVDAL. Nothing executes until it is simulated, validated against your constraints, and authorized by policy. Below: a live one. <strong>ACT-991</strong>, a $5.0M capital distribution that gets caught.</p>
+          <p class="sec-lede">When the nervous system senses something that demands action, the signal moves through seven governed stages — SRPVDAL. Nothing executes until it is simulated, validated against your constraints, and authorized by policy. <strong>Run one yourself.</strong> Set the amount, the domain, and the fiduciary floor, then watch the state machine evaluate it. The default — <strong>ACT-991</strong>, a $5.0M capital distribution — gets caught.</p>
         </div>
-        <div class="term reveal">
-          <div class="term-h"><span><span class="lite"></span>IMMUTABLE DECISION TRACE · ACT-991</span><span>SRPVDAL v3.5</span></div>
+        <div class="term reveal" id="sim">
+          <div class="term-h"><span><span class="lite"></span>EXECUTABLE CAUSAL SIMULATION · <b id="sim-id" style="color:var(--cy);font-weight:700">ACT-991</b></span><span>SRPVDAL v3.5</span></div>
+          <div class="sim-inputs">
+            <div class="sim-field">
+              <div class="row"><label for="sim-amt">Transaction amount</label><output id="sim-amtv">$5.0M</output></div>
+              <input type="range" id="sim-amt" min="5" max="100" value="50" step="1" aria-describedby="sim-readout">
+            </div>
+            <div class="sim-field">
+              <div class="row"><label for="sim-floor">Liquidity / fiduciary floor</label><output id="sim-floorv">$2.0M</output></div>
+              <input type="range" id="sim-floor" min="10" max="50" value="20" step="1" aria-describedby="sim-readout">
+            </div>
+            <div class="sim-field">
+              <div class="row"><span>Domain cell</span></div>
+              <div class="sim-domains" id="sim-domains" role="group" aria-label="Domain cell"></div>
+            </div>
+            <div class="sim-field">
+              <div class="row"><label for="sim-legal">Legal compliance</label></div>
+              <button type="button" class="sim-toggle on" id="sim-legal" aria-pressed="true"><span class="dotk"></span><span class="lab">Covenants clear</span></button>
+            </div>
+            <button class="sim-run" type="button" id="sim-run">RUN DIAGNOSTIC SIMULATION ▸</button>
+            <div class="sim-readout" id="sim-readout">Reserve <b>$6.0M</b> · post-transaction <b class="breach">$1.0M</b> · floor <b>$2.0M</b></div>
+          </div>
           <div class="stages" id="stages"></div>
           <div class="term-body">
             <div class="term-detail">
@@ -674,61 +764,184 @@ function each(list,fn){for(var i=0;i<list.length;i++)fn(list[i],i)}
   var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){size();build()},150)});
 }catch(err){if(cv)cv.style.display='none'}})();
 
-/* ---------- reflex arc ---------- */
-var STAGES=[
- {k:'Sense',lat:'12ms',state:'Ingested',p:'Telemetry, contracts, and ledger events stream into the temporal-causal knowledge graph. Q3 liquidity, 3 covenants, and 12 active contracts are pulled into context for ACT-991.',
-  trace:{ts:'14:32:01',cls:'',txt:'sense · context assembled · 12 contracts linked'}},
- {k:'Reason',lat:'140ms',state:'Modeled',p:'Cross-domain reasoning over the graph: Capital proposes reallocating $5.0M to the Series B reserve. The model surfaces second-order effects on Treasury and Risk.',
-  trace:{ts:'14:32:03',cls:'',txt:'reason · proposal drafted · reallocate $5.0M → reserve'}},
- {k:'Plan',lat:'88ms',state:'Sequenced',p:'A candidate action plan is sequenced with rollback points and the domains it touches — Treasury, Risk, and Counsel are flagged as stakeholders.',
-  trace:{ts:'14:32:04',cls:'',txt:'plan · 3 stakeholder domains · rollback armed'}},
- {k:'Validate',lat:'210ms',state:'Breach detected',p:'The Counterfactual Simulation Engine runs the action against every binding constraint. Covenant COV-01 (DSCR ≥ 1.25) passes; the Master Loan Agreement §7.2 passes; the $2.0M liquidity floor is breached.',
-  trace:{ts:'14:32:05',cls:'veto',txt:'validate · COV-01 PASS · §7.2 PASS · liquidity floor FLAG'}},
- {k:'Decide',lat:'34ms',state:'Vetoed',p:'The Decision Eligibility Layer scores ACT-991 ineligible. The Decision Control Plane stamps it VETOED and re-routes to a safe Option B — a phased $3.2M reallocation that clears the floor.',
-  trace:{ts:'14:32:05',cls:'veto',txt:'decide · DEL score 41 · DCP verdict: VETOED'}},
- {k:'Act',lat:'19ms',state:'Re-routed',p:'Only the authorized Option B executes — scoped, reversible, and bounded. The original $5.0M proposal never touches the business.',
-  trace:{ts:'14:32:06',cls:'pass',txt:'act · Option B executed · $3.2M phased · scoped + reversible'}},
- {k:'Learn',lat:'7ms',state:'Promoted',p:'The full trace — proposal, simulation, veto, and re-route — is written to the immutable ledger and promoted into a reusable skill, so the same breach is caught faster next time.',
-  trace:{ts:'14:32:06',cls:'pass',txt:'learn · trace #8f2a appended · skill promoted'}}
-];
+/* ---------- hero schema inspector ---------- */
+(function(){try{
+var ov=document.getElementById('schema-ov');if(!ov)return;
+var nodes=document.querySelectorAll('.dnode'),core=document.getElementById('dcore');
+var SCHEMA={
+ Counsel:{type:'CLAUSE GRAPH',live:'1,840 clauses linked',
+   edges:['(Clause)-[:CONSTRAINS]->(Holding)','(Contract)-[:OBLIGATES]->(Entity)','(Clause)-[:LINKS]->(Capital.Covenant)']},
+ Capital:{type:'RESERVE SUBSTRATE',live:'1,294 decisions / 24h',
+   edges:['(Reserve)-[:FUNDS]->(Distribution)','(Covenant)-[:GOVERNS]->(Reserve)','(Reserve)-[:EXPOSES]->(Risk.Limit)']},
+ Risk:{type:'EXPOSURE LATTICE',live:'312 active covenants',
+   edges:['(Exposure)-[:THREATENS]->(Covenant)','(Signal)-[:TRIGGERS]->(Alert)','(Limit)-[:GATES]->(Capital.Move)']},
+ Estate:{type:'TRUST LEDGER',live:'126 structures modeled',
+   edges:['(Trust)-[:TRANSFERS]->(Beneficiary)','(Asset)-[:TAXED_BY]->(Jurisdiction)','(Trust)-[:HOLDS]->(Capital.Reserve)']},
+ Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',
+   edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']}
+};
+function show(k){
+  var d=SCHEMA[k];if(!d)return;
+  for(var i=0;i<nodes.length;i++){var n=nodes[i],is=n.getAttribute('data-k')===k;
+    n.classList.toggle('sel',is);n.classList.toggle('dim',!is)}
+  var e='';for(i=0;i<d.edges.length;i++)e+='<div class="edge">'+
+    d.edges[i].replace(/\[(.*?)\]/,'<span class="rel">[$1]</span>')+'</div>';
+  ov.innerHTML='<div class="sh"><span>(:'+k+') &middot; <b>'+d.type+'</b></span><span>SCHEMA</span></div>'+e+
+    '<div class="live">'+d.live+' &middot; one shared substrate</div>';
+  ov.classList.add('show');
+}
+function clear(){for(var i=0;i<nodes.length;i++)nodes[i].classList.remove('sel','dim');ov.classList.remove('show')}
+for(var i=0;i<nodes.length;i++)(function(n){var k=n.getAttribute('data-k');
+  n.onclick=function(){if(n.classList.contains('sel'))clear();else show(k)};
+  n.onmouseenter=function(){show(k)};
+  n.addEventListener('focus',function(){show(k)});
+})(nodes[i]);
+if(core)core.onclick=clear;
+}catch(e){}})();
+
+/* ---------- executable causal simulation ---------- */
+(function(){
 var stagesEl=document.getElementById('stages'),traceEl=document.getElementById('trace');
-each(STAGES,function(s,i){
-  var d=document.createElement('div');
-  d.className='stage'+(s.trace.cls?' '+s.trace.cls:'');d.setAttribute('role','button');d.tabIndex=0;
-  d.innerHTML='<div class="k">0'+(i+1)+'</div><div class="n">'+s.k+'</div>';
-  d.onclick=function(){clearInterval(ptimer);setStage(i)};
-  d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();clearInterval(ptimer);setStage(i)}};
-  stagesEl.appendChild(d);
-  var t=document.createElement('div');t.className='tl '+s.trace.cls;
-  t.innerHTML='<span class="dt"></span><span class="ts">'+s.trace.ts+'</span><span class="vx">'+
-    s.trace.txt.replace('VETOED','<span class="vt">VETOED</span>')
-               .replace('FLAG','<span class="vt">FLAG</span>')
-               .replace(/executed/,'<span class="pz">executed</span>')+'</span>';
-  traceEl.appendChild(t);
-});
+if(!stagesEl)return;
+var POOL=6.0;
+var DOMAINS=[
+ {k:'Counsel',verb:'settlement disbursement',cstr:'Master Agreement §7.2 indemnity cap',stake:'Counsel, Risk, and Capital'},
+ {k:'Estate', verb:'trust distribution',     cstr:'the fiduciary reserve floor',          stake:'Estate, Counsel, and Capital'},
+ {k:'Capital',verb:'capital distribution',   cstr:'the liquidity floor and DSCR covenant COV-01',stake:'Capital, Treasury, and Risk'},
+ {k:'Signal', verb:'media budget reallocation',cstr:'the ROAS guardrail and spend cap',    stake:'Signal, Capital, and Risk'},
+ {k:'Risk',   verb:'exposure rebalance',      cstr:'the exposure limit and covenant DSCR', stake:'Risk, Capital, and Counsel'}
+];
+var amtEl=document.getElementById('sim-amt'),floorEl=document.getElementById('sim-floor'),
+    legalEl=document.getElementById('sim-legal'),runEl=document.getElementById('sim-run'),
+    readEl=document.getElementById('sim-readout'),domsEl=document.getElementById('sim-domains'),
+    idEl=document.getElementById('sim-id');
+var domIdx=2,legalClear=true,CUR=[],VERD='veto',anim=null;
+function fmt(m){return '$'+m.toFixed(1)+'M'}
+function rid(){var s='0123456789ABCDEF',o='';for(var i=0;i<4;i++)o+=s[Math.floor(Math.random()*16)];return o}
+
+each(DOMAINS,function(d,i){var b=document.createElement('button');
+  b.type='button';b.className='sim-dom'+(i===2?' on':'');b.textContent=d.k;
+  b.onclick=function(){domIdx=i;var bs=domsEl.children;for(var j=0;j<bs.length;j++)bs[j].classList.toggle('on',j===i);refresh()};
+  domsEl.appendChild(b);});
+
+legalEl.onclick=function(){legalClear=!legalClear;
+  legalEl.classList.toggle('on',legalClear);legalEl.classList.toggle('off',!legalClear);
+  legalEl.setAttribute('aria-pressed',legalClear?'true':'false');
+  legalEl.querySelector('.lab').textContent=legalClear?'Covenants clear':'Covenant breach';
+  refresh();};
+
+function model(){
+  var amt=amtEl.value/10,floor=floorEl.value/10;
+  var post=+(POOL-amt).toFixed(1),margin=+(post-floor).toFixed(1),liq=margin<-1e-9;
+  var marginPct=margin/POOL*100;
+  /* deterministic DEL score: wide headroom → eligible, thin headroom → operator gate,
+     breach or legal failure → veto band. Monotonic in margin and amount. */
+  var score=Math.round(62+marginPct*1.1-(amt/POOL)*6-(legalClear?0:45));
+  score=Math.max(0,Math.min(100,score));
+  var hard=(!legalClear)||liq;
+  var verdict=hard?'veto':(score>=80?'ok':(score>=60?'gate':'veto'));
+  var optB=+(Math.max(0,POOL-floor)).toFixed(1);
+  return {amt:amt,floor:floor,post:post,margin:margin,liq:liq,score:score,verdict:verdict,optB:optB};
+}
+function refresh(){
+  var m=model();
+  document.getElementById('sim-amtv').textContent=fmt(m.amt);
+  document.getElementById('sim-floorv').textContent=fmt(m.floor);
+  readEl.innerHTML='Reserve <b>'+fmt(POOL)+'</b> · post-transaction <b class="'+(m.liq?'breach':'')+'">'+fmt(m.post)+
+    '</b> · floor <b>'+fmt(m.floor)+'</b>';
+  return m;
+}
+amtEl.oninput=refresh;floorEl.oninput=refresh;
+
+function buildStages(m){
+  var d=DOMAINS[domIdx];
+  var vlabel=m.verdict==='veto'?'VETOED':(m.verdict==='gate'?'OPERATOR GATE':'ELIGIBLE');
+  var legalLine=legalClear?'consent + covenant attestations PASS':'covenant attestation FAIL';
+  var liqLine=m.liq?('post-transaction '+fmt(m.post)+' < floor '+fmt(m.floor)+' — BREACH')
+                   :('post-transaction '+fmt(m.post)+' ≥ floor '+fmt(m.floor)+' — PASS');
+  var vCls=(!legalClear||m.liq)?'veto':'pass';
+  var actLine,actCls,actState;
+  if(m.verdict==='ok'){actLine='Authorized. The '+fmt(m.amt)+' '+d.verb+' executes — scoped, reversible, and written to the immutable ledger as it runs.';actCls='pass';actState='Executed';}
+  else if(m.verdict==='gate'){actLine='Execution suspended. The action is routed to a human-in-the-loop key holder for review — nothing moves until a person signs.';actCls='gate';actState='Held';}
+  else{actLine='Vetoed. Re-routed to Option B — a '+fmt(m.optB)+' '+d.verb+' that holds the floor exactly. The original proposal never touches the business.';actCls='pass';actState='Re-routed';}
+  return [
+   {k:'Sense',lat:'12ms',state:'Ingested',
+    p:'Reserve '+fmt(POOL)+', floor '+fmt(m.floor)+', and the '+d.k+' cell stream into the temporal-causal knowledge graph. 12 active contracts and 3 covenants are pulled into context.',
+    tcls:'',tt:'sense · context assembled · domain '+d.k},
+   {k:'Reason',lat:'140ms',state:'Modeled',
+    p:d.k+' proposes a '+fmt(m.amt)+' '+d.verb+'. Cross-domain reasoning surfaces second-order effects across '+d.stake+'.',
+    tcls:'',tt:'reason · proposal · '+fmt(m.amt)+' '+d.verb},
+   {k:'Plan',lat:'88ms',state:'Sequenced',
+    p:'A candidate plan is sequenced with rollback points. Post-transaction reserve would settle at '+fmt(m.post)+'.',
+    tcls:'',tt:'plan · rollback armed · post '+fmt(m.post)},
+   {k:'Validate',lat:'210ms',state:(!legalClear||m.liq)?'Breach detected':'Cleared',
+    p:'The Counterfactual Simulation Engine runs the action against '+d.cstr+'. Legal: '+legalLine+'. Liquidity: '+liqLine+'.',
+    tcls:vCls,tt:'validate · '+(legalClear?'legal PASS':'legal FAIL')+' · '+(m.liq?'liquidity BREACH':'liquidity PASS')},
+   {k:'Decide',lat:'34ms',state:vlabel,
+    p:'The Decision Eligibility Layer scores this action '+m.score+'. The Decision Control Plane verdict: '+vlabel+(m.verdict==='ok'?' — at or above the autonomy threshold of 80.':(m.verdict==='gate'?' — below 80, above the veto line.':' — a binding constraint fails.')),
+    tcls:m.verdict,tt:'decide · DEL score '+m.score+' · DCP verdict: '+vlabel},
+   {k:'Act',lat:'19ms',state:actState,p:actLine,tcls:actCls,tt:'act · '+actState.toLowerCase()},
+   {k:'Learn',lat:'7ms',state:'Promoted',
+    p:'The full trace — proposal, simulation, verdict, and routing — is written to the immutable ledger and promoted into a reusable skill, so the same case is resolved faster next time.',
+    tcls:'pass',tt:'learn · trace #'+rid()+' appended · skill promoted'}
+  ];
+}
+function ts(i){var s=1+i;return '14:32:'+(s<10?'0'+s:s)}
+function stampFor(i){
+  if(VERD==='veto'){if(i===3&&CUR[3].tcls==='veto')return {t:'BREACH',c:'veto'};if(i>=4)return {t:'VETOED',c:'veto'};}
+  else if(VERD==='gate'){if(i===4)return {t:'REVIEW',c:'gate'};if(i>=5)return {t:'OP · GATE',c:'gate'};}
+  else{if(i===4)return {t:'ELIGIBLE',c:'ok'};if(i>=5)return {t:'EXECUTED',c:'ok'};}
+  return null;
+}
+function renderStages(){
+  stagesEl.innerHTML='';traceEl.innerHTML='';
+  each(CUR,function(s,i){
+    var d=document.createElement('div');
+    d.className='stage'+(s.tcls?' '+s.tcls:'');d.setAttribute('role','button');d.tabIndex=0;
+    d.innerHTML='<div class="k">0'+(i+1)+'</div><div class="n">'+s.k+'</div>';
+    d.onclick=function(){stop();setStage(i)};
+    d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();stop();setStage(i)}};
+    stagesEl.appendChild(d);
+    var t=document.createElement('div');t.className='tl '+(s.tcls||'');
+    t.innerHTML='<span class="dt"></span><span class="ts">'+ts(i)+'</span><span>'+
+      s.tt.replace(/VETOED|BREACH|FAIL/g,function(x){return '<span class="vt">'+x+'</span>'})
+          .replace(/executed|PASS|ELIGIBLE/g,function(x){return '<span class="pz">'+x+'</span>'})+'</span>';
+    traceEl.appendChild(t);
+  });
+}
 function setStage(i){
-  var st=document.querySelectorAll('.stage');
+  var st=stagesEl.children;
   for(var j=0;j<st.length;j++){st[j].classList.toggle('active',j===i);st[j].classList.toggle('done',j<i)}
-  var tl=traceEl.children;
-  for(j=0;j<tl.length;j++){tl[j].classList.toggle('on',j<=i)}
-  var s=STAGES[i];
+  var tl=traceEl.children;for(j=0;j<tl.length;j++)tl[j].classList.toggle('on',j<=i);
+  var s=CUR[i];
   document.getElementById('d-k').textContent='Stage 0'+(i+1);
   document.getElementById('d-n').textContent=s.k;
   document.getElementById('d-p').textContent=s.p;
   document.getElementById('d-stage').textContent='0'+(i+1)+' / 07';
   document.getElementById('d-lat').textContent=s.lat;
   var se=document.getElementById('d-state');se.textContent=s.state;
-  se.style.color=(i===3||i===4)?'#FF6B7C':(i>=5?'#41D695':'#fff');
-  var stamp=document.getElementById('stamp');
-  if(i===4){stamp.textContent='VETOED';stamp.className='stamp show'}
-  else if(i===5){stamp.textContent='OPTION B';stamp.className='stamp show ok'}
-  else if(i===6){stamp.textContent='APPENDED';stamp.className='stamp show ok'}
-  else{stamp.className='stamp'}
+  se.style.color=s.tcls==='veto'?'#FF6B7C':(s.tcls==='gate'?'#E0A92E':(s.tcls==='pass'?'#41D695':'#fff'));
+  var stamp=document.getElementById('stamp'),sp=stampFor(i);
+  if(sp){stamp.textContent=sp.t;stamp.className='stamp show'+(sp.c==='ok'?' ok':(sp.c==='gate'?' gate':''))}
+  else stamp.className='stamp';
 }
-var pi=0,ptimer;
-setStage(0);
-function startPlay(){clearInterval(ptimer);setStage(0);pi=0;
-  ptimer=setInterval(function(){pi=(pi+1)%STAGES.length;setStage(pi)},2600);}
+function stop(){if(anim){clearInterval(anim);anim=null}if(runEl){runEl.classList.remove('running');runEl.textContent='RUN AGAIN ▸'}}
+function run(){
+  var m=refresh();VERD=m.verdict;CUR=buildStages(m);renderStages();
+  var isDefault=domIdx===2&&Math.abs(m.amt-5)<.05&&Math.abs(m.floor-2)<.05&&legalClear;
+  if(idEl)idEl.textContent=isDefault?'ACT-991':('SIM-'+rid());
+  setStage(0);
+  var reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){for(var k=0;k<CUR.length;k++)setStage(k);stop();return}
+  runEl.classList.add('running');runEl.textContent='RUNNING SRPVDAL…';
+  var i=0;if(anim)clearInterval(anim);
+  anim=setInterval(function(){i++;if(i>=CUR.length){clearInterval(anim);anim=null;
+    runEl.classList.remove('running');runEl.textContent='RUN AGAIN ▸';return}setStage(i)},560);
+}
+runEl.onclick=run;runEl._auto=run;
+/* initial static render (animates when scrolled into view) */
+var m0=refresh();VERD=m0.verdict;CUR=buildStages(m0);renderStages();setStage(0);
+})();
 
 /* ---------- divisions ---------- */
 var DIV=[
@@ -807,7 +1020,8 @@ if('IntersectionObserver' in window){
     if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
   each(document.querySelectorAll('.reveal'),function(el){io.observe(el)});
   var iop=new IntersectionObserver(function(es){each(es,function(e){
-    if(e.isIntersecting){startPlay()}else{clearInterval(ptimer)}})},{threshold:.4});
+    if(e.isIntersecting){var r=document.getElementById('sim-run');
+      if(r&&r._auto&&!r._ran){r._ran=1;r._auto()}}})},{threshold:.35});
   iop.observe(document.getElementById('pipeline'));
   var iog=new IntersectionObserver(function(es){each(es,function(e){if(e.isIntersecting){
     document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.87);
