@@ -381,6 +381,24 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 .sim-readout b.breach{color:#FF6B7C}
 .stamp.gate{color:#E0A92E;border-color:#E0A92E}
 .tl.gate.on .dt{background:#E0A92E}
+
+/* ---------- authorization scorecard (ledger) ---------- */
+.scorecard{margin-top:50px;border:1px solid var(--rule2);background:var(--card);box-shadow:6px 6px 0 var(--paper2)}
+.sc-h{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
+.sc-verdict{color:var(--veto);font-weight:700;white-space:nowrap}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr}
+.sc-item{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:20px 24px;border-bottom:1px solid var(--rule)}
+.sc-item:nth-child(odd){border-right:1px solid var(--rule)}
+.sc-k{font-size:14.5px;color:var(--ink2);font-weight:300}
+.sc-k::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:11px;vertical-align:1px;background:var(--pass)}
+.sc-item:last-child .sc-k::before{background:var(--veto)}
+.sc-v{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:5px 11px;border:1px solid;flex:none}
+.sc-v.pass{color:var(--pass);border-color:var(--pass)}
+.sc-v.veto{color:var(--veto);border-color:var(--veto)}
+.sc-f{padding:18px 24px;font-size:14.5px;font-weight:300;color:var(--ink2)}
+.sc-f b{font-weight:500;color:var(--ink)}
+@media(max-width:680px){.sc-grid{grid-template-columns:1fr}.sc-item{border-right:0!important}}
 @media(max-width:680px){.sim-inputs{grid-template-columns:1fr}}
 
 @media (prefers-reduced-motion: reduce){
@@ -576,8 +594,18 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
           </div>
           <div class="gauge-copy">
             <div class="gt">Decision Eligibility Layer</div>
-            <p>Every proposed action is scored per decision, per domain. At or above the threshold of 80, it is eligible for autonomous execution. Below it — like ACT-991 at 41 — the action is vetoed and re-routed before it can touch the business.</p>
+            <p>Every proposed action is scored per decision, per domain. At or above the threshold of 80, it is eligible for autonomous execution. Below it — like ACT-991 at 39 — the action is vetoed and re-routed before it can touch the business.</p>
           </div>
+        </div>
+        <div class="scorecard reveal">
+          <div class="sc-h"><span>DECISION AUTHORIZATION SCORECARD · ACT-991</span><span class="sc-verdict">FIDUCIARY GATE FAILED · VETOED</span></div>
+          <div class="sc-grid">
+            <div class="sc-item"><span class="sc-k">Identity &amp; signature token</span><span class="sc-v pass">VERIFIED</span></div>
+            <div class="sc-item"><span class="sc-k">Policy alignment · Master Agreement §7.2</span><span class="sc-v pass">ALIGNED</span></div>
+            <div class="sc-item"><span class="sc-k">Context sufficiency</span><span class="sc-v pass">98.2%</span></div>
+            <div class="sc-item"><span class="sc-k">Fiduciary liquidity floor</span><span class="sc-v veto">BREACH</span></div>
+          </div>
+          <div class="sc-f">Every autonomous action must clear <b>all four gates</b>. ACT-991 clears identity, policy, and context — but breaches the $2.0M fiduciary floor, so the Decision Control Plane vetoes it regardless of the rest.</div>
         </div>
         <div class="sandbox reveal" id="sandbox">
           <div class="sh"><span>EXHIBIT — CONTROL PLANE SANDBOX · <b>INTERACTIVE</b></span><span>ILLUSTRATIVE</span></div>
