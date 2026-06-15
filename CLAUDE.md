@@ -297,6 +297,40 @@ the zip/`Noah_gemini` deletions; untracked `files/` + `mizoki3-complete-site*.zi
 in the tree. GitHub Dependabot reports **28 vulnerabilities (6 high, 18 moderate, 4 low)**
 on the default branch — unrelated to this deploy.
 
+### Provenance-Note Deploy + "Docs Deploy but Aren't Served" Verification (2026-06-10)
+
+Landed the 2026-06-09 homepage-provenance addendum (entry below) to `main` and ran the
+deploy end-to-end to confirm production actually picked it up.
+
+**Branch handling — used the fresh-branch pattern, not the prescribed
+`claude/add-monitoring-dashboard-ENme0`.** That branch, recreated off an older base,
+re-added the Cell 27 H3 that already lived on `main`, so **PR #3** went
+`mergeable_state: dirty` on a duplicate heading that git couldn't reconcile. Abandoned it:
+cut `claude/docs-homepage-provenance-2026-06` from current `main` (`41d52ec`) carrying
+**only** the provenance section, opened **PR #4** (clean diff), squash-merged to `main` at
+`7b12eb9`, and closed PR #3 as superseded. (This is the `7b12eb9` that the 2026-06-12
+Diverged-Branch entry above rebased onto.)
+
+**Deploy confirmed.** The merge to `main` triggered `deploy-cloudrun.yml` (run
+`27294723804`): built + pushed `gcr.io/spry-bus-425315-p6/mizoki-website@sha256:1f2244…a5c26`
+and rolled Cloud Run revision **`mizoki-website-00066-gzj`** to 100% traffic in ~60s
+(17:43→17:44 UTC). Live smoke: `mizoki3.com/` → 200, `last-modified` matched the deploy window.
+
+**Gotcha worth keeping — this is exactly why a docs push can look like "it didn't deploy":**
+
+- The deploy workflow has **no path filter.** *Every* push to `main`, including docs-only
+  commits, runs the full Docker build → GCR push → `gcloud run deploy` and produces a new
+  Cloud Run revision. (Build context transfers the whole repo — `.dockerignore` is ~2 bytes —
+  but Flask still serves from `BASE_DIR`, so this is cost/noise, not a correctness issue.)
+- **`CLAUDE.md` and the other dev docs are not served by Flask** — `app.py` has no
+  `/CLAUDE.md` route. So a docs-only deploy ships a brand-new revision with **zero
+  user-visible change** on `mizoki3.com`.
+- **Therefore: don't read "nothing changed on the live site" as "the deploy failed."**
+  Verify the real outcome from the `gcloud run deploy` step log (the
+  `revision [...] has been deployed and is serving 100 percent of traffic` line) or by
+  diffing `curl -sI https://mizoki3.com/`'s `last-modified` against the run time — not by
+  eyeballing the homepage.
+
 ### Cell 27 — Programmatic Intelligence: OpenRTB Bidstream → SRPVDAL Alignment (2026-06-09)
 
 Added a **graph-native programmatic intelligence cell (Cell 27)** so OpenRTB bidstream signals enter the platform at the SENSE stage and flow through the *entire* SRPVDAL spiral instead of being routed straight into decisioning. The **VALIDATE stage is the hard safety gate** — no optimization reaches ACT without clearing it.
