@@ -1,1 +1,0 @@
-This folder is reserved for a future single-file version. The production site is split into proper pages/components under src/.\n

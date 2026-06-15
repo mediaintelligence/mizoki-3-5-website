@@ -41,3 +41,6 @@ output/
 # tool aliases) — generated at runtime under data/, keep only data/.gitkeep
 data/*.jsonl
 data/*.json
+
+# Untracked React scratch tree — design reference only; never built/deployed (clears npm Dependabot noise)
+Noah_gemini/
