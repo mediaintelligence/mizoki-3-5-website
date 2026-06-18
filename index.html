@@ -441,7 +441,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
         <div class="attest"><span>REAL-TIME</span><span>PREDICTIVE</span><span>DEFENSIBLE</span></div>
       </div>
       <div class="plate" id="plate">
-        <div class="plate-h"><span>EXHIBIT A — ORGANIZATIONAL GRAPH</span><span>▸ INSPECT NODES</span></div>
+        <div class="plate-h"><span>EXHIBIT A — ORGANIZATIONAL GRAPH · ILLUSTRATIVE</span><span>▸ INSPECT NODES</span></div>
         <div class="plate-b">
           <svg class="fallback" viewBox="0 0 560 430" fill="none" aria-hidden="true">
             <g stroke="#0C7C8F" stroke-opacity=".3">
@@ -484,6 +484,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
     <div class="cellv"><div class="k">Predictions in flight</div><div class="v">312</div></div>
     <div class="cellv"><div class="k">Autonomous actions vetoed</div><div class="v w">7</div></div>
   </div>
+  <div style="max-width:var(--max);margin:0 auto;padding:7px 36px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--faint)">ILLUSTRATIVE FIGURES · REPRESENTATIVE OF A DEPLOYED MIZOKI3 SYSTEM</div>
 </div>
 
 <section id="what" class="ruled">
@@ -590,7 +591,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
               <circle class="track" cx="86" cy="86" r="70"/>
               <circle class="arcfill" id="arc" cx="86" cy="86" r="70"/>
             </svg>
-            <div class="gv"><div class="gnum" id="gscore">87</div><div class="glbl">DEL SCORE</div></div>
+            <div class="gv"><div class="gnum" id="gscore" style="color:var(--veto)">39</div><div class="glbl" style="color:var(--veto)">DEL SCORE · ACT-991 VETOED</div></div>
           </div>
           <div class="gauge-copy">
             <div class="gt">Decision Eligibility Layer</div>
@@ -660,7 +661,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
       <div>
         <div class="reveal">
           <h2>It maps to your business. <em>Not the other way around.</em></h2>
-          <p class="sec-lede">MIZOKI3 has no fixed shape. It senses your actual operating structure and grows a decision controller for every domain you have — three, forty, or something no one has built before — all reasoning over one shared graph. The files below aren't the product. They're simply how the customers we've onboarded happen to be structured today.</p>
+          <p class="sec-lede">MIZOKI3 has no fixed shape. It senses your actual operating structure and grows a decision controller for every domain you have — three, forty, or something no one has built before — all reasoning over one shared graph. The files below aren't the product. They're simply how a typical deployment tends to be structured.</p>
         </div>
         <div class="reveal">
           <div class="dtabs" id="dtabs"></div>
@@ -1052,14 +1053,14 @@ if('IntersectionObserver' in window){
       if(r&&r._auto&&!r._ran){r._ran=1;r._auto()}}})},{threshold:.35});
   iop.observe(document.getElementById('pipeline'));
   var iog=new IntersectionObserver(function(es){each(es,function(e){if(e.isIntersecting){
-    document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.87);
+    document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.39);document.getElementById('arc').style.stroke='var(--veto)';
     var v=0,g=document.getElementById('gscore');g.textContent='0';
-    var gi=setInterval(function(){v++;g.textContent=v;if(v>=87)clearInterval(gi)},16);
+    var gi=setInterval(function(){v++;g.textContent=v;if(v>=39)clearInterval(gi)},16);
     iog.disconnect();}})},{threshold:.5});
   iog.observe(document.getElementById('control'));
 }else{
   each(document.querySelectorAll('.reveal'),function(el){el.classList.add('in')});
-  document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.87);
+  document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.39);document.getElementById('arc').style.stroke='var(--veto)';
 }
 })();
 </script>
