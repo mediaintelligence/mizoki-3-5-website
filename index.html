@@ -401,6 +401,40 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 @media(max-width:680px){.sc-grid{grid-template-columns:1fr}.sc-item{border-right:0!important}}
 @media(max-width:680px){.sim-inputs{grid-template-columns:1fr}}
 
+/* ---------- SRPVDAL spiral: subsystem ownership ---------- */
+.spiral{margin-top:52px;border:1px solid var(--rule2);background:var(--card);box-shadow:8px 8px 0 var(--paper2)}
+.spiral .sp-h{display:flex;justify-content:space-between;padding:12px 22px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
+.spiral .sp-h b{color:var(--teal);font-weight:700}
+.sp-body{display:grid;grid-template-columns:1.06fr .94fr}
+.sp-canvas{position:relative;border-right:1px solid var(--rule);padding:14px 10px}
+#sp-svg{display:block;width:100%;height:auto}
+#sp-svg text{font-family:var(--mono)}
+.sp-loop{fill:var(--teal);font-size:18px;text-anchor:middle}
+.sp-loopl{fill:var(--faint);font-size:6.5px;text-anchor:middle;letter-spacing:1px}
+.sp-node{cursor:pointer}
+.sp-node circle{transition:opacity .2s}
+.sp-node text{font-size:10px;letter-spacing:.08em;fill:var(--ink2)}
+.sp-node.dim{opacity:.3}
+.sp-arc{fill:none;transition:opacity .2s,stroke-width .2s}
+.sp-arc.dim{opacity:.16}
+.sp-side{padding:28px 30px;display:flex;flex-direction:column}
+.sp-legend{display:flex;flex-direction:column;gap:9px}
+.sp-chip{display:flex;align-items:center;gap:12px;text-align:left;width:100%;cursor:pointer;
+  border:1px solid var(--rule2);background:var(--paper);padding:12px 14px;transition:all .2s;font-family:inherit}
+.sp-chip:hover{border-color:var(--mute)}
+.sp-chip.on{border-color:var(--ink);background:var(--card)}
+.sp-chip .sp-sw{width:11px;height:11px;border-radius:50%;flex:none}
+.sp-chip .sp-ct{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--ink);font-weight:600}
+.sp-chip .sp-cs{font-size:11px;color:var(--mute);font-weight:300}
+.sp-chip .sp-cstg{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.sp-detail{margin-top:24px;padding-top:22px;border-top:2px solid var(--rule);flex:1}
+.sp-detail .dl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:5px}
+.sp-detail h4{font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.1;margin-bottom:7px}
+.sp-detail .owns{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;margin-bottom:14px}
+.sp-detail p{color:var(--ink2);font-size:15px;font-weight:300}
+@media(max-width:900px){.sp-body{grid-template-columns:1fr}.sp-canvas{border-right:0;border-bottom:1px solid var(--rule)}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
@@ -418,8 +452,9 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
     <a class="logo" href="#top"><span class="dot"></span>MIZOKI3</a>
     <div class="nav-links">
       <a href="#pipeline" class="hide-m">§02 ENGINE</a>
-      <a href="#control" class="hide-m">§03 CONTROL</a>
-      <a href="#divisions" class="hide-m">§04 DOMAINS</a>
+      <a href="#architecture" class="hide-m">§03 LOOP</a>
+      <a href="#control" class="hide-m">§04 CONTROL</a>
+      <a href="#divisions" class="hide-m">§05 DOMAINS</a>
       <a href="/blog/" class="hide-m">BLOG</a>
       <a href="/login">SIGN IN</a>
       <a class="btn primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request">EXECUTIVE BRIEFING</a>
@@ -570,10 +605,34 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
   </div>
 </section>
 
+<section id="architecture" class="ruled" style="padding-top:0">
+  <div class="wrap">
+    <div class="art">
+      <div class="folio reveal">§03<span class="sub">ARCHITECTURE</span></div>
+      <div>
+        <div class="reveal">
+          <h2>One loop. <em>Three subsystems carry it.</em></h2>
+          <p class="sec-lede">The reflex arc isn't a straight line — it's a loop that never stops, tightening with every pass. Three subsystems carry each signal around it: the <strong>knowledge graph</strong> grounds the reasoning, the <strong>financial model</strong> proves the action out before it's chosen, and the <strong>orchestrator</strong> executes under policy and learns from the result. <strong>Hover a subsystem or a stage</strong> to see who owns what.</p>
+        </div>
+        <div class="spiral reveal" id="spiral">
+          <div class="sp-h"><span>EXHIBIT — SRPVDAL LOOP · <b>WHO OWNS EACH STAGE</b></span><span>INTERACTIVE</span></div>
+          <div class="sp-body">
+            <div class="sp-canvas"><svg id="sp-svg" viewBox="0 0 560 470" role="img" aria-label="SRPVDAL loop with knowledge graph, financial model, and orchestrator subsystems"></svg></div>
+            <div class="sp-side">
+              <div class="sp-legend" id="sp-legend"></div>
+              <div class="sp-detail" id="sp-detail"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="control" class="ruled" style="padding-top:0">
   <div class="wrap">
     <div class="art">
-      <div class="folio reveal">§03<span class="sub">CONTROL PLANE</span></div>
+      <div class="folio reveal">§04<span class="sub">CONTROL PLANE</span></div>
       <div>
         <div class="reveal">
           <h2>Decisions you can <em>defend.</em></h2>
@@ -657,7 +716,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
 <section id="divisions" class="ruled" style="padding-top:0">
   <div class="wrap">
     <div class="art">
-      <div class="folio reveal">§04<span class="sub">DOMAINS</span></div>
+      <div class="folio reveal">§05<span class="sub">DOMAINS</span></div>
       <div>
         <div class="reveal">
           <h2>It maps to your business. <em>Not the other way around.</em></h2>
@@ -687,7 +746,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
 <section id="enterprise" class="ruled" style="padding-top:0">
   <div class="wrap">
     <div class="art">
-      <div class="folio reveal">§05<span class="sub">ASSURANCE</span></div>
+      <div class="folio reveal">§06<span class="sub">ASSURANCE</span></div>
       <div>
         <div class="reveal">
           <h2>You keep control. <em>The system handles complexity.</em></h2>
@@ -705,7 +764,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
 
 <section class="final">
   <div class="wrap reveal">
-    <div class="filing"><span class="fno">§06</span><span class="sep">/</span><span>OUTCOMES COMPOUNDED</span></div>
+    <div class="filing"><span class="fno">§07</span><span class="sep">/</span><span>OUTCOMES COMPOUNDED</span></div>
     <h2>A nervous system <em>for your business.</em></h2>
     <p class="sec-lede">Real-time understanding, prediction, and defensible action across your entire organization. See MIZOKI3 sense your own operating structure in a private executive briefing.</p>
     <div class="cta-row">
@@ -1042,6 +1101,104 @@ setDiv(0);
   })(ps[i]);
   calc();
 }catch(e){}})();
+
+/* ---------- SRPVDAL spiral: subsystem ownership ---------- */
+(function(){try{
+var svg=document.getElementById('sp-svg');if(!svg)return;
+var legend=document.getElementById('sp-legend'),detail=document.getElementById('sp-detail');
+var NS='http://www.w3.org/2000/svg';
+function E(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+
+var COMP={
+ kg :{label:'Knowledge Graph',sub:'Temporal-Causal Knowledge Graph',owns:'Reason · Plan',color:'#0C7C8F',
+   role:'Holds a living graph of every entity, relationship, and prediction — with full provenance. It grounds reasoning and planning in cause and effect, so the system understands why, not just what.'},
+ fin:{label:'Financial Model',sub:'Counterfactual Simulation Engine',owns:'Validate · Decide',color:'#B07A18',
+   role:'Forecasts the financial outcome of every candidate action — liquidity, P&L, ROAS — runs risk and sensitivity, and enforces capital guardrails before any choice is ranked. Nothing reaches a decision unproven.'},
+ orc:{label:'Orchestrator',sub:'Boss Agent',owns:'Act · Learn',color:'#1F8A5B',
+   role:'Executes only after every policy gate clears, coordinates the sub-agents, writes the tamper-evident audit trail, and feeds the outcome back into the graph — so the next pass around the loop is sharper.'}
+};
+var ENTRY={label:'Sense',sub:'The loop begins',owns:'Entry',color:'#5E6E75',
+   role:'Signals enter here. The nervous system senses the whole organization at once — telemetry, contracts, ledgers — and streams it into the graph. Everything downstream reasons over what it captures.'};
+var STAGES=[
+ {k:'SENSE',c:null},{k:'REASON',c:'kg'},{k:'PLAN',c:'kg'},{k:'VALIDATE',c:'fin'},
+ {k:'DECIDE',c:'fin'},{k:'ACT',c:'orc'},{k:'LEARN',c:'orc'}
+];
+var N=STAGES.length,cx=280,cy=236,rOut=186,rIn=60,turns=1.12;
+function pt(f){var a=-Math.PI/2+f*Math.PI*2*turns,r=rOut-(rOut-rIn)*f;
+  return {x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,a:a}}
+function path(f0,f1){var d='',first=true;
+  for(var f=f0;f<=f1+1e-9;f+=0.01){var p=pt(f);d+=(first?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1)+' ';first=false}
+  return d}
+
+svg.appendChild(E('path',{d:path(-0.03,1.07),fill:'none',stroke:'#C3CCD0','stroke-width':1.5}));
+
+var ARCS={kg:[0.12,0.38],fin:[0.46,0.705],orc:[0.79,1.045]},arcEls={};
+for(var ck in ARCS){var a=ARCS[ck];
+  var pe=E('path',{d:path(a[0],a[1]),fill:'none',stroke:COMP[ck].color,'stroke-width':5,'stroke-linecap':'round'});
+  pe.setAttribute('class','sp-arc');pe.setAttribute('data-c',ck);svg.appendChild(pe);arcEls[ck]=pe}
+
+svg.appendChild(E('circle',{cx:cx,cy:cy,r:22,fill:'#FBFCFC',stroke:'#D4DBDE','stroke-width':1}));
+var lt=E('text',{x:cx,y:cy,'class':'sp-loop'});lt.textContent='↻';svg.appendChild(lt);
+var ll=E('text',{x:cx,y:cy+14,'class':'sp-loopl'});ll.textContent='LOOP TIGHTENS';svg.appendChild(ll);
+var rs=E('circle',{cx:cx,cy:cy,r:22,fill:'transparent',style:'cursor:pointer'});rs.addEventListener('click',overview);svg.appendChild(rs);
+
+var nodeEls=[];
+for(var i=0;i<N;i++){(function(i){
+  var s=STAGES[i],f=i/(N-1),p=pt(f),col=s.c?COMP[s.c].color:ENTRY.color;
+  var g=E('g',{'class':'sp-node'});
+  g.appendChild(E('circle',{cx:p.x,cy:p.y,r:s.c?7:8,fill:'#FBFCFC',stroke:col,'stroke-width':2.5}));
+  g.appendChild(E('circle',{cx:p.x,cy:p.y,r:2.6,fill:col}));
+  var dx=Math.cos(p.a),dy=Math.sin(p.a),anch=dx<-0.25?'end':(dx>0.25?'start':'middle');
+  var tx=E('text',{x:(p.x+dx*16).toFixed(1),y:(p.y+dy*16+3.5).toFixed(1),'text-anchor':anch});
+  tx.textContent=s.k;g.appendChild(tx);
+  function sel(){if(s.c)select(s.c);else showEntry()}
+  g.addEventListener('click',sel);g.addEventListener('mouseenter',sel);
+  svg.appendChild(g);nodeEls.push({g:g,comp:s.c})
+})(i)}
+
+var chips={};
+['kg','fin','orc'].forEach(function(ck){
+  var d=COMP[ck],b=document.createElement('button');b.type='button';b.className='sp-chip';b.setAttribute('data-c',ck);
+  b.innerHTML='<span class="sp-sw" style="background:'+d.color+'"></span>'+
+    '<span><span class="sp-ct">'+d.label+'</span><span class="sp-cs"> · '+d.sub+'</span></span>'+
+    '<span class="sp-cstg">'+d.owns+'</span>';
+  b.addEventListener('click',function(){b.classList.contains('on')?overview():select(ck)});
+  b.addEventListener('mouseenter',function(){select(ck)});
+  legend.appendChild(b);chips[ck]=b
+});
+
+function setDetail(d){
+  detail.style.borderTopColor=d.color;
+  detail.innerHTML='<div class="dl" style="color:'+d.color+'">'+d.sub+'</div>'+
+    '<h4>'+d.label+'</h4><div class="owns">OWNS · '+d.owns+'</div><p>'+d.role+'</p>'
+}
+function reset(){
+  for(var k in arcEls){arcEls[k].classList.remove('dim');arcEls[k].setAttribute('stroke-width','5')}
+  for(var i=0;i<nodeEls.length;i++)nodeEls[i].g.classList.remove('dim');
+  for(var c in chips){chips[c].classList.remove('on');chips[c].style.boxShadow=''}
+}
+function select(ck){
+  reset();
+  for(var k in arcEls){var on=k===ck;arcEls[k].setAttribute('stroke-width',on?'7':'5');if(!on)arcEls[k].classList.add('dim')}
+  for(var i=0;i<nodeEls.length;i++)if(nodeEls[i].comp!==ck)nodeEls[i].g.classList.add('dim');
+  chips[ck].classList.add('on');chips[ck].style.boxShadow='inset 3px 0 0 '+COMP[ck].color;
+  setDetail(COMP[ck])
+}
+function showEntry(){
+  reset();
+  for(var k in arcEls)arcEls[k].classList.add('dim');
+  for(var i=0;i<nodeEls.length;i++)if(nodeEls[i].comp)nodeEls[i].g.classList.add('dim');
+  setDetail(ENTRY)
+}
+function overview(){
+  reset();detail.style.borderTopColor='';
+  detail.innerHTML='<div class="dl" style="color:var(--teal)">THE CONTINUOUS LOOP</div>'+
+    '<h4>Three subsystems, one memory.</h4>'+
+    '<div class="owns">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</div>'+
+    '<p>Every signal travels the full loop. The knowledge graph grounds it, the financial model proves it out, and the orchestrator executes and learns — each pass written to one shared memory, so the loop tightens over time. Hover a subsystem to isolate the stages it owns.</p>'
+}
+overview();
+}catch(e){var s=document.getElementById('architecture');if(s)s.style.display='none'}})();
 
 /* ---------- observers: enhancement only ---------- */
 if('IntersectionObserver' in window){
