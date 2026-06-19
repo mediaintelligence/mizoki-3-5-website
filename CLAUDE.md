@@ -56,9 +56,9 @@ Key innovations:
 
 ```
 mizoki-website/
-├── index.html                    # Homepage — MIZOKI3.com adaptive nervous-system design
-│                                 # (Flywheel, bento cards, Live Nexus Snapshot,
-│                                 # Counterfactual Sim Engine, DEL gauge, CTA)
+├── index.html                    # Homepage — nervous-system design (1,068 lines, vanilla JS)
+│                                 # Hero graph + schema inspector, executable SRPVDAL sim,
+│                                 # DEL gauge + scorecard, control-plane sandbox, domain tabs
 ├── how-it-works.html             # Legacy — 301s to / via app.py
 ├── platform.html                 # Legacy — 301s to / via app.py
 ├── security.html                 # Legacy — 301s to / via app.py
@@ -146,6 +146,64 @@ mizoki-website/
 ---
 
 ## Recent Work (June 2026)
+
+### Homepage Polish — Live-vs-Repo Audit, DEL Gauge Fix, Illustrative Disclaimer (2026-06-18)
+
+Reviewed a founder-supplied `index.html` paste against **live mizoki3.com** and repo
+`index.html`. Finding: the paste was **not a full redesign** — production already shipped
+the June-13 interactive homepage (executable SRPVDAL sim, hero schema inspector, authorization
+scorecard, control-plane sandbox). The paste was a **polish pass** with four meaningful deltas
+over live. Repo root `index.html` was already byte-identical to live (1,067 lines / 71,671 bytes)
+before this session; an older ~827-line static reflex-arc version must **not** be redeployed —
+that would roll back all interactivity.
+
+**Four deltas cherry-picked and shipped (`index.html` only — no `app.py`, runtime, route, or test changes):**
+
+1. **DEL gauge narrative fix (§03).** Live had an internal contradiction: copy cited ACT-991 at
+   **39** (vetoed) while the gauge displayed **87** and animated to 87 (eligible). Fixed initial
+   HTML to `39` with `var(--veto)` styling, label `DEL SCORE · ACT-991 VETOED`, arc fill
+   `439.8*(1-0.39)` with veto stroke, and IntersectionObserver animation counting to 39 (both
+   observer and no-JS fallback branches). Aligns gauge with simulation default, scorecard, and
+   "ACT-991 at 39" copy. Control-plane **sandbox** left at 82/ELIGIBLE default — intentional;
+   it is an independent interactive demo, not tied to ACT-991.
+2. **Illustrative figures disclaimer.** Added strip footer under the five metric cells:
+   `ILLUSTRATIVE FIGURES · REPRESENTATIVE OF A DEPLOYED MIZOKI3 SYSTEM` — enterprise liability
+   hygiene on synthetic stats (48,213 nodes, 1,294 signals/24h, etc.).
+3. **Domains copy (§04).** Replaced "how the **customers we've onboarded** happen to be structured
+   **today**" with "how a **typical deployment tends to be structured**" — matches canonical
+   positioning that divisions are example deployments, not a fixed product shape. Kept footer line
+   "Your deployment is whatever your business is. There is no list to fit into."
+4. **Hero plate label.** `EXHIBIT A — ORGANIZATIONAL GRAPH · ILLUSTRATIVE` (was missing
+   `· ILLUSTRATIVE`). `▸ INSPECT NODES` unchanged.
+
+**Not changed (already correct on live):** executable sim controls and deterministic model
+(`post = $6.0M − amount`; breach if `post < floor`; DEL `= 62 + marginPct·1.1 − (amount/pool)·6 −
+(legal ? 0 : 45)`; default Capital · $5.0M · floor $2.0M → score 39, VETO, Option B $4.0M);
+hero schema inspector (Counsel CLAUSE GRAPH overlay, five `dnode`s + TCKG core); authorization
+scorecard (four gates, fiduciary BREACH); sandbox presets; no `/manufacturing` footer link.
+
+**Branch / deploy:** `cursor/homepage-polish-deltas-c454` → **PR #6** squash-merged to `main`
+at `13e2061` (*Homepage polish: DEL gauge fix, illustrative disclaimer, domains copy*). WIF
+auto-deploy workflow `deploy-cloudrun.yml` run **`27796329844`** built + rolled Cloud Run green
+in ~48s.
+
+**Verification before merge:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` clean;
+`python3 -m unittest tests.test_app tests.test_runtime` → **32 passing**; `app.test_client()`
+smoke of `/` → 200 with markers `sim-run`, `schema-ov`, `ILLUSTRATIVE FIGURES`,
+`ACT-991 VETOED`, `typical deployment tends`, `EXECUTABLE CAUSAL SIMULATION`; ACT-991 model
+probed (amt 5.0, floor 2.0, post 1.0, score 39, verdict veto, optB 4.0).
+
+**Post-deploy audit (mizoki3.com vs founder reference paste):** repo `index.html` and live HTML
+confirmed **byte-identical** after deploy. Full section-by-section audit — 43 content markers PASS
+(top bar `DOC. MZK3-2026 · REV 4`, nav §02/§03/§04, hero nervous-system copy, exhibit + schema
+inspector, metrics + disclaimer, §02 "Run one yourself" sim, §03 gauge 39 + scorecard + sandbox,
+§04 typical-deployment copy, §05 assurance, §06 CTA, footer five example domains only). Regressions
+checked: no gauge 87, no "customers we've onboarded" on page, no `IMMUTABLE DECISION TRACE`
+header, no `/manufacturing` link, no "brain" product metaphor.
+
+**Gotcha for future agents:** if `index.html` is ~827 lines with a static `STAGES` array and no
+`sim-inputs` / `schema-ov` IDs, that is **stale** — fetch live or use current `main` before editing.
+Interactive homepage lives entirely in root `index.html` (single-file vanilla JS, no build step).
 
 ### Homepage Strategic Upgrades — Executable Simulation + Schema Inspector + Dynamic Gating (2026-06-13)
 
