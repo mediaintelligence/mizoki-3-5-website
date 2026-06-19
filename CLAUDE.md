@@ -147,6 +147,52 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Homepage §03 ARCHITECTURE — Interactive SRPVDAL Spiral + Subsystem Ownership (2026-06-19)
+
+Integrated a founder-supplied investor slide (the "SRPVDAL spiral" — SENSE → REASON → PLAN →
+VALIDATE → DECIDE → ACT → LEARN with three component callouts) into the homepage as a real,
+interactive section rather than a static export. Built in the canonical single-file vanilla-JS
+`index.html` (no build step), matching the existing exhibit pattern (SVG generated in JS like the
+§02 reflex arc and §05 divisions).
+
+**New section `#architecture` (§03 ARCHITECTURE), inserted between §02 reflex arc and the control
+plane.** Renders an SVG **spiral** of the seven SRPVDAL stages (outer SENSE spiraling inward to
+LEARN, with a center `↻ LOOP TIGHTENS` glyph to convey the continuous, compounding loop) and maps
+each stage to the subsystem that owns it:
+
+- **Knowledge Graph** (Temporal-Causal Knowledge Graph) → owns **Reason · Plan** — teal.
+- **Financial Model** (Counterfactual Simulation Engine) → owns **Validate · Decide** — amber.
+- **Orchestrator** (Boss Agent) → owns **Act · Learn** — green.
+- **Sense** is the neutral entry node (where signals enter), unowned by the three — faithful to the
+  slide.
+
+**Interaction:** hovering/clicking a legend chip or a stage node isolates that subsystem (colors its
+arc + the two stages it owns, dims the rest) and updates a detail panel describing its role; the
+center glyph (or clicking an active chip) resets to an overview. Keyboard path is the three `<button>`
+legend chips; the SVG nodes are mouse/hover enhancement. Honors `prefers-reduced-motion` (it's
+interactive, not animated). Wrapped in try/catch — if it ever throws, the section hides itself rather
+than showing an empty card.
+
+**Positioning honored:** nervous-system framing, no "brain" metaphor; subsystems named in
+site-consistent vocabulary (TCKG / Counterfactual Simulation Engine), with the founder's exact
+callout labels (Knowledge Graph / Financial Model / Boss Agent) surfaced as the subsystem names.
+Divisions framing untouched.
+
+**Renumbering (folios are sequential ledger numbers):** new section is §03; CONTROL PLANE §03→§04,
+DOMAINS §04→§05, ASSURANCE §05→§06, final filing §06→§07. Nav gained `§03 LOOP` (→`#architecture`)
+and bumped CONTROL→§04 / DOMAINS→§05. Anchor hrefs (`#pipeline`, `#control`, `#divisions`) unchanged.
+
+**Files:** `index.html` only — added spiral CSS (`.spiral`/`.sp-*`), the section markup, and one
+`SRPVDAL spiral` IIFE (SVG built with `createElementNS`). No `app.py`, runtime, route, or test
+changes.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` clean; `python3 -m
+unittest tests.test_app tests.test_runtime` → **32 passing**; `node --check` on the extracted
+homepage script clean; HTMLParser structural balance passes (no unclosed/stray tags); `app.test_client()`
+smoke of `/` → 200 with all new markers (`id="architecture"`, `id="sp-svg"`, `WHO OWNS EACH STAGE`,
+`§03 LOOP`, renumbered folios §04–§07) and no `§03 CONTROL` nav regression; all 7 spiral node + label
+coordinates confirmed within the viewBox (no clipping).
+
 ### Homepage Polish — Live-vs-Repo Audit, DEL Gauge Fix, Illustrative Disclaimer (2026-06-18)
 
 Reviewed a founder-supplied `index.html` paste against **live mizoki3.com** and repo
