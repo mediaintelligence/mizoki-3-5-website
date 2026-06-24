@@ -28,6 +28,9 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "gndi.run_decision_loop",
                 "gndi.simulate_action",
                 "graphrag.query",
+                "journey.ingest_events",
+                "journey.normalize_event",
+                "journey.recent_events",
                 "kg.describe_entity",
                 "kg.list_neighbors",
                 "programmatic.ingest_bidstream",
@@ -229,6 +232,120 @@ class BossRuntimeTestCase(unittest.TestCase):
             self.runtime.run_programmatic_pipeline([])
         with self.assertRaises(ValueError):
             self.runtime.ingest_bidstream("not-a-list")
+
+    def test_journey_normalizes_each_connector_into_canonical_schema(self) -> None:
+        cases = {
+            "meta": (_META_EVENT, "Purchase", "campaign_id", "111"),
+            "google_ads": (_GOOGLE_ADS_ROW, "conversion", "campaign_id", "111"),
+            "sendgrid": (_SENDGRID_EVENT, "click", "message_id", "SG.x.y"),
+            "openrtb": (_OPENRTB_REQUEST, "bid_request", "auction_id", "auc-1"),
+        }
+        for source, (payload, expected_type, context_key, context_value) in cases.items():
+            result = self.runtime.normalize_journey_event(source, payload)
+            self.assertTrue(result["valid"], msg=f"{source} errors: {result['errors']}")
+            event = result["event"]
+            self.assertEqual(source, event["event_source"])
+            self.assertEqual(expected_type, event["event_type"])
+            self.assertEqual(context_value, event["context"][context_key])
+            self.assertTrue(event["event_time"])  # always populated (schema-required)
+            self.assertEqual([], self.runtime.journey.schema.validate(event))
+
+    def test_journey_provenance_pins_model_and_schema_hash(self) -> None:
+        result = self.runtime.normalize_journey_event("sendgrid", _SENDGRID_EVENT)
+        provenance = result["event"]["provenance"]
+        for field in (
+            "model_version",
+            "request_id",
+            "prompt_hash",
+            "response_schema_hash",
+            "connector_version",
+            "ingest_time",
+        ):
+            self.assertTrue(provenance[field], msg=f"missing provenance.{field}")
+        self.assertEqual("SENSE", provenance["srpvdal_phase"])
+        self.assertEqual(self.runtime.journey.schema.schema_hash, provenance["response_schema_hash"])
+        self.assertEqual("mizoki/ingest/sendgrid", provenance["pipeline"])
+
+    def test_journey_event_id_is_stable_and_ingest_is_idempotent(self) -> None:
+        first = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
+        second = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
+        self.assertEqual(first["event_id"], second["event_id"])
+
+        initial = self.runtime.ingest_journey_events("meta", [_META_EVENT])
+        self.assertEqual(1, initial["accepted"])
+        self.assertEqual(1, initial["idempotency"]["inserted"])
+
+        replayed = self.runtime.ingest_journey_events("meta", [_META_EVENT], replay=True)
+        self.assertEqual(1, replayed["idempotency"]["duplicate"])
+        self.assertEqual(0, replayed["idempotency"]["inserted"])
+        self.assertEqual(1, self.runtime.journey.store.count())
+
+    def test_journey_ingest_persists_and_fans_out_to_sinks(self) -> None:
+        batch = [_META_EVENT, _SENDGRID_EVENT]
+        summary = self.runtime.ingest_journey_events("meta", [_META_EVENT])
+        sendgrid_summary = self.runtime.ingest_journey_events("sendgrid", [_SENDGRID_EVENT])
+        self.assertEqual("SENSE", summary["srpvdal_phase"])
+        self.assertEqual(4, len(summary["sinks"]))
+        self.assertTrue(all(sink["status"] == "written" for sink in summary["sinks"]))
+        recent = self.runtime.recent_journey_events(limit=10)
+        self.assertEqual(2, len(recent))
+        self.assertEqual({"meta", "sendgrid"}, {event["event_source"] for event in recent})
+        self.assertEqual(len(batch), summary["received"] + sendgrid_summary["received"])
+
+    def test_journey_validation_gate_rejects_bad_records(self) -> None:
+        result = self.runtime.ingest_journey_events("meta", [_META_EVENT, "not-an-object"])
+        self.assertEqual(1, result["accepted"])
+        self.assertEqual(1, result["rejected"])
+        self.assertEqual(1, result["rejections"][0]["index"])
+        self.assertTrue(result["rejections"][0]["errors"])
+
+    def test_journey_rejects_unknown_source_and_bad_payload(self) -> None:
+        with self.assertRaises(ValueError):
+            self.runtime.normalize_journey_event("tiktok", _META_EVENT)
+        with self.assertRaises(ValueError):
+            self.runtime.normalize_journey_event("meta", "not-a-dict")
+        with self.assertRaises(ValueError):
+            self.runtime.ingest_journey_events("meta", [])
+
+
+# Canonical JourneyEvent test vectors (one per connector).
+_META_EVENT = {
+    "event_name": "Purchase",
+    "event_time": 1719945600,
+    "user_data": {"em": "hash", "ph": "hash", "client_ip_address": "1.2.3.4", "client_user_agent": "UA"},
+    "custom_data": {
+        "value": 59.99,
+        "currency": "USD",
+        "order_id": "A123",
+        "campaign_id": "111",
+        "adset_id": "222",
+        "ad_id": "333",
+    },
+}
+
+_GOOGLE_ADS_ROW = {
+    "campaign": {"id": "111"},
+    "ad_group": {"id": "222"},
+    "ad_group_ad": {"ad": {"id": "333"}},
+    "metrics": {"conversions": 1, "conversions_value": 59.99},
+    "customer": {"currency_code": "USD"},
+    "segments": {"date": "2026-06-22", "hour": 14, "geo_target_country": "US"},
+}
+
+_SENDGRID_EVENT = {
+    "event": "click",
+    "timestamp": 1719945600,
+    "email": "sam@example.com",
+    "sg_message_id": "SG.x.y",
+    "url": "https://site.com/p/abc",
+}
+
+_OPENRTB_REQUEST = {
+    "id": "auc-1",
+    "imp": [{"id": "1", "tagid": "slot-7", "bidfloor": 0.8}],
+    "site": {"domain": "news.com"},
+    "device": {"ifa": "ifa123", "ip": "1.1.1.1", "ua": "UA"},
+}
 
 
 def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):

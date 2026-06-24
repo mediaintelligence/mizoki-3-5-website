@@ -181,6 +181,66 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn("must be an array", response.get_json()["error"])
 
+    def test_journey_schema_is_served(self) -> None:
+        response = self.client.get("/schemas/journey-event.json")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertEqual("JourneyEvent", payload["title"])
+        self.assertEqual(
+            ["meta", "google_ads", "sendgrid", "openrtb", "other"],
+            payload["properties"]["event_source"]["enum"],
+        )
+        response.close()
+
+    def test_journey_normalize_endpoint_returns_canonical_event(self) -> None:
+        response = self.client.post(
+            "/api/boss/journey/normalize",
+            json={
+                "source": "openrtb",
+                "payload": {
+                    "id": "auc-1",
+                    "imp": [{"id": "1", "tagid": "slot-7", "bidfloor": 0.8}],
+                    "site": {"domain": "news.com"},
+                    "device": {"ifa": "ifa123"},
+                },
+            },
+        )
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertTrue(payload["valid"])
+        self.assertEqual("openrtb", payload["event"]["event_source"])
+        self.assertEqual("auc-1", payload["event"]["context"]["auction_id"])
+
+    def test_journey_ingest_endpoint_is_idempotent(self) -> None:
+        event = {
+            "event": "open",
+            "timestamp": 1719945600,
+            "email": "lead@example.com",
+            "sg_message_id": "SG.abc.def",
+        }
+        first = self.client.post(
+            "/api/boss/journey/ingest",
+            json={"source": "sendgrid", "events": [event]},
+        )
+        self.assertEqual(200, first.status_code)
+        self.assertEqual(1, first.get_json()["idempotency"]["inserted"])
+
+        second = self.client.post(
+            "/api/boss/journey/ingest",
+            json={"source": "sendgrid", "events": [event], "replay": True},
+        )
+        self.assertEqual(200, second.status_code)
+        self.assertEqual(1, second.get_json()["idempotency"]["duplicate"])
+
+        events_response = self.client.get("/api/boss/journey/events")
+        self.assertEqual(200, events_response.status_code)
+        self.assertEqual(1, len(events_response.get_json()["events"]))
+
+    def test_journey_ingest_endpoint_validates_events(self) -> None:
+        response = self.client.post("/api/boss/journey/ingest", json={"source": "meta", "events": "nope"})
+        self.assertEqual(400, response.status_code)
+        self.assertIn("must be an array", response.get_json()["error"])
+
 
 if __name__ == "__main__":
     unittest.main()

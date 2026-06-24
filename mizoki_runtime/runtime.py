@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
+from .journey import JourneyIngestCell
+
 
 STOP_WORDS = {
     "a",
@@ -519,6 +521,18 @@ GRAPH_NODES = {
         "summary": "Auction-level programmatic signal source: bid requests, win/loss notices, buyer IDs, exchange/seat metadata, floors, currency, and consent that enter the loop at the SENSE stage.",
         "aliases": ("bidstream", "openrtb", "rtb bidstream", "auction signals"),
     },
+    "journey_event": {
+        "name": "JourneyEvent Schema",
+        "type": "schema",
+        "summary": "Canonical event shape that normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one record so every connector enters SRPVDAL deterministically and idempotently at the SENSE stage.",
+        "aliases": ("journey event", "canonical event", "event schema", "journeyevent"),
+    },
+    "journey_ingest": {
+        "name": "Journey Ingest Cell",
+        "type": "cell",
+        "summary": "SENSE-stage connector layer that maps native Meta/Google Ads/SendGrid/OpenRTB payloads to the JourneyEvent schema, validates them against the schema gate, and upserts them idempotently on a stable event_id with full provenance.",
+        "aliases": ("journey ingest", "event normalizer", "connector layer", "sense connectors"),
+    },
 }
 
 
@@ -557,6 +571,11 @@ GRAPH_EDGES = (
     ("programmatic_intelligence", "runs", "srpvdal"),
     ("programmatic_intelligence", "validated_by", "validation_arbitration"),
     ("openrtb_bidstream", "feeds", "sense"),
+    ("journey_ingest", "normalizes_to", "journey_event"),
+    ("journey_ingest", "feeds", "sense"),
+    ("journey_ingest", "validated_by", "validation_arbitration"),
+    ("journey_event", "feeds", "sense"),
+    ("openrtb_bidstream", "normalized_by", "journey_ingest"),
 )
 
 GRAPH_NATIVE_STAGE_ORDER = ("sense", "reason", "plan", "validate", "decide", "act", "learn")
@@ -2281,6 +2300,7 @@ class BossAgent:
         knowledge_graph: KnowledgeGraph,
         graph_decision: GraphNativeDecisionIntelligence,
         programmatic: ProgrammaticIntelligenceCell,
+        journey: JourneyIngestCell,
         trace_file: Path,
     ) -> None:
         self.registry = registry
@@ -2289,6 +2309,7 @@ class BossAgent:
         self.knowledge_graph = knowledge_graph
         self.graph_decision = graph_decision
         self.programmatic = programmatic
+        self.journey = journey
         self.trace_file = trace_file
         self.trace_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -2314,6 +2335,10 @@ class BossAgent:
                     "programmatic.recent_runs",
                 ],
                 "recent_runs": self.programmatic.recent_runs(limit=3),
+            },
+            "journey": {
+                **self.journey.discovery_block(),
+                "description": "Canonical JourneyEvent connector layer: normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one schema at SENSE with deterministic, idempotent upserts.",
             },
             "capabilities": {
                 "skill_learning_tools": ["skills.learn", "skills.learn_from_loop"],
@@ -2816,6 +2841,10 @@ class BossRuntime:
             self.knowledge_graph,
             self.data_dir / "programmatic_runs.jsonl",
         )
+        self.journey = JourneyIngestCell(
+            self.base_dir / "schemas" / "journey-event.json",
+            self.data_dir / "journey_events.jsonl",
+        )
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
         self._register_tools()
@@ -2827,6 +2856,7 @@ class BossRuntime:
             knowledge_graph=self.knowledge_graph,
             graph_decision=self.graph_decision,
             programmatic=self.programmatic,
+            journey=self.journey,
             trace_file=self.data_dir / "boss_decision_log.jsonl",
         )
 
@@ -2940,6 +2970,47 @@ class BossRuntime:
                 parameters=(ToolParameter("limit", "integer", "Maximum number of traces to return.", default=5),),
                 tags=("programmatic", "bidstream", "traces", "audit", "cell-27"),
                 handler=lambda payload: {"runs": self.programmatic.recent_runs(limit=payload["limit"])},
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="journey.normalize_event",
+                description="Normalize a single native connector payload (meta, google_ads, sendgrid, openrtb, other) into the canonical JourneyEvent schema and validate it, without persisting.",
+                category="journey",
+                parameters=(
+                    ToolParameter("source", "string", "Connector source: meta, google_ads, sendgrid, openrtb, or other.", required=True),
+                    ToolParameter("payload", "object", "Native source payload to normalize.", required=True),
+                ),
+                tags=("journey", "schema", "normalize", "sense", "connector"),
+                handler=lambda payload: self.journey.normalize_event(payload["source"], payload["payload"]),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="journey.ingest_events",
+                description="SENSE stage: normalize a batch of native connector records into JourneyEvents, validate them against the schema gate, and upsert idempotently on a stable event_id.",
+                category="journey",
+                parameters=(
+                    ToolParameter("source", "string", "Connector source: meta, google_ads, sendgrid, openrtb, or other.", required=True),
+                    ToolParameter("events", "array", "Array of native source records for the connector.", required=True),
+                    ToolParameter("replay", "boolean", "Mark the batch as a replay in provenance (idempotency unchanged).", default=False),
+                ),
+                tags=("journey", "schema", "ingest", "sense", "idempotent"),
+                handler=lambda payload: self.journey.ingest(
+                    payload["source"],
+                    payload["events"],
+                    replay=payload["replay"],
+                ),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="journey.recent_events",
+                description="Return the most recent canonical JourneyEvents from the idempotent event store.",
+                category="journey",
+                parameters=(ToolParameter("limit", "integer", "Maximum number of events to return.", default=10),),
+                tags=("journey", "events", "store", "audit"),
+                handler=lambda payload: {"events": self.journey.recent_events(limit=payload["limit"])},
             )
         )
         self.registry.register(
@@ -3150,6 +3221,7 @@ class BossRuntime:
             "graph_native_loop_count": len(self.graph_decision.recent_loops(limit=100)),
             "graph_native_subagent_count": len(self.graph_decision.list_subagents()),
             "programmatic_run_count": len(self.programmatic.recent_runs(limit=100)),
+            "journey_event_count": self.journey.store.count(),
         }
 
     def list_tools(self) -> list[dict[str, Any]]:
@@ -3241,6 +3313,20 @@ class BossRuntime:
 
     def recent_programmatic_runs(self, limit: int = 5) -> list[dict[str, Any]]:
         return self.programmatic.recent_runs(limit=limit)
+
+    def normalize_journey_event(self, source: str, payload: Any) -> dict[str, Any]:
+        return self.journey.normalize_event(source, payload)
+
+    def ingest_journey_events(
+        self,
+        source: str,
+        events: Any,
+        replay: bool = False,
+    ) -> dict[str, Any]:
+        return self.journey.ingest(source, events, replay=replay)
+
+    def recent_journey_events(self, limit: int = 10) -> list[dict[str, Any]]:
+        return self.journey.recent_events(limit=limit)
 
 
 def create_runtime(base_dir: Path | None = None, data_dir: Path | None = None) -> BossRuntime:
