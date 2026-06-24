@@ -593,10 +593,15 @@ class JourneyIngestCell:
     VALIDATE gate sits in front of ACT.
     """
 
-    def __init__(self, schema_path: Path, store_path: Path) -> None:
+    def __init__(self, schema_path: Path, store_path: Path, external_sinks: list[Any] | None = None) -> None:
         self.schema = JourneyEventSchema(schema_path)
         self.normalizer = JourneyEventNormalizer(self.schema)
         self.store = JourneyEventStore(store_path)
+        # Optional cloud sinks (Firestore / BigQuery). Each exposes `name` and
+        # `upsert(event) -> str`; delegation is best-effort so a misconfigured or
+        # credential-less sink degrades to an `error` status instead of failing
+        # the whole SENSE batch. Empty by default -> in-process JSONL only.
+        self.external_sinks = list(external_sinks or [])
 
     def normalize_event(self, source: str, payload: Any, **kwargs: Any) -> dict[str, Any]:
         event = self.normalizer.normalize(source, payload, **kwargs)
@@ -622,6 +627,10 @@ class JourneyIngestCell:
         accepted: list[dict[str, Any]] = []
         rejected: list[dict[str, Any]] = []
         status_counts = {"inserted": 0, "updated": 0, "duplicate": 0}
+        external_results = {
+            sink.name: {"written": 0, "skipped": 0, "errors": []}
+            for sink in self.external_sinks
+        }
 
         for index, raw in enumerate(events):
             if not isinstance(raw, dict):
@@ -641,12 +650,15 @@ class JourneyIngestCell:
             status = self.store.upsert(event)
             status_counts[status] += 1
             accepted.append({"event_id": event["event_id"], "event_type": event["event_type"], "status": status})
+            # Forward only real writes; duplicates are no-ops to keep replays idempotent.
+            if status != "duplicate":
+                self._forward_to_sinks(event, external_results)
 
         sinks = [
             {"sink": sink, "records": len(accepted), "status": "written"}
             for sink in JOURNEY_SINKS
         ]
-        return {
+        summary = {
             "srpvdal_phase": "SENSE",
             "event_source": source.strip().lower() if isinstance(source, str) else source,
             "request_id": batch_request_id,
@@ -660,6 +672,20 @@ class JourneyIngestCell:
             "rejections": rejected,
             "sample": [deepcopy(record) for record in self.store.recent_events(limit=5)],
         }
+        if self.external_sinks:
+            summary["external_sinks"] = [
+                {"sink": name, **result} for name, result in external_results.items()
+            ]
+        return summary
+
+    def _forward_to_sinks(self, event: dict[str, Any], results: dict[str, dict[str, Any]]) -> None:
+        for sink in self.external_sinks:
+            bucket = results[sink.name]
+            try:
+                sink.upsert(event)
+                bucket["written"] += 1
+            except Exception as exc:  # noqa: BLE001 - degrade gracefully, never fail the batch
+                bucket["errors"].append({"event_id": event["event_id"], "error": str(exc)})
 
     def recent_events(self, limit: int = 10) -> list[dict[str, Any]]:
         return self.store.recent_events(limit=limit)
@@ -671,6 +697,7 @@ class JourneyIngestCell:
             "response_schema_hash": self.schema.schema_hash,
             "sources": list(JOURNEY_SOURCES),
             "sinks": list(JOURNEY_SINKS),
+            "external_sinks": [sink.name for sink in self.external_sinks],
             "tools": [
                 "journey.normalize_event",
                 "journey.ingest_events",

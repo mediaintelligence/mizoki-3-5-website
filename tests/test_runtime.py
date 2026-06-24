@@ -1,11 +1,21 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from mizoki_runtime import create_runtime
+from mizoki_runtime.journey import JourneyIngestCell
+from mizoki_runtime.journey_sinks import (
+    BigQueryJourneySink,
+    FirestoreJourneySink,
+    build_journey_sinks_from_env,
+    build_merge_sql,
+    event_to_bigquery_row,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+SCHEMA_PATH = REPO_ROOT / "schemas" / "journey-event.json"
 
 
 class BossRuntimeTestCase(unittest.TestCase):
@@ -307,6 +317,62 @@ class BossRuntimeTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.runtime.ingest_journey_events("meta", [])
 
+    def _cell(self, sinks):
+        store = Path(self.temp_dir.name) / "journey_sink_test.jsonl"
+        return JourneyIngestCell(SCHEMA_PATH, store, external_sinks=sinks)
+
+    def test_journey_forwards_writes_to_external_sinks_and_skips_duplicates(self) -> None:
+        sink = _RecordingSink()
+        cell = self._cell([sink])
+
+        first = cell.ingest("meta", [_META_EVENT])
+        self.assertEqual(1, first["external_sinks"][0]["written"])
+        self.assertEqual([_first_event_id(cell, "meta", _META_EVENT)], sink.events)
+
+        # A replay is a store duplicate, so it must NOT be forwarded again.
+        replay = cell.ingest("meta", [_META_EVENT], replay=True)
+        self.assertEqual(0, replay["external_sinks"][0]["written"])
+        self.assertEqual(1, len(sink.events))
+
+    def test_journey_external_sink_errors_degrade_without_failing_batch(self) -> None:
+        cell = self._cell([_RecordingSink(name="boom", fail=True)])
+        result = cell.ingest("sendgrid", [_SENDGRID_EVENT])
+        self.assertEqual(1, result["accepted"])  # in-process store still succeeded
+        self.assertEqual(0, result["external_sinks"][0]["written"])
+        self.assertTrue(result["external_sinks"][0]["errors"])
+
+    def test_firestore_sink_upserts_document_by_event_id(self) -> None:
+        client = _FakeFirestoreClient()
+        sink = FirestoreJourneySink(collection="journey_events", client=client)
+        event = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
+        self.assertEqual("written", sink.upsert(event))
+        self.assertIn(event["event_id"], client.store)
+        stored = client.store[event["event_id"]]
+        self.assertTrue(stored["merge"])
+        self.assertEqual(event["event_source"], stored["event"]["event_source"])
+
+    def test_bigquery_merge_sql_and_row_projection(self) -> None:
+        event = self.runtime.normalize_journey_event("openrtb", _OPENRTB_REQUEST)["event"]
+        sql = build_merge_sql("analytics.journey_events")
+        self.assertIn("MERGE `analytics.journey_events`", sql)
+        self.assertIn("ON T.event_id = S.event_id", sql)
+        row = event_to_bigquery_row(event)
+        self.assertEqual(event["event_id"], row["event_id"])
+        self.assertEqual("auc-1", json.loads(row["context"])["auction_id"])
+        self.assertEqual(event["event_source"], json.loads(row["provenance"])["pipeline"].split("/")[-1])
+
+    def test_build_journey_sinks_from_env(self) -> None:
+        self.assertEqual([], build_journey_sinks_from_env({}))
+        sinks = build_journey_sinks_from_env(
+            {
+                "MIZOKI_JOURNEY_FIRESTORE_COLLECTION": "je",
+                "MIZOKI_JOURNEY_BIGQUERY_TABLE": "analytics.journey_events",
+            }
+        )
+        self.assertEqual({"firestore:je", "bigquery:analytics.journey_events"}, {sink.name for sink in sinks})
+        self.assertIsInstance(sinks[0], FirestoreJourneySink)
+        self.assertIsInstance(sinks[1], BigQueryJourneySink)
+
 
 # Canonical JourneyEvent test vectors (one per connector).
 _META_EVENT = {
@@ -346,6 +412,50 @@ _OPENRTB_REQUEST = {
     "site": {"domain": "news.com"},
     "device": {"ifa": "ifa123", "ip": "1.1.1.1", "ua": "UA"},
 }
+
+
+class _RecordingSink:
+    """Duck-typed external sink used to assert delegation without cloud libs."""
+
+    def __init__(self, name="recording", fail=False):
+        self.name = name
+        self.fail = fail
+        self.events = []
+
+    def upsert(self, event):
+        if self.fail:
+            raise RuntimeError("simulated sink failure")
+        self.events.append(event["event_id"])
+        return "written"
+
+
+class _FakeDoc:
+    def __init__(self, store, key):
+        self._store = store
+        self._key = key
+
+    def set(self, event, merge=False):
+        self._store[self._key] = {"event": event, "merge": merge}
+
+
+class _FakeCollection:
+    def __init__(self, store):
+        self._store = store
+
+    def document(self, key):
+        return _FakeDoc(self._store, key)
+
+
+class _FakeFirestoreClient:
+    def __init__(self):
+        self.store = {}
+
+    def collection(self, _name):
+        return _FakeCollection(self.store)
+
+
+def _first_event_id(cell, source, payload):
+    return cell.normalizer.normalize(source, payload)["event_id"]
 
 
 def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):

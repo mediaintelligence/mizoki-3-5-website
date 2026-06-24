@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .journey import JourneyIngestCell
+from .journey_sinks import build_journey_sinks_from_env
 
 
 STOP_WORDS = {
@@ -2844,6 +2845,7 @@ class BossRuntime:
         self.journey = JourneyIngestCell(
             self.base_dir / "schemas" / "journey-event.json",
             self.data_dir / "journey_events.jsonl",
+            external_sinks=build_journey_sinks_from_env(),
         )
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
