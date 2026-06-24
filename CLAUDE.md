@@ -108,9 +108,12 @@ mizoki-website/
 │   └── pdf/                      # Downloadable resources
 │
 ├── app.py                        # Python/Flask routing engine
+├── schemas/
+│   └── journey-event.json        # Canonical JourneyEvent schema (Meta/Google Ads/SendGrid/OpenRTB → one SENSE shape)
 ├── mizoki_runtime/
 │   ├── __init__.py
-│   └── runtime.py                # Boss runtime, MCP registry, GraphRAG, KG, and graph-native SRPVDAL loop
+│   ├── runtime.py                # Boss runtime, MCP registry, GraphRAG, KG, and graph-native SRPVDAL loop
+│   └── journey.py                # JourneyEvent connector mappers, schema validator, idempotent store, SENSE ingest cell
 ├── tests/
 │   ├── test_app.py               # Flask API coverage
 │   └── test_runtime.py           # Boss/MCP runtime coverage
@@ -146,6 +149,85 @@ mizoki-website/
 ---
 
 ## Recent Work (June 2026)
+
+### Canonical JourneyEvent Schema — Multi-Connector SENSE Normalization (2026-06-24)
+
+Added a **canonical `JourneyEvent` ingestion layer** so events from **Meta (Conversions
+API/Webhooks), Google Ads (GAQL rows), SendGrid (Event Webhook/Inbound Parse), and OpenRTB
+(bid request/win/loss)** all normalize into **one schema** and enter SRPVDAL at the **SENSE**
+stage deterministically and idempotently. Built in the same deterministic, in-process,
+dependency-free style as Cell 27 (no external services, no new pip deps — fully unit-testable).
+
+**Founder supplied two reference designs.** The first was the rich multi-connector
+`JourneyEvent` (`event_source`/`event_type`/`actor`/`context`/`provenance`); the second was a
+thinner Gemini-extraction shape plus a cURL/Node/Python flow (pin model + API revision, strict
+`response_format` json_schema, capture provenance, hash the schema, idempotent upsert by
+`event_id`). **Reconciliation:** the multi-connector shape is canonical (it's the only one that
+can carry `campaign_id`/`auction_id`/`bidfloor`/`search_term`/`message_id`, which is the whole
+point). The two **agree on the mechanics**, so those are first-class: `provenance` carries
+`model_version` · `request_id` · `prompt_hash` · `response_schema_hash` · `connector_version`,
+and the normalizer accepts optional `model_version`/`prompt`/`request_id` overrides so an
+**LLM strict-schema path (Gemini, pinned model)** and the rule-based connectors produce
+**audit-identical rows under one schema**.
+
+**New files:**
+- `schemas/journey-event.json` — canonical schema (draft 2020-12). Refined the founder draft to
+  be self-consistent: added top-level `source_payload_hash` (matches the documented hashing note
+  + the BQ table column; the draft had `additionalProperties:false` but omitted it). Served live
+  at **`GET /schemas/journey-event.json`** (`application/schema+json`) so it's a real `$ref`
+  target for a Gemini `response_format`.
+- `mizoki_runtime/journey.py` — deterministic per-source mappers, a **dependency-free JSON Schema
+  validator** (type unions/enum/required/properties/additionalProperties; `format` is annotation-
+  only per spec), `JourneyEventNormalizer`, an **idempotent JSONL `JourneyEventStore`**, and the
+  SENSE-stage `JourneyIngestCell` (normalize → validate gate → upsert → fan-out to the
+  `event_store`/`knowledge_graph`/`bigquery`/`audit_log` sinks).
+- `mizoki_runtime/journey_sinks.py` + `schemas/journey-event.bigquery.sql` — **optional** external
+  upsert sinks (the founder's second-prompt Firestore/BigQuery flow). `FirestoreJourneySink`
+  (doc per `event_id`) and `BigQueryJourneySink` (idempotent `MERGE` on `event_id`) **lazily import**
+  `google-cloud-firestore`/`google-cloud-bigquery` only inside the upsert path — nothing added to
+  `requirements.txt`, default deploy stays dependency-free. The cell delegates inserted/updated
+  events (duplicates are skipped to keep replays no-ops) and **degrades gracefully**: a missing
+  client lib or credential records a per-sink `error` instead of failing the SENSE batch. Wired
+  via env: `MIZOKI_JOURNEY_FIRESTORE_COLLECTION` / `MIZOKI_JOURNEY_BIGQUERY_TABLE` (unset → in-process
+  JSONL only). The MERGE SQL + event→row projection are pure functions, unit-testable without the cloud.
+- `mizoki_runtime/journey_gemini.py` — **optional** Gemini strict-schema extraction connector (the
+  second-prompt LLM path). Calls Gemini with a **pinned model + API revision** and the served
+  `journey-event.json` as a strict `response_format` json_schema, then threads the model provenance
+  (`model_version`/`request_id`/`prompt_hash`/`response_schema_hash`) through the normalizer's
+  `assemble_from_extraction` so an LLM-extracted row is **shape-identical** to the rule-based
+  connectors. HTTP uses **stdlib `urllib`** (no new dep) and only fires when `GEMINI_API_KEY` is set;
+  a `transport` callable is injectable so the parse → provenance → canonicalize path is unit-tested
+  with no network. Model/revision pinned via `MIZOKI_GEMINI_MODEL` / `MIZOKI_GEMINI_API_REVISION`;
+  `discover().journey.llm_extractor` reports the pin + whether it's configured.
+
+**Idempotency (matches the documented recipe):** `event_id = sha256(event_source || event_type ||
+stable_keys_from_source)` — **never** over volatile timestamps; `source_payload_hash =
+sha256(canonical_compact_json(payload))`. Store upsert: first sight → `inserted`; same id + same
+payload hash → `duplicate` (no write, replays are no-ops); same id + changed payload → `updated`.
+
+**Wiring (`runtime.py`, `app.py`):** MCP tools `journey.normalize_event`, `journey.ingest_events`,
+`journey.recent_events` (new `journey` category, discoverable via `/api/mcp/tools` +
+`/api/boss/discover`). Flask: `POST /api/boss/journey/normalize`, `POST /api/boss/journey/ingest`,
+`GET /api/boss/journey/events`, plus the schema route. KG grounding: new entities
+`journey_event` (schema) and `journey_ingest` (cell) wired into `sense`/`srpvdal`/
+`validation_arbitration` and to `openrtb_bidstream`. `discover()` gains a `journey` block;
+`health_snapshot()` adds `journey_event_count`.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/journey.py mizoki_runtime/journey_sinks.py
+mizoki_runtime/journey_gemini.py mizoki_runtime/runtime.py app.py` clean; `python3 -m unittest
+tests.test_app tests.test_runtime` → **50 passing** (added 18: 14 runtime — per-connector
+normalization + schema validity, pinned provenance + schema-hash, stable `event_id` + idempotent
+replay, sink fan-out + persistence, validation-gate rejection, bad-source/payload guards,
+external-sink forwarding + duplicate-skip, graceful sink-error degradation, Firestore upsert via
+fake client, BigQuery MERGE SQL + row projection, env sink builder, Gemini extractor provenance
+threading + strict-schema request via fake transport, Gemini creds-required guard, extractor
+metadata; 4 app — schema served, normalize endpoint, idempotent ingest endpoint, event-array
+validation). Smoked `app.test_client()`: schema route 200 `application/schema+json`,
+`/api/health` carries `journey_event_count`, `/api/boss/discover` carries `journey`, MCP
+`journey.ingest_events` returns `{inserted:1}` then `{duplicate:1}` on replay, and Gemini-style
+provenance (`model_version=gemini-…`, custom `request_id`) threads through with a matching
+`response_schema_hash`. Run traces persist to `data/journey_events.jsonl` (already covered by the
+`data/*.jsonl` gitignore rule). No homepage/site copy touched; positioning untouched.
 
 ### Homepage §03 ARCHITECTURE — Interactive SRPVDAL Spiral + Subsystem Ownership (2026-06-19)
 
