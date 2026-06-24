@@ -190,6 +190,15 @@ and the normalizer accepts optional `model_version`/`prompt`/`request_id` overri
   client lib or credential records a per-sink `error` instead of failing the SENSE batch. Wired
   via env: `MIZOKI_JOURNEY_FIRESTORE_COLLECTION` / `MIZOKI_JOURNEY_BIGQUERY_TABLE` (unset → in-process
   JSONL only). The MERGE SQL + event→row projection are pure functions, unit-testable without the cloud.
+- `mizoki_runtime/journey_gemini.py` — **optional** Gemini strict-schema extraction connector (the
+  second-prompt LLM path). Calls Gemini with a **pinned model + API revision** and the served
+  `journey-event.json` as a strict `response_format` json_schema, then threads the model provenance
+  (`model_version`/`request_id`/`prompt_hash`/`response_schema_hash`) through the normalizer's
+  `assemble_from_extraction` so an LLM-extracted row is **shape-identical** to the rule-based
+  connectors. HTTP uses **stdlib `urllib`** (no new dep) and only fires when `GEMINI_API_KEY` is set;
+  a `transport` callable is injectable so the parse → provenance → canonicalize path is unit-tested
+  with no network. Model/revision pinned via `MIZOKI_GEMINI_MODEL` / `MIZOKI_GEMINI_API_REVISION`;
+  `discover().journey.llm_extractor` reports the pin + whether it's configured.
 
 **Idempotency (matches the documented recipe):** `event_id = sha256(event_source || event_type ||
 stable_keys_from_source)` — **never** over volatile timestamps; `source_payload_hash =
@@ -205,13 +214,15 @@ payload hash → `duplicate` (no write, replays are no-ops); same id + changed p
 `health_snapshot()` adds `journey_event_count`.
 
 **Verification:** `python3 -m py_compile mizoki_runtime/journey.py mizoki_runtime/journey_sinks.py
-mizoki_runtime/runtime.py app.py` clean; `python3 -m unittest tests.test_app tests.test_runtime` →
-**47 passing** (added 15: 11 runtime — per-connector normalization + schema validity, pinned
-provenance + schema-hash, stable `event_id` + idempotent replay, sink fan-out + persistence,
-validation-gate rejection, bad-source/payload guards, external-sink forwarding + duplicate-skip,
-graceful sink-error degradation, Firestore upsert via fake client, BigQuery MERGE SQL + row
-projection, env sink builder; 4 app — schema served, normalize endpoint, idempotent ingest
-endpoint, event-array validation). Smoked `app.test_client()`: schema route 200 `application/schema+json`,
+mizoki_runtime/journey_gemini.py mizoki_runtime/runtime.py app.py` clean; `python3 -m unittest
+tests.test_app tests.test_runtime` → **50 passing** (added 18: 14 runtime — per-connector
+normalization + schema validity, pinned provenance + schema-hash, stable `event_id` + idempotent
+replay, sink fan-out + persistence, validation-gate rejection, bad-source/payload guards,
+external-sink forwarding + duplicate-skip, graceful sink-error degradation, Firestore upsert via
+fake client, BigQuery MERGE SQL + row projection, env sink builder, Gemini extractor provenance
+threading + strict-schema request via fake transport, Gemini creds-required guard, extractor
+metadata; 4 app — schema served, normalize endpoint, idempotent ingest endpoint, event-array
+validation). Smoked `app.test_client()`: schema route 200 `application/schema+json`,
 `/api/health` carries `journey_event_count`, `/api/boss/discover` carries `journey`, MCP
 `journey.ingest_events` returns `{inserted:1}` then `{duplicate:1}` on replay, and Gemini-style
 provenance (`model_version=gemini-…`, custom `request_id`) threads through with a matching

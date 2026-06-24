@@ -511,6 +511,82 @@ class JourneyEventNormalizer:
             "provenance": provenance,
         }
 
+    def assemble_from_extraction(
+        self,
+        extracted: Any,
+        *,
+        event_source: str = "other",
+        prompt: str | None = None,
+        model_version: str | None = None,
+        request_id: str | None = None,
+        raw_response: str | None = None,
+        ingest_time: float | None = None,
+    ) -> dict[str, Any]:
+        """Assemble a canonical JourneyEvent from an LLM strict-schema extraction.
+
+        The model is asked to emit a JourneyEvent matching the schema, so its
+        output is already canonical-ish; this stamps deterministic provenance,
+        computes a stable ``event_id`` and ``source_payload_hash``, and validates
+        — producing a row audit-identical in shape to the rule-based connectors.
+        """
+        if not isinstance(extracted, dict):
+            raise ValueError("extracted payload must be a JSON object")
+
+        source = _str_or_none(extracted.get("event_source")) or event_source or "other"
+        source = source.strip().lower()
+        if source not in JOURNEY_SOURCES:
+            source = "other"
+
+        ingest_seconds = ingest_time if ingest_time is not None else time.time()
+        ingest_iso = _iso_from_epoch_seconds(ingest_seconds)
+
+        event_type = _str_or_none(extracted.get("event_type")) or _str_or_none(extracted.get("action")) or "event"
+        actor = _build_actor(_as_dict(extracted.get("actor")))
+        context = _build_context(_as_dict(extracted.get("context")))
+
+        raw_time = extracted.get("event_time") if extracted.get("event_time") is not None else extracted.get("timestamp")
+        if isinstance(raw_time, str) and raw_time.strip():
+            event_time = raw_time.strip()
+        else:
+            event_time = _epoch_to_iso(raw_time) or ingest_iso
+
+        source_payload_hash = sha256_hex(raw_response if raw_response is not None else extracted)
+        model_event_id = _str_or_none(extracted.get("event_id"))
+        if model_event_id and 6 <= len(model_event_id) <= 128:
+            event_id = model_event_id
+        else:
+            stable = [event_time, canonical_compact_json(actor), canonical_compact_json(context)]
+            event_id = sha256_hex("|".join([source, event_type, *stable]))
+
+        connector_version = f"gemini-extractor-{JOURNEY_RULESET_VERSION}"
+        resolved_request_id = request_id or f"req-{sha256_hex((model_version or '') + '|' + source_payload_hash)[:24]}"
+        provenance = {
+            "model_version": model_version or JOURNEY_MODEL_VERSION,
+            "request_id": resolved_request_id,
+            "prompt_hash": sha256_hex(prompt) if prompt else sha256_hex(connector_version),
+            "response_schema_hash": self._schema.schema_hash,
+            "connector_version": connector_version,
+            "ingest_time": ingest_iso,
+            "source_payload_hash": source_payload_hash,
+            "srpvdal_phase": "SENSE",
+            "pipeline": "mizoki/ingest/llm",
+            "replay": False,
+        }
+
+        event = {
+            "event_id": event_id,
+            "event_time": event_time,
+            "ingest_time": ingest_iso,
+            "event_source": source,
+            "event_type": event_type,
+            "source_payload_hash": source_payload_hash,
+            "actor": actor,
+            "context": context,
+            "provenance": provenance,
+        }
+        errors = self._schema.validate(event)
+        return {"event": event, "valid": not errors, "errors": errors}
+
 
 # ---------------------------------------------------------------------------
 # Idempotent event store (JSONL-backed; compare-and-set on source_payload_hash)

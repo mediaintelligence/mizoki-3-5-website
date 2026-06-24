@@ -5,6 +5,7 @@ from pathlib import Path
 
 from mizoki_runtime import create_runtime
 from mizoki_runtime.journey import JourneyIngestCell
+from mizoki_runtime.journey_gemini import GeminiJourneyExtractor, gemini_extractor_metadata
 from mizoki_runtime.journey_sinks import (
     BigQueryJourneySink,
     FirestoreJourneySink,
@@ -372,6 +373,58 @@ class BossRuntimeTestCase(unittest.TestCase):
         self.assertEqual({"firestore:je", "bigquery:analytics.journey_events"}, {sink.name for sink in sinks})
         self.assertIsInstance(sinks[0], FirestoreJourneySink)
         self.assertIsInstance(sinks[1], BigQueryJourneySink)
+
+    def test_gemini_extractor_threads_provenance_into_canonical_event(self) -> None:
+        captured = {}
+
+        def fake_transport(url, headers, body):
+            captured["url"] = url
+            captured["headers"] = headers
+            captured["body"] = json.loads(body.decode("utf-8"))
+            model_event = {
+                "event_source": "sendgrid",
+                "event_type": "click",
+                "actor": {"email": "sam@example.com"},
+                "context": {"channel": "email", "message_id": "SG.x.y"},
+                "event_time": "2026-06-22T14:03:12Z",
+            }
+            return {
+                "modelVersion": "gemini-2.0-pro-exp-02-05",
+                "responseId": "resp-123",
+                "candidates": [{"content": {"parts": [{"text": json.dumps(model_event)}]}}],
+            }
+
+        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=fake_transport)
+        result = extractor.extract("Emit one JourneyEvent for a SendGrid click.", event_source="sendgrid")
+
+        self.assertTrue(result["valid"], msg=result["errors"])
+        event = result["event"]
+        self.assertEqual("sendgrid", event["event_source"])
+        self.assertEqual("click", event["event_type"])
+        self.assertEqual("sam@example.com", event["actor"]["email"])
+        self.assertEqual("2026-06-22T14:03:12Z", event["event_time"])
+        self.assertEqual("gemini-2.0-pro-exp-02-05", event["provenance"]["model_version"])
+        self.assertEqual("resp-123", event["provenance"]["request_id"])
+        self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
+        self.assertEqual("mizoki/ingest/llm", event["provenance"]["pipeline"])
+        # The request pins the model + enforces the strict schema response_format.
+        self.assertTrue(captured["body"]["response_format"]["strict"])
+        self.assertEqual("gemini-2.0-pro-exp-02-05", captured["body"]["model_version"])
+        self.assertEqual("2026-06-01", captured["headers"]["X-Api-Revision"])
+
+    def test_gemini_extractor_requires_credentials_without_transport(self) -> None:
+        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, api_key=None)
+        self.assertFalse(extractor.configured)
+        with self.assertRaises(RuntimeError):
+            extractor.extract("Emit one JourneyEvent.")
+
+    def test_gemini_extractor_metadata_reports_pinned_model(self) -> None:
+        meta = gemini_extractor_metadata({})
+        self.assertEqual("google-gemini", meta["provider"])
+        self.assertEqual("gemini-2.0-pro-exp-02-05", meta["model"])
+        self.assertTrue(meta["strict_response_format"])
+        self.assertFalse(meta["configured"])
+        self.assertTrue(gemini_extractor_metadata({"GEMINI_API_KEY": "x"})["configured"])
 
 
 # Canonical JourneyEvent test vectors (one per connector).
