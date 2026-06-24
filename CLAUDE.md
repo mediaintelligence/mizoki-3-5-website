@@ -229,6 +229,23 @@ provenance (`model_version=gemini-…`, custom `request_id`) threads through wit
 `response_schema_hash`. Run traces persist to `data/journey_events.jsonl` (already covered by the
 `data/*.jsonl` gitignore rule). No homepage/site copy touched; positioning untouched.
 
+**Production deploy (2026-06-24).** Shipped via **PR #11** (*Canonical JourneyEvent schema +
+multi-connector SENSE normalization*) merged to `main` at merge commit **`19e65e52`**. The WIF
+auto-deploy workflow `deploy-cloudrun.yml` run **`28119426946`** built + pushed the image and rolled
+a new `mizoki-website` Cloud Run revision green in ~60s (all steps success: Build → Push → Deploy to
+Cloud Run 18:07:39→18:07:57 UTC). **Live smoke on mizoki3.com** (all pass): `GET
+/schemas/journey-event.json` → 200 `application/schema+json`; `/api/health` carries
+`journey_event_count`; `/api/boss/discover` carries the `journey` block (5 sources, 3 tools,
+`llm_extractor` pinned to `gemini-2.0-pro-exp-02-05` @ rev `2026-06-01`, `configured:false` — no
+`GEMINI_API_KEY` set in prod); `POST /api/boss/journey/normalize` (openrtb) returns a valid
+canonical event; `POST /api/boss/journey/ingest` returns `{inserted:1}` then `{duplicate:1}` on
+replay. **Caveat for future agents:** the default in-process JSONL `JourneyEventStore` lives on the
+Cloud Run instance's ephemeral disk, so idempotency holds **per instance/revision**, not across
+scale-out or restarts; for durable, cross-instance idempotency set `MIZOKI_JOURNEY_FIRESTORE_COLLECTION`
+and/or `MIZOKI_JOURNEY_BIGQUERY_TABLE` (and install the optional `google-cloud-firestore`/
+`google-cloud-bigquery` clients) so the canonical `event_id` upsert lands in durable storage. The
+Gemini extractor stays dormant until `GEMINI_API_KEY` is provided.
+
 ### Homepage §03 ARCHITECTURE — Interactive SRPVDAL Spiral + Subsystem Ownership (2026-06-19)
 
 Integrated a founder-supplied investor slide (the "SRPVDAL spiral" — SENSE → REASON → PLAN →
