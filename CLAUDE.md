@@ -191,14 +191,32 @@ and the normalizer accepts optional `model_version`/`prompt`/`request_id` overri
   via env: `MIZOKI_JOURNEY_FIRESTORE_COLLECTION` / `MIZOKI_JOURNEY_BIGQUERY_TABLE` (unset → in-process
   JSONL only). The MERGE SQL + event→row projection are pure functions, unit-testable without the cloud.
 - `mizoki_runtime/journey_gemini.py` — **optional** Gemini strict-schema extraction connector (the
-  second-prompt LLM path). Calls Gemini with a **pinned model + API revision** and the served
-  `journey-event.json` as a strict `response_format` json_schema, then threads the model provenance
+  second-prompt LLM path), with two backends that both thread the model provenance
   (`model_version`/`request_id`/`prompt_hash`/`response_schema_hash`) through the normalizer's
   `assemble_from_extraction` so an LLM-extracted row is **shape-identical** to the rule-based
-  connectors. HTTP uses **stdlib `urllib`** (no new dep) and only fires when `GEMINI_API_KEY` is set;
-  a `transport` callable is injectable so the parse → provenance → canonicalize path is unit-tested
-  with no network. Model/revision pinned via `MIZOKI_GEMINI_MODEL` / `MIZOKI_GEMINI_API_REVISION`;
-  `discover().journey.llm_extractor` reports the pin + whether it's configured.
+  connectors:
+  - **`VertexGeminiJourneyExtractor` (the chosen Cloud Run path, 2026-06-24).** Uses Vertex AI via
+    the **`google-genai` SDK** with **Application Default Credentials** — i.e. the Cloud Run service
+    account, **no API key**. The SDK is imported lazily, and an injected `client` makes the parse →
+    provenance → canonicalize path unit-testable with no SDK and no network. `to_vertex_response_schema`
+    projects the served `journey-event.json` onto the OpenAPI subset Vertex controlled-generation
+    accepts (drops `$schema`/`$id`/`additionalProperties`, rewrites `["T","null"]` unions to
+    `type` + `nullable`); the in-process validator stays the authoritative gate. Config via env:
+    `MIZOKI_GEMINI_PROJECT` (or `GOOGLE_CLOUD_PROJECT`/`GCP_PROJECT_ID`), `MIZOKI_GEMINI_LOCATION`
+    (default `us-central1`), `MIZOKI_GEMINI_MODEL`. **`google-genai==2.10.0` added to
+    `requirements.txt`** — it ships in the image but the extractor stays dormant until a project is set.
+  - **`GeminiJourneyExtractor` (API-key REST, retained).** Calls `generativelanguage.googleapis.com`
+    with a pinned model + API revision via **stdlib `urllib`** (no dep), fires only when
+    `GEMINI_API_KEY` is set; injectable `transport` for network-free tests.
+
+  `discover().journey.llm_extractor` reports the **Vertex** backend (`provider:google-vertex-ai`,
+  `auth:application-default-credentials`, pinned model/location, `configured` = project present).
+
+  **Cloud Run ops to activate it (operator, GCP-side):** (1) grant the Cloud Run *runtime* service
+  account `roles/aiplatform.user`; (2) set env vars `MIZOKI_GEMINI_PROJECT` (or rely on
+  `GOOGLE_CLOUD_PROJECT`), `MIZOKI_GEMINI_LOCATION`, and a **Vertex-valid** `MIZOKI_GEMINI_MODEL`
+  (the AI-Studio id `gemini-2.0-pro-exp-02-05` is a placeholder — confirm the approved Vertex
+  publisher model). No secret/API key required.
 
 **Idempotency (matches the documented recipe):** `event_id = sha256(event_source || event_type ||
 stable_keys_from_source)` — **never** over volatile timestamps; `source_payload_hash =
@@ -215,7 +233,9 @@ payload hash → `duplicate` (no write, replays are no-ops); same id + changed p
 
 **Verification:** `python3 -m py_compile mizoki_runtime/journey.py mizoki_runtime/journey_sinks.py
 mizoki_runtime/journey_gemini.py mizoki_runtime/runtime.py app.py` clean; `python3 -m unittest
-tests.test_app tests.test_runtime` → **50 passing** (added 18: 14 runtime — per-connector
+tests.test_app tests.test_runtime` → **54 passing** (the Vertex backend added 4: ADC-client
+provenance threading via a fake google-genai client, project-required guard, Vertex-compatible
+schema transform, extractor metadata) (the JourneyEvent layer added 18: 14 runtime — per-connector
 normalization + schema validity, pinned provenance + schema-hash, stable `event_id` + idempotent
 replay, sink fan-out + persistence, validation-gate rejection, bad-source/payload guards,
 external-sink forwarding + duplicate-skip, graceful sink-error degradation, Firestore upsert via
