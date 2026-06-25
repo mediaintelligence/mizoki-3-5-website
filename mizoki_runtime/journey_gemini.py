@@ -104,7 +104,8 @@ class GeminiJourneyExtractor:
 
     def extract(self, prompt_text: str, *, event_source: str = "other") -> dict[str, Any]:
         data = self._call(prompt_text)
-        extracted = json.loads(self._extract_text(data))
+        raw_text = self._extract_text(data)
+        extracted, json_error = _safe_json_load(raw_text)
         provenance = self._model_provenance(data, prompt_text)
         result = self.normalizer.assemble_from_extraction(
             extracted,
@@ -112,10 +113,28 @@ class GeminiJourneyExtractor:
             prompt=prompt_text,
             model_version=provenance["model_version"],
             request_id=provenance["request_id"],
-            raw_response=json.dumps(extracted, sort_keys=True),
+            # Valid JSON -> canonical hash (order/format-independent, so replays
+            # stay idempotent). Malformed -> raw bytes (audit + distinct hashes).
+            raw_response=raw_text if json_error else None,
         )
+        if json_error:
+            result["valid"] = False
+            result["errors"].append(json_error)
         result["model_provenance"] = provenance
         return result
+
+
+def _safe_json_load(raw_text: str) -> tuple[dict[str, Any], str | None]:
+    """Parse model output, never raising: a malformed/truncated response (token
+    limits, safety filters) becomes an empty object + a validation error string
+    instead of crashing the SENSE pipeline."""
+    try:
+        parsed = json.loads(raw_text)
+    except json.JSONDecodeError as exc:
+        return {}, f"model returned invalid JSON: {exc}"
+    if not isinstance(parsed, dict):
+        return {}, f"model returned non-object JSON: {type(parsed).__name__}"
+    return parsed, None
 
 
 def gemini_extractor_metadata(env: dict[str, str] | None = None) -> dict[str, Any]:
@@ -155,9 +174,14 @@ def to_vertex_response_schema(schema: dict[str, Any]) -> dict[str, Any]:
             continue
         if key == "type" and isinstance(value, list):
             non_null = [item for item in value if item != "null"]
-            result["type"] = non_null[0] if non_null else "string"
-            if "null" in value:
+            # Only rewrite the nullable-union case (["T","null"]) -> T + nullable.
+            # Preserve any other union as-is so an unsupported multi-type union
+            # fails loudly at Vertex rather than being silently narrowed.
+            if "null" in value and len(non_null) == 1:
+                result["type"] = non_null[0]
                 result["nullable"] = True
+            else:
+                result["type"] = value
             continue
         if key == "properties" and isinstance(value, dict):
             result["properties"] = {name: to_vertex_response_schema(sub) for name, sub in value.items()}
@@ -196,12 +220,14 @@ class VertexGeminiJourneyExtractor:
 
     @property
     def configured(self) -> bool:
-        return self._client is not None or bool(self.project)
+        # A project is required even when a client is injected, so provenance
+        # (raw_uri) is always well-formed and discovery stays consistent.
+        return bool(self.project)
 
     def _resolve_client(self) -> Any:
+        if not self.project:
+            raise RuntimeError("Vertex project is not configured (set MIZOKI_GEMINI_PROJECT or GOOGLE_CLOUD_PROJECT)")
         if self._client is None:
-            if not self.project:
-                raise RuntimeError("Vertex project is not configured (set MIZOKI_GEMINI_PROJECT or GOOGLE_CLOUD_PROJECT)")
             from google import genai  # lazy: optional dependency (google-genai)
 
             self._client = genai.Client(vertexai=True, project=self.project, location=self.location)
@@ -225,7 +251,8 @@ class VertexGeminiJourneyExtractor:
             contents=prompt_text,
             config=self.build_config(),
         )
-        extracted = json.loads(getattr(response, "text", None) or "{}")
+        raw_text = getattr(response, "text", None) or "{}"
+        extracted, json_error = _safe_json_load(raw_text)
         provenance = {
             "model_version": getattr(response, "model_version", None) or self.model,
             "request_id": getattr(response, "response_id", None),
@@ -238,8 +265,13 @@ class VertexGeminiJourneyExtractor:
             prompt=prompt_text,
             model_version=provenance["model_version"],
             request_id=provenance["request_id"],
-            raw_response=json.dumps(extracted, sort_keys=True),
+            # Valid JSON -> canonical hash (order/format-independent, so replays
+            # stay idempotent). Malformed -> raw bytes (audit + distinct hashes).
+            raw_response=raw_text if json_error else None,
         )
+        if json_error:
+            result["valid"] = False
+            result["errors"].append(json_error)
         result["model_provenance"] = provenance
         return result
 
@@ -256,3 +288,15 @@ def vertex_extractor_metadata(env: dict[str, str] | None = None) -> dict[str, An
         "strict_response_format": True,
         "configured": bool(project),
     }
+
+
+def active_extractor_metadata(env: dict[str, str] | None = None) -> dict[str, Any]:
+    """Report the backend that is actually runnable: Vertex (ADC) if a project is
+    set, else the API-key REST backend if a key is set, else the documented
+    Vertex default (dormant)."""
+    source = os.environ if env is None else env
+    if _resolve_vertex_project(source):
+        return vertex_extractor_metadata(source)
+    if (source.get("GEMINI_API_KEY") or "").strip():
+        return gemini_extractor_metadata(source)
+    return vertex_extractor_metadata(source)

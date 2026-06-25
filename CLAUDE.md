@@ -266,6 +266,20 @@ and/or `MIZOKI_JOURNEY_BIGQUERY_TABLE` (and install the optional `google-cloud-f
 `google-cloud-bigquery` clients) so the canonical `event_id` upsert lands in durable storage. The
 Gemini extractor stays dormant until `GEMINI_API_KEY` is provided.
 
+**Post-merge review hardening (2026-06-25).** Automated reviewers (gemini-code-assist, copilot,
+codex) flagged robustness issues on the merged PR #12; addressed in a follow-up: (1) **malformed
+model JSON no longer crashes** — both extractors route the response through `_safe_json_load`, so a
+truncated/invalid response becomes a `valid:false` row with an error string instead of a
+`JSONDecodeError`; (2) `to_vertex_response_schema` now **only collapses the nullable `["T","null"]`
+case** and preserves genuine multi-type unions (no silent narrowing); (3) the Vertex extractor
+**requires a project even when a client is injected**, so `model_provenance.raw_uri` is always
+well-formed; (4) `discover().journey.llm_extractor` uses `active_extractor_metadata()` to report the
+**backend that is actually configured** (Vertex if a project is set, else API-key if a key is set,
+else the dormant Vertex default); (5) **idempotency preserved on the LLM path** — valid responses
+hash the parsed object's `canonical_compact_json` (order/format-independent) while only malformed
+responses hash raw bytes, so a re-formatted replay stays a `duplicate` rather than an `updated`.
+`python3 -m unittest tests.test_app tests.test_runtime` → **60 passing**.
+
 ### Homepage §03 ARCHITECTURE — Interactive SRPVDAL Spiral + Subsystem Ownership (2026-06-19)
 
 Integrated a founder-supplied investor slide (the "SRPVDAL spiral" — SENSE → REASON → PLAN →

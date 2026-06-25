@@ -4,10 +4,11 @@ import unittest
 from pathlib import Path
 
 from mizoki_runtime import create_runtime
-from mizoki_runtime.journey import JourneyIngestCell
+from mizoki_runtime.journey import JourneyIngestCell, sha256_hex
 from mizoki_runtime.journey_gemini import (
     GeminiJourneyExtractor,
     VertexGeminiJourneyExtractor,
+    active_extractor_metadata,
     gemini_extractor_metadata,
     to_vertex_response_schema,
     vertex_extractor_metadata,
@@ -424,6 +425,42 @@ class BossRuntimeTestCase(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             extractor.extract("Emit one JourneyEvent.")
 
+    def test_gemini_extractor_preserves_raw_text_on_malformed_json(self) -> None:
+        raw = "not valid json {"
+
+        def fake_transport(url, headers, body):
+            return {"modelVersion": "gemini-3.5-pro", "responseId": "resp-9",
+                    "candidates": [{"content": {"parts": [{"text": raw}]}}]}
+
+        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=fake_transport)
+        result = extractor.extract("Emit one JourneyEvent.")
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("invalid JSON" in err for err in result["errors"]))
+        # raw_response is the model's raw text (for audit), not "{}".
+        self.assertEqual(sha256_hex(raw), result["event"]["source_payload_hash"])
+
+    def test_gemini_extractor_valid_json_hash_is_canonical_and_idempotent(self) -> None:
+        # Same event, different key order / whitespace -> identical canonical hash,
+        # so a replay is a store duplicate rather than a spurious update.
+        # A real JourneyEvent carries event_time, so event_id is stable; the only
+        # difference between the two responses is key order / whitespace.
+        text_a = '{"event_source":"other","event_type":"signup","event_time":"2026-06-22T14:03:12Z","actor":{"user_id":"u1"},"context":{"channel":"web"}}'
+        text_b = '{ "context": {"channel":"web"}, "event_time":"2026-06-22T14:03:12Z", "event_type":"signup", "actor":{"user_id":"u1"}, "event_source":"other" }'
+
+        def transport_for(text):
+            def fake(url, headers, body):
+                return {"modelVersion": "gemini-3.5-pro", "responseId": "r",
+                        "candidates": [{"content": {"parts": [{"text": text}]}}]}
+            return fake
+
+        a = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=transport_for(text_a)).extract("p")
+        b = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=transport_for(text_b)).extract("p")
+        self.assertTrue(a["valid"] and b["valid"])
+        self.assertEqual(a["event"]["source_payload_hash"], b["event"]["source_payload_hash"])
+        self.assertEqual(a["event"]["event_id"], b["event"]["event_id"])
+        # Canonical hash of the parsed object, not the raw bytes.
+        self.assertEqual(sha256_hex(json.loads(text_a)), a["event"]["source_payload_hash"])
+
     def test_gemini_extractor_metadata_reports_pinned_model(self) -> None:
         meta = gemini_extractor_metadata({})
         self.assertEqual("google-gemini", meta["provider"])
@@ -483,6 +520,39 @@ class BossRuntimeTestCase(unittest.TestCase):
         self.assertEqual("us-central1", meta["location"])
         self.assertFalse(meta["configured"])
         self.assertTrue(vertex_extractor_metadata({"GOOGLE_CLOUD_PROJECT": "p"})["configured"])
+
+    def test_vertex_extractor_handles_malformed_json_gracefully(self) -> None:
+        client = _FakeGenaiClient(None, raw_text="not json {", model_version="gemini-3.5-pro", response_id="vtx-9")
+        extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="proj-x", client=client)
+        result = extractor.extract("Extract a JourneyEvent.")
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("invalid JSON" in err for err in result["errors"]))
+        # Provenance is still recorded even on a malformed response.
+        self.assertEqual("gemini-3.5-pro", result["model_provenance"]["model_version"])
+
+    def test_vertex_extractor_configured_requires_project_even_with_client(self) -> None:
+        client = _FakeGenaiClient({"event_source": "other", "event_type": "x"})
+        extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="", client=client)
+        self.assertFalse(extractor.configured)
+        with self.assertRaises(RuntimeError):
+            extractor.extract("Extract a JourneyEvent.")
+
+    def test_vertex_schema_preserves_non_nullable_unions(self) -> None:
+        schema = {"type": "object", "properties": {"u": {"type": ["string", "number"]}, "n": {"type": ["string", "null"]}}}
+        out = to_vertex_response_schema(schema)
+        # A genuine multi-type union is preserved (not silently narrowed)...
+        self.assertEqual(["string", "number"], out["properties"]["u"]["type"])
+        self.assertNotIn("nullable", out["properties"]["u"])
+        # ...while a nullable union collapses to type + nullable.
+        self.assertEqual("string", out["properties"]["n"]["type"])
+        self.assertTrue(out["properties"]["n"]["nullable"])
+
+    def test_active_extractor_metadata_selects_configured_backend(self) -> None:
+        self.assertEqual("google-vertex-ai", active_extractor_metadata({"GOOGLE_CLOUD_PROJECT": "p"})["provider"])
+        self.assertEqual("google-gemini", active_extractor_metadata({"GEMINI_API_KEY": "k"})["provider"])
+        # Vertex wins when both are set; nothing set -> documented Vertex default (dormant).
+        self.assertEqual("google-vertex-ai", active_extractor_metadata({"GOOGLE_CLOUD_PROJECT": "p", "GEMINI_API_KEY": "k"})["provider"])
+        self.assertEqual("google-vertex-ai", active_extractor_metadata({})["provider"])
 
 
 # Canonical JourneyEvent test vectors (one per connector).
@@ -577,22 +647,22 @@ class _FakeGenaiResponse:
 
 
 class _FakeGenaiModels:
-    def __init__(self, payload, model_version, response_id):
-        self._payload = payload
+    def __init__(self, payload, model_version, response_id, raw_text=None):
+        self._text = raw_text if raw_text is not None else json.dumps(payload)
         self._model_version = model_version
         self._response_id = response_id
         self.calls = []
 
     def generate_content(self, *, model, contents, config):
         self.calls.append({"model": model, "contents": contents, "config": config})
-        return _FakeGenaiResponse(json.dumps(self._payload), self._model_version, self._response_id)
+        return _FakeGenaiResponse(self._text, self._model_version, self._response_id)
 
 
 class _FakeGenaiClient:
     """Duck-typed google-genai client: exposes .models.generate_content(...)."""
 
-    def __init__(self, payload, *, model_version="gemini-3.5-pro", response_id="vtx-1"):
-        self.models = _FakeGenaiModels(payload, model_version, response_id)
+    def __init__(self, payload, *, raw_text=None, model_version="gemini-3.5-pro", response_id="vtx-1"):
+        self.models = _FakeGenaiModels(payload, model_version, response_id, raw_text=raw_text)
 
 
 def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):
