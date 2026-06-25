@@ -1,11 +1,22 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from mizoki_runtime import create_runtime
+from mizoki_runtime.journey import JourneyIngestCell
+from mizoki_runtime.journey_gemini import GeminiJourneyExtractor, gemini_extractor_metadata
+from mizoki_runtime.journey_sinks import (
+    BigQueryJourneySink,
+    FirestoreJourneySink,
+    build_journey_sinks_from_env,
+    build_merge_sql,
+    event_to_bigquery_row,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+SCHEMA_PATH = REPO_ROOT / "schemas" / "journey-event.json"
 
 
 class BossRuntimeTestCase(unittest.TestCase):
@@ -28,6 +39,9 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "gndi.run_decision_loop",
                 "gndi.simulate_action",
                 "graphrag.query",
+                "journey.ingest_events",
+                "journey.normalize_event",
+                "journey.recent_events",
                 "kg.describe_entity",
                 "kg.list_neighbors",
                 "programmatic.ingest_bidstream",
@@ -229,6 +243,272 @@ class BossRuntimeTestCase(unittest.TestCase):
             self.runtime.run_programmatic_pipeline([])
         with self.assertRaises(ValueError):
             self.runtime.ingest_bidstream("not-a-list")
+
+    def test_journey_normalizes_each_connector_into_canonical_schema(self) -> None:
+        cases = {
+            "meta": (_META_EVENT, "Purchase", "campaign_id", "111"),
+            "google_ads": (_GOOGLE_ADS_ROW, "conversion", "campaign_id", "111"),
+            "sendgrid": (_SENDGRID_EVENT, "click", "message_id", "SG.x.y"),
+            "openrtb": (_OPENRTB_REQUEST, "bid_request", "auction_id", "auc-1"),
+        }
+        for source, (payload, expected_type, context_key, context_value) in cases.items():
+            result = self.runtime.normalize_journey_event(source, payload)
+            self.assertTrue(result["valid"], msg=f"{source} errors: {result['errors']}")
+            event = result["event"]
+            self.assertEqual(source, event["event_source"])
+            self.assertEqual(expected_type, event["event_type"])
+            self.assertEqual(context_value, event["context"][context_key])
+            self.assertTrue(event["event_time"])  # always populated (schema-required)
+            self.assertEqual([], self.runtime.journey.schema.validate(event))
+
+    def test_journey_provenance_pins_model_and_schema_hash(self) -> None:
+        result = self.runtime.normalize_journey_event("sendgrid", _SENDGRID_EVENT)
+        provenance = result["event"]["provenance"]
+        for field in (
+            "model_version",
+            "request_id",
+            "prompt_hash",
+            "response_schema_hash",
+            "connector_version",
+            "ingest_time",
+        ):
+            self.assertTrue(provenance[field], msg=f"missing provenance.{field}")
+        self.assertEqual("SENSE", provenance["srpvdal_phase"])
+        self.assertEqual(self.runtime.journey.schema.schema_hash, provenance["response_schema_hash"])
+        self.assertEqual("mizoki/ingest/sendgrid", provenance["pipeline"])
+
+    def test_journey_event_id_is_stable_and_ingest_is_idempotent(self) -> None:
+        first = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
+        second = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
+        self.assertEqual(first["event_id"], second["event_id"])
+
+        initial = self.runtime.ingest_journey_events("meta", [_META_EVENT])
+        self.assertEqual(1, initial["accepted"])
+        self.assertEqual(1, initial["idempotency"]["inserted"])
+
+        replayed = self.runtime.ingest_journey_events("meta", [_META_EVENT], replay=True)
+        self.assertEqual(1, replayed["idempotency"]["duplicate"])
+        self.assertEqual(0, replayed["idempotency"]["inserted"])
+        self.assertEqual(1, self.runtime.journey.store.count())
+
+    def test_journey_ingest_persists_and_fans_out_to_sinks(self) -> None:
+        batch = [_META_EVENT, _SENDGRID_EVENT]
+        summary = self.runtime.ingest_journey_events("meta", [_META_EVENT])
+        sendgrid_summary = self.runtime.ingest_journey_events("sendgrid", [_SENDGRID_EVENT])
+        self.assertEqual("SENSE", summary["srpvdal_phase"])
+        self.assertEqual(4, len(summary["sinks"]))
+        self.assertTrue(all(sink["status"] == "written" for sink in summary["sinks"]))
+        recent = self.runtime.recent_journey_events(limit=10)
+        self.assertEqual(2, len(recent))
+        self.assertEqual({"meta", "sendgrid"}, {event["event_source"] for event in recent})
+        self.assertEqual(len(batch), summary["received"] + sendgrid_summary["received"])
+
+    def test_journey_validation_gate_rejects_bad_records(self) -> None:
+        result = self.runtime.ingest_journey_events("meta", [_META_EVENT, "not-an-object"])
+        self.assertEqual(1, result["accepted"])
+        self.assertEqual(1, result["rejected"])
+        self.assertEqual(1, result["rejections"][0]["index"])
+        self.assertTrue(result["rejections"][0]["errors"])
+
+    def test_journey_rejects_unknown_source_and_bad_payload(self) -> None:
+        with self.assertRaises(ValueError):
+            self.runtime.normalize_journey_event("tiktok", _META_EVENT)
+        with self.assertRaises(ValueError):
+            self.runtime.normalize_journey_event("meta", "not-a-dict")
+        with self.assertRaises(ValueError):
+            self.runtime.ingest_journey_events("meta", [])
+
+    def _cell(self, sinks):
+        store = Path(self.temp_dir.name) / "journey_sink_test.jsonl"
+        return JourneyIngestCell(SCHEMA_PATH, store, external_sinks=sinks)
+
+    def test_journey_forwards_writes_to_external_sinks_and_skips_duplicates(self) -> None:
+        sink = _RecordingSink()
+        cell = self._cell([sink])
+
+        first = cell.ingest("meta", [_META_EVENT])
+        self.assertEqual(1, first["external_sinks"][0]["written"])
+        self.assertEqual([_first_event_id(cell, "meta", _META_EVENT)], sink.events)
+
+        # A replay is a store duplicate, so it must NOT be forwarded again.
+        replay = cell.ingest("meta", [_META_EVENT], replay=True)
+        self.assertEqual(0, replay["external_sinks"][0]["written"])
+        self.assertEqual(1, len(sink.events))
+
+    def test_journey_external_sink_errors_degrade_without_failing_batch(self) -> None:
+        cell = self._cell([_RecordingSink(name="boom", fail=True)])
+        result = cell.ingest("sendgrid", [_SENDGRID_EVENT])
+        self.assertEqual(1, result["accepted"])  # in-process store still succeeded
+        self.assertEqual(0, result["external_sinks"][0]["written"])
+        self.assertTrue(result["external_sinks"][0]["errors"])
+
+    def test_firestore_sink_upserts_document_by_event_id(self) -> None:
+        client = _FakeFirestoreClient()
+        sink = FirestoreJourneySink(collection="journey_events", client=client)
+        event = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
+        self.assertEqual("written", sink.upsert(event))
+        self.assertIn(event["event_id"], client.store)
+        stored = client.store[event["event_id"]]
+        self.assertTrue(stored["merge"])
+        self.assertEqual(event["event_source"], stored["event"]["event_source"])
+
+    def test_bigquery_merge_sql_and_row_projection(self) -> None:
+        event = self.runtime.normalize_journey_event("openrtb", _OPENRTB_REQUEST)["event"]
+        sql = build_merge_sql("analytics.journey_events")
+        self.assertIn("MERGE `analytics.journey_events`", sql)
+        self.assertIn("ON T.event_id = S.event_id", sql)
+        row = event_to_bigquery_row(event)
+        self.assertEqual(event["event_id"], row["event_id"])
+        self.assertEqual("auc-1", json.loads(row["context"])["auction_id"])
+        self.assertEqual(event["event_source"], json.loads(row["provenance"])["pipeline"].split("/")[-1])
+
+    def test_build_journey_sinks_from_env(self) -> None:
+        self.assertEqual([], build_journey_sinks_from_env({}))
+        sinks = build_journey_sinks_from_env(
+            {
+                "MIZOKI_JOURNEY_FIRESTORE_COLLECTION": "je",
+                "MIZOKI_JOURNEY_BIGQUERY_TABLE": "analytics.journey_events",
+            }
+        )
+        self.assertEqual({"firestore:je", "bigquery:analytics.journey_events"}, {sink.name for sink in sinks})
+        self.assertIsInstance(sinks[0], FirestoreJourneySink)
+        self.assertIsInstance(sinks[1], BigQueryJourneySink)
+
+    def test_gemini_extractor_threads_provenance_into_canonical_event(self) -> None:
+        captured = {}
+
+        def fake_transport(url, headers, body):
+            captured["url"] = url
+            captured["headers"] = headers
+            captured["body"] = json.loads(body.decode("utf-8"))
+            model_event = {
+                "event_source": "sendgrid",
+                "event_type": "click",
+                "actor": {"email": "sam@example.com"},
+                "context": {"channel": "email", "message_id": "SG.x.y"},
+                "event_time": "2026-06-22T14:03:12Z",
+            }
+            return {
+                "modelVersion": "gemini-2.0-pro-exp-02-05",
+                "responseId": "resp-123",
+                "candidates": [{"content": {"parts": [{"text": json.dumps(model_event)}]}}],
+            }
+
+        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=fake_transport)
+        result = extractor.extract("Emit one JourneyEvent for a SendGrid click.", event_source="sendgrid")
+
+        self.assertTrue(result["valid"], msg=result["errors"])
+        event = result["event"]
+        self.assertEqual("sendgrid", event["event_source"])
+        self.assertEqual("click", event["event_type"])
+        self.assertEqual("sam@example.com", event["actor"]["email"])
+        self.assertEqual("2026-06-22T14:03:12Z", event["event_time"])
+        self.assertEqual("gemini-2.0-pro-exp-02-05", event["provenance"]["model_version"])
+        self.assertEqual("resp-123", event["provenance"]["request_id"])
+        self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
+        self.assertEqual("mizoki/ingest/llm", event["provenance"]["pipeline"])
+        # The request pins the model + enforces the strict schema response_format.
+        self.assertTrue(captured["body"]["response_format"]["strict"])
+        self.assertEqual("gemini-2.0-pro-exp-02-05", captured["body"]["model_version"])
+        self.assertEqual("2026-06-01", captured["headers"]["X-Api-Revision"])
+
+    def test_gemini_extractor_requires_credentials_without_transport(self) -> None:
+        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, api_key=None)
+        self.assertFalse(extractor.configured)
+        with self.assertRaises(RuntimeError):
+            extractor.extract("Emit one JourneyEvent.")
+
+    def test_gemini_extractor_metadata_reports_pinned_model(self) -> None:
+        meta = gemini_extractor_metadata({})
+        self.assertEqual("google-gemini", meta["provider"])
+        self.assertEqual("gemini-2.0-pro-exp-02-05", meta["model"])
+        self.assertTrue(meta["strict_response_format"])
+        self.assertFalse(meta["configured"])
+        self.assertTrue(gemini_extractor_metadata({"GEMINI_API_KEY": "x"})["configured"])
+
+
+# Canonical JourneyEvent test vectors (one per connector).
+_META_EVENT = {
+    "event_name": "Purchase",
+    "event_time": 1719945600,
+    "user_data": {"em": "hash", "ph": "hash", "client_ip_address": "1.2.3.4", "client_user_agent": "UA"},
+    "custom_data": {
+        "value": 59.99,
+        "currency": "USD",
+        "order_id": "A123",
+        "campaign_id": "111",
+        "adset_id": "222",
+        "ad_id": "333",
+    },
+}
+
+_GOOGLE_ADS_ROW = {
+    "campaign": {"id": "111"},
+    "ad_group": {"id": "222"},
+    "ad_group_ad": {"ad": {"id": "333"}},
+    "metrics": {"conversions": 1, "conversions_value": 59.99},
+    "customer": {"currency_code": "USD"},
+    "segments": {"date": "2026-06-22", "hour": 14, "geo_target_country": "US"},
+}
+
+_SENDGRID_EVENT = {
+    "event": "click",
+    "timestamp": 1719945600,
+    "email": "sam@example.com",
+    "sg_message_id": "SG.x.y",
+    "url": "https://site.com/p/abc",
+}
+
+_OPENRTB_REQUEST = {
+    "id": "auc-1",
+    "imp": [{"id": "1", "tagid": "slot-7", "bidfloor": 0.8}],
+    "site": {"domain": "news.com"},
+    "device": {"ifa": "ifa123", "ip": "1.1.1.1", "ua": "UA"},
+}
+
+
+class _RecordingSink:
+    """Duck-typed external sink used to assert delegation without cloud libs."""
+
+    def __init__(self, name="recording", fail=False):
+        self.name = name
+        self.fail = fail
+        self.events = []
+
+    def upsert(self, event):
+        if self.fail:
+            raise RuntimeError("simulated sink failure")
+        self.events.append(event["event_id"])
+        return "written"
+
+
+class _FakeDoc:
+    def __init__(self, store, key):
+        self._store = store
+        self._key = key
+
+    def set(self, event, merge=False):
+        self._store[self._key] = {"event": event, "merge": merge}
+
+
+class _FakeCollection:
+    def __init__(self, store):
+        self._store = store
+
+    def document(self, key):
+        return _FakeDoc(self._store, key)
+
+
+class _FakeFirestoreClient:
+    def __init__(self):
+        self.store = {}
+
+    def collection(self, _name):
+        return _FakeCollection(self.store)
+
+
+def _first_event_id(cell, source, payload):
+    return cell.normalizer.normalize(source, payload)["event_id"]
 
 
 def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):

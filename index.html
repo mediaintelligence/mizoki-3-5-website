@@ -433,9 +433,12 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 .sp-detail h4{font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.1;margin-bottom:7px}
 .sp-detail .owns{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;margin-bottom:14px}
 .sp-detail p{color:var(--ink2);font-size:15px;font-weight:300}
+<<<<<<< HEAD
 .sp-tagline{font-family:var(--serif);font-style:italic;font-size:21px;line-height:1.2;color:var(--teal);margin-top:16px}
 .sp-node text.sp-art{font-size:7.5px;letter-spacing:.02em;fill:var(--faint)}
 .sp-roi .roi-l{font-family:var(--mono);font-size:8px;letter-spacing:.1em;fill:var(--faint)}
+=======
+>>>>>>> origin/main
 @media(max-width:900px){.sp-body{grid-template-columns:1fr}.sp-canvas{border-right:0;border-bottom:1px solid var(--rule)}}
 
 @media (prefers-reduced-motion: reduce){
@@ -615,17 +618,28 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
       <div>
         <div class="reveal">
           <h2>One loop. <em>Three subsystems carry it.</em></h2>
+<<<<<<< HEAD
           <p class="sec-lede">The reflex arc isn't a straight line — it's a loop that turns raw signals into compounding ROI. Three subsystems carry each signal around it: the <strong>knowledge graph</strong> grounds the reasoning in causal drivers, the <strong>financial model</strong> proves each option out before it's chosen, and the <strong>orchestrator</strong> executes the approved change and learns from the result. Every lap is written to one shared memory — so the next one starts smarter. <strong>Hover a stage</strong> for its artifact, or a subsystem for the stages it owns.</p>
           <!-- A/B taglines: change data-i to 0 or 1 (see TAGLINES in the spiral script below) -->
           <p class="sp-tagline" id="sp-tagline" data-i="0">From data to decision to lift—on repeat.</p>
+=======
+          <p class="sec-lede">The reflex arc isn't a straight line — it's a loop that never stops, tightening with every pass. Three subsystems carry each signal around it: the <strong>knowledge graph</strong> grounds the reasoning, the <strong>financial model</strong> proves the action out before it's chosen, and the <strong>orchestrator</strong> executes under policy and learns from the result. <strong>Hover a subsystem or a stage</strong> to see who owns what.</p>
+>>>>>>> origin/main
         </div>
         <div class="spiral reveal" id="spiral">
           <div class="sp-h"><span>EXHIBIT — SRPVDAL LOOP · <b>WHO OWNS EACH STAGE</b></span><span>INTERACTIVE</span></div>
           <div class="sp-body">
+<<<<<<< HEAD
             <div class=
             <div class="sp-side">
               <div class="sp-legend" id="sp-legend"></div>
               <div class="sp-detail" id="sp-detail" aria-live="polite" aria-atomic="true"></div>
+=======
+            <div class="sp-canvas"><svg id="sp-svg" viewBox="0 0 560 470" role="img" aria-label="SRPVDAL loop with knowledge graph, financial model, and orchestrator subsystems"></svg></div>
+            <div class="sp-side">
+              <div class="sp-legend" id="sp-legend"></div>
+              <div class="sp-detail" id="sp-detail"></div>
+>>>>>>> origin/main
             </div>
           </div>
         </div>
@@ -1107,13 +1121,18 @@ setDiv(0);
   calc();
 }catch(e){}})();
 
+<<<<<<< HEAD
 /* ---------- SRPVDAL spiral: subsystem ownership + artifacts + compounding ROI ---------- */
+=======
+/* ---------- SRPVDAL spiral: subsystem ownership ---------- */
+>>>>>>> origin/main
 (function(){try{
 var svg=document.getElementById('sp-svg');if(!svg)return;
 var legend=document.getElementById('sp-legend'),detail=document.getElementById('sp-detail');
 var NS='http://www.w3.org/2000/svg';
 function E(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
 
+<<<<<<< HEAD
 /* A/B tagline — change data-i (0|1) on #sp-tagline in the HTML to swap */
 var TAGLINES=['From data to decision to lift—on repeat.','Every cycle smarter: sense it, reason it, ship it, learn it.'];
 var tEl=document.getElementById('sp-tagline');
@@ -1142,6 +1161,23 @@ var STAGES=[
 function title(s){return s.charAt(0)+s.slice(1).toLowerCase()}
 
 var N=STAGES.length,cx=300,cy=250,rOut=190,rIn=62,turns=1.12;
+=======
+var COMP={
+ kg :{label:'Knowledge Graph',sub:'Temporal-Causal Knowledge Graph',owns:'Reason · Plan',color:'#0C7C8F',
+   role:'Holds a living graph of every entity, relationship, and prediction — with full provenance. It grounds reasoning and planning in cause and effect, so the system understands why, not just what.'},
+ fin:{label:'Financial Model',sub:'Counterfactual Simulation Engine',owns:'Validate · Decide',color:'#B07A18',
+   role:'Forecasts the financial outcome of every candidate action — liquidity, P&L, ROAS — runs risk and sensitivity, and enforces capital guardrails before any choice is ranked. Nothing reaches a decision unproven.'},
+ orc:{label:'Orchestrator',sub:'Boss Agent',owns:'Act · Learn',color:'#1F8A5B',
+   role:'Executes only after every policy gate clears, coordinates the sub-agents, writes the tamper-evident audit trail, and feeds the outcome back into the graph — so the next pass around the loop is sharper.'}
+};
+var ENTRY={label:'Sense',sub:'The loop begins',owns:'Entry',color:'#5E6E75',
+   role:'Signals enter here. The nervous system senses the whole organization at once — telemetry, contracts, ledgers — and streams it into the graph. Everything downstream reasons over what it captures.'};
+var STAGES=[
+ {k:'SENSE',c:null},{k:'REASON',c:'kg'},{k:'PLAN',c:'kg'},{k:'VALIDATE',c:'fin'},
+ {k:'DECIDE',c:'fin'},{k:'ACT',c:'orc'},{k:'LEARN',c:'orc'}
+];
+var N=STAGES.length,cx=280,cy=236,rOut=186,rIn=60,turns=1.12;
+>>>>>>> origin/main
 function pt(f){var a=-Math.PI/2+f*Math.PI*2*turns,r=rOut-(rOut-rIn)*f;
   return {x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,a:a}}
 function path(f0,f1){var d='',first=true;
@@ -1153,6 +1189,7 @@ svg.appendChild(E('path',{d:path(-0.03,1.07),fill:'none',stroke:'#C3CCD0','strok
 var ARCS={kg:[0.12,0.38],fin:[0.46,0.705],orc:[0.79,1.045]},arcEls={};
 for(var ck in ARCS){var a=ARCS[ck];
   var pe=E('path',{d:path(a[0],a[1]),fill:'none',stroke:COMP[ck].color,'stroke-width':5,'stroke-linecap':'round'});
+<<<<<<< HEAD
   pe.setAttribute('class','sp-arc');svg.appendChild(pe);arcEls[ck]=pe}
 
 /* center loop glyph */
@@ -1168,6 +1205,14 @@ var rsv=E('circle',{cx:cx,cy:cy,r:23,fill:'transparent',style:'cursor:pointer'})
   for(var j=1;j<=5;j++)g.appendChild(E('circle',{cx:bx+j*step,cy:by-j*rise,r:2,fill:'#1F8A5B'}));
   var t=E('text',{x:bx,y:by-5*rise-9,'class':'roi-l'});t.textContent='ROI ↑ EACH LAP';g.appendChild(t);
   svg.appendChild(g)})();
+=======
+  pe.setAttribute('class','sp-arc');pe.setAttribute('data-c',ck);svg.appendChild(pe);arcEls[ck]=pe}
+
+svg.appendChild(E('circle',{cx:cx,cy:cy,r:22,fill:'#FBFCFC',stroke:'#D4DBDE','stroke-width':1}));
+var lt=E('text',{x:cx,y:cy,'class':'sp-loop'});lt.textContent='↻';svg.appendChild(lt);
+var ll=E('text',{x:cx,y:cy+14,'class':'sp-loopl'});ll.textContent='LOOP TIGHTENS';svg.appendChild(ll);
+var rs=E('circle',{cx:cx,cy:cy,r:22,fill:'transparent',style:'cursor:pointer'});rs.addEventListener('click',overview);svg.appendChild(rs);
+>>>>>>> origin/main
 
 var nodeEls=[];
 for(var i=0;i<N;i++){(function(i){
@@ -1176,17 +1221,28 @@ for(var i=0;i<N;i++){(function(i){
   g.appendChild(E('circle',{cx:p.x,cy:p.y,r:s.c?7:8,fill:'#FBFCFC',stroke:col,'stroke-width':2.5}));
   g.appendChild(E('circle',{cx:p.x,cy:p.y,r:2.6,fill:col}));
   var dx=Math.cos(p.a),dy=Math.sin(p.a),anch=dx<-0.25?'end':(dx>0.25?'start':'middle');
+<<<<<<< HEAD
   var lx=(p.x+dx*16),ly=(p.y+dy*16+3.5);
   var t1=E('text',{x:lx.toFixed(1),y:ly.toFixed(1),'text-anchor':anch});t1.textContent=s.k;g.appendChild(t1);
   var t2=E('text',{x:lx.toFixed(1),y:(ly+10).toFixed(1),'text-anchor':anch,'class':'sp-art'});t2.textContent=s.art;g.appendChild(t2);
   function go(){if(s.c)showStage(i);else showEntry()}
   g.addEventListener('click',go);g.addEventListener('mouseenter',go);
+=======
+  var tx=E('text',{x:(p.x+dx*16).toFixed(1),y:(p.y+dy*16+3.5).toFixed(1),'text-anchor':anch});
+  tx.textContent=s.k;g.appendChild(tx);
+  function sel(){if(s.c)select(s.c);else showEntry()}
+  g.addEventListener('click',sel);g.addEventListener('mouseenter',sel);
+>>>>>>> origin/main
   svg.appendChild(g);nodeEls.push({g:g,comp:s.c})
 })(i)}
 
 var chips={};
 ['kg','fin','orc'].forEach(function(ck){
+<<<<<<< HEAD
   var d=COMP[ck],b=document.createElement('button');b.type='button';b.className='sp-chip';
+=======
+  var d=COMP[ck],b=document.createElement('button');b.type='button';b.className='sp-chip';b.setAttribute('data-c',ck);
+>>>>>>> origin/main
   b.innerHTML='<span class="sp-sw" style="background:'+d.color+'"></span>'+
     '<span><span class="sp-ct">'+d.label+'</span><span class="sp-cs"> · '+d.sub+'</span></span>'+
     '<span class="sp-cstg">'+d.owns+'</span>';
@@ -1195,16 +1251,24 @@ var chips={};
   legend.appendChild(b);chips[ck]=b
 });
 
+<<<<<<< HEAD
 function setDetail(o){
   detail.style.borderTopColor=o.color;
   detail.innerHTML='<div class="dl" style="color:'+o.color+'">'+o.kicker+'</div>'+
     '<h4>'+o.title+'</h4><div class="owns">'+o.owns+'</div><p>'+o.body+'</p>'
+=======
+function setDetail(d){
+  detail.style.borderTopColor=d.color;
+  detail.innerHTML='<div class="dl" style="color:'+d.color+'">'+d.sub+'</div>'+
+    '<h4>'+d.label+'</h4><div class="owns">OWNS · '+d.owns+'</div><p>'+d.role+'</p>'
+>>>>>>> origin/main
 }
 function reset(){
   for(var k in arcEls){arcEls[k].classList.remove('dim');arcEls[k].setAttribute('stroke-width','5')}
   for(var i=0;i<nodeEls.length;i++)nodeEls[i].g.classList.remove('dim');
   for(var c in chips){chips[c].classList.remove('on');chips[c].style.boxShadow=''}
 }
+<<<<<<< HEAD
 function emphArc(ck){for(var k in arcEls){var on=k===ck;arcEls[k].setAttribute('stroke-width',on?'7':'5');if(!on)arcEls[k].classList.add('dim')}}
 function chipOn(ck){chips[ck].classList.add('on');chips[ck].style.boxShadow='inset 3px 0 0 '+COMP[ck].color}
 function select(ck){
@@ -1232,6 +1296,27 @@ function overview(){
     '<h4>From signal to lift, on repeat.</h4>'+
     '<div class="owns">SIGNALS → CAUSAL GRAPH → ACTION PLAN → SIMULATION → DECISION SLATE → EXECUTIONS → LEARNING RECORDS</div>'+
     '<p>Raw signals become causal understanding, proven options, and governed execution — each lap written to one shared memory. Predicted-vs-actual deltas feed back so the next cycle starts smarter, and ROI compounds one notch at a time. Hover a stage for its artifact, or a subsystem for the stages it owns.</p>'
+=======
+function select(ck){
+  reset();
+  for(var k in arcEls){var on=k===ck;arcEls[k].setAttribute('stroke-width',on?'7':'5');if(!on)arcEls[k].classList.add('dim')}
+  for(var i=0;i<nodeEls.length;i++)if(nodeEls[i].comp!==ck)nodeEls[i].g.classList.add('dim');
+  chips[ck].classList.add('on');chips[ck].style.boxShadow='inset 3px 0 0 '+COMP[ck].color;
+  setDetail(COMP[ck])
+}
+function showEntry(){
+  reset();
+  for(var k in arcEls)arcEls[k].classList.add('dim');
+  for(var i=0;i<nodeEls.length;i++)if(nodeEls[i].comp)nodeEls[i].g.classList.add('dim');
+  setDetail(ENTRY)
+}
+function overview(){
+  reset();detail.style.borderTopColor='';
+  detail.innerHTML='<div class="dl" style="color:var(--teal)">THE CONTINUOUS LOOP</div>'+
+    '<h4>Three subsystems, one memory.</h4>'+
+    '<div class="owns">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</div>'+
+    '<p>Every signal travels the full loop. The knowledge graph grounds it, the financial model proves it out, and the orchestrator executes and learns — each pass written to one shared memory, so the loop tightens over time. Hover a subsystem to isolate the stages it owns.</p>'
+>>>>>>> origin/main
 }
 overview();
 }catch(e){var s=document.getElementById('architecture');if(s)s.style.display='none'}})();
