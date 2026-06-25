@@ -555,6 +555,33 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         limit = max(1, min(limit, 100))
         return jsonify({"events": get_runtime().recent_journey_events(limit=limit)})
 
+    @app.route("/schemas/canonical-event-envelope.json", methods=["GET"])
+    def canonical_envelope_schema():
+        schema_path = BASE_DIR / "schemas" / "canonical-event-envelope.json"
+        if not schema_path.is_file():
+            abort(404)
+        return send_from_directory(
+            schema_path.parent,
+            schema_path.name,
+            mimetype="application/schema+json",
+        )
+
+    @app.route("/api/boss/journey/envelope", methods=["POST"])
+    def boss_journey_envelope():
+        payload = require_json_payload()
+        source = payload.get("source", "")
+        record = payload.get("payload")
+        if not isinstance(source, str) or not source.strip():
+            abort(400, description="Field 'source' must be a non-empty string.")
+        if not isinstance(record, dict):
+            abort(400, description="Field 'payload' must be an object.")
+        context = {
+            key: payload[key]
+            for key in ("business_context", "reasoning_context", "causal", "intelligence")
+            if isinstance(payload.get(key), dict)
+        }
+        return jsonify(run_runtime_call(lambda: get_runtime().build_journey_envelope(source, record, **context)))
+
     @app.route("/api/boss/skills/learn", methods=["POST"])
     def learn_boss_skill():
         payload = require_json_payload()

@@ -46,6 +46,7 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "gndi.run_decision_loop",
                 "gndi.simulate_action",
                 "graphrag.query",
+                "journey.build_envelope",
                 "journey.ingest_events",
                 "journey.normalize_event",
                 "journey.recent_events",
@@ -324,6 +325,73 @@ class BossRuntimeTestCase(unittest.TestCase):
             self.runtime.normalize_journey_event("meta", "not-a-dict")
         with self.assertRaises(ValueError):
             self.runtime.ingest_journey_events("meta", [])
+
+    def test_build_envelope_wraps_v1_with_all_layers(self) -> None:
+        result = self.runtime.build_journey_envelope("meta", _META_EVENT)
+        self.assertTrue(result["valid"], msg=result["errors"])
+        self.assertTrue(result["canonical_valid"])
+        env = result["envelope"]
+
+        self.assertEqual("2.0.0", env["schema_version"])
+        # v1 JourneyEvent is embedded as the canonical payload (stable identity).
+        self.assertEqual("meta", env["canonical_payload"]["event_source"])
+        self.assertEqual("Purchase", env["canonical_payload"]["event_type"])
+        self.assertEqual(
+            self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]["event_id"],
+            env["canonical_payload"]["event_id"],
+        )
+        # Deterministic semantic classification.
+        self.assertEqual(
+            {"domain": "Advertising", "category": "Conversion", "subcategory": "Purchase",
+             "intent": "Commercial", "confidence": 1.0},
+            env["classification"],
+        )
+        # KG references derived deterministically for Neo4j MERGE.
+        self.assertEqual("Campaign:111", env["kg_refs"]["CampaignNodeID"])
+        self.assertEqual("Creative:333", env["kg_refs"]["CreativeNodeID"])
+        self.assertEqual("Order:A123", env["kg_refs"]["OrderNodeID"])
+        # Identity resolved from the strongest available key (email present).
+        self.assertTrue(env["identity"]["resolution_method"].startswith("email"))
+        self.assertFalse(env["identity"]["anonymous"])
+        self.assertTrue(env["identity"]["identity_id"].startswith("Identity:"))
+        self.assertEqual(env["identity"]["identity_id"], env["kg_refs"]["IdentityNodeID"])
+        # Relationships materialize the graph edges.
+        rel_types = {rel["type"] for rel in env["relationships"]}
+        self.assertIn("BELONGS_TO", rel_types)
+        self.assertIn("RESULTED_IN", rel_types)
+        # SRPVDAL lifecycle initialized at SENSE.
+        self.assertEqual("SENSE", env["srpvdal_state"]["current_phase"])
+        self.assertEqual("REASON", env["srpvdal_state"]["next_phase"])
+        self.assertEqual(1, len(env["srpvdal_state"]["phase_history"]))
+        # Version vector for reproducibility.
+        for field in ("schema_version", "policy_version", "governance_version", "ontology_version", "reasoning_version"):
+            self.assertIn(field, env["provenance"])
+        # Security + data quality + observability.
+        self.assertIn("email", env["security"]["pii"])
+        self.assertEqual("restricted", env["security"]["classification"])
+        self.assertTrue(env["data_quality"]["schema_valid"])
+        self.assertTrue(env["observability"]["trace_id"].startswith("trace-"))
+        self.assertIsInstance(env["time_intelligence"]["latency_ms"], (int, float))
+        # Loop-filled layers are empty scaffolds at SENSE.
+        self.assertEqual([], env["actions"]["recommended"])
+        self.assertEqual({}, env["evaluation"])
+        # Envelope id is stable/idempotent-linked to the canonical event_id.
+        self.assertEqual(f"env-{env['canonical_payload']['event_id']}", env["envelope_id"])
+
+    def test_build_envelope_classification_for_openrtb(self) -> None:
+        env = self.runtime.build_journey_envelope("openrtb", _OPENRTB_REQUEST)["envelope"]
+        self.assertEqual("Advertising", env["classification"]["domain"])
+        self.assertEqual("Auction", env["classification"]["category"])
+        self.assertEqual("bid_request", env["classification"]["subcategory"])
+        self.assertEqual("auc-1", env["canonical_payload"]["context"]["auction_id"])
+
+    def test_build_envelope_is_deterministic(self) -> None:
+        a = self.runtime.build_journey_envelope("meta", _META_EVENT)["envelope"]
+        b = self.runtime.build_journey_envelope("meta", _META_EVENT)["envelope"]
+        # Identity/classification/kg/envelope_id are content-derived, so stable.
+        self.assertEqual(a["envelope_id"], b["envelope_id"])
+        self.assertEqual(a["identity"]["identity_id"], b["identity"]["identity_id"])
+        self.assertEqual(a["kg_refs"], b["kg_refs"])
 
     def _cell(self, sinks):
         store = Path(self.temp_dir.name) / "journey_sink_test.jsonl"

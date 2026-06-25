@@ -241,6 +241,47 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn("must be an array", response.get_json()["error"])
 
+    def test_canonical_envelope_schema_is_served(self) -> None:
+        response = self.client.get("/schemas/canonical-event-envelope.json")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertEqual("CanonicalEventEnvelope", payload["title"])
+        self.assertIn("canonical_payload", payload["properties"])
+        response.close()
+
+    def test_journey_envelope_endpoint_returns_layered_envelope(self) -> None:
+        response = self.client.post(
+            "/api/boss/journey/envelope",
+            json={
+                "source": "meta",
+                "payload": {
+                    "event_name": "Purchase",
+                    "event_time": 1719945600,
+                    "user_data": {"em": "hash"},
+                    "custom_data": {"campaign_id": "111", "ad_id": "333", "order_id": "A123", "value": 59.99, "currency": "USD"},
+                },
+                "business_context": {"kpi": "ROAS", "target": 4.0},
+            },
+        )
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertTrue(payload["valid"])
+        env = payload["envelope"]
+        self.assertEqual("2.0.0", env["schema_version"])
+        self.assertEqual("Conversion", env["classification"]["category"])
+        self.assertEqual("Campaign:111", env["kg_refs"]["CampaignNodeID"])
+        self.assertEqual("SENSE", env["srpvdal_state"]["current_phase"])
+        self.assertEqual("ROAS", env["business_context"]["kpi"])
+        self.assertEqual("meta", env["canonical_payload"]["event_source"])
+
+    def test_discover_exposes_envelope_block(self) -> None:
+        response = self.client.get("/api/boss/discover")
+        self.assertEqual(200, response.status_code)
+        journey = response.get_json()["journey"]
+        self.assertIn("envelope", journey)
+        self.assertEqual("2.0.0", journey["envelope"]["schema_version"])
+        self.assertIn("classification", journey["envelope"]["layers"])
+
 
 if __name__ == "__main__":
     unittest.main()

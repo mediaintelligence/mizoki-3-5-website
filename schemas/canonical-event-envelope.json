@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mizoki/schema/canonical-event-envelope.json",
+  "title": "CanonicalEventEnvelope",
+  "description": "Universal layered contract every MIZ OKI Intelligence Cell reads and writes. It wraps the canonical JourneyEvent (v1) as `canonical_payload` and adds the reasoning-native layers — classification, identity, knowledge-graph references, relationships, time intelligence, security, data quality, observability, SRPVDAL lifecycle state, and the loop-filled evaluation/actions/learning slots — so events support autonomous reasoning natively rather than merely being stored. SENSE-computable layers are populated deterministically at ingest; reasoning-derived layers are initialized as typed scaffolds for downstream cells to fill.",
+  "type": "object",
+  "required": ["schema_version", "metadata", "provenance", "classification", "identity", "srpvdal_state", "canonical_payload"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"type": "string", "description": "Envelope schema version (semver)."},
+    "envelope_id": {"type": "string"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["envelope_id", "event_source", "event_type", "created_at", "schema_version"],
+      "properties": {
+        "envelope_id": {"type": "string"},
+        "event_source": {"type": "string"},
+        "event_type": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "schema_version": {"type": "string"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["connector_version", "schema_version", "policy_version", "governance_version", "ontology_version", "reasoning_version"],
+      "properties": {
+        "model_version": {"type": ["string", "null"]},
+        "request_id": {"type": ["string", "null"]},
+        "prompt_hash": {"type": ["string", "null"]},
+        "response_schema_hash": {"type": ["string", "null"]},
+        "connector_version": {"type": "string"},
+        "schema_version": {"type": "string"},
+        "policy_version": {"type": "string"},
+        "governance_version": {"type": "string"},
+        "ontology_version": {"type": "string"},
+        "reasoning_version": {"type": "string"},
+        "source_payload_hash": {"type": ["string", "null"]},
+        "pipeline": {"type": ["string", "null"]}
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity_id", "confidence", "resolution_method", "anonymous"],
+      "properties": {
+        "identity_id": {"type": ["string", "null"]},
+        "confidence": {"type": "number"},
+        "resolution_method": {"type": ["string", "null"]},
+        "identity_cluster": {"type": ["string", "null"]},
+        "anonymous": {"type": "boolean"}
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "classification": {"type": "string"},
+        "pii": {"type": "array", "items": {"type": "string"}},
+        "gdpr": {"type": ["boolean", "null"]},
+        "hipaa": {"type": ["boolean", "null"]},
+        "encrypted": {"type": "boolean"},
+        "retention_policy": {"type": ["string", "null"]},
+        "consent": {"type": ["string", "null"]}
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_valid": {"type": "boolean"},
+        "validation_errors": {"type": "array", "items": {"type": "string"}},
+        "missing_fields": {"type": "array", "items": {"type": "string"}},
+        "completeness": {"type": "number"},
+        "freshness_seconds": {"type": ["number", "null"]},
+        "duplicate_probability": {"type": "number"}
+      }
+    },
+    "business_context": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "objective_id": {"type": ["string", "null"]},
+        "kpi": {"type": ["string", "null"]},
+        "target": {"type": ["number", "null"]},
+        "priority": {"type": ["string", "null"]},
+        "owner": {"type": ["string", "null"]}
+      }
+    },
+    "reasoning_context": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "business_unit": {"type": ["string", "null"]},
+        "goal": {"type": ["string", "null"]},
+        "objective": {"type": ["string", "null"]},
+        "constraint_set": {"type": "array", "items": {"type": "string"}},
+        "guardrails": {"type": "array", "items": {"type": "string"}},
+        "policies": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "kg_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CampaignNodeID": {"type": ["string", "null"]},
+        "CreativeNodeID": {"type": ["string", "null"]},
+        "AudienceNodeID": {"type": ["string", "null"]},
+        "CustomerNodeID": {"type": ["string", "null"]},
+        "OrderNodeID": {"type": ["string", "null"]},
+        "IdentityNodeID": {"type": ["string", "null"]},
+        "SessionNodeID": {"type": ["string", "null"]}
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "target"],
+        "properties": {
+          "type": {"type": "string"},
+          "source": {"type": ["string", "null"]},
+          "target": {"type": "string"}
+        }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "category", "subcategory", "intent", "confidence"],
+      "properties": {
+        "domain": {"type": "string"},
+        "category": {"type": "string"},
+        "subcategory": {"type": "string"},
+        "intent": {"type": "string"},
+        "confidence": {"type": "number"}
+      }
+    },
+    "field_confidence": {"type": "object", "additionalProperties": {"type": "number"}},
+    "causal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parent_events": {"type": "array", "items": {"type": "string"}},
+        "caused_by": {"type": "array", "items": {"type": "string"}},
+        "predicted_effect": {"type": ["string", "null"]},
+        "counterfactual_id": {"type": ["string", "null"]}
+      }
+    },
+    "time_intelligence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_time", "ingest_time", "processing_time"],
+      "properties": {
+        "event_time": {"type": ["string", "null"], "format": "date-time"},
+        "source_time": {"type": ["string", "null"], "format": "date-time"},
+        "ingest_time": {"type": ["string", "null"], "format": "date-time"},
+        "processing_time": {"type": "string", "format": "date-time"},
+        "decision_time": {"type": ["string", "null"], "format": "date-time"},
+        "latency_ms": {"type": ["number", "null"]},
+        "watermark": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "srpvdal_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["current_phase", "phase_history", "retry_count"],
+      "properties": {
+        "current_phase": {"type": "string", "enum": ["SENSE", "REASON", "PLAN", "VALIDATE", "DECIDE", "ACT", "LEARN"]},
+        "previous_phase": {"type": ["string", "null"]},
+        "next_phase": {"type": ["string", "null"]},
+        "retry_count": {"type": "integer"},
+        "phase_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "phase": {"type": "string"},
+              "at": {"type": "string", "format": "date-time"},
+              "outcome": {"type": ["string", "null"]},
+              "duration_ms": {"type": ["number", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "span_id"],
+      "properties": {
+        "trace_id": {"type": "string"},
+        "span_id": {"type": "string"},
+        "workflow_id": {"type": ["string", "null"]},
+        "execution_id": {"type": ["string", "null"]},
+        "agent_id": {"type": ["string", "null"]},
+        "cell_id": {"type": ["string", "null"]}
+      }
+    },
+    "intelligence": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "reasoning_engine": {"type": ["string", "null"]},
+        "planner": {"type": ["string", "null"]},
+        "validator": {"type": ["string", "null"]},
+        "decision_engine": {"type": ["string", "null"]},
+        "learning_engine": {"type": ["string", "null"]},
+        "confidence": {"type": ["number", "null"]}
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "prediction": {"type": ["number", "string", "null"]},
+        "actual": {"type": ["number", "string", "null"]},
+        "error": {"type": ["number", "null"]},
+        "outcome": {"type": ["string", "null"]},
+        "score": {"type": ["number", "null"]},
+        "passed": {"type": ["boolean", "null"]},
+        "failed": {"type": ["boolean", "null"]}
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommended": {"type": "array", "items": {"type": "object"}},
+        "approved": {"type": "array", "items": {"type": "object"}},
+        "executed": {"type": "array", "items": {"type": "object"}},
+        "rolled_back": {"type": "array", "items": {"type": "object"}},
+        "status": {"type": ["string", "null"]}
+      }
+    },
+    "learning": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "expected": {"type": ["number", "string", "null"]},
+        "actual": {"type": ["number", "string", "null"]},
+        "reward": {"type": ["number", "null"]},
+        "feedback": {"type": ["string", "null"]},
+        "drift": {"type": ["number", "null"]},
+        "model_update": {"type": ["string", "null"]}
+      }
+    },
+    "canonical_payload": {
+      "type": "object",
+      "description": "The embedded canonical JourneyEvent (v1). Source of truth for the event itself.",
+      "additionalProperties": true
+    },
+    "audit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "phase": {"type": "string"},
+          "actor": {"type": "string"},
+          "at": {"type": "string", "format": "date-time"},
+          "note": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}
