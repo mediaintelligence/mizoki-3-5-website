@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .journey import JourneyIngestCell
-from .journey_gemini import vertex_extractor_metadata
+from .journey_gemini import active_extractor_metadata
 from .journey_sinks import build_journey_sinks_from_env
 
 
@@ -2340,7 +2340,7 @@ class BossAgent:
             },
             "journey": {
                 **self.journey.discovery_block(),
-                "llm_extractor": vertex_extractor_metadata(),
+                "llm_extractor": active_extractor_metadata(),
                 "description": "Canonical JourneyEvent connector layer: normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one schema at SENSE with deterministic, idempotent upserts.",
             },
             "capabilities": {
