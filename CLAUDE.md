@@ -193,6 +193,26 @@ smoke of `/` → 200 with all new markers (`id="architecture"`, `id="sp-svg"`, `
 `§03 LOOP`, renumbered folios §04–§07) and no `§03 CONTROL` nav regression; all 7 spiral node + label
 coordinates confirmed within the viewBox (no clipping).
 
+**Investor-framing enhancement (same session, follow-up after PR #8 merged + deployed).** Per founder
+direction, layered an investor storytelling pass onto the §03 spiral while **keeping the canonical
+7-stage SRPVDAL** (the founder's framing pitched a 5-stage SRDAL ring; we kept 7 for consistency with
+§02 and the rest of the site, and mapped the narrative onto all seven stages). Added:
+(1) a **key-artifact second label under each stage node** — Signals · Causal Graph · Action Plan ·
+Simulation · Decision Slate · Executions · Learning Records; (2) **stage-level hover/click detail**
+(`showStage`) surfacing each stage's artifact + a one-line investor description ("causal drivers, not
+correlations" / "rank by expected value and risk" / "secure connectors execute the approved change" /
+"predicted-vs-actual deltas feed back"); (3) a **compounding-ROI inset** (`.sp-roi`) — a thin line
+rising one notch per lap with `ROI ↑ EACH LAP`; (4) an **A/B tagline slot** `#sp-tagline` populated
+from a `TAGLINES` array, swappable via the `data-i` attribute in the HTML (0 = "From data to decision
+to lift—on repeat.", 1 = "Every cycle smarter: sense it, reason it, ship it, learn it."); (5) refreshed
+lede + overview copy ("turns raw signals into compounding ROI", "each lap written to one shared
+memory"). viewBox enlarged 560×470 → 600×500 (cx/cy 300/250, rOut 190) to give the two-line labels
+margin. Verification: py_compile clean; 32 unittest pass; `node --check` clean; HTML balanced;
+`/` smoke 200 with all new markers (`sp-tagline`, both taglines, artifacts, `ROI ↑ EACH LAP`,
+`THE COMPOUNDING LOOP`); all 7 node labels + artifact second-lines + ROI inset numerically confirmed
+within the viewBox with no label/label or label/ROI overlap. Lands on `claude/nifty-knuth-mhvohu`
+(ahead of `main` again post-#8-merge — needs a fresh PR/merge to deploy).
+
 ### Homepage Polish — Live-vs-Repo Audit, DEL Gauge Fix, Illustrative Disclaimer (2026-06-18)
 
 Reviewed a founder-supplied `index.html` paste against **live mizoki3.com** and repo
