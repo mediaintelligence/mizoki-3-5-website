@@ -150,8 +150,6 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
-<<<<<<< HEAD
-=======
 ### Canonical JourneyEvent Schema — Multi-Connector SENSE Normalization (2026-06-24)
 
 Added a **canonical `JourneyEvent` ingestion layer** so events from **Meta (Conversions
@@ -268,7 +266,6 @@ and/or `MIZOKI_JOURNEY_BIGQUERY_TABLE` (and install the optional `google-cloud-f
 `google-cloud-bigquery` clients) so the canonical `event_id` upsert lands in durable storage. The
 Gemini extractor stays dormant until `GEMINI_API_KEY` is provided.
 
->>>>>>> origin/main
 ### Homepage §03 ARCHITECTURE — Interactive SRPVDAL Spiral + Subsystem Ownership (2026-06-19)
 
 Integrated a founder-supplied investor slide (the "SRPVDAL spiral" — SENSE → REASON → PLAN →
@@ -315,7 +312,6 @@ smoke of `/` → 200 with all new markers (`id="architecture"`, `id="sp-svg"`, `
 `§03 LOOP`, renumbered folios §04–§07) and no `§03 CONTROL` nav regression; all 7 spiral node + label
 coordinates confirmed within the viewBox (no clipping).
 
-<<<<<<< HEAD
 **Investor-framing enhancement (same session, follow-up after PR #8 merged + deployed).** Per founder
 direction, layered an investor storytelling pass onto the §03 spiral while **keeping the canonical
 7-stage SRPVDAL** (the founder's framing pitched a 5-stage SRDAL ring; we kept 7 for consistency with
@@ -336,8 +332,6 @@ margin. Verification: py_compile clean; 32 unittest pass; `node --check` clean; 
 within the viewBox with no label/label or label/ROI overlap. Lands on `claude/nifty-knuth-mhvohu`
 (ahead of `main` again post-#8-merge — needs a fresh PR/merge to deploy).
 
-=======
->>>>>>> origin/main
 ### Homepage Polish — Live-vs-Repo Audit, DEL Gauge Fix, Illustrative Disclaimer (2026-06-18)
 
 Reviewed a founder-supplied `index.html` paste against **live mizoki3.com** and repo
