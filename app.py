@@ -582,6 +582,18 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         }
         return jsonify(run_runtime_call(lambda: get_runtime().build_journey_envelope(source, record, **context)))
 
+    @app.route("/api/boss/identity/resolve", methods=["POST"])
+    def boss_identity_resolve():
+        payload = require_json_payload()
+        actor = payload.get("actor")
+        if not isinstance(actor, dict):
+            abort(400, description="Field 'actor' must be an object.")
+        return jsonify(run_runtime_call(lambda: get_runtime().resolve_identity(actor)))
+
+    @app.route("/api/boss/identity/stats", methods=["GET"])
+    def boss_identity_stats():
+        return jsonify(run_runtime_call(lambda: get_runtime().identity_cluster_stats()))
+
     @app.route("/api/boss/skills/learn", methods=["POST"])
     def learn_boss_skill():
         payload = require_json_payload()

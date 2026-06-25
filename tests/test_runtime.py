@@ -13,6 +13,7 @@ from mizoki_runtime.journey_gemini import (
     to_vertex_response_schema,
     vertex_extractor_metadata,
 )
+from mizoki_runtime.identity import IdentityClusterResolver
 from mizoki_runtime.journey_sinks import (
     BigQueryJourneySink,
     FirestoreJourneySink,
@@ -46,6 +47,8 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "gndi.run_decision_loop",
                 "gndi.simulate_action",
                 "graphrag.query",
+                "identity.cluster_stats",
+                "identity.resolve",
                 "journey.build_envelope",
                 "journey.ingest_events",
                 "journey.normalize_event",
@@ -392,6 +395,53 @@ class BossRuntimeTestCase(unittest.TestCase):
         self.assertEqual(a["envelope_id"], b["envelope_id"])
         self.assertEqual(a["identity"]["identity_id"], b["identity"]["identity_id"])
         self.assertEqual(a["kg_refs"], b["kg_refs"])
+
+    def test_identity_resolver_stitches_on_shared_strong_key(self) -> None:
+        resolver = IdentityClusterResolver(Path(self.temp_dir.name) / "id_stitch.json")
+        a = resolver.resolve({"email": "e1", "user_id": "u1"})
+        b = resolver.resolve({"email": "e1", "device_ifa": "d1"})  # shares email -> same cluster
+        c = resolver.resolve({"email": "e9"})  # unrelated -> different cluster
+        self.assertEqual(a["identity_cluster"], b["identity_cluster"])
+        self.assertNotEqual(a["identity_cluster"], c["identity_cluster"])
+        # device_ifa d1 got stitched into the cluster, growing its token count.
+        self.assertGreaterEqual(b["cluster_size"], 3)
+        self.assertFalse(a["newly_merged"])
+
+    def test_identity_resolver_merges_previously_separate_clusters(self) -> None:
+        resolver = IdentityClusterResolver(Path(self.temp_dir.name) / "id_merge.json")
+        first = resolver.resolve({"email": "alice@x.com"})
+        second = resolver.resolve({"device_ifa": "dev-9"})
+        self.assertNotEqual(first["identity_cluster"], second["identity_cluster"])
+        # An event carrying both identifiers stitches the two known clusters together.
+        bridge = resolver.resolve({"email": "alice@x.com", "device_ifa": "dev-9"})
+        self.assertTrue(bridge["newly_merged"])
+        after = resolver.resolve({"device_ifa": "dev-9"})
+        self.assertEqual(bridge["identity_cluster"], after["identity_cluster"])
+
+    def test_identity_resolver_ignores_weak_ip_only_actor(self) -> None:
+        resolver = IdentityClusterResolver(Path(self.temp_dir.name) / "id_ip.json")
+        result = resolver.resolve({"ip": "1.2.3.4"})
+        self.assertIsNone(result["identity_cluster"])
+        self.assertTrue(result["anonymous"])
+        self.assertEqual([], result["linked_keys"])
+
+    def test_identity_resolver_persists_across_instances(self) -> None:
+        path = Path(self.temp_dir.name) / "id_persist.json"
+        first = IdentityClusterResolver(path).resolve({"email": "persist@x.com"})
+        # A fresh instance loads the snapshot and resolves the same actor identically.
+        reloaded = IdentityClusterResolver(path).resolve({"email": "persist@x.com"})
+        self.assertEqual(first["identity_cluster"], reloaded["identity_cluster"])
+
+    def test_build_envelope_populates_resolved_identity_cluster(self) -> None:
+        result = self.runtime.build_journey_envelope("meta", _META_EVENT)
+        self.assertTrue(result["valid"], msg=result["errors"])
+        cluster = result["envelope"]["identity"]["identity_cluster"]
+        self.assertIsNotNone(cluster)
+        self.assertTrue(cluster.startswith("Cluster:"))
+        self.assertEqual(cluster, result["identity_resolution"]["identity_cluster"])
+        # Re-resolving the same actor stays in the same cluster (idempotent).
+        again = self.runtime.build_journey_envelope("meta", _META_EVENT)
+        self.assertEqual(cluster, again["envelope"]["identity"]["identity_cluster"])
 
     def _cell(self, sinks):
         store = Path(self.temp_dir.name) / "journey_sink_test.jsonl"

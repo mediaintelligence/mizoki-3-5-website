@@ -150,6 +150,36 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Identity Resolver Cell — Cross-Event Cluster Stitching (2026-06-25)
+
+Closed the v2 envelope's one deliberate gap: `identity.identity_cluster` was emitted `null`
+("pending a stateful resolver"). Added that resolver. New `mizoki_runtime/identity.py` —
+`IdentityClusterResolver` (persistent union-find) + `IdentityResolutionCell`. Deterministic,
+dependency-free, in-process JSON snapshot (same ephemeral-disk caveat as the v1 store).
+
+**Mechanism:** connected components over **strong** identifier tokens (`user_id` / `email` /
+`phone_sha256` / `device_ifa`). Weak `ip` is **deliberately not stitched** (shared NAT/office IPs
+would over-merge distinct people). Cluster id = `Cluster:<sha256(anchor_root)[:16]>`. **Anchor rule
+(the subtle part):** the union anchors on an *already-established* root when one exists, so a
+brand-new identifier joining a known cluster **adopts** that cluster's id rather than relabeling it;
+only an event bridging >1 previously-separate known clusters relabels (deterministic min root) and is
+surfaced as `newly_merged`. (First implementation used union-by-min-root, which flipped a cluster's id
+whenever a lexicographically-smaller token joined — caught by the shared-email smoke; fixed.)
+
+**Wiring (`runtime.py`, `app.py`):** `BossRuntime.build_journey_envelope` now resolves the actor and
+populates `identity.identity_cluster` (then re-validates), returning `identity_resolution`. New
+`resolve_identity`/`identity_cluster_stats`; MCP tools `identity.resolve` + `identity.cluster_stats`
+(new `identity` category); Flask `POST /api/boss/identity/resolve` + `GET /api/boss/identity/stats`;
+`discover().journey.identity_resolution` block (method, stitch_keys, excluded `ip`, live stats);
+`health_snapshot().identity_cluster_count`.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/identity.py mizoki_runtime/runtime.py app.py`
+clean; `python3 -m unittest tests.test_app tests.test_runtime` → **73 passing** (+7: shared-key
+stitching, previously-separate-cluster merge + `newly_merged`, ip-only ignored, cross-instance
+persistence, envelope populates a resolved cluster idempotently, resolve endpoint + actor validation,
+discover block). Smoked: two events sharing a (normalized) email land in one stable cluster as a
+device_ifa accretes; ip-only → null. Purely additive; v1 + v2 envelope unchanged.
+
 ### CanonicalEventEnvelope v2 — Reasoning-Native Layered Contract (2026-06-25)
 
 Evolved the canonical layer from an *event* (`JourneyEvent` v1) toward a canonical *reasoning

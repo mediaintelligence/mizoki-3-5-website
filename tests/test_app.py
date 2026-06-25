@@ -281,6 +281,30 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertIn("envelope", journey)
         self.assertEqual("2.0.0", journey["envelope"]["schema_version"])
         self.assertIn("classification", journey["envelope"]["layers"])
+        self.assertIn("identity_resolution", journey)
+        self.assertIn("user_id", journey["identity_resolution"]["stitch_keys"])
+        self.assertIn("ip", journey["identity_resolution"]["excluded_keys"])
+
+    def test_identity_resolve_endpoint_returns_cluster(self) -> None:
+        response = self.client.post(
+            "/api/boss/identity/resolve",
+            json={"actor": {"email": "buyer@example.com", "user_id": "u-42"}},
+        )
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertTrue(payload["identity_cluster"].startswith("Cluster:"))
+        self.assertFalse(payload["anonymous"])
+        # A second event sharing the email resolves to the same cluster.
+        again = self.client.post(
+            "/api/boss/identity/resolve",
+            json={"actor": {"email": "buyer@example.com", "device_ifa": "dev-1"}},
+        )
+        self.assertEqual(payload["identity_cluster"], again.get_json()["identity_cluster"])
+
+    def test_identity_resolve_endpoint_validates_actor(self) -> None:
+        response = self.client.post("/api/boss/identity/resolve", json={"actor": "nope"})
+        self.assertEqual(400, response.status_code)
+        self.assertIn("must be an object", response.get_json()["error"])
 
 
 if __name__ == "__main__":

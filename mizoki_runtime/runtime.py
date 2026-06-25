@@ -13,6 +13,7 @@ from .journey import JourneyIngestCell
 from .journey_gemini import active_extractor_metadata
 from .journey_sinks import build_journey_sinks_from_env
 from .envelope import CanonicalEnvelopeBuilder
+from .identity import IdentityResolutionCell
 
 
 STOP_WORDS = {
@@ -2305,6 +2306,7 @@ class BossAgent:
         programmatic: ProgrammaticIntelligenceCell,
         journey: JourneyIngestCell,
         envelope_builder: CanonicalEnvelopeBuilder,
+        identity_resolver: IdentityResolutionCell,
         trace_file: Path,
     ) -> None:
         self.registry = registry
@@ -2315,6 +2317,7 @@ class BossAgent:
         self.programmatic = programmatic
         self.journey = journey
         self.envelope_builder = envelope_builder
+        self.identity_resolver = identity_resolver
         self.trace_file = trace_file
         self.trace_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -2345,6 +2348,7 @@ class BossAgent:
                 **self.journey.discovery_block(),
                 "llm_extractor": active_extractor_metadata(),
                 "envelope": self.envelope_builder.discovery_block(),
+                "identity_resolution": self.identity_resolver.discovery_block(),
                 "description": "Canonical JourneyEvent connector layer: normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one schema at SENSE with deterministic, idempotent upserts.",
             },
             "capabilities": {
@@ -2857,6 +2861,7 @@ class BossRuntime:
             self.base_dir / "schemas" / "canonical-event-envelope.json",
             self.journey.schema,
         )
+        self.identity_resolver = IdentityResolutionCell(self.data_dir / "identity_clusters.json")
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
         self._register_tools()
@@ -2870,6 +2875,7 @@ class BossRuntime:
             programmatic=self.programmatic,
             journey=self.journey,
             envelope_builder=self.envelope_builder,
+            identity_resolver=self.identity_resolver,
             trace_file=self.data_dir / "boss_decision_log.jsonl",
         )
 
@@ -3037,6 +3043,28 @@ class BossRuntime:
                 ),
                 tags=("journey", "envelope", "canonical", "reasoning", "v2"),
                 handler=lambda payload: self.build_journey_envelope(payload["source"], payload["payload"]),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="identity.resolve",
+                description="Resolve a cross-event identity cluster for an actor by stitching on strong identifiers (user_id/email/phone_sha256/device_ifa). Returns a deterministic, persistent cluster id; weak signals like ip are not stitched.",
+                category="identity",
+                parameters=(
+                    ToolParameter("actor", "object", "Canonical JourneyEvent actor (user_id/email/phone_sha256/device_ifa/ip).", required=True),
+                ),
+                tags=("identity", "resolution", "cluster", "sense"),
+                handler=lambda payload: self.resolve_identity(payload["actor"]),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="identity.cluster_stats",
+                description="Report identity-cluster store statistics: known tokens, resolved clusters, and largest cluster size.",
+                category="identity",
+                parameters=(),
+                tags=("identity", "resolution", "stats"),
+                handler=lambda payload: self.identity_cluster_stats(),
             )
         )
         self.registry.register(
@@ -3248,6 +3276,7 @@ class BossRuntime:
             "graph_native_subagent_count": len(self.graph_decision.list_subagents()),
             "programmatic_run_count": len(self.programmatic.recent_runs(limit=100)),
             "journey_event_count": self.journey.store.count(),
+            "identity_cluster_count": self.identity_resolver.stats()["clusters"],
         }
 
     def list_tools(self) -> list[dict[str, Any]]:
@@ -3372,9 +3401,23 @@ class BossRuntime:
             causal=causal,
             intelligence=intelligence,
         )
+        # Stateful cross-event identity stitching: upgrade identity_cluster from the
+        # builder's deterministic null to a resolved cluster id, then re-validate.
+        resolution = self.identity_resolver.resolve_actor(normalized["event"].get("actor", {}))
+        result["envelope"]["identity"]["identity_cluster"] = resolution["identity_cluster"]
+        errors = self.envelope_builder.schema.validate(result["envelope"])
+        result["valid"] = not errors
+        result["errors"] = errors
+        result["identity_resolution"] = resolution
         result["canonical_valid"] = normalized["valid"]
         result["canonical_errors"] = normalized["errors"]
         return result
+
+    def resolve_identity(self, actor: Any) -> dict[str, Any]:
+        return self.identity_resolver.resolve_actor(actor)
+
+    def identity_cluster_stats(self) -> dict[str, Any]:
+        return self.identity_resolver.stats()
 
 
 def create_runtime(base_dir: Path | None = None, data_dir: Path | None = None) -> BossRuntime:
