@@ -395,7 +395,7 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "event_time": "2026-06-22T14:03:12Z",
             }
             return {
-                "modelVersion": "gemini-2.0-pro-exp-02-05",
+                "modelVersion": "gemini-3.5-pro",
                 "responseId": "resp-123",
                 "candidates": [{"content": {"parts": [{"text": json.dumps(model_event)}]}}],
             }
@@ -409,13 +409,13 @@ class BossRuntimeTestCase(unittest.TestCase):
         self.assertEqual("click", event["event_type"])
         self.assertEqual("sam@example.com", event["actor"]["email"])
         self.assertEqual("2026-06-22T14:03:12Z", event["event_time"])
-        self.assertEqual("gemini-2.0-pro-exp-02-05", event["provenance"]["model_version"])
+        self.assertEqual("gemini-3.5-pro", event["provenance"]["model_version"])
         self.assertEqual("resp-123", event["provenance"]["request_id"])
         self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
         self.assertEqual("mizoki/ingest/llm", event["provenance"]["pipeline"])
         # The request pins the model + enforces the strict schema response_format.
         self.assertTrue(captured["body"]["response_format"]["strict"])
-        self.assertEqual("gemini-2.0-pro-exp-02-05", captured["body"]["model_version"])
+        self.assertEqual("gemini-3.5-pro", captured["body"]["model_version"])
         self.assertEqual("2026-06-01", captured["headers"]["X-Api-Revision"])
 
     def test_gemini_extractor_requires_credentials_without_transport(self) -> None:
@@ -427,7 +427,7 @@ class BossRuntimeTestCase(unittest.TestCase):
     def test_gemini_extractor_metadata_reports_pinned_model(self) -> None:
         meta = gemini_extractor_metadata({})
         self.assertEqual("google-gemini", meta["provider"])
-        self.assertEqual("gemini-2.0-pro-exp-02-05", meta["model"])
+        self.assertEqual("gemini-3.5-pro", meta["model"])
         self.assertTrue(meta["strict_response_format"])
         self.assertFalse(meta["configured"])
         self.assertTrue(gemini_extractor_metadata({"GEMINI_API_KEY": "x"})["configured"])
@@ -440,7 +440,7 @@ class BossRuntimeTestCase(unittest.TestCase):
             "context": {"channel": "search", "campaign_id": "111", "value": 59.99},
             "event_time": "2026-06-22T14:00:00Z",
         }
-        client = _FakeGenaiClient(model_event, model_version="gemini-2.0-pro", response_id="vtx-1")
+        client = _FakeGenaiClient(model_event, model_version="gemini-3.5-pro", response_id="vtx-1")
         extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="proj-x", client=client)
         self.assertTrue(extractor.configured)
         result = extractor.extract("Extract a Google Ads conversion JourneyEvent.", event_source="google_ads")
@@ -449,7 +449,7 @@ class BossRuntimeTestCase(unittest.TestCase):
         event = result["event"]
         self.assertEqual("google_ads", event["event_source"])
         self.assertEqual("conversion", event["event_type"])
-        self.assertEqual("gemini-2.0-pro", event["provenance"]["model_version"])
+        self.assertEqual("gemini-3.5-pro", event["provenance"]["model_version"])
         self.assertEqual("vtx-1", event["provenance"]["request_id"])
         self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
         self.assertEqual("vertex://proj-x/us-central1/" + extractor.model, result["model_provenance"]["raw_uri"])
@@ -591,7 +591,7 @@ class _FakeGenaiModels:
 class _FakeGenaiClient:
     """Duck-typed google-genai client: exposes .models.generate_content(...)."""
 
-    def __init__(self, payload, *, model_version="gemini-2.0-pro", response_id="vtx-1"):
+    def __init__(self, payload, *, model_version="gemini-3.5-pro", response_id="vtx-1"):
         self.models = _FakeGenaiModels(payload, model_version, response_id)
 
 

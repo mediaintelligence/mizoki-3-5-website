@@ -26,7 +26,7 @@ from .journey import JourneyEventNormalizer, sha256_hex
 
 # Pinned defaults — override via env so a deployment can bump the model/revision
 # without a code change (and the pin is recorded in provenance per row).
-DEFAULT_GEMINI_MODEL = "gemini-2.0-pro-exp-02-05"
+DEFAULT_GEMINI_MODEL = "gemini-3.5-pro"
 DEFAULT_GEMINI_API_REVISION = "2026-06-01"
 DEFAULT_VERTEX_LOCATION = "us-central1"
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"

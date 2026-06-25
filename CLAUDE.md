@@ -203,8 +203,8 @@ and the normalizer accepts optional `model_version`/`prompt`/`request_id` overri
     accepts (drops `$schema`/`$id`/`additionalProperties`, rewrites `["T","null"]` unions to
     `type` + `nullable`); the in-process validator stays the authoritative gate. Config via env:
     `MIZOKI_GEMINI_PROJECT` (or `GOOGLE_CLOUD_PROJECT`/`GCP_PROJECT_ID`), `MIZOKI_GEMINI_LOCATION`
-    (default `us-central1`), `MIZOKI_GEMINI_MODEL`. **`google-genai==2.10.0` added to
-    `requirements.txt`** — it ships in the image but the extractor stays dormant until a project is set.
+    (default `us-central1`), `MIZOKI_GEMINI_MODEL` (default **`gemini-3.5-pro`**). **`google-genai==2.10.0`
+    added to `requirements.txt`** — it ships in the image but the extractor stays dormant until a project is set.
   - **`GeminiJourneyExtractor` (API-key REST, retained).** Calls `generativelanguage.googleapis.com`
     with a pinned model + API revision via **stdlib `urllib`** (no dep), fires only when
     `GEMINI_API_KEY` is set; injectable `transport` for network-free tests.
@@ -215,8 +215,8 @@ and the normalizer accepts optional `model_version`/`prompt`/`request_id` overri
   **Cloud Run ops to activate it (operator, GCP-side):** (1) grant the Cloud Run *runtime* service
   account `roles/aiplatform.user`; (2) set env vars `MIZOKI_GEMINI_PROJECT` (or rely on
   `GOOGLE_CLOUD_PROJECT`), `MIZOKI_GEMINI_LOCATION`, and a **Vertex-valid** `MIZOKI_GEMINI_MODEL`
-  (the AI-Studio id `gemini-2.0-pro-exp-02-05` is a placeholder — confirm the approved Vertex
-  publisher model). No secret/API key required.
+  (default `gemini-3.5-pro` — confirm it's the approved Vertex publisher-model id in your project/region
+  before enabling). No secret/API key required.
 
 **Idempotency (matches the documented recipe):** `event_id = sha256(event_source || event_type ||
 stable_keys_from_source)` — **never** over volatile timestamps; `source_payload_hash =
