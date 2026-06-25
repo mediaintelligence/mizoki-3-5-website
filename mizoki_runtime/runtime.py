@@ -12,6 +12,7 @@ from typing import Any, Callable
 from .journey import JourneyIngestCell
 from .journey_gemini import active_extractor_metadata
 from .journey_sinks import build_journey_sinks_from_env
+from .envelope import CanonicalEnvelopeBuilder
 
 
 STOP_WORDS = {
@@ -2303,6 +2304,7 @@ class BossAgent:
         graph_decision: GraphNativeDecisionIntelligence,
         programmatic: ProgrammaticIntelligenceCell,
         journey: JourneyIngestCell,
+        envelope_builder: CanonicalEnvelopeBuilder,
         trace_file: Path,
     ) -> None:
         self.registry = registry
@@ -2312,6 +2314,7 @@ class BossAgent:
         self.graph_decision = graph_decision
         self.programmatic = programmatic
         self.journey = journey
+        self.envelope_builder = envelope_builder
         self.trace_file = trace_file
         self.trace_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -2341,6 +2344,7 @@ class BossAgent:
             "journey": {
                 **self.journey.discovery_block(),
                 "llm_extractor": active_extractor_metadata(),
+                "envelope": self.envelope_builder.discovery_block(),
                 "description": "Canonical JourneyEvent connector layer: normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one schema at SENSE with deterministic, idempotent upserts.",
             },
             "capabilities": {
@@ -2849,6 +2853,10 @@ class BossRuntime:
             self.data_dir / "journey_events.jsonl",
             external_sinks=build_journey_sinks_from_env(),
         )
+        self.envelope_builder = CanonicalEnvelopeBuilder(
+            self.base_dir / "schemas" / "canonical-event-envelope.json",
+            self.journey.schema,
+        )
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
         self._register_tools()
@@ -2861,6 +2869,7 @@ class BossRuntime:
             graph_decision=self.graph_decision,
             programmatic=self.programmatic,
             journey=self.journey,
+            envelope_builder=self.envelope_builder,
             trace_file=self.data_dir / "boss_decision_log.jsonl",
         )
 
@@ -3015,6 +3024,19 @@ class BossRuntime:
                 parameters=(ToolParameter("limit", "integer", "Maximum number of events to return.", default=10),),
                 tags=("journey", "events", "store", "audit"),
                 handler=lambda payload: {"events": self.journey.recent_events(limit=payload["limit"])},
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="journey.build_envelope",
+                description="Normalize a native connector payload into a v1 JourneyEvent and wrap it in a CanonicalEventEnvelope (v2): classification, identity, KG refs, relationships, time intelligence, security, data quality, observability, SRPVDAL state, and reasoning scaffolds.",
+                category="journey",
+                parameters=(
+                    ToolParameter("source", "string", "Connector source: meta, google_ads, sendgrid, openrtb, or other.", required=True),
+                    ToolParameter("payload", "object", "Native source payload to normalize and wrap.", required=True),
+                ),
+                tags=("journey", "envelope", "canonical", "reasoning", "v2"),
+                handler=lambda payload: self.build_journey_envelope(payload["source"], payload["payload"]),
             )
         )
         self.registry.register(
@@ -3331,6 +3353,28 @@ class BossRuntime:
 
     def recent_journey_events(self, limit: int = 10) -> list[dict[str, Any]]:
         return self.journey.recent_events(limit=limit)
+
+    def build_journey_envelope(
+        self,
+        source: str,
+        payload: Any,
+        *,
+        business_context: dict[str, Any] | None = None,
+        reasoning_context: dict[str, Any] | None = None,
+        causal: dict[str, Any] | None = None,
+        intelligence: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        normalized = self.journey.normalize_event(source, payload)
+        result = self.envelope_builder.build_and_validate(
+            normalized["event"],
+            business_context=business_context,
+            reasoning_context=reasoning_context,
+            causal=causal,
+            intelligence=intelligence,
+        )
+        result["canonical_valid"] = normalized["valid"]
+        result["canonical_errors"] = normalized["errors"]
+        return result
 
 
 def create_runtime(base_dir: Path | None = None, data_dir: Path | None = None) -> BossRuntime:

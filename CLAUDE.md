@@ -150,6 +150,52 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### CanonicalEventEnvelope v2 — Reasoning-Native Layered Contract (2026-06-25)
+
+Evolved the canonical layer from an *event* (`JourneyEvent` v1) toward a canonical *reasoning
+envelope* per founder direction (the 20-layer "BGI substrate" review). **Decision: wrap, not
+replace** — the v2 `CanonicalEventEnvelope` embeds the in-prod v1 `JourneyEvent` as
+`canonical_payload`, so v1 stays live and the migration is non-breaking. Same discipline as the rest
+of the layer: deterministic, dependency-free, unit-testable.
+
+**Split of concerns (important):** SENSE-computable layers are populated deterministically at ingest;
+reasoning-derived layers are initialized as **typed empty scaffolds** for later SRPVDAL cells to fill
+(we do not fake them at SENSE).
+- **Populated at SENSE:** `metadata`, `provenance` (+ version vector: `schema/policy/governance/
+  ontology/reasoning_version`), `classification` (deterministic domain/category/subcategory/intent by
+  source+type), `identity` (strongest-key resolution → `identity_id`, `resolution_method`, confidence,
+  `anonymous`; cross-event `identity_cluster` left null pending a stateful resolver), `kg_refs`
+  (`Campaign:/Creative:/Order:/Customer:/Identity:…` node ids for deterministic Neo4j MERGE),
+  `relationships` (BELONGS_TO/ATTRIBUTED_TO/RESULTED_IN/IDENTIFIED_AS/GENERATED_BY edges),
+  `time_intelligence` (event/source/ingest/processing time, latency_ms, watermark), `security`
+  (PII set, classification, retention, consent), `data_quality` (schema_valid + v1 validation errors,
+  completeness, freshness), `observability` (trace/span/workflow/execution/agent/cell ids),
+  `field_confidence` (1.0 rule-based; threaded from the LLM path), `srpvdal_state` (current=SENSE,
+  next=REASON, phase_history), `audit`.
+- **Scaffolds (loop-filled):** `evaluation`, `actions`, `learning`, `causal` effects, `intelligence`,
+  plus reference-style `business_context`/`reasoning_context` (store ids/versions, not copies).
+
+**New files:**
+- `schemas/canonical-event-envelope.json` — v2 schema (`schema_version` 2.0.0); served at
+  **`GET /schemas/canonical-event-envelope.json`** (`application/schema+json`).
+- `mizoki_runtime/envelope.py` — `CanonicalEnvelopeBuilder` (deterministic `build`/`build_and_validate`),
+  classification map, identity resolution, kg_refs + relationship derivation, version vector
+  (env-overridable: `MIZOKI_POLICY_VERSION`/`MIZOKI_GOVERNANCE_VERSION`/`MIZOKI_ONTOLOGY_VERSION`/
+  `MIZOKI_REASONING_VERSION`). Reuses the v1 `JourneyEventSchema` as a generic validator.
+
+**Wiring (`runtime.py`, `app.py`):** MCP tool `journey.build_envelope`; `BossRuntime.build_journey_envelope`
+(normalize v1 → wrap → validate, returns `{envelope, valid, errors, canonical_valid, canonical_errors}`);
+`discover().journey.envelope` block (schema id, version, 21 layers, version vector). Flask `POST
+/api/boss/journey/envelope` (+ optional `business_context`/`reasoning_context`/`causal`/`intelligence`)
+and the schema route. `envelope_id = "env-<event_id>"` (idempotent-linked to the canonical event).
+
+**Verification:** `python3 -m py_compile mizoki_runtime/envelope.py mizoki_runtime/runtime.py app.py`
+clean; `python3 -m unittest tests.test_app tests.test_runtime` → **66 passing** (+6: full-layer build +
+schema-validate, openrtb classification, deterministic build, envelope schema served, envelope endpoint,
+discover envelope block). Smoked: meta Purchase → Advertising/Conversion/Purchase/Commercial,
+`Campaign:111`/`Creative:333`/`Order:A123`, identity `email+ip`, edges BELONGS_TO/RESULTED_IN, SENSE→REASON.
+v1 `JourneyEvent` and its endpoints are unchanged; this is purely additive. No site copy touched.
+
 ### Canonical JourneyEvent Schema — Multi-Connector SENSE Normalization (2026-06-24)
 
 Added a **canonical `JourneyEvent` ingestion layer** so events from **Meta (Conversions
