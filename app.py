@@ -161,6 +161,12 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def risk():
         return serve_dir_page("risk")
 
+    @app.route("/manufacturing")
+    @app.route("/manufacturing/")
+    @app.route("/manufacturing.html")
+    def manufacturing():
+        return serve_dir_page("manufacturing")
+
     @app.route("/privacy")
     @app.route("/privacy/")
     def privacy():
