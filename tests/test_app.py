@@ -306,6 +306,62 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn("must be an object", response.get_json()["error"])
 
+    def test_google_ads_validate_endpoint_flags_sunset_version(self) -> None:
+        response = self.client.post(
+            "/api/boss/google-ads/validate",
+            json={
+                "query": "SELECT campaign.id FROM campaign",
+                "api_version": "v19",
+                "as_of": "2026-06-30",
+            },
+        )
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertFalse(payload["valid"])
+        self.assertTrue(any(e["code"] == "api_version_sunset" for e in payload["errors"]))
+
+    def test_google_ads_validate_endpoint_requires_query(self) -> None:
+        response = self.client.post("/api/boss/google-ads/validate", json={"query": ""})
+        self.assertEqual(400, response.status_code)
+
+    def test_google_ads_validate_batch_endpoint(self) -> None:
+        response = self.client.post(
+            "/api/boss/google-ads/validate-batch",
+            json={
+                "queries": [
+                    "SELECT campaign.id FROM campaign",
+                    "SELECT campaign.bogus FROM campaign",
+                ],
+                "api_version": "v21",
+                "as_of": "2026-06-30",
+            },
+        )
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertEqual(2, payload["received"])
+        self.assertEqual(1, payload["valid"])
+
+    def test_google_ads_versions_endpoint_returns_schedule(self) -> None:
+        response = self.client.get("/api/boss/google-ads/versions?as_of=2026-06-30")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertIn("schedule", payload)
+        self.assertTrue(any(v["status"] == "sunset" for v in payload["schedule"]))
+
+    def test_google_ads_fields_endpoint_returns_metadata(self) -> None:
+        response = self.client.get("/api/boss/google-ads/fields?resource=campaign")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertTrue(payload["known_resource"])
+        self.assertIn("campaign", payload["resource"])
+
+    def test_discover_exposes_google_ads_block(self) -> None:
+        response = self.client.get("/api/boss/discover")
+        self.assertEqual(200, response.status_code)
+        block = response.get_json()["google_ads"]
+        self.assertIn("google_ads.validate_gaql", block["tools"])
+        self.assertIn("default_version", block)
+
 
 if __name__ == "__main__":
     unittest.main()

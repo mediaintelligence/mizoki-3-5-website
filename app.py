@@ -594,6 +594,57 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def boss_identity_stats():
         return jsonify(run_runtime_call(lambda: get_runtime().identity_cluster_stats()))
 
+    @app.route("/api/boss/google-ads/validate", methods=["POST"])
+    def boss_google_ads_validate():
+        payload = require_json_payload()
+        query = payload.get("query")
+        api_version = payload.get("api_version")
+        as_of = payload.get("as_of")
+        if not isinstance(query, str) or not query.strip():
+            abort(400, description="Field 'query' must be a non-empty GAQL string.")
+        return jsonify(
+            run_runtime_call(
+                lambda: get_runtime().validate_gaql(query, api_version=api_version, as_of=as_of)
+            )
+        )
+
+    @app.route("/api/boss/google-ads/validate-batch", methods=["POST"])
+    def boss_google_ads_validate_batch():
+        payload = require_json_payload()
+        queries = payload.get("queries")
+        api_version = payload.get("api_version")
+        as_of = payload.get("as_of")
+        if not isinstance(queries, list) or not queries:
+            abort(400, description="Field 'queries' must be a non-empty array of GAQL strings.")
+        return jsonify(
+            run_runtime_call(
+                lambda: get_runtime().validate_gaql_batch(queries, api_version=api_version, as_of=as_of)
+            )
+        )
+
+    @app.route("/api/boss/google-ads/versions", methods=["GET"])
+    def boss_google_ads_versions():
+        api_version = request.args.get("api_version", default=None)
+        as_of = request.args.get("as_of", default=None)
+        return jsonify(
+            run_runtime_call(
+                lambda: get_runtime().google_ads_version_status(api_version=api_version, as_of=as_of)
+            )
+        )
+
+    @app.route("/api/boss/google-ads/fields", methods=["GET"])
+    def boss_google_ads_fields():
+        resource = request.args.get("resource", default=None)
+        return jsonify(
+            run_runtime_call(lambda: get_runtime().google_ads_field_metadata(resource=resource))
+        )
+
+    @app.route("/api/boss/google-ads/validations", methods=["GET"])
+    def boss_google_ads_validations():
+        limit = request.args.get("limit", default=10, type=int)
+        limit = max(1, min(limit, 100))
+        return jsonify({"validations": get_runtime().recent_gaql_validations(limit=limit)})
+
     @app.route("/api/boss/skills/learn", methods=["POST"])
     def learn_boss_skill():
         payload = require_json_payload()

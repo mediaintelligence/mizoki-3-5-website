@@ -150,6 +150,63 @@ mizoki-website/
 
 ## Recent Work (June 2026)
 
+### Google Ads API Version + GAQL Compatibility Pre-Flight (2026-06-30)
+
+Closed a latent operational risk in the Google Ads SENSE connector: the Ads API churns ~3
+versions/year and **sunsets** old ones on a published schedule (e.g. v19 sunset early 2026), so
+requests against a removed version hard-fail, and a GAQL query selecting/filtering/sorting a field
+that is invalid for the targeted **version + resource** combination hard-fails too. The connector
+mapped GAQL rows but never validated the query against a version *before* running it across MCC
+accounts. Added a deterministic, dependency-free pre-flight that embodies the official guidance
+(check field availability with `GoogleAdsFieldService` + the Query Validator before constructing
+complex queries). Same discipline as the JourneyEvent connectors / Cell 27: no Google Ads client,
+no network, fully unit-testable.
+
+**New file `mizoki_runtime/google_ads_gaql.py`:**
+- **Version deprecation schedule** (`GOOGLE_ADS_API_VERSIONS`, v16–v21 with release/sunset dates).
+  `version_status(version, as_of)` *computes* `supported` / `deprecated` / `sunset` / `unreleased`
+  / `unknown` relative to a date (never hard-coded) — `deprecated` once within
+  `DEPRECATION_WARNING_WINDOW_DAYS` (120) of sunset; `usable` flips false on sunset. Bump the table
+  as Google publishes versions.
+- **GoogleAdsFieldService-style field registry** keyed by resource (campaign, ad_group,
+  ad_group_ad, ad_group_criterion, search_term_view, keyword_view, customer) carrying
+  `selectable`/`filterable`/`sortable` flags + version windows (`available_since`/`deprecated_in`/
+  `removed_in`). Shared SEGMENT + METRIC field sets (metrics are not filterable in WHERE; the legacy
+  `metrics.average_position` is modeled removed → a hard error on modern versions). Covers the exact
+  fields the connector's `_map_google_ads` reads.
+- **Dependency-free GAQL parser** (`parse_gaql`) extracting SELECT / FROM / WHERE / ORDER BY / LIMIT
+  field references.
+- **`GaqlValidator`** — pre-flights a query: version gate (sunset/unreleased → error, deprecated →
+  warning), unknown-resource, per-field unknown/unavailable/not-selectable/not-filterable/
+  not-sortable errors, deprecated-field warnings. Returns a structured
+  `{valid, errors[], warnings[], fields[], version_status, cache_key}` report.
+- **`GaqlValidationCache`** — keys on (normalized query, version, **day**) so a template reused
+  across thousands of MCC accounts validates once, and a verdict that flips when a version sunsets is
+  not served stale across day boundaries.
+- **`GoogleAdsCompatibilityCell`** (`cell.31`) — `validate_query` / `validate_batch` (the MCC sweep)
+  / `version_status` / `field_metadata` / `recent_validations`, persisting traces to
+  `data/google_ads_validations.jsonl` (covered by the `data/*.jsonl` gitignore).
+
+**Wiring (`runtime.py`, `app.py`):** MCP tools `google_ads.validate_gaql`,
+`google_ads.validate_gaql_batch`, `google_ads.version_status`, `google_ads.field_metadata` (new
+`google_ads` category). `BossRuntime` methods + Flask `POST /api/boss/google-ads/validate`,
+`POST /api/boss/google-ads/validate-batch`, `GET /api/boss/google-ads/versions`,
+`GET /api/boss/google-ads/fields`, `GET /api/boss/google-ads/validations`. `discover()` gains a
+`google_ads` block (default/latest/supported versions, resources, tools, cache stats);
+`health_snapshot()` adds `gaql_validation_count`. Purely additive — no site copy, no existing
+endpoint touched.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/google_ads_gaql.py mizoki_runtime/runtime.py
+app.py` clean; `python3 -m unittest tests.test_google_ads_gaql tests.test_runtime tests.test_app` →
+**113 passing** (+61: a new `tests/test_google_ads_gaql.py` covering version lifecycle, parser,
+validator error/warning codes, the (query, version, day) cache, field metadata, and the cell; plus
+runtime + app integration tests). Smoked via `app.test_client()` with a fixed `as_of=2026-06-30`:
+schedule resolves v16–v19 `sunset` / v20 `deprecated` / v21 `supported`; the connector's real GAQL
+fails against sunset v19 (`api_version_sunset`) and passes clean on v21; batch validation hits the
+cache; `/api/health` carries `gaql_validation_count`; `/api/boss/discover` carries the `google_ads`
+block. (Note: the JSONL trace store is per-instance ephemeral on Cloud Run, same caveat as the
+JourneyEvent store; the cache is in-process per revision — both are fine for stateless pre-flight.)
+
 ### Identity Resolver Cell — Cross-Event Cluster Stitching (2026-06-25)
 
 Closed the v2 envelope's one deliberate gap: `identity.identity_cluster` was emitted `null`

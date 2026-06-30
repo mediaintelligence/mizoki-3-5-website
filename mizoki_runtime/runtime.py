@@ -14,6 +14,7 @@ from .journey_gemini import active_extractor_metadata
 from .journey_sinks import build_journey_sinks_from_env
 from .envelope import CanonicalEnvelopeBuilder
 from .identity import IdentityResolutionCell
+from .google_ads_gaql import GOOGLE_ADS_CELL_ID, GoogleAdsCompatibilityCell
 
 
 STOP_WORDS = {
@@ -2307,6 +2308,7 @@ class BossAgent:
         journey: JourneyIngestCell,
         envelope_builder: CanonicalEnvelopeBuilder,
         identity_resolver: IdentityResolutionCell,
+        google_ads: GoogleAdsCompatibilityCell,
         trace_file: Path,
     ) -> None:
         self.registry = registry
@@ -2318,6 +2320,7 @@ class BossAgent:
         self.journey = journey
         self.envelope_builder = envelope_builder
         self.identity_resolver = identity_resolver
+        self.google_ads = google_ads
         self.trace_file = trace_file
         self.trace_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -2351,6 +2354,7 @@ class BossAgent:
                 "identity_resolution": self.identity_resolver.discovery_block(),
                 "description": "Canonical JourneyEvent connector layer: normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one schema at SENSE with deterministic, idempotent upserts.",
             },
+            "google_ads": self.google_ads.discovery_block(),
             "capabilities": {
                 "skill_learning_tools": ["skills.learn", "skills.learn_from_loop"],
                 "tool_learning_tools": ["tools.register_alias"],
@@ -2862,6 +2866,7 @@ class BossRuntime:
             self.journey.schema,
         )
         self.identity_resolver = IdentityResolutionCell(self.data_dir / "identity_clusters.json")
+        self.google_ads = GoogleAdsCompatibilityCell(self.data_dir / "google_ads_validations.jsonl")
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
         self._register_tools()
@@ -2876,6 +2881,7 @@ class BossRuntime:
             journey=self.journey,
             envelope_builder=self.envelope_builder,
             identity_resolver=self.identity_resolver,
+            google_ads=self.google_ads,
             trace_file=self.data_dir / "boss_decision_log.jsonl",
         )
 
@@ -3065,6 +3071,65 @@ class BossRuntime:
                 parameters=(),
                 tags=("identity", "resolution", "stats"),
                 handler=lambda payload: self.identity_cluster_stats(),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="google_ads.validate_gaql",
+                description="Pre-flight a GAQL query against a Google Ads API version: checks the version's deprecation status and validates every SELECT/WHERE/ORDER BY field against the GoogleAdsFieldService-style registry for that resource, so version sunsets and field/version mismatches are caught before the query runs.",
+                category="google_ads",
+                parameters=(
+                    ToolParameter("query", "string", "The GAQL query to validate.", required=True),
+                    ToolParameter("api_version", "string", "Target API version (e.g. 'v20' or '20'). Defaults to the latest known version.", default=""),
+                    ToolParameter("as_of", "string", "Optional ISO date (YYYY-MM-DD) to evaluate version status against. Defaults to today.", default=""),
+                ),
+                tags=("google_ads", "gaql", "validation", "deprecation", "field-service"),
+                handler=lambda payload: self.validate_gaql(
+                    payload["query"], api_version=payload["api_version"], as_of=payload["as_of"]
+                ),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="google_ads.validate_gaql_batch",
+                description="Validate a batch of GAQL query templates against one API version in a single call — the MCC-traversal pre-flight. Results are served from a (query, version, day) cache so a template reused across many accounts is validated once.",
+                category="google_ads",
+                parameters=(
+                    ToolParameter("queries", "array", "Array of GAQL query strings to validate.", required=True),
+                    ToolParameter("api_version", "string", "Target API version (e.g. 'v20'). Defaults to the latest known version.", default=""),
+                    ToolParameter("as_of", "string", "Optional ISO date (YYYY-MM-DD) to evaluate version status against. Defaults to today.", default=""),
+                ),
+                tags=("google_ads", "gaql", "validation", "batch", "mcc", "cache"),
+                handler=lambda payload: self.validate_gaql_batch(
+                    payload["queries"], api_version=payload["api_version"], as_of=payload["as_of"]
+                ),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="google_ads.version_status",
+                description="Resolve a Google Ads API version to its lifecycle status (supported/deprecated/sunset/unreleased/unknown) relative to a date, or return the full deprecation schedule when no version is given.",
+                category="google_ads",
+                parameters=(
+                    ToolParameter("api_version", "string", "API version to resolve (e.g. 'v19'). Omit for the full schedule.", default=""),
+                    ToolParameter("as_of", "string", "Optional ISO date (YYYY-MM-DD) to evaluate against. Defaults to today.", default=""),
+                ),
+                tags=("google_ads", "version", "deprecation", "schedule"),
+                handler=lambda payload: self.google_ads_version_status(
+                    api_version=payload["api_version"], as_of=payload["as_of"]
+                ),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="google_ads.field_metadata",
+                description="Return GoogleAdsFieldService-style field metadata (selectable/filterable/sortable + version availability) for a resource, or the whole catalog when no resource is given.",
+                category="google_ads",
+                parameters=(
+                    ToolParameter("resource", "string", "Resource name (e.g. 'campaign'). Omit for the full catalog.", default=""),
+                ),
+                tags=("google_ads", "field-service", "metadata", "schema"),
+                handler=lambda payload: self.google_ads_field_metadata(resource=payload["resource"]),
             )
         )
         self.registry.register(
@@ -3277,6 +3342,7 @@ class BossRuntime:
             "programmatic_run_count": len(self.programmatic.recent_runs(limit=100)),
             "journey_event_count": self.journey.store.count(),
             "identity_cluster_count": self.identity_resolver.stats()["clusters"],
+            "gaql_validation_count": len(self.google_ads.recent_validations(limit=100)),
         }
 
     def list_tools(self) -> list[dict[str, Any]]:
@@ -3418,6 +3484,22 @@ class BossRuntime:
 
     def identity_cluster_stats(self) -> dict[str, Any]:
         return self.identity_resolver.stats()
+
+    def validate_gaql(self, query: Any, api_version: Any = None, as_of: Any = None) -> dict[str, Any]:
+        return self.google_ads.validate_query(query, api_version=api_version, as_of=as_of)
+
+    def validate_gaql_batch(self, queries: Any, api_version: Any = None, as_of: Any = None) -> dict[str, Any]:
+        return self.google_ads.validate_batch(queries, api_version=api_version, as_of=as_of)
+
+    def google_ads_version_status(self, api_version: Any = None, as_of: Any = None) -> dict[str, Any]:
+        return self.google_ads.version_status(api_version=api_version, as_of=as_of)
+
+    def google_ads_field_metadata(self, resource: Any = None) -> dict[str, Any]:
+        cleaned = resource.strip() if isinstance(resource, str) and resource.strip() else None
+        return self.google_ads.field_metadata(cleaned)
+
+    def recent_gaql_validations(self, limit: int = 10) -> list[dict[str, Any]]:
+        return self.google_ads.recent_validations(limit=limit)
 
 
 def create_runtime(base_dir: Path | None = None, data_dir: Path | None = None) -> BossRuntime:

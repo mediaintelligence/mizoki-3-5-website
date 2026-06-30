@@ -46,6 +46,10 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "gndi.recent_loops",
                 "gndi.run_decision_loop",
                 "gndi.simulate_action",
+                "google_ads.field_metadata",
+                "google_ads.validate_gaql",
+                "google_ads.validate_gaql_batch",
+                "google_ads.version_status",
                 "graphrag.query",
                 "identity.cluster_stats",
                 "identity.resolve",
@@ -781,6 +785,54 @@ class _FakeGenaiClient:
 
     def __init__(self, payload, *, raw_text=None, model_version="gemini-3.5-pro", response_id="vtx-1"):
         self.models = _FakeGenaiModels(payload, model_version, response_id, raw_text=raw_text)
+
+
+class GoogleAdsCompatibilityRuntimeTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.runtime = create_runtime(base_dir=REPO_ROOT, data_dir=Path(self.temp_dir.name))
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_validate_gaql_flags_sunset_version(self) -> None:
+        report = self.runtime.validate_gaql(
+            "SELECT campaign.id FROM campaign", api_version="v19", as_of="2026-06-30"
+        )
+        self.assertFalse(report["valid"])
+        self.assertTrue(any(e["code"] == "api_version_sunset" for e in report["errors"]))
+
+    def test_validate_gaql_catches_field_version_mismatch(self) -> None:
+        report = self.runtime.validate_gaql(
+            "SELECT campaign.id, metrics.average_position FROM campaign",
+            api_version="v21",
+            as_of="2026-06-30",
+        )
+        self.assertFalse(report["valid"])
+        self.assertTrue(
+            any(e["code"] == "field_unavailable_in_version" for e in report["errors"])
+        )
+
+    def test_validate_gaql_batch_uses_cache_across_accounts(self) -> None:
+        # Same template validated twice (as in an MCC sweep) should hit the cache.
+        template = "SELECT campaign.id, metrics.clicks FROM campaign"
+        result = self.runtime.validate_gaql_batch(
+            [template, template], api_version="v21", as_of="2026-06-30"
+        )
+        self.assertEqual(2, result["valid"])
+        self.assertGreaterEqual(result["cache"]["hits"], 1)
+
+    def test_version_status_and_field_metadata_are_exposed(self) -> None:
+        status = self.runtime.google_ads_version_status(api_version="v21", as_of="2026-06-30")
+        self.assertEqual("supported", status["status"])
+        meta = self.runtime.google_ads_field_metadata(resource="campaign")
+        self.assertTrue(meta["known_resource"])
+
+    def test_discover_and_health_carry_google_ads(self) -> None:
+        discover = self.runtime.discover()
+        self.assertIn("google_ads", discover)
+        self.assertIn("google_ads.validate_gaql", discover["google_ads"]["tools"])
+        self.assertIn("gaql_validation_count", self.runtime.health_snapshot())
 
 
 def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):
