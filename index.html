@@ -401,42 +401,9 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 @media(max-width:680px){.sc-grid{grid-template-columns:1fr}.sc-item{border-right:0!important}}
 @media(max-width:680px){.sim-inputs{grid-template-columns:1fr}}
 
-/* ---------- SRPVDAL spiral: subsystem ownership ---------- */
-.spiral{margin-top:52px;border:1px solid var(--rule2);background:var(--card);box-shadow:8px 8px 0 var(--paper2)}
-.spiral .sp-h{display:flex;justify-content:space-between;padding:12px 22px;border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
-.spiral .sp-h b{color:var(--teal);font-weight:700}
-.sp-body{display:grid;grid-template-columns:1.06fr .94fr}
-.sp-canvas{position:relative;border-right:1px solid var(--rule);padding:14px 10px}
-#sp-svg{display:block;width:100%;height:auto}
-#sp-svg text{font-family:var(--mono)}
-.sp-loop{fill:var(--teal);font-size:18px;text-anchor:middle}
-.sp-loopl{fill:var(--faint);font-size:6.5px;text-anchor:middle;letter-spacing:1px}
-.sp-node{cursor:pointer}
-.sp-node circle{transition:opacity .2s}
-.sp-node text{font-size:10px;letter-spacing:.08em;fill:var(--ink2)}
-.sp-node.dim{opacity:.3}
-.sp-arc{fill:none;transition:opacity .2s,stroke-width .2s}
-.sp-arc.dim{opacity:.16}
-.sp-side{padding:28px 30px;display:flex;flex-direction:column}
-.sp-legend{display:flex;flex-direction:column;gap:9px}
-.sp-chip{display:flex;align-items:center;gap:12px;text-align:left;width:100%;cursor:pointer;
-  border:1px solid var(--rule2);background:var(--paper);padding:12px 14px;transition:all .2s;font-family:inherit}
-.sp-chip:hover{border-color:var(--mute)}
-.sp-chip.on{border-color:var(--ink);background:var(--card)}
-.sp-chip .sp-sw{width:11px;height:11px;border-radius:50%;flex:none}
-.sp-chip .sp-ct{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--ink);font-weight:600}
-.sp-chip .sp-cs{font-size:11px;color:var(--mute);font-weight:300}
-.sp-chip .sp-cstg{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
-.sp-detail{margin-top:24px;padding-top:22px;border-top:2px solid var(--rule);flex:1}
-.sp-detail .dl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:5px}
-.sp-detail h4{font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.1;margin-bottom:7px}
-.sp-detail .owns{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;margin-bottom:14px}
-.sp-detail p{color:var(--ink2);font-size:15px;font-weight:300}
-.sp-tagline{font-family:var(--serif);font-style:italic;font-size:21px;line-height:1.2;color:var(--teal);margin-top:16px}
-.sp-node text.sp-art{font-size:7.5px;letter-spacing:.02em;fill:var(--faint)}
-.sp-roi .roi-l{font-family:var(--mono);font-size:8px;letter-spacing:.1em;fill:var(--faint)}
-@media(max-width:900px){.sp-body{grid-template-columns:1fr}.sp-canvas{border-right:0;border-bottom:1px solid var(--rule)}}
+.d-link{margin-top:22px;padding-top:18px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+.d-link a{color:var(--teal);font-weight:600}
+.d-link a:hover{color:var(--ink)}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
@@ -455,9 +422,8 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
     <a class="logo" href="#top"><span class="dot"></span>MIZOKI3</a>
     <div class="nav-links">
       <a href="#pipeline" class="hide-m">§02 ENGINE</a>
-      <a href="#architecture" class="hide-m">§03 LOOP</a>
-      <a href="#control" class="hide-m">§04 CONTROL</a>
-      <a href="#divisions" class="hide-m">§05 DOMAINS</a>
+      <a href="#control" class="hide-m">§03 CONTROL</a>
+      <a href="#divisions" class="hide-m">§04 DOMAINS</a>
       <a href="/blog/" class="hide-m">BLOG</a>
       <a href="/login">SIGN IN</a>
       <a class="btn primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request">EXECUTIVE BRIEFING</a>
@@ -548,6 +514,12 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
             <ul><li>Senses the whole organization at once</li><li>Models cause, effect &amp; prediction</li><li>Simulates and validates before acting</li><li>Acts — only when authorized</li></ul>
           </div>
         </div>
+        <div class="reveal" style="margin-top:44px">
+          <div class="tag" style="margin-bottom:14px">CANONICALEVENTENVELOPE · v1.0</div>
+          <h3>One envelope. Ten questions a record can't answer.</h3>
+          <p>A data row stores a fact. Every MIZOKI3 source — Google Ads, Stripe, contracts, tickets, ERP — emits the <em>same</em> canonical event, so the system reasons over evidence instead of rows.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">01</div><div><h4>What happened?</h4></div></div><div class="ent"><div class="ic">02</div><div><h4>Who or what was involved?</h4></div></div><div class="ent"><div class="ic">03</div><div><h4>Why did it likely happen?</h4></div></div><div class="ent"><div class="ic">04</div><div><h4>What objective does it affect?</h4></div></div><div class="ent"><div class="ic">05</div><div><h4>What policy governs it?</h4></div></div><div class="ent"><div class="ic">06</div><div><h4>What action could be taken?</h4></div></div><div class="ent"><div class="ic">07</div><div><h4>What risk exists?</h4></div></div><div class="ent"><div class="ic">08</div><div><h4>What did we predict?</h4></div></div><div class="ent"><div class="ic">09</div><div><h4>What actually happened?</h4></div></div><div class="ent"><div class="ic">10</div><div><h4>What should the system learn?</h4></div></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -561,6 +533,12 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
         <div class="reveal">
           <h2>Every signal travels <em>one governed pathway.</em></h2>
           <p class="sec-lede">When the nervous system senses something that demands action, the signal moves through seven governed stages — SRPVDAL. Nothing executes until it is simulated, validated against your constraints, and authorized by policy. <strong>Run one yourself.</strong> Set the amount, the domain, and the fiduciary floor, then watch the state machine evaluate it. The default — <strong>ACT-991</strong>, a $5.0M capital distribution — gets caught.</p>
+        </div>
+        <div class="reveal" style="margin:32px 0 40px">
+          <div class="tag" style="margin-bottom:14px">UNIFIED INGRESS · CONNECTOR GATEWAY</div>
+          <p class="sec-lede" style="margin-top:0">Before a signal can travel the pathway it enters through one governed gateway, where every external source is normalized into a single canonical business event. Nothing goes from raw signal straight to action.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">GML</div><div><h4>Gmail</h4><p>Mail &amp; thread signals.</p></div></div><div class="ent"><div class="ic">DRV</div><div><h4>Drive</h4><p>Documents &amp; contracts.</p></div></div><div class="ent"><div class="ic">GIT</div><div><h4>GitHub</h4><p>Code, issues &amp; CI.</p></div></div><div class="ent"><div class="ic">CAL</div><div><h4>Calendar</h4><p>Commitments &amp; timing.</p></div></div><div class="ent"><div class="ic">BQ</div><div><h4>BigQuery</h4><p>Warehoused facts.</p></div></div><div class="ent"><div class="ic">NEO</div><div><h4>Neo4j</h4><p>Graph relationships.</p></div></div><div class="ent"><div class="ic">VTX</div><div><h4>Vertex AI</h4><p>Reasoning &amp; embeddings.</p></div></div><div class="ent"><div class="ic">STR</div><div><h4>Stripe</h4><p>Payments &amp; revenue.</p></div></div><div class="ent"><div class="ic">ADS</div><div><h4>Google Ads</h4><p>Acquisition signals.</p></div></div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:22px"><div style="background:var(--card);padding:18px 20px"><div class="k">Native connectors</div><div class="v">9</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">Legal domain experts</div><div class="v">4</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">SRPVDAL stages</div><div class="v">7</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">Governed MCP tools</div><div class="v">650+</div></div></div>
         </div>
         <div class="term reveal" id="sim">
           <div class="term-h"><span><span class="lite"></span>EXECUTABLE CAUSAL SIMULATION · <b id="sim-id" style="color:var(--cy);font-weight:700">ACT-991</b></span><span>SRPVDAL v3.5</span></div>
@@ -608,36 +586,10 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
   </div>
 </section>
 
-<section id="architecture" class="ruled" style="padding-top:0">
-  <div class="wrap">
-    <div class="art">
-      <div class="folio reveal">§03<span class="sub">ARCHITECTURE</span></div>
-      <div>
-        <div class="reveal">
-          <h2>One loop. <em>Three subsystems carry it.</em></h2>
-          <p class="sec-lede">The reflex arc isn't a straight line — it's a loop that turns raw signals into compounding ROI. Three subsystems carry each signal around it: the <strong>knowledge graph</strong> grounds the reasoning in causal drivers, the <strong>financial model</strong> proves each option out before it's chosen, and the <strong>orchestrator</strong> executes the approved change and learns from the result. Every lap is written to one shared memory — so the next one starts smarter. <strong>Hover a stage</strong> for its artifact, or a subsystem for the stages it owns.</p>
-          <!-- A/B taglines: change data-i to 0 or 1 (see TAGLINES in the spiral script below) -->
-          <p class="sp-tagline" id="sp-tagline" data-i="1">Every cycle smarter: sense it, reason it, ship it, learn it.</p>
-        </div>
-        <div class="spiral reveal" id="spiral">
-          <div class="sp-h"><span>EXHIBIT — SRPVDAL LOOP · <b>WHO OWNS EACH STAGE</b></span><span>INTERACTIVE</span></div>
-          <div class="sp-body">
-            <div class="sp-canvas"><svg id="sp-svg" viewBox="0 0 560 470" role="img" aria-label="SRPVDAL loop with knowledge graph, financial model, and orchestrator subsystems"></svg></div>
-            <div class="sp-side">
-              <div class="sp-legend" id="sp-legend"></div>
-              <div class="sp-detail" id="sp-detail"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="control" class="ruled" style="padding-top:0">
   <div class="wrap">
     <div class="art">
-      <div class="folio reveal">§04<span class="sub">CONTROL PLANE</span></div>
+      <div class="folio reveal">§03<span class="sub">CONTROL PLANE</span></div>
       <div>
         <div class="reveal">
           <h2>Decisions you can <em>defend.</em></h2>
@@ -721,7 +673,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
 <section id="divisions" class="ruled" style="padding-top:0">
   <div class="wrap">
     <div class="art">
-      <div class="folio reveal">§05<span class="sub">DOMAINS</span></div>
+      <div class="folio reveal">§04<span class="sub">DOMAINS</span></div>
       <div>
         <div class="reveal">
           <h2>It maps to your business. <em>Not the other way around.</em></h2>
@@ -735,6 +687,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
               <h3 id="dv-n">Legal &amp; Counsel</h3>
               <p id="dv-p"></p>
               <ul id="dv-l"></ul>
+              <p class="d-link"><a href="/counsel" id="dv-link">View Counsel dossier →</a></p>
             </div>
             <div class="dside">
               <div><div class="ml" id="dv-ml"></div><div class="mv" id="dv-mv"></div></div>
@@ -751,7 +704,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
 <section id="enterprise" class="ruled" style="padding-top:0">
   <div class="wrap">
     <div class="art">
-      <div class="folio reveal">§06<span class="sub">ASSURANCE</span></div>
+      <div class="folio reveal">§05<span class="sub">ASSURANCE</span></div>
       <div>
         <div class="reveal">
           <h2>You keep control. <em>The system handles complexity.</em></h2>
@@ -762,6 +715,17 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
           <div class="ent"><div class="ic">HITL</div><div><h4>Deterministic overrides</h4><p>Policy overrides and human-in-the-loop keys gate every authorized action.</p></div></div>
           <div class="ent"><div class="ic">LOG</div><div><h4>Immutable audit trail</h4><p>Every proposal, simulation, and authorization is written to a tamper-evident ledger.</p></div></div>
         </div>
+        <div class="reveal" style="margin-top:38px">
+          <div class="tag" style="margin-bottom:14px">DELEGATION · AUTONOMY LEVELS</div>
+          <p class="sec-lede" style="margin-top:0">You grant each domain its own ceiling. Autonomy defaults conservative — ACT unlocks only once evaluation gates pass, policy approvals exist, and a rollback path, cost control, audit log, and human override are all in place.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">L0</div><div><h4>Observe</h4><p>Senses and maps. Takes no action. Default.</p></div></div><div class="ent"><div class="ic">L1</div><div><h4>Recommend</h4><p>Surfaces explainable recommendations. Default.</p></div></div><div class="ent"><div class="ic">L2</div><div><h4>Approval flow</h4><p>Recommends, then routes for human sign-off.</p></div></div><div class="ent"><div class="ic">L3</div><div><h4>Act in limits</h4><p>Executes within strict policy bounds.</p></div></div><div class="ent"><div class="ic">L4</div><div><h4>Self-correct</h4><p>Acts and adjusts within an approved domain.</p></div></div><div class="ent"><div class="ic">L5</div><div><h4>Autonomous</h4><p>Fully autonomous, under continuous audit.</p></div></div></div>
+        </div>
+        <div class="reveal" style="margin-top:38px">
+          <div class="tag" style="margin-bottom:14px">CATEGORY</div>
+          <h3>Not a dashboard. Not an agent framework. Not a pipeline.</h3>
+          <p>It turns enterprise evidence into governed decisions — the full operating loop, not a fragment of it.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">≠</div><div><h4>Not a dashboard</h4><p>Dashboards show what happened. MIZOKI3 explains why, recommends what comes next, validates it, acts when allowed, and learns from the result.</p></div></div><div class="ent"><div class="ic">≠</div><div><h4>Not an agent framework</h4><p>Agent frameworks execute tasks. MIZOKI3 governs the full loop — graph memory, causal reasoning, policy validation, and continuous learning.</p></div></div><div class="ent"><div class="ic">≠</div><div><h4>Not a pipeline</h4><p>Pipelines move records. MIZOKI3 turns evidence into governed decisions — every signal normalized, reasoned over, validated, and measured.</p></div></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -769,7 +733,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
 
 <section class="final">
   <div class="wrap reveal">
-    <div class="filing"><span class="fno">§07</span><span class="sep">/</span><span>OUTCOMES COMPOUNDED</span></div>
+    <div class="filing"><span class="fno">§06</span><span class="sep">/</span><span>OUTCOMES COMPOUNDED</span></div>
     <h2>A nervous system <em>for your business.</em></h2>
     <p class="sec-lede">Real-time understanding, prediction, and defensible action across your entire organization. See MIZOKI3 sense your own operating structure in a private executive briefing.</p>
     <div class="cta-row">
@@ -791,7 +755,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
       </div>
       <div>
         <h5>Platform</h5>
-        <a href="#pipeline">Decision Engine</a><a href="#control">Control Plane</a><a href="/blog/">Blog</a><a href="/login">Sign In</a><a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
+        <a href="#pipeline">Decision Engine</a><a href="#control">Control Plane</a><a href="#enterprise">Assurance</a><a href="/blog/">Blog</a><a href="/login">Sign In</a><a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
       </div>
     </div>
     <div class="f-bottom">
@@ -862,15 +826,15 @@ function each(list,fn){for(var i=0;i<list.length;i++)fn(list[i],i)}
 var ov=document.getElementById('schema-ov');if(!ov)return;
 var nodes=document.querySelectorAll('.dnode'),core=document.getElementById('dcore');
 var SCHEMA={
- Counsel:{type:'CLAUSE GRAPH',live:'1,840 clauses linked',
+ Counsel:{type:'CLAUSE GRAPH',live:'1,840 clauses linked',slug:'counsel',
    edges:['(Clause)-[:CONSTRAINS]->(Holding)','(Contract)-[:OBLIGATES]->(Entity)','(Clause)-[:LINKS]->(Capital.Covenant)']},
- Capital:{type:'RESERVE SUBSTRATE',live:'1,294 decisions / 24h',
+ Capital:{type:'RESERVE SUBSTRATE',live:'1,294 decisions / 24h',slug:'capital',
    edges:['(Reserve)-[:FUNDS]->(Distribution)','(Covenant)-[:GOVERNS]->(Reserve)','(Reserve)-[:EXPOSES]->(Risk.Limit)']},
- Risk:{type:'EXPOSURE LATTICE',live:'312 active covenants',
+ Risk:{type:'EXPOSURE LATTICE',live:'312 active covenants',slug:'risk',
    edges:['(Exposure)-[:THREATENS]->(Covenant)','(Signal)-[:TRIGGERS]->(Alert)','(Limit)-[:GATES]->(Capital.Move)']},
- Estate:{type:'TRUST LEDGER',live:'126 structures modeled',
+ Estate:{type:'TRUST LEDGER',live:'126 structures modeled',slug:'estate',
    edges:['(Trust)-[:TRANSFERS]->(Beneficiary)','(Asset)-[:TAXED_BY]->(Jurisdiction)','(Trust)-[:HOLDS]->(Capital.Reserve)']},
- Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',
+ Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',slug:'signal',
    edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']}
 };
 function show(k){
@@ -880,7 +844,7 @@ function show(k){
   var e='';for(i=0;i<d.edges.length;i++)e+='<div class="edge">'+
     d.edges[i].replace(/\[(.*?)\]/,'<span class="rel">[$1]</span>')+'</div>';
   ov.innerHTML='<div class="sh"><span>(:'+k+') &middot; <b>'+d.type+'</b></span><span>SCHEMA</span></div>'+e+
-    '<div class="live">'+d.live+' &middot; one shared substrate</div>';
+    '<div class="live"><a href="/'+d.slug+'" style="color:var(--cy)">View '+k+' dossier →</a> · '+d.live+' · one shared substrate</div>';
   ov.classList.add('show');
 }
 function clear(){for(var i=0;i<nodes.length;i++)nodes[i].classList.remove('sel','dim');ov.classList.remove('show')}
@@ -1038,15 +1002,15 @@ var m0=refresh();VERD=m0.verdict;CUR=buildStages(m0);renderStages();setStage(0);
 
 /* ---------- divisions ---------- */
 var DIV=[
- {k:'Counsel',n:'Legal & Counsel',p:'Autonomous contract analysis, obligation mapping, and litigation-pathway scoring — every clause linked to live operations through the shared graph.',
-  l:['Obligation & covenant extraction','Litigation pathway scoring','Regulatory compliance mapping'],ml:'Contracts under management',mv:'1,840',note:'Reasons over the same causal memory as Capital and Risk — so a clause and a cash movement are never evaluated in isolation.'},
- {k:'Estate',n:'Estate & Trust',p:'Governed reasoning for multi-generational wealth transfer — trust structuring and tax-strategy analysis with full traceability.',
+ {k:'Counsel',slug:'counsel',n:'Legal & Counsel',p:'A Mixture-of-Legal-Experts — Connecticut, Trust, Estate and Tax — reasons each matter into a single IRAC answer with cross-domain conflict detection, every clause linked to live operations through the shared graph.',
+  l:['Obligation & covenant extraction','IRAC across CT · Trust · Estate · Tax','Litigation pathway scoring','Regulatory compliance mapping'],ml:'Contracts under management',mv:'1,840',note:'Reasons over the same causal memory as Capital and Risk — so a clause and a cash movement are never evaluated in isolation.'},
+ {k:'Estate',slug:'estate',n:'Estate & Trust',p:'Governed reasoning for multi-generational wealth transfer — trust structuring and tax-strategy analysis with full traceability.',
   l:['Trust structure modeling','Tax-strategy simulation','Beneficiary impact analysis'],ml:'Structures modeled',mv:'126',note:'Every recommendation carries its counterfactual — what changes, for whom, and why.'},
- {k:'Capital',n:'Treasury & Capital',p:'Capital allocation grounded in causal evidence, not spreadsheet assumptions. Covenant-breach forecasting and liquidity stress modeling.',
+ {k:'Capital',slug:'capital',n:'Treasury & Capital',p:'Capital allocation grounded in causal evidence, not spreadsheet assumptions. Covenant-breach forecasting and liquidity stress modeling.',
   l:['Covenant breach forecasting','Liquidity stress modeling','Causal capital allocation'],ml:'Decisions / 24h',mv:'1,294',note:'Source domain of ACT-991 — its proposals are simulated and gated before any reserve moves.'},
- {k:'Signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
+ {k:'Signal',slug:'signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
   l:['Causal attribution (uplift)','Autonomous bid optimization','Self-proving ROI'],ml:'Channels attributed',mv:'24',note:'Uplift measured with counterfactual rigor — no last-click fiction.'},
- {k:'Risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
+ {k:'Risk',slug:'risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
   l:['Continuous verification','Regulatory monitoring','Live obligation tracking'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'}
 ];
 var dtabs=document.getElementById('dtabs');
@@ -1067,6 +1031,8 @@ function setDiv(i){
   document.getElementById('dv-ml').textContent=d.ml;
   document.getElementById('dv-mv').textContent=d.mv;
   document.getElementById('dv-note').textContent=d.note;
+  document.getElementById('dv-link').href='/'+d.slug;
+  document.getElementById('dv-link').textContent='View '+d.k+' dossier →';
 }
 setDiv(0);
 
@@ -1106,135 +1072,6 @@ setDiv(0);
   })(ps[i]);
   calc();
 }catch(e){}})();
-
-/* ---------- SRPVDAL spiral: subsystem ownership + artifacts + compounding ROI ---------- */
-(function(){try{
-var svg=document.getElementById('sp-svg');if(!svg)return;
-var legend=document.getElementById('sp-legend'),detail=document.getElementById('sp-detail');
-var NS='http://www.w3.org/2000/svg';
-function E(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
-
-/* A/B tagline — change data-i (0|1) on #sp-tagline in the HTML to swap */
-var TAGLINES=['From data to decision to lift—on repeat.','Every cycle smarter: sense it, reason it, ship it, learn it.'];
-var tEl=document.getElementById('sp-tagline');
-if(tEl){var ti=parseInt(tEl.getAttribute('data-i'),10);if(isNaN(ti)||ti<0||ti>=TAGLINES.length)ti=0;tEl.textContent=TAGLINES[ti]}
-
-var COMP={
- kg :{label:'Knowledge Graph',sub:'Temporal-Causal Knowledge Graph',owns:'Reason · Plan',color:'#0C7C8F',
-   role:'A self-healing graph of every entity, relationship, and prediction — with full provenance. It grounds reasoning and planning in causal drivers, so the system understands why, not just what.'},
- fin:{label:'Financial Model',sub:'Counterfactual Simulation Engine',owns:'Validate · Decide',color:'#B07A18',
-   role:'Forecasts the financial outcome of every candidate action — liquidity, P&L, ROAS — runs risk and sensitivity, and ranks the options by expected value before any choice is made. Nothing reaches a decision unproven.'},
- orc:{label:'Orchestrator',sub:'Boss Agent',owns:'Act · Learn',color:'#1F8A5B',
-   role:'Executes the approved change through secure connectors — budgets, bids, content, workflows — only after every policy gate clears, then compares predicted vs. actual and feeds the deltas back into the graph, so the next lap starts smarter.'}
-};
-var ENTRY={label:'Sense',sub:'The loop begins',owns:'Signals',color:'#5E6E75',
-   role:'Signals enter here. The nervous system senses the whole organization at once — telemetry, contracts, ledgers — in real time, and streams it into the graph. Everything downstream reasons over what it captures.'};
-
-var STAGES=[
- {k:'SENSE',   c:null, art:'Signals',          desc:'Fragmented data across every channel and system, captured in real time.'},
- {k:'REASON',  c:'kg', art:'Causal Graph',     desc:'The self-healing knowledge graph surfaces causal drivers — not just correlations.'},
- {k:'PLAN',    c:'kg', art:'Action Plan',      desc:'Candidate moves are sequenced with rollback points before anything is weighed.'},
- {k:'VALIDATE',c:'fin',art:'Simulation',       desc:'Counterfactual simulation proves each option against your constraints.'},
- {k:'DECIDE',  c:'fin',art:'Decision Slate',   desc:'Policy-aware evaluators rank the options by expected value and risk.'},
- {k:'ACT',     c:'orc',art:'Executions',       desc:'Secure connectors execute the approved change — budgets, bids, content, workflows.'},
- {k:'LEARN',   c:'orc',art:'Learning Records', desc:'Predicted-vs-actual deltas feed back into the graph, so the next cycle starts smarter.'}
-];
-function title(s){return s.charAt(0)+s.slice(1).toLowerCase()}
-
-var N=STAGES.length,cx=300,cy=250,rOut=190,rIn=62,turns=1.12;
-function pt(f){var a=-Math.PI/2+f*Math.PI*2*turns,r=rOut-(rOut-rIn)*f;
-  return {x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,a:a}}
-function path(f0,f1){var d='',first=true;
-  for(var f=f0;f<=f1+1e-9;f+=0.01){var p=pt(f);d+=(first?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1)+' ';first=false}
-  return d}
-
-svg.appendChild(E('path',{d:path(-0.03,1.07),fill:'none',stroke:'#C3CCD0','stroke-width':1.5}));
-
-var ARCS={kg:[0.12,0.38],fin:[0.46,0.705],orc:[0.79,1.045]},arcEls={};
-for(var ck in ARCS){var a=ARCS[ck];
-  var pe=E('path',{d:path(a[0],a[1]),fill:'none',stroke:COMP[ck].color,'stroke-width':5,'stroke-linecap':'round'});
-  pe.setAttribute('class','sp-arc');svg.appendChild(pe);arcEls[ck]=pe}
-
-/* center loop glyph */
-svg.appendChild(E('circle',{cx:cx,cy:cy,r:23,fill:'#FBFCFC',stroke:'#D4DBDE','stroke-width':1}));
-var lt=E('text',{x:cx,y:cy,'class':'sp-loop'});lt.textContent='↻';svg.appendChild(lt);
-var ll=E('text',{x:cx,y:cy+14,'class':'sp-loopl'});ll.textContent='LOOP TIGHTENS';svg.appendChild(ll);
-var rsv=E('circle',{cx:cx,cy:cy,r:23,fill:'transparent',style:'cursor:pointer'});rsv.addEventListener('click',overview);svg.appendChild(rsv);
-
-/* compounding-ROI inset — a thin line rising one notch per lap */
-(function(){var g=E('g',{'class':'sp-roi'}),bx=40,by=470,step=15,rise=8,d='M'+bx+' '+by;
-  for(var i=1;i<=5;i++){d+='L'+(bx+i*step-step*0.5)+' '+(by-(i-1)*rise)+'L'+(bx+i*step)+' '+(by-i*rise)}
-  g.appendChild(E('path',{d:d,fill:'none',stroke:'#1F8A5B','stroke-width':1.6,'stroke-linejoin':'round'}));
-  for(var j=1;j<=5;j++)g.appendChild(E('circle',{cx:bx+j*step,cy:by-j*rise,r:2,fill:'#1F8A5B'}));
-  var t=E('text',{x:bx,y:by-5*rise-9,'class':'roi-l'});t.textContent='ROI ↑ EACH LAP';g.appendChild(t);
-  svg.appendChild(g)})();
-
-var nodeEls=[];
-for(var i=0;i<N;i++){(function(i){
-  var s=STAGES[i],f=i/(N-1),p=pt(f),col=s.c?COMP[s.c].color:ENTRY.color;
-  var g=E('g',{'class':'sp-node'});
-  g.appendChild(E('circle',{cx:p.x,cy:p.y,r:s.c?7:8,fill:'#FBFCFC',stroke:col,'stroke-width':2.5}));
-  g.appendChild(E('circle',{cx:p.x,cy:p.y,r:2.6,fill:col}));
-  var dx=Math.cos(p.a),dy=Math.sin(p.a),anch=dx<-0.25?'end':(dx>0.25?'start':'middle');
-  var lx=(p.x+dx*16),ly=(p.y+dy*16+3.5);
-  var t1=E('text',{x:lx.toFixed(1),y:ly.toFixed(1),'text-anchor':anch});t1.textContent=s.k;g.appendChild(t1);
-  var t2=E('text',{x:lx.toFixed(1),y:(ly+10).toFixed(1),'text-anchor':anch,'class':'sp-art'});t2.textContent=s.art;g.appendChild(t2);
-  function go(){if(s.c)showStage(i);else showEntry()}
-  g.addEventListener('click',go);g.addEventListener('mouseenter',go);
-  svg.appendChild(g);nodeEls.push({g:g,comp:s.c})
-})(i)}
-
-var chips={};
-['kg','fin','orc'].forEach(function(ck){
-  var d=COMP[ck],b=document.createElement('button');b.type='button';b.className='sp-chip';
-  b.innerHTML='<span class="sp-sw" style="background:'+d.color+'"></span>'+
-    '<span><span class="sp-ct">'+d.label+'</span><span class="sp-cs"> · '+d.sub+'</span></span>'+
-    '<span class="sp-cstg">'+d.owns+'</span>';
-  b.addEventListener('click',function(){b.classList.contains('on')?overview():select(ck)});
-  b.addEventListener('mouseenter',function(){select(ck)});
-  legend.appendChild(b);chips[ck]=b
-});
-
-function setDetail(o){
-  detail.style.borderTopColor=o.color;
-  detail.innerHTML='<div class="dl" style="color:'+o.color+'">'+o.kicker+'</div>'+
-    '<h4>'+o.title+'</h4><div class="owns">'+o.owns+'</div><p>'+o.body+'</p>'
-}
-function reset(){
-  for(var k in arcEls){arcEls[k].classList.remove('dim');arcEls[k].setAttribute('stroke-width','5')}
-  for(var i=0;i<nodeEls.length;i++)nodeEls[i].g.classList.remove('dim');
-  for(var c in chips){chips[c].classList.remove('on');chips[c].style.boxShadow=''}
-}
-function emphArc(ck){for(var k in arcEls){var on=k===ck;arcEls[k].setAttribute('stroke-width',on?'7':'5');if(!on)arcEls[k].classList.add('dim')}}
-function chipOn(ck){chips[ck].classList.add('on');chips[ck].style.boxShadow='inset 3px 0 0 '+COMP[ck].color}
-function select(ck){
-  reset();emphArc(ck);
-  for(var i=0;i<nodeEls.length;i++)if(nodeEls[i].comp!==ck)nodeEls[i].g.classList.add('dim');
-  chipOn(ck);var d=COMP[ck];
-  setDetail({color:d.color,kicker:d.sub,title:d.label,owns:'OWNS · '+d.owns,body:d.role})
-}
-function showStage(i){
-  var s=STAGES[i],ck=s.c,d=COMP[ck];
-  reset();emphArc(ck);
-  for(var j=0;j<nodeEls.length;j++)if(j!==i)nodeEls[j].g.classList.add('dim');
-  chipOn(ck);
-  setDetail({color:d.color,kicker:'STAGE 0'+(i+1)+' · '+d.label.toUpperCase(),title:title(s.k),owns:'ARTIFACT · '+s.art,body:s.desc})
-}
-function showEntry(){
-  var s=STAGES[0];reset();
-  for(var k in arcEls)arcEls[k].classList.add('dim');
-  for(var j=1;j<nodeEls.length;j++)nodeEls[j].g.classList.add('dim');
-  setDetail({color:ENTRY.color,kicker:'STAGE 01 · ENTRY',title:'Sense',owns:'ARTIFACT · '+s.art,body:s.desc})
-}
-function overview(){
-  reset();detail.style.borderTopColor='';
-  detail.innerHTML='<div class="dl" style="color:var(--teal)">THE COMPOUNDING LOOP</div>'+
-    '<h4>From signal to lift, on repeat.</h4>'+
-    '<div class="owns">SIGNALS → CAUSAL GRAPH → ACTION PLAN → SIMULATION → DECISION SLATE → EXECUTIONS → LEARNING RECORDS</div>'+
-    '<p>Raw signals become causal understanding, proven options, and governed execution — each lap written to one shared memory. Predicted-vs-actual deltas feed back so the next cycle starts smarter, and ROI compounds one notch at a time. Hover a stage for its artifact, or a subsystem for the stages it owns.</p>'
-}
-overview();
-}catch(e){var s=document.getElementById('architecture');if(s)s.style.display='none'}})();
 
 /* ---------- observers: enhancement only ---------- */
 if('IntersectionObserver' in window){
