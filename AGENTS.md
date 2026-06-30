@@ -139,6 +139,41 @@ Brand colors used throughout:
 
 ---
 
+## Cursor Cloud specific instructions
+
+This repo is a **Flask app** (`app.py` + `mizoki_runtime/`) that serves the static
+marketing HTML and a decision-intelligence API; it is **not** a Node/build-step project,
+and the `nginx.conf` mentioned elsewhere is legacy/deprecated. There is no lint or build
+step — "lint" here means `py_compile`, and HTML pages are self-contained (no bundler).
+
+- **Python env**: a shared virtualenv lives at `/home/ubuntu/.venv` (created during cloud
+  setup; the startup update script keeps its deps fresh). Use `/home/ubuntu/.venv/bin/python`
+  and `/home/ubuntu/.venv/bin/pip`. The only runtime deps are `Flask` + `gunicorn`
+  (`requirements.txt`). The sibling repo `mizoki-website` shares this same venv — it pins an
+  older Flask (3.0.3) but runs fine on the installed 3.1.3.
+- **Run (dev)**: `PORT=8080 /home/ubuntu/.venv/bin/python app.py` (Flask dev server on
+  `0.0.0.0:8080`). Production uses gunicorn (see `Dockerfile`), but for development use
+  `app.py` directly. There is no hot-reload configured (`debug=False`), so restart the
+  process after editing `app.py` / `mizoki_runtime/`.
+- **Lint/compile**: `/home/ubuntu/.venv/bin/python -m py_compile mizoki_runtime/runtime.py app.py`
+- **Test**: `/home/ubuntu/.venv/bin/python -m unittest tests.test_app tests.test_runtime`
+  (32 tests). This is the canonical verification gate before pushing.
+- **Smoke / hello-world**: `GET /health` → `healthy`; `GET /api/health` → JSON snapshot;
+  the homepage `/` 301-redirects most legacy `*.html` marketing pages. The platform's core
+  feature is the **SRPVDAL decision loop**: `POST /api/boss/graph/loop` runs the 7-stage
+  Sense→Reason→Plan→Validate→Decide→Act→Learn pipeline and increments
+  `graph_native_loop_count` in `/api/health`.
+- **Gotcha**: the Boss runtime writes generated artifacts under `data/` (decision logs,
+  loop traces, `programmatic_runs.jsonl`). These are git-ignored (only `data/.gitkeep` is
+  tracked) — don't commit them. `/api/boss/traces` is a *separate* store from the graph
+  loop, so running `/api/boss/graph/loop` will not populate `/api/boss/traces` (use
+  `gndi.recent_loops` via `/api/mcp/call`, or watch `graph_native_loop_count`).
+- **Out of scope for local dev**: `deploy.sh` / `master-deploy.sh` require `gcloud` auth and
+  a real GCP project (Cloud Run) — do not run them to verify changes; use the local dev
+  server + unittest instead.
+
+---
+
 ## Contact
 
 - Website: mizoki3.com
