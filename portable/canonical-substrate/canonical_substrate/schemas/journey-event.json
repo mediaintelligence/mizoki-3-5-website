@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mizoki/schema/journey-event.json",
+  "title": "JourneyEvent",
+  "description": "One canonical shape for every user/auction/notification event so SRPVDAL can Sense -> Reason -> Plan -> Validate -> Decide -> Act -> Learn deterministically and idempotently. Connectors (Meta CAPI/Webhooks, Google Ads GAQL, SendGrid, OpenRTB) normalize their native payloads into this shape at the SENSE stage.",
+  "type": "object",
+  "required": ["event_id", "event_time", "event_source", "event_type", "provenance", "actor", "context"],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 128,
+      "description": "Stable, idempotent key: sha256(event_source || event_type || stable_keys_from_source). Never derived from ingest_time."
+    },
+    "event_time": {"type": "string", "format": "date-time"},
+    "ingest_time": {"type": ["string", "null"], "format": "date-time"},
+    "event_source": {"type": "string", "enum": ["meta", "google_ads", "sendgrid", "openrtb", "other"]},
+    "event_type": {"type": "string", "description": "e.g. conversion, click, impression, email_event, bid_request, win, loss"},
+    "source_payload_hash": {
+      "type": ["string", "null"],
+      "description": "sha256(canonical_compact_json(source_payload)). Drives compare-and-set idempotency on event_id collisions."
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {"type": ["string", "null"]},
+        "email": {"type": ["string", "null"]},
+        "phone_sha256": {"type": ["string", "null"]},
+        "device_ifa": {"type": ["string", "null"]},
+        "ip": {"type": ["string", "null"]},
+        "ua": {"type": ["string", "null"]}
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "channel": {"type": ["string", "null"]},
+        "campaign_id": {"type": ["string", "null"]},
+        "adgroup_id": {"type": ["string", "null"]},
+        "ad_id": {"type": ["string", "null"]},
+        "keyword": {"type": ["string", "null"]},
+        "search_term": {"type": ["string", "null"]},
+        "placement": {"type": ["string", "null"]},
+        "inventory": {"type": ["string", "null"]},
+        "domain": {"type": ["string", "null"]},
+        "page": {"type": ["string", "null"]},
+        "geo": {"type": ["string", "null"]},
+        "currency": {"type": ["string", "null"]},
+        "value": {"type": ["number", "null"]},
+        "quantity": {"type": ["number", "null"]},
+        "order_id": {"type": ["string", "null"]},
+        "message_id": {"type": ["string", "null"]},
+        "auction_id": {"type": ["string", "null"]},
+        "bidfloor": {"type": ["number", "null"]},
+        "ext": {"type": "object"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["model_version", "request_id", "prompt_hash", "response_schema_hash", "connector_version", "ingest_time"],
+      "additionalProperties": false,
+      "properties": {
+        "model_version": {"type": "string"},
+        "request_id": {"type": "string"},
+        "prompt_hash": {"type": "string"},
+        "response_schema_hash": {"type": "string"},
+        "connector_version": {"type": "string"},
+        "ingest_time": {"type": "string", "format": "date-time"},
+        "source_payload_hash": {"type": ["string", "null"]},
+        "srpvdal_phase": {"type": ["string", "null"], "enum": ["SENSE", "REASON", "PLAN", "VALIDATE", "DECIDE", "ACT", "LEARN"]},
+        "pipeline": {"type": ["string", "null"]},
+        "replay": {"type": ["boolean", "null"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+# The core substrate (journey / envelope / identity) is stdlib-only — nothing here is
+# needed for it. Install a line ONLY if you enable the matching optional path; each is
+# imported lazily inside its call path, so the package imports cleanly without them.
+
+# journey_gemini.py — Vertex AI (ADC) strict-schema extractor
+google-genai==2.10.0
+
+# journey_sinks.py — durable cross-instance idempotency sinks
+google-cloud-firestore
+google-cloud-bigquery
