@@ -470,6 +470,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
             <button class="dnode" type="button" data-k="Risk" style="left:83%;top:45%"><span class="pip"></span>RISK</button>
             <button class="dnode" type="button" data-k="Estate" style="left:17%;top:45%"><span class="pip"></span>ESTATE</button>
             <button class="dnode" type="button" data-k="Signal" style="left:50%;top:63%"><span class="pip"></span>SIGNAL</button>
+            <button class="dnode" type="button" data-k="Manufacturing" style="left:64%;top:73%"><span class="pip"></span>MANUFACTURING</button>
             <button class="dcore" id="dcore" type="button">TCKG CORE</button>
           </div>
           <div class="schema-ov" id="schema-ov" aria-live="polite"></div>
@@ -751,7 +752,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
       </div>
       <div>
         <h5>Example domains</h5>
-        <a href="/counsel">Counsel</a><a href="/signal">Signal</a><a href="/capital">Capital</a><a href="/risk">Risk</a><a href="/estate">Estate</a>
+        <a href="/counsel">Counsel</a><a href="/signal">Signal</a><a href="/capital">Capital</a><a href="/risk">Risk</a><a href="/estate">Estate</a><a href="/manufacturing">Manufacturing</a>
       </div>
       <div>
         <h5>Platform</h5>
@@ -835,7 +836,9 @@ var SCHEMA={
  Estate:{type:'TRUST LEDGER',live:'126 structures modeled',slug:'estate',
    edges:['(Trust)-[:TRANSFERS]->(Beneficiary)','(Asset)-[:TAXED_BY]->(Jurisdiction)','(Trust)-[:HOLDS]->(Capital.Reserve)']},
  Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',slug:'signal',
-   edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']}
+   edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']},
+ Manufacturing:{type:'OPERATIONS LATTICE',live:'48 production lines monitored',slug:'manufacturing',
+   edges:['(Line)-[:YIELDS]->(Output)','(Defect)-[:PROPAGATES]->(Risk.Exposure)','(Throughput)-[:FEEDS]->(Capital.Forecast)']}
 };
 function show(k){
   var d=SCHEMA[k];if(!d)return;
@@ -866,7 +869,8 @@ var DOMAINS=[
  {k:'Estate', verb:'trust distribution',     cstr:'the fiduciary reserve floor',          stake:'Estate, Counsel, and Capital'},
  {k:'Capital',verb:'capital distribution',   cstr:'the liquidity floor and DSCR covenant COV-01',stake:'Capital, Treasury, and Risk'},
  {k:'Signal', verb:'media budget reallocation',cstr:'the ROAS guardrail and spend cap',    stake:'Signal, Capital, and Risk'},
- {k:'Risk',   verb:'exposure rebalance',      cstr:'the exposure limit and covenant DSCR', stake:'Risk, Capital, and Counsel'}
+ {k:'Risk',   verb:'exposure rebalance',      cstr:'the exposure limit and covenant DSCR', stake:'Risk, Capital, and Counsel'},
+ {k:'Manufacturing',verb:'production line shutdown',cstr:'the throughput floor and safety covenant',stake:'Manufacturing, Capital, and Risk'}
 ];
 var amtEl=document.getElementById('sim-amt'),floorEl=document.getElementById('sim-floor'),
     legalEl=document.getElementById('sim-legal'),runEl=document.getElementById('sim-run'),
@@ -1011,7 +1015,9 @@ var DIV=[
  {k:'Signal',slug:'signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
   l:['Causal attribution (uplift)','Autonomous bid optimization','Self-proving ROI'],ml:'Channels attributed',mv:'24',note:'Uplift measured with counterfactual rigor — no last-click fiction.'},
  {k:'Risk',slug:'risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
-  l:['Continuous verification','Regulatory monitoring','Live obligation tracking'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'}
+  l:['Continuous verification','Regulatory monitoring','Live obligation tracking'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'},
+ {k:'Manufacturing',slug:'manufacturing',n:'Operations & Manufacturing',p:'Predictive maintenance, yield forecasting, and throughput optimization — shop-floor telemetry reasoned over the same graph as capital and risk.',
+  l:['Predictive maintenance','Yield & defect forecasting','Supply-disruption propagation'],ml:'Production lines monitored',mv:'48',note:'Connects shop-floor yield to Capital and Risk — a defect trend and a covenant are never reasoned over in isolation.'}
 ];
 var dtabs=document.getElementById('dtabs');
 each(DIV,function(d,i){var t=document.createElement('div');
