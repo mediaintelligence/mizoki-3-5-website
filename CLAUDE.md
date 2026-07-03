@@ -148,6 +148,69 @@ mizoki-website/
 
 ---
 
+## Recent Work (July 2026)
+
+### Manufacturing Example-Domain Lens — Full First-Class Integration + Stale-Branch Reconciliation (2026-07-03)
+
+Added **Manufacturing** as a first-class example-domain lens (a 6th alongside Counsel/Estate/
+Capital/Signal/Risk) and shipped it to production. The work started from the stale
+`cursor/add-manufacturing-lens` branch, which had gone **32 commits behind `origin/main`**
+(forked at `afa5599`, only 1 commit ahead) and predated the entire homepage rework — merging it
+would have reverted the SRPVDAL spiral, Decision Authorization Scorecard, sim playground, the
+JourneyEvent / CanonicalEventEnvelope v2 / identity-resolver cells, and the Node-24 CI bump.
+**Decision: rebuild the lens onto current `main`, not merge the stale branch.**
+
+**What shipped (branch `feat/manufacturing-lens` off current `origin/main`, commit `7c36d87`):**
+- **`manufacturing/index.html`** — new lens page cloned from the *current* 485-line lens template
+  (Capital), not the stale branch's 420-line one, so it matches the reworked lens layout (crumb
+  nav, `REINFORCES` cross-links, "example deployment, not a product ceiling" copy). **FILE F**
+  (Counsel=A … Capital=C, Risk=E → Manufacturing=F). Content: shop-floor telemetry / yield /
+  supply-chain; reinforces Capital · Risk · Counsel · Signal; metric "48 production lines monitored".
+- **`index.html`** — Manufacturing wired into **all four** homepage domain systems (the stale
+  commit only touched two): the hero graph node (`data-k="Manufacturing"` at 64%/73%), the `SCHEMA`
+  inspector (`OPERATIONS LATTICE`, edges to `Risk.Exposure` / `Capital.Forecast`), the
+  executable-simulation `DOMAINS` scenarios (`production line shutdown`, appended at index 5 so the
+  ACT-991 Capital default `domIdx=2` is unchanged), and the §04 `DIV` divisions panel — **with the
+  `slug` field** the current array requires (the stale commit's entry lacked it, which would have
+  broken the dossier link).
+- **Footer "Example domains"** — Manufacturing appended on all **15 tracked pages** (homepage, six
+  lenses incl. Manufacturing, five blog pages, privacy, terms, 404) via one verified perl pass over
+  the exact-match footer line; the untracked `site/` Decision-Ledger scratch copies were deliberately
+  excluded.
+- **`app.py`** — `/manufacturing` + `/manufacturing/` + `/manufacturing.html` → `serve_dir_page("manufacturing")`.
+- **`sitemap.xml`** — `/manufacturing/` entry.
+- **Repo hygiene** — removed three tracked deploy-junk zips (`mizoki3-final-*.zip`). Also restored a
+  phantom working-tree deletion of `mizoki3-site/` (README/console/main.tf — **identical blob SHAs on
+  both sides**, the recurring Drive-sync gotcha; a recovery, never committed).
+
+**Verification:** `python3 -m py_compile app.py mizoki_runtime/runtime.py` clean; `python3 -m unittest
+tests.test_app tests.test_runtime` → **73 passing**; `app.test_client()` smoke of
+`/manufacturing{,/,.html}`, all five existing lenses, `/`, `/sitemap.xml`, `/blog/`, and a 404 — all
+correct; all four inline homepage `<script>` blocks pass `node --check`; HTML structurally balanced
+(HTMLParser). Homepage confirmed carrying all four Manufacturing hooks.
+
+**Deploy (2026-07-03).** Pushed `ceb9c1e..7c36d87` to `main` (clean fast-forward) → WIF auto-deploy
+`deploy-cloudrun.yml` run **`28676737392`** built + rolled a new `mizoki-website` Cloud Run revision
+green in **58s**. Live smoke on **mizoki3.com**: `/manufacturing{,/,.html}` 200 with "Operations &
+Manufacturing" / "FILE F"; homepage footer + hero node + `DIV` entry present; `/sitemap.xml` carries
+`/manufacturing/`; `/capital` + `/` regression-clean.
+
+**Loose ends re-checked this session (both resolved — no action needed):**
+- **Node 20→24 CI bump — already done** on `main` (`c7719d0`); deploy actions are now
+  `checkout@v5` / `auth@v3` / `setup-gcloud@v3`.
+- **Dependabot — 0 open alerts.** All 30 historical alerts are `fixed` (6 high / 18 medium / 6 low);
+  the six highs were all `vite` from the untracked `Noah_gemini/` React scratch tree, cleared by
+  `42a35a8` (untrack), with gunicorn 23 / Flask 3.1.3 covering the Python ones. The "28 vulns (6
+  high)" flagged 2026-06-12 is resolved.
+- Untracked clutter kept on disk per direction: `site/`, `files/`, `mizoki-site-v4-RELEASE/`, and
+  `MIZOKI3_Creative_Single_Point_of_Truth_v1_0.{docx,md}`. Deleted only deploy-junk zips.
+
+**Gotcha for future agents:** the local default `python3` is Homebrew **3.14 without Flask**, so
+`tests.test_app` ImportErrors there (only `test_runtime` runs). Use **`python3.13`** (has Flask 3.0.3)
+to run the app tests and `test_client` smokes locally.
+
+---
+
 ## Recent Work (June 2026)
 
 ### Identity Resolver Cell — Cross-Event Cluster Stitching (2026-06-25)
