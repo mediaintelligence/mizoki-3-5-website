@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZOKI3 — A Nervous System for Your Business</title>
+<meta name="description" content="MIZOKI3 is a verifiable autonomous decision intelligence platform — a living nervous system for your business. Real-time understanding, prediction, and defensible action across your entire organization.">
+<link rel="canonical" href="https://mizoki3.com/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#F4F6F7">
+<meta property="og:title" content="MIZOKI3 — A Nervous System for Your Business">
+<meta property="og:description" content="Real-time understanding of every part of your organization. A living graph of metrics and prediction — not another backwards-looking dashboard.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/">
+<meta property="og:image" content="https://mizoki3.com/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mizoki3.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F6F7; --paper2:#EDF0F2; --card:#FBFCFC;
+  --ink:#0B1E26; --ink2:#33454D; --mute:#5E6E75; --faint:#93A0A6;
+  --rule:#D4DBDE; --rule2:#C3CCD0;
+  --teal:#0C7C8F; --teal2:#0A6675; --wash:#E3EEF0;
+  --veto:#C8273A; --pass:#1F8A5B; --warn:#B07A18;
+  --dark:#0A1418; --dark2:#0E1B21; --dline:#1C2E36; --dtext:#DCE9ED; --cy:#3FDCF2;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+  --max:1240px; --margin:118px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:400;
+  font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--ink);color:var(--paper)}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 36px;position:relative}
+
+/* ledger ruling: continuous left margin rule */
+.ruled{position:relative}
+.ruled::before{content:'';position:absolute;top:0;bottom:0;left:var(--margin);
+  width:1px;background:var(--rule2)}
+@media(max-width:980px){.ruled::before{display:none}}
+
+/* ---------- top bar ---------- */
+.topline{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--mute);
+  border-bottom:1px solid var(--rule);background:var(--paper2)}
+.topline .wrap{display:flex;justify-content:space-between;padding-top:8px;padding-bottom:8px}
+nav{position:sticky;top:0;z-index:50;background:rgba(244,246,247,.92);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule2)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:0 36px;height:62px;
+  display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--mono);font-weight:700;font-size:15px;letter-spacing:.24em;display:flex;align-items:center;color:var(--ink)}
+.logo .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);margin-right:11px}
+.nav-links{display:flex;align-items:center;gap:28px}
+.no-gap .nav-links>*+*{margin-left:28px}
+.nav-links a{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--mute);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.btn{display:inline-block;font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.08em;
+  padding:12px 24px;border:1px solid var(--ink);color:var(--ink);transition:all .2s;cursor:pointer;background:transparent}
+.btn:hover{background:var(--wash)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+@media(max-width:780px){.nav-links a.hide-m{display:none}}
+
+/* ---------- hero ---------- */
+.hero{padding:96px 0 84px;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.no-gap .hero-grid>*+*{margin-left:56px}
+.filing{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--mute);
+  display:flex;align-items:center;gap:14px;margin-bottom:30px;flex-wrap:wrap}
+.no-gap .filing>*+*{margin-left:14px}
+.filing .fno{color:var(--teal);font-weight:700}
+.filing .sep{color:var(--rule2)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(52px,6.8vw,92px);line-height:.99;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--teal)}
+.lede{margin-top:30px;font-size:19px;color:var(--ink2);max-width:560px;font-weight:300}
+.lede strong{font-weight:500;color:var(--ink)}
+.cta-row{margin-top:38px;display:flex;flex-wrap:wrap;gap:14px}
+.no-gap .cta-row>*+*{margin-left:14px}
+.attest{margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--mute);
+  display:flex;flex-wrap:wrap;gap:26px}
+.no-gap .attest>*+*{margin-left:26px}
+.attest span::before{content:'✓';color:var(--teal);margin-right:8px;font-weight:700}
+
+/* exhibit plate (hero graph) */
+.plate{border:1px solid var(--rule2);background:var(--card);position:relative;
+  box-shadow:0 1px 0 var(--rule2), 6px 6px 0 var(--paper2)}
+.plate-h{display:flex;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute)}
+.plate-b{position:relative;height:430px}
+.plate-b canvas,.plate-b svg.fallback{position:absolute;inset:0;width:100%;height:100%}
+.plate.canvas-on svg.fallback{display:none}
+.plate-f{display:flex;justify-content:space-between;padding:11px 18px;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--faint)}
+.plate-f b{color:var(--ink2);font-weight:600}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr}.plate-b{height:340px}}
+
+/* ---------- ledger strip ---------- */
+.strip{border-top:1px solid var(--rule2);border-bottom:1px solid var(--rule2);background:var(--card)}
+.strip .wrap{display:grid;grid-template-columns:repeat(5,1fr)}
+.cellv{padding:24px 22px;border-right:1px solid var(--rule)}
+.cellv:last-child{border-right:0}
+.cellv .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+.cellv .v{font-family:var(--serif);font-size:30px;margin-top:6px;color:var(--ink)}
+.cellv .v.t{color:var(--teal)} .cellv .v.w{color:var(--warn);font-size:30px}
+.cellv .v small{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.06em}
+@media(max-width:980px){.strip .wrap{grid-template-columns:1fr 1fr;}.cellv{border-bottom:1px solid var(--rule)}}
+
+/* ---------- sections / ledger articles ---------- */
+section{padding:104px 0;position:relative}
+.art{display:grid;grid-template-columns:var(--margin) 1fr;column-gap:46px}
+.art .folio{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--teal);
+  font-weight:700;text-align:right;padding-top:10px;white-space:nowrap}
+.art .folio .sub{display:block;color:var(--faint);font-weight:400;font-size:10px;margin-top:8px;letter-spacing:.2em}
+@media(max-width:980px){.art{grid-template-columns:1fr}.art .folio{text-align:left;margin-bottom:18px}}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(36px,4.6vw,58px);line-height:1.05;max-width:780px;letter-spacing:-.01em}
+h2 em{font-style:italic;color:var(--teal)}
+.sec-lede{margin-top:20px;color:var(--ink2);max-width:680px;font-size:17.5px;font-weight:300}
+.sec-lede strong{font-weight:500;color:var(--ink)}
+.reveal{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.js .reveal.in{opacity:1;transform:none}
+
+/* compare ledger */
+.compare{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule2);background:var(--card)}
+.col{padding:38px 40px}
+.col+.col{border-left:1px solid var(--rule2)}
+.col .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
+.col.live .tag{color:var(--teal)}
+.col h3{font-family:var(--serif);font-weight:400;font-size:28px;margin:14px 0 12px}
+.col p{color:var(--ink2);font-size:15.5px;font-weight:300}
+.col ul{list-style:none;margin-top:22px}
+.col li{padding:10px 0;border-top:1px solid var(--rule);color:var(--ink2);font-size:14.5px}
+.col li::before{content:'—';color:var(--faint);margin-right:12px}
+.col.live{background:linear-gradient(140deg,var(--wash),var(--card) 60%)}
+.col.live li::before{content:'→';color:var(--teal);font-family:var(--mono);font-size:12px}
+@media(max-width:880px){.compare{grid-template-columns:1fr}.col+.col{border-left:0;border-top:1px solid var(--rule2)}}
+
+/* ---------- reflex arc: dark terminal exhibit ---------- */
+.term{margin-top:56px;background:var(--dark);color:var(--dtext);border:1px solid var(--dline);
+  box-shadow:8px 8px 0 var(--paper2);position:relative;overflow:hidden}
+.term-h{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;
+  border-bottom:1px solid var(--dline);font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:#7E97A0}
+.term-h .lite{width:7px;height:7px;border-radius:50%;background:var(--cy);margin-right:10px;
+  display:inline-block;vertical-align:1px;animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(63,220,242,.5)}55%{box-shadow:0 0 0 7px rgba(63,220,242,0)}}
+.stages{display:flex;border-bottom:1px solid var(--dline);overflow-x:auto}
+.stage{flex:1;min-width:92px;padding:16px 8px 14px;text-align:center;cursor:pointer;
+  border-right:1px solid var(--dline);position:relative;transition:background .3s}
+.stage:last-child{border-right:0}
+.stage .k{font-family:var(--mono);font-size:10px;color:#5E7780;letter-spacing:.18em}
+.stage .n{font-family:var(--serif);font-size:18.5px;margin-top:4px;color:#8FA6AE;transition:color .3s}
+.stage::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent;transition:background .3s}
+.stage.done .n{color:var(--dtext)} .stage.done::after{background:#1B5560}
+.stage.active{background:rgba(63,220,242,.06)}
+.stage.active .n{color:var(--cy)} .stage.active::after{background:var(--cy)}
+.stage.veto.active .n{color:#FF6B7C} .stage.veto.active::after{background:#FF6B7C}
+.stage.pass.active .n{color:#41D695} .stage.pass.active::after{background:#41D695}
+.term-body{display:grid;grid-template-columns:1.12fr .88fr;min-height:296px}
+.term-detail{padding:36px 40px;border-right:1px solid var(--dline);position:relative}
+.term-detail .sk{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:#5E7780;text-transform:uppercase}
+.term-detail h3{font-family:var(--serif);font-weight:400;font-size:36px;margin:8px 0 14px;color:#fff}
+.term-detail p{color:#A9BDC4;font-size:15.5px;max-width:520px;font-weight:300}
+.term-meta{margin-top:28px;display:flex;gap:42px;font-family:var(--mono);font-size:13px}
+.no-gap .term-meta>*+*{margin-left:42px}
+.term-meta .lbl{color:#5E7780;font-size:10px;letter-spacing:.2em;text-transform:uppercase;display:block;margin-bottom:6px}
+.term-meta .val{color:#fff;font-weight:500}
+.stamp{position:absolute;top:30px;right:34px;font-family:var(--mono);font-weight:700;font-size:15px;
+  letter-spacing:.3em;color:#FF6B7C;border:2.5px solid #FF6B7C;padding:8px 16px 8px 19px;
+  transform:rotate(-9deg);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.stamp.show{opacity:.95;transform:rotate(-7deg) scale(1)}
+.stamp.ok{color:#41D695;border-color:#41D695}
+.trace{padding:28px;background:#071013;font-family:var(--mono);font-size:12.5px}
+.trace-h{font-size:10px;letter-spacing:.22em;color:#5E7780;text-transform:uppercase;margin-bottom:16px;
+  padding-bottom:12px;border-bottom:1px solid var(--dline)}
+.tl{display:flex;align-items:baseline;padding:7px 0;color:#5E7780;opacity:.34;transition:opacity .4s}
+.tl.on{opacity:1;color:#A9BDC4}
+.tl .dt{width:6px;height:6px;border-radius:50%;background:#1B5560;margin-right:12px;flex:none;align-self:center}
+.tl.veto.on .dt{background:#FF6B7C} .tl.pass.on .dt{background:#41D695}
+.tl .ts{color:#5E7780;margin-right:13px;flex:none}
+.tl .vt{color:#FF6B7C;font-weight:700} .tl .pz{color:#41D695;font-weight:700}
+@media(max-width:900px){.term-body{grid-template-columns:1fr}.term-detail{border-right:0;border-bottom:1px solid var(--dline)}}
+
+/* ---------- control plane ---------- */
+.csteps{margin-top:52px;border:1px solid var(--rule2);background:var(--card)}
+.cstep{display:grid;grid-template-columns:90px 200px 1fr;align-items:baseline;
+  padding:26px 34px;border-bottom:1px solid var(--rule)}
+.cstep:last-child{border-bottom:0}
+.cstep .num{font-family:var(--mono);font-size:12px;color:var(--teal);font-weight:700;letter-spacing:.2em}
+.cstep h4{font-family:var(--serif);font-weight:400;font-size:25px}
+.cstep p{color:var(--ink2);font-size:15px;font-weight:300}
+@media(max-width:780px){.cstep{grid-template-columns:1fr}.cstep h4{margin:4px 0 6px}}
+.gauge-row{margin-top:50px;display:flex;align-items:center;gap:52px;flex-wrap:wrap}
+.no-gap .gauge-row>*+*{margin-left:52px}
+.gauge{position:relative;width:172px;height:172px;flex:none}
+.gauge svg{transform:rotate(-90deg)}
+.gauge .track{fill:none;stroke:var(--rule);stroke-width:10}
+.gauge .arcfill{fill:none;stroke:var(--teal);stroke-width:10;stroke-linecap:butt;
+  stroke-dasharray:439.8;stroke-dashoffset:439.8;transition:stroke-dashoffset 1.6s cubic-bezier(.2,.7,.2,1)}
+.gauge .gv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge .gnum{font-family:var(--serif);font-size:54px;line-height:1;color:var(--ink)}
+.gauge .glbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--faint);margin-top:6px}
+.gauge-copy{max-width:500px}
+.gauge-copy .gt{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--teal);font-weight:700;text-transform:uppercase}
+.gauge-copy p{color:var(--ink2);margin-top:12px;font-size:15.5px;font-weight:300}
+
+/* ---------- divisions: file folders ---------- */
+.dtabs{margin-top:52px;display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--rule2)}
+.dtab{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;padding:13px 24px;cursor:pointer;
+  color:var(--mute);border:1px solid transparent;border-bottom:0;margin-bottom:-1px;transition:color .2s}
+.dtab:hover{color:var(--ink)}
+.dtab.active{background:var(--card);border-color:var(--rule2);color:var(--teal);font-weight:600}
+.dpanel{border:1px solid var(--rule2);border-top:0;background:var(--card);
+  display:grid;grid-template-columns:1.2fr .8fr}
+.dmain{padding:40px 44px}
+.dmain .dk{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--teal);font-weight:700;text-transform:uppercase}
+.dmain h3{font-family:var(--serif);font-weight:400;font-size:34px;margin:10px 0 12px}
+.dmain p{color:var(--ink2);font-size:16px;font-weight:300}
+.dmain ul{list-style:none;margin-top:22px}
+.dmain li{padding:10px 0;border-top:1px solid var(--rule);color:var(--ink2);font-size:14.5px}
+.dmain li::before{content:'→';color:var(--teal);font-family:var(--mono);font-size:12px;margin-right:12px}
+.dside{padding:40px 38px;border-left:1px solid var(--rule);background:var(--paper2);
+  display:flex;flex-direction:column;justify-content:space-between}
+.dside .ml{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
+.dside .mv{font-family:var(--serif);font-size:62px;line-height:1.05;color:var(--teal);margin-top:6px}
+.dside .note{margin-top:26px;color:var(--ink2);font-size:14px;border-top:1px solid var(--rule2);padding-top:18px;font-weight:300}
+.dfoot{margin-top:26px;font-size:16px;color:var(--ink2)}
+.dfoot strong{color:var(--ink);font-weight:500}
+@media(max-width:880px){.dpanel{grid-template-columns:1fr}.dside{border-left:0;border-top:1px solid var(--rule)}}
+
+/* ---------- enterprise ---------- */
+.ent-grid{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule2);background:var(--card)}
+.ent{padding:32px 36px;display:flex;gap:22px;border-bottom:1px solid var(--rule)}
+.no-gap .ent>*+*{margin-left:22px}
+.ent:nth-child(odd){border-right:1px solid var(--rule)}
+.ent:nth-last-child(-n+2){border-bottom:0}
+.ent .ic{font-family:var(--mono);font-size:10.5px;color:var(--teal);border:1px solid var(--teal);
+  padding:6px 9px;height:fit-content;letter-spacing:.1em;font-weight:700;flex:none}
+.ent h4{font-size:16.5px;font-weight:500;margin-bottom:5px}
+.ent p{color:var(--ink2);font-size:14.5px;font-weight:300}
+@media(max-width:780px){.ent-grid{grid-template-columns:1fr}.ent:nth-child(odd){border-right:0}.ent:nth-last-child(2){border-bottom:1px solid var(--rule)}}
+
+/* ---------- final ---------- */
+.final{background:var(--ink);color:var(--paper);padding:120px 0;text-align:center}
+.final h2{margin:0 auto;color:#fff;max-width:none}
+.final h2 em{color:var(--cy)}
+.final .sec-lede{margin:22px auto 0;color:#B9C6CB}
+.final .cta-row{justify-content:center;margin-top:40px}
+.final .btn{border-color:#3A4B52;color:#fff}
+.final .btn:hover{background:#15262D}
+.final .btn.primary{background:var(--cy);border-color:var(--cy);color:#06262C;font-weight:700}
+.final .btn.primary:hover{background:#6CE8FA}
+.final .filing{justify-content:center;color:#7E97A0}
+.final .filing .fno{color:var(--cy)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--paper2)}
+.f-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px}
+.no-gap .f-grid>*+*{margin-left:44px}
+.f-grid p{color:var(--mute);font-size:14.5px;max-width:340px;margin-top:14px;font-weight:300}
+.f-grid h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase;margin-bottom:14px}
+.f-grid a{display:block;color:var(--ink2);font-size:14.5px;padding:5px 0}
+.f-grid a:hover{color:var(--teal)}
+.f-bottom{margin-top:50px;padding-top:24px;border-top:1px solid var(--rule2);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+  font-family:var(--mono);font-size:11.5px;color:var(--mute)}
+.f-badges span{margin-right:22px}
+.f-badges span::before{content:'✓';color:var(--teal);margin-right:7px;font-weight:700}
+@media(max-width:780px){.f-grid{grid-template-columns:1fr}}
+
+/* ---------- control plane sandbox ---------- */
+.sandbox{margin-top:54px;border:1px solid var(--rule2);background:var(--card);box-shadow:8px 8px 0 var(--paper2)}
+.sandbox .sh{display:flex;justify-content:space-between;padding:12px 22px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute)}
+.sandbox .sh b{color:var(--teal);font-weight:700}
+.sb-body{display:grid;grid-template-columns:1fr 1fr}
+.sb-controls{padding:34px 38px;border-right:1px solid var(--rule)}
+.sb-controls .ct{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.sb-controls .cs{color:var(--mute);font-size:14px;font-weight:300;margin-bottom:26px}
+.sld{margin-bottom:22px}
+.sld .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;
+  letter-spacing:.14em;color:var(--ink2);text-transform:uppercase;margin-bottom:9px}
+.sld .row output{font-weight:700;color:var(--ink)}
+.sld input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--rule2);outline:none}
+.sld input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--paper);border:2px solid var(--teal);cursor:pointer}
+.sld input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--paper);border:2px solid var(--teal);cursor:pointer}
+.sld input[type=range]:focus-visible{outline:2px solid var(--teal);outline-offset:4px}
+.presets{margin-top:28px;padding-top:22px;border-top:1px solid var(--rule)}
+.presets .pt{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase;margin-bottom:12px}
+.preset{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+  padding:11px 14px;margin-bottom:8px;border:1px solid var(--rule2);background:var(--paper);color:var(--ink2);
+  cursor:pointer;transition:all .2s}
+.preset:hover{border-color:var(--teal);color:var(--ink)}
+.preset b{color:var(--veto);font-weight:700} .preset b.ok{color:var(--pass)}
+.sb-verdict{padding:34px 38px;display:flex;flex-direction:column;justify-content:space-between;position:relative;background:var(--paper2)}
+.sb-verdict .vh{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
+.delbig{font-family:var(--serif);font-size:96px;line-height:1;margin-top:10px;transition:color .3s}
+.delbig small{font-size:26px;color:var(--faint)}
+.delbar{height:4px;background:var(--rule2);margin:18px 0 6px;position:relative}
+.delbar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);transition:width .3s,background .3s}
+.delbar .gate{position:absolute;left:80%;top:-5px;bottom:-5px;width:2px;background:var(--ink)}
+.delbar-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint)}
+.sb-stamp{position:absolute;top:26px;right:30px;font-family:var(--mono);font-weight:700;font-size:14px;
+  letter-spacing:.28em;padding:7px 14px 7px 17px;border:2.5px solid;transform:rotate(-7deg);transition:all .25s}
+.sb-stamp.veto{color:var(--veto);border-color:var(--veto)}
+.sb-stamp.gate{color:var(--warn);border-color:var(--warn)}
+.sb-stamp.ok{color:var(--pass);border-color:var(--pass)}
+.sb-expl{margin-top:20px;padding-top:18px;border-top:1px solid var(--rule2);color:var(--ink2);font-size:14.5px;font-weight:300;min-height:88px}
+.sb-trace{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin-top:16px}
+.sb-trace b{font-weight:700}
+.sb-trace b.veto{color:var(--veto)} .sb-trace b.gate{color:var(--warn)} .sb-trace b.ok{color:var(--pass)}
+@media(max-width:900px){.sb-body{grid-template-columns:1fr}.sb-controls{border-right:0;border-bottom:1px solid var(--rule)}}
+
+/* ---------- hero schema inspector ---------- */
+.nodes-ov{position:absolute;inset:0;pointer-events:none;z-index:3}
+.dnode{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;color:var(--teal2);
+  background:rgba(251,252,252,.9);border:1px solid var(--rule2);padding:5px 9px;border-radius:2px;
+  display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all .2s}
+.dnode .pip{width:6px;height:6px;border-radius:50%;background:var(--teal);flex:none}
+.dnode:hover,.dnode:focus-visible{border-color:var(--teal);box-shadow:0 0 0 3px var(--wash);outline:none}
+.dnode.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dnode.sel .pip{background:var(--cy)}
+.dnode.dim{opacity:.34}
+.dcore{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.16em;color:var(--paper);
+  background:var(--teal);border:0;padding:6px 11px;border-radius:2px}
+.dcore:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.schema-ov{position:absolute;left:14px;right:14px;bottom:12px;z-index:4;background:var(--dark);color:var(--dtext);
+  border:1px solid var(--dline);padding:13px 16px;font-family:var(--mono);
+  transform:translateY(8px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.schema-ov.show{opacity:1;transform:none}
+.schema-ov .sh{display:flex;justify-content:space-between;font-size:9.5px;letter-spacing:.16em;color:#5E7780;margin-bottom:10px}
+.schema-ov .sh b{color:var(--cy);font-weight:700}
+.schema-ov .edge{font-size:11.5px;color:#A9BDC4;padding:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.schema-ov .edge .rel{color:var(--cy)}
+.schema-ov .live{margin-top:9px;padding-top:8px;border-top:1px solid var(--dline);font-size:9px;letter-spacing:.14em;color:#5E7780}
+
+/* ---------- executable simulation inputs ---------- */
+.sim-inputs{padding:22px 24px;border-bottom:1px solid var(--dline);background:#0B161B;
+  display:grid;grid-template-columns:1fr 1fr;gap:18px 28px;align-items:end}
+.sim-field .row{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;color:#7E97A0;text-transform:uppercase;margin-bottom:10px}
+.sim-field .row output{color:var(--cy);font-weight:700;letter-spacing:.04em}
+.sim-field input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--dline);outline:none}
+.sim-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--dark);border:2px solid var(--cy);cursor:pointer}
+.sim-field input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--dark);border:2px solid var(--cy);cursor:pointer}
+.sim-field input[type=range]:focus-visible{outline:2px solid var(--cy);outline-offset:4px}
+.sim-domains{display:flex;flex-wrap:wrap;gap:6px}
+.sim-dom{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;padding:7px 11px;cursor:pointer;
+  border:1px solid var(--dline);background:transparent;color:#8FA6AE;transition:all .2s}
+.sim-dom:hover{border-color:#2C4750;color:var(--dtext)}
+.sim-dom.on{background:var(--cy);border-color:var(--cy);color:#06262C;font-weight:700}
+.sim-dom:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.sim-toggle{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:9px 14px;cursor:pointer;width:100%;
+  border:1px solid var(--dline);background:transparent;color:#8FA6AE;display:flex;align-items:center;gap:9px;transition:all .2s}
+.sim-toggle .dotk{width:8px;height:8px;border-radius:50%;background:#41D695;flex:none}
+.sim-toggle.on{color:#41D695;border-color:#1F4536}
+.sim-toggle.off{color:#FF6B7C;border-color:#3A2630}
+.sim-toggle.off .dotk{background:#FF6B7C}
+.sim-toggle:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.sim-run{grid-column:1/-1;font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.14em;
+  padding:14px;cursor:pointer;background:var(--cy);border:0;color:#06262C;transition:background .2s}
+.sim-run:hover{background:#6CE8FA}
+.sim-run:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sim-run.running{background:#2C4750;color:#8FA6AE;cursor:progress}
+.sim-readout{grid-column:1/-1;font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:#7E97A0;padding-top:2px}
+.sim-readout b{color:var(--dtext);font-weight:600}
+.sim-readout b.breach{color:#FF6B7C}
+.stamp.gate{color:#E0A92E;border-color:#E0A92E}
+.tl.gate.on .dt{background:#E0A92E}
+
+/* ---------- authorization scorecard (ledger) ---------- */
+.scorecard{margin-top:50px;border:1px solid var(--rule2);background:var(--card);box-shadow:6px 6px 0 var(--paper2)}
+.sc-h{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
+.sc-verdict{color:var(--veto);font-weight:700;white-space:nowrap}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr}
+.sc-item{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:20px 24px;border-bottom:1px solid var(--rule)}
+.sc-item:nth-child(odd){border-right:1px solid var(--rule)}
+.sc-k{font-size:14.5px;color:var(--ink2);font-weight:300}
+.sc-k::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:11px;vertical-align:1px;background:var(--pass)}
+.sc-item:last-child .sc-k::before{background:var(--veto)}
+.sc-v{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:5px 11px;border:1px solid;flex:none}
+.sc-v.pass{color:var(--pass);border-color:var(--pass)}
+.sc-v.veto{color:var(--veto);border-color:var(--veto)}
+.sc-f{padding:18px 24px;font-size:14.5px;font-weight:300;color:var(--ink2)}
+.sc-f b{font-weight:500;color:var(--ink)}
+@media(max-width:680px){.sc-grid{grid-template-columns:1fr}.sc-item{border-right:0!important}}
+@media(max-width:680px){.sim-inputs{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+<link rel="alternate" type="application/rss+xml" title="MIZOKI3 Journal" href="/blog/feed.xml">
+</head>
+<body>
+<script>document.documentElement.classList.add('js');
+if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentElement.classList.add('no-gap');</script>
+
+<div class="topline"><div class="wrap"><span>VERIFIABLE AUTONOMOUS DECISION INTELLIGENCE</span><span>DOC. MZK3-2026 · REV 4</span></div></div>
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#top"><span class="dot"></span>MIZOKI3</a>
+    <div class="nav-links">
+      <a href="#pipeline" class="hide-m">§02 ENGINE</a>
+      <a href="#control" class="hide-m">§03 CONTROL</a>
+      <a href="#divisions" class="hide-m">§04 DOMAINS</a>
+      <a href="/blog/" class="hide-m">BLOG</a>
+      <a href="/login">SIGN IN</a>
+      <a class="btn primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request">EXECUTIVE BRIEFING</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero ruled" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="filing"><span class="fno">§01</span><span class="sep">/</span><span>THE SYSTEM</span><span class="sep">/</span><span>FILED 2026</span></div>
+        <h1>A nervous system for <em>your business.</em></h1>
+        <p class="lede">MIZOKI3 gives your organization a <strong>real-time, mathematical understanding of itself</strong> — a living graph of every metric, relationship, and prediction. It replaces the CRM and the backwards-looking dashboards with a system that senses, reasons, and acts across your entire business the moment something changes.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request">SCHEDULE EXECUTIVE BRIEFING</a>
+          <a class="btn" href="#pipeline">SEE THE REFLEX ARC ↓</a>
+        </div>
+        <div class="attest"><span>REAL-TIME</span><span>PREDICTIVE</span><span>DEFENSIBLE</span></div>
+      </div>
+      <div class="plate" id="plate">
+        <div class="plate-h"><span>EXHIBIT A — ORGANIZATIONAL GRAPH · ILLUSTRATIVE</span><span>▸ INSPECT NODES</span></div>
+        <div class="plate-b">
+          <svg class="fallback" viewBox="0 0 560 430" fill="none" aria-hidden="true">
+            <g stroke="#0C7C8F" stroke-opacity=".3">
+              <path d="M280 215 L170 110 M280 215 L390 95 M280 215 L430 235 M280 215 L380 340 M280 215 L160 330 M280 215 L115 215
+                       M170 110 L85 70 M170 110 L245 45 M390 95 L470 55 M390 95 L330 40 M430 235 L515 195 M430 235 L510 290
+                       M380 340 L455 400 M380 340 L300 405 M160 330 L85 385 M115 215 L40 185"/>
+            </g>
+            <g fill="#0C7C8F">
+              <circle cx="170" cy="110" r="4"/><circle cx="390" cy="95" r="4"/><circle cx="430" cy="235" r="4"/>
+              <circle cx="380" cy="340" r="4"/><circle cx="160" cy="330" r="4"/><circle cx="115" cy="215" r="4"/>
+              <circle cx="85" cy="70" r="2.5"/><circle cx="245" cy="45" r="2.5"/><circle cx="470" cy="55" r="2.5"/>
+              <circle cx="330" cy="40" r="2.5"/><circle cx="515" cy="195" r="2.5"/><circle cx="510" cy="290" r="2.5"/>
+              <circle cx="455" cy="400" r="2.5"/><circle cx="300" cy="405" r="2.5"/><circle cx="85" cy="385" r="2.5"/><circle cx="40" cy="185" r="2.5"/>
+            </g>
+            <circle cx="280" cy="215" r="7" fill="#0C7C8F"/>
+            <circle cx="280" cy="215" r="13" stroke="#0C7C8F" stroke-opacity=".5"/>
+          </svg>
+          <canvas id="graph"></canvas>
+          <div class="nodes-ov" id="nodes-ov">
+            <button class="dnode" type="button" data-k="Counsel" style="left:22%;top:19%"><span class="pip"></span>COUNSEL</button>
+            <button class="dnode" type="button" data-k="Capital" style="left:75%;top:19%"><span class="pip"></span>CAPITAL</button>
+            <button class="dnode" type="button" data-k="Risk" style="left:83%;top:45%"><span class="pip"></span>RISK</button>
+            <button class="dnode" type="button" data-k="Estate" style="left:17%;top:45%"><span class="pip"></span>ESTATE</button>
+            <button class="dnode" type="button" data-k="Signal" style="left:50%;top:63%"><span class="pip"></span>SIGNAL</button>
+            <button class="dcore" id="dcore" type="button">TCKG CORE</button>
+          </div>
+          <div class="schema-ov" id="schema-ov" aria-live="polite"></div>
+        </div>
+        <div class="plate-f"><span>NODES SENSED <b>48,213</b></span><span>SIGNALS/24H <b>1,294</b></span><span>IN FLIGHT <b>312</b></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="strip">
+  <div class="wrap">
+    <div class="cellv"><div class="k">Graph nodes sensed</div><div class="v">48,213</div></div>
+    <div class="cellv"><div class="k">Signals propagated / 24h</div><div class="v t">1,294</div></div>
+    <div class="cellv"><div class="k">Understanding latency</div><div class="v"><small>backwards →</small> real-time</div></div>
+    <div class="cellv"><div class="k">Predictions in flight</div><div class="v">312</div></div>
+    <div class="cellv"><div class="k">Autonomous actions vetoed</div><div class="v w">7</div></div>
+  </div>
+  <div style="max-width:var(--max);margin:0 auto;padding:7px 36px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--faint)">ILLUSTRATIVE FIGURES · REPRESENTATIVE OF A DEPLOYED MIZOKI3 SYSTEM</div>
+</div>
+
+<section id="what" class="ruled">
+  <div class="wrap">
+    <div class="art">
+      <div class="folio reveal">§01<span class="sub">WHAT IT IS</span></div>
+      <div>
+        <div class="reveal">
+          <h2>Real-time understanding — <em>not a record of the past.</em></h2>
+          <p class="sec-lede">A CRM and a dashboard describe what already happened. A nervous system feels what's happening across the whole organization — and what's about to. That's the difference between a ledger and a living system.</p>
+        </div>
+        <div class="compare reveal">
+          <div class="col">
+            <div class="tag">The CRM era</div>
+            <h3>Linear. Backwards-looking.</h3>
+            <p>Rows, pipelines, and quarterly reports describe the past. By the time a dashboard refreshes, the moment that mattered has already passed and the decision is made by hand.</p>
+            <ul><li>Records what already happened</li><li>Siloed, one table at a time</li><li>No model of cause &amp; effect</li><li>Humans reconcile it after the fact</li></ul>
+          </div>
+          <div class="col live">
+            <div class="tag">MIZOKI3</div>
+            <h3>A living nervous system.</h3>
+            <p>A real-time mathematical graph of every metric and relationship in your business, continuously sensing and predicting. It doesn't report the past — it understands the present and anticipates what comes next.</p>
+            <ul><li>Senses the whole organization at once</li><li>Models cause, effect &amp; prediction</li><li>Simulates and validates before acting</li><li>Acts — only when authorized</li></ul>
+          </div>
+        </div>
+        <div class="reveal" style="margin-top:44px">
+          <div class="tag" style="margin-bottom:14px">CANONICALEVENTENVELOPE · v1.0</div>
+          <h3>One envelope. Ten questions a record can't answer.</h3>
+          <p>A data row stores a fact. Every MIZOKI3 source — Google Ads, Meta, Shopify, contracts, tickets, ERP — emits the <em>same</em> canonical event, so the system reasons over evidence instead of rows.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">01</div><div><h4>What happened?</h4></div></div><div class="ent"><div class="ic">02</div><div><h4>Who or what was involved?</h4></div></div><div class="ent"><div class="ic">03</div><div><h4>Why did it likely happen?</h4></div></div><div class="ent"><div class="ic">04</div><div><h4>What objective does it affect?</h4></div></div><div class="ent"><div class="ic">05</div><div><h4>What policy governs it?</h4></div></div><div class="ent"><div class="ic">06</div><div><h4>What action could be taken?</h4></div></div><div class="ent"><div class="ic">07</div><div><h4>What risk exists?</h4></div></div><div class="ent"><div class="ic">08</div><div><h4>What did we predict?</h4></div></div><div class="ent"><div class="ic">09</div><div><h4>What actually happened?</h4></div></div><div class="ent"><div class="ic">10</div><div><h4>What should the system learn?</h4></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline" class="ruled" style="padding-top:0">
+  <div class="wrap">
+    <div class="art">
+      <div class="folio reveal">§02<span class="sub">THE REFLEX ARC</span></div>
+      <div>
+        <div class="reveal">
+          <h2>Every signal travels <em>one governed pathway.</em></h2>
+          <p class="sec-lede">When the nervous system senses something that demands action, the signal moves through seven governed stages — SRPVDAL. Nothing executes until it is simulated, validated against your constraints, and authorized by policy. <strong>Run one yourself.</strong> Set the amount, the domain, and the fiduciary floor, then watch the state machine evaluate it. The default — <strong>ACT-991</strong>, a $5.0M capital distribution — gets caught.</p>
+        </div>
+        <div class="reveal" style="margin:32px 0 40px">
+          <div class="tag" style="margin-bottom:14px">UNIFIED INGRESS · CONNECTOR GATEWAY</div>
+          <p class="sec-lede" style="margin-top:0">Before a signal can travel the pathway it enters through one governed gateway, where every external source is normalized into a single canonical business event. Nothing goes from raw signal straight to action.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">GML</div><div><h4>Gmail</h4><p>Mail &amp; thread signals.</p></div></div><div class="ent"><div class="ic">DRV</div><div><h4>Drive</h4><p>Documents &amp; contracts.</p></div></div><div class="ent"><div class="ic">GIT</div><div><h4>GitHub</h4><p>Code, issues &amp; CI.</p></div></div><div class="ent"><div class="ic">CAL</div><div><h4>Calendar</h4><p>Commitments &amp; timing.</p></div></div><div class="ent"><div class="ic">BQ</div><div><h4>BigQuery</h4><p>Warehoused facts.</p></div></div><div class="ent"><div class="ic">NEO</div><div><h4>Neo4j</h4><p>Graph relationships.</p></div></div><div class="ent"><div class="ic">VTX</div><div><h4>Vertex AI</h4><p>Reasoning &amp; embeddings.</p></div></div><div class="ent"><div class="ic">SHP</div><div><h4>Shopify</h4><p>Commerce, orders &amp; revenue.</p></div></div><div class="ent"><div class="ic">ADS</div><div><h4>Google Ads</h4><p>Search acquisition signals.</p></div></div><div class="ent"><div class="ic">MTA</div><div><h4>Meta Ads</h4><p>Facebook &amp; Instagram signals.</p></div></div><div class="ent"><div class="ic">KLV</div><div><h4>Klaviyo</h4><p>Email &amp; lifecycle marketing.</p></div></div><div class="ent"><div class="ic">DV3</div><div><h4>DV360</h4><p>Programmatic display &amp; video.</p></div></div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:22px"><div style="background:var(--card);padding:18px 20px"><div class="k">Native connectors</div><div class="v">12</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">Legal domain experts</div><div class="v">4</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">SRPVDAL stages</div><div class="v">7</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">Governed MCP tools</div><div class="v">650+</div></div></div>
+        </div>
+        <div class="term reveal" id="sim">
+          <div class="term-h"><span><span class="lite"></span>EXECUTABLE CAUSAL SIMULATION · <b id="sim-id" style="color:var(--cy);font-weight:700">ACT-991</b></span><span>SRPVDAL v3.5</span></div>
+          <div class="sim-inputs">
+            <div class="sim-field">
+              <div class="row"><label for="sim-amt">Transaction amount</label><output id="sim-amtv">$5.0M</output></div>
+              <input type="range" id="sim-amt" min="5" max="100" value="50" step="1" aria-describedby="sim-readout">
+            </div>
+            <div class="sim-field">
+              <div class="row"><label for="sim-floor">Liquidity / fiduciary floor</label><output id="sim-floorv">$2.0M</output></div>
+              <input type="range" id="sim-floor" min="10" max="50" value="20" step="1" aria-describedby="sim-readout">
+            </div>
+            <div class="sim-field">
+              <div class="row"><span>Domain cell</span></div>
+              <div class="sim-domains" id="sim-domains" role="group" aria-label="Domain cell"></div>
+            </div>
+            <div class="sim-field">
+              <div class="row"><label for="sim-legal">Legal compliance</label></div>
+              <button type="button" class="sim-toggle on" id="sim-legal" aria-pressed="true"><span class="dotk"></span><span class="lab">Covenants clear</span></button>
+            </div>
+            <button class="sim-run" type="button" id="sim-run">RUN DIAGNOSTIC SIMULATION ▸</button>
+            <div class="sim-readout" id="sim-readout">Reserve <b>$6.0M</b> · post-transaction <b class="breach">$1.0M</b> · floor <b>$2.0M</b></div>
+          </div>
+          <div class="stages" id="stages"></div>
+          <div class="term-body">
+            <div class="term-detail">
+              <div class="stamp" id="stamp">VETOED</div>
+              <div class="sk" id="d-k">Stage 01</div>
+              <h3 id="d-n">Sense</h3>
+              <p id="d-p">Telemetry, contracts, and ledger events stream into the temporal-causal knowledge graph. Q3 liquidity, 3 covenants, and 12 active contracts are pulled into context for ACT-991.</p>
+              <div class="term-meta">
+                <div><span class="lbl">Stage</span><span class="val" id="d-stage">01 / 07</span></div>
+                <div><span class="lbl">Latency</span><span class="val" id="d-lat">12ms</span></div>
+                <div><span class="lbl">State</span><span class="val" id="d-state">Ingested</span></div>
+              </div>
+            </div>
+            <div class="trace">
+              <div class="trace-h">LEDGER APPEND-ONLY · TAMPER-EVIDENT</div>
+              <div id="trace"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="control" class="ruled" style="padding-top:0">
+  <div class="wrap">
+    <div class="art">
+      <div class="folio reveal">§03<span class="sub">CONTROL PLANE</span></div>
+      <div>
+        <div class="reveal">
+          <h2>Decisions you can <em>defend.</em></h2>
+          <p class="sec-lede">Deterministic policy, human-in-the-loop keys, and an eligibility score gate every autonomous action before it touches the business.</p>
+        </div>
+        <div class="csteps reveal">
+          <div class="cstep"><div class="num">01</div><h4>Propose</h4><p>Context-aware controllers suggest an operational action or capital movement.</p></div>
+          <div class="cstep"><div class="num">02</div><h4>Validate</h4><p>Counterfactual simulations run the action against contracts and legal frameworks.</p></div>
+          <div class="cstep"><div class="num">03</div><h4>Authorize</h4><p>The control plane applies deterministic policy and human-in-the-loop approval.</p></div>
+          <div class="cstep"><div class="num">04</div><h4>Act</h4><p>Secure, immutable execution with a tamper-evident audit trail.</p></div>
+        </div>
+        <div class="gauge-row reveal">
+          <div class="gauge">
+            <svg width="172" height="172" viewBox="0 0 172 172">
+              <circle class="track" cx="86" cy="86" r="70"/>
+              <circle class="arcfill" id="arc" cx="86" cy="86" r="70"/>
+            </svg>
+            <div class="gv"><div class="gnum" id="gscore" style="color:var(--veto)">39</div><div class="glbl" style="color:var(--veto)">DEL SCORE · ACT-991 VETOED</div></div>
+          </div>
+          <div class="gauge-copy">
+            <div class="gt">Decision Eligibility Layer</div>
+            <p>Every proposed action is scored per decision, per domain. At or above the threshold of 80, it is eligible for autonomous execution. Below it — like ACT-991 at 39 — the action is vetoed and re-routed before it can touch the business.</p>
+          </div>
+        </div>
+        <div class="scorecard reveal">
+          <div class="sc-h"><span>DECISION AUTHORIZATION SCORECARD · ACT-991</span><span class="sc-verdict">FIDUCIARY GATE FAILED · VETOED</span></div>
+          <div class="sc-grid">
+            <div class="sc-item"><span class="sc-k">Identity &amp; signature token</span><span class="sc-v pass">VERIFIED</span></div>
+            <div class="sc-item"><span class="sc-k">Policy alignment · Master Agreement §7.2</span><span class="sc-v pass">ALIGNED</span></div>
+            <div class="sc-item"><span class="sc-k">Context sufficiency</span><span class="sc-v pass">98.2%</span></div>
+            <div class="sc-item"><span class="sc-k">Fiduciary liquidity floor</span><span class="sc-v veto">BREACH</span></div>
+          </div>
+          <div class="sc-f">Every autonomous action must clear <b>all four gates</b>. ACT-991 clears identity, policy, and context — but breaches the $2.0M fiduciary floor, so the Decision Control Plane vetoes it regardless of the rest.</div>
+        </div>
+        <div class="sandbox reveal" id="sandbox">
+          <div class="sh"><span>EXHIBIT — CONTROL PLANE SANDBOX · <b>INTERACTIVE</b></span><span>ILLUSTRATIVE</span></div>
+          <div class="sb-body">
+            <div class="sb-controls">
+              <div class="ct">Move the thresholds. Watch the gate.</div>
+              <p class="cs">Adjust the parameters of a hypothetical proposed action and see how the Decision Control Plane scores and gates it.</p>
+              <div class="sld">
+                <div class="row"><label for="sb-c">Decision confidence</label><output id="sb-cv">94%</output></div>
+                <input type="range" id="sb-c" min="40" max="100" value="94">
+              </div>
+              <div class="sld">
+                <div class="row"><label for="sb-p">Policy alignment</label><output id="sb-pv">98%</output></div>
+                <input type="range" id="sb-p" min="40" max="100" value="98">
+              </div>
+              <div class="sld">
+                <div class="row"><label for="sb-r">Constraint breach risk</label><output id="sb-rv">12%</output></div>
+                <input type="range" id="sb-r" min="0" max="100" value="12">
+              </div>
+              <div class="presets">
+                <div class="pt">Scenario presets</div>
+                <button class="preset" type="button" data-c="61" data-p="86" data-r="71">ACT-991 &middot; liquidity floor breach &rarr; <b>VETOED</b></button>
+                <button class="preset" type="button" data-c="90" data-p="62" data-r="55">Regulatory drift &middot; policy misalignment &rarr; <b>VETOED</b></button>
+                <button class="preset" type="button" data-c="84" data-p="93" data-r="30">Marginal case &rarr; <b style="color:var(--warn)">OPERATOR GATE</b></button>
+                <button class="preset" type="button" data-c="96" data-p="98" data-r="8">Clean execution &rarr; <b class="ok">ELIGIBLE</b></button>
+              </div>
+            </div>
+            <div class="sb-verdict">
+              <div>
+                <div class="vh">DEL Score &middot; Autonomy threshold 80</div>
+                <div class="delbig" id="sb-score">82<small>/100</small></div>
+                <div class="delbar"><div class="fill" id="sb-fill" style="width:82%"></div><div class="gate"></div></div>
+                <div class="delbar-l"><span>0</span><span>GATE 80</span><span>100</span></div>
+              </div>
+              <div class="sb-stamp ok" id="sb-stamp">ELIGIBLE</div>
+              <div>
+                <div class="sb-expl" id="sb-expl">All deterministic constraints satisfied. The action is eligible for autonomous execution — scoped, reversible, and written to the immutable ledger as it runs.</div>
+                <div class="sb-trace" id="sb-trace">decide &middot; DEL score 82 &middot; DCP verdict: <b class="ok">ELIGIBLE</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="divisions" class="ruled" style="padding-top:0">
+  <div class="wrap">
+    <div class="art">
+      <div class="folio reveal">§04<span class="sub">DOMAINS</span></div>
+      <div>
+        <div class="reveal">
+          <h2>It maps to your business. <em>Not the other way around.</em></h2>
+          <p class="sec-lede">MIZOKI3 has no fixed shape. It senses your actual operating structure and grows a decision controller for every domain you have — three, forty, or something no one has built before — all reasoning over one shared graph. The files below aren't the product. They're simply how a typical deployment tends to be structured.</p>
+        </div>
+        <div class="reveal">
+          <div class="dtabs" id="dtabs"></div>
+          <div class="dpanel">
+            <div class="dmain">
+              <div class="dk" id="dv-k">Counsel</div>
+              <h3 id="dv-n">Legal &amp; Counsel</h3>
+              <p id="dv-p"></p>
+              <ul id="dv-l"></ul>
+            </div>
+            <div class="dside">
+              <div><div class="ml" id="dv-ml"></div><div class="mv" id="dv-mv"></div></div>
+              <div class="note" id="dv-note"></div>
+            </div>
+          </div>
+        </div>
+        <p class="dfoot reveal">→ <strong>Your deployment is whatever your business is.</strong> There is no list to fit into.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="enterprise" class="ruled" style="padding-top:0">
+  <div class="wrap">
+    <div class="art">
+      <div class="folio reveal">§05<span class="sub">ASSURANCE</span></div>
+      <div>
+        <div class="reveal">
+          <h2>You keep control. <em>The system handles complexity.</em></h2>
+        </div>
+        <div class="ent-grid reveal">
+          <div class="ent"><div class="ic">KMS</div><div><h4>Customer-managed encryption</h4><p>Your keys, your cloud. CMEK provisioned by Terraform across the reasoning substrate.</p></div></div>
+          <div class="ent"><div class="ic">VPC</div><div><h4>Isolated reasoning</h4><p>Private VPC and isolated model environments. Reasoning never leaves your perimeter.</p></div></div>
+          <div class="ent"><div class="ic">HITL</div><div><h4>Deterministic overrides</h4><p>Policy overrides and human-in-the-loop keys gate every authorized action.</p></div></div>
+          <div class="ent"><div class="ic">LOG</div><div><h4>Immutable audit trail</h4><p>Every proposal, simulation, and authorization is written to a tamper-evident ledger.</p></div></div>
+        </div>
+        <div class="reveal" style="margin-top:38px">
+          <div class="tag" style="margin-bottom:14px">DELEGATION · AUTONOMY LEVELS</div>
+          <p class="sec-lede" style="margin-top:0">You grant each domain its own ceiling. Autonomy defaults conservative — ACT unlocks only once evaluation gates pass, policy approvals exist, and a rollback path, cost control, audit log, and human override are all in place.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">L0</div><div><h4>Observe</h4><p>Senses and maps. Takes no action. Default.</p></div></div><div class="ent"><div class="ic">L1</div><div><h4>Recommend</h4><p>Surfaces explainable recommendations. Default.</p></div></div><div class="ent"><div class="ic">L2</div><div><h4>Approval flow</h4><p>Recommends, then routes for human sign-off.</p></div></div><div class="ent"><div class="ic">L3</div><div><h4>Act in limits</h4><p>Executes within strict policy bounds.</p></div></div><div class="ent"><div class="ic">L4</div><div><h4>Self-correct</h4><p>Acts and adjusts within an approved domain.</p></div></div><div class="ent"><div class="ic">L5</div><div><h4>Autonomous</h4><p>Fully autonomous, under continuous audit.</p></div></div></div>
+        </div>
+        <div class="reveal" style="margin-top:38px">
+          <div class="tag" style="margin-bottom:14px">CATEGORY</div>
+          <h3>Not a dashboard. Not an agent framework. Not a pipeline.</h3>
+          <p>It turns enterprise evidence into governed decisions — the full operating loop, not a fragment of it.</p>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">≠</div><div><h4>Not a dashboard</h4><p>Dashboards show what happened. MIZOKI3 explains why, recommends what comes next, validates it, acts when allowed, and learns from the result.</p></div></div><div class="ent"><div class="ic">≠</div><div><h4>Not an agent framework</h4><p>Agent frameworks execute tasks. MIZOKI3 governs the full loop — graph memory, causal reasoning, policy validation, and continuous learning.</p></div></div><div class="ent"><div class="ic">≠</div><div><h4>Not a pipeline</h4><p>Pipelines move records. MIZOKI3 turns evidence into governed decisions — every signal normalized, reasoned over, validated, and measured.</p></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap reveal">
+    <div class="filing"><span class="fno">§06</span><span class="sep">/</span><span>OUTCOMES COMPOUNDED</span></div>
+    <h2>A nervous system <em>for your business.</em></h2>
+    <p class="sec-lede">Real-time understanding, prediction, and defensible action across your entire organization. See MIZOKI3 sense your own operating structure in a private executive briefing.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request">SCHEDULE EXECUTIVE BRIEFING</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <a class="logo" href="#top"><span class="dot"></span>MIZOKI3</a>
+        <p>A living nervous system for the enterprise. Real-time understanding, prediction, and governed action across your whole organization.</p>
+      </div>
+      <div>
+        <h5>Example domains</h5>
+        <a href="/counsel">Counsel</a><a href="/signal">Signal</a><a href="/capital">Capital</a><a href="/risk">Risk</a><a href="/estate">Estate</a>
+      </div>
+      <div>
+        <h5>Platform</h5>
+        <a href="#pipeline">Decision Engine</a><a href="#control">Control Plane</a><a href="/blog/">Blog</a><a href="/login">Sign In</a><a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <div class="f-badges"><span>GDPR-ready</span><span>Patented technology</span><span>Customer-managed encryption</span></div>
+      <div>© 2026 MIZOKI3 · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+function each(list,fn){for(var i=0;i<list.length;i++)fn(list[i],i)}
+
+/* ---------- hero canvas: ink-on-paper firing graph ---------- */
+(function(){var cv;try{
+  cv=document.getElementById('graph');if(!cv||!cv.getContext)return;
+  var ctx=cv.getContext('2d'),W,H,nodes=[],edges=[],pulses=[];
+  var reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var size=function(){var r=cv.getBoundingClientRect();var d=Math.min(window.devicePixelRatio||1,2);
+    W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);};
+  var build=function(){
+    nodes=[];edges=[];var cx=W*.5,cy=H*.5;
+    nodes.push({x:cx,y:cy,r:6,core:true});
+    var rings=[[Math.min(W,H)*.2,6],[Math.min(W,H)*.36,10],[Math.min(W,H)*.5,13]];
+    for(var ri=0;ri<rings.length;ri++){var rg=rings[ri];
+      for(var i=0;i<rg[1];i++){
+        var a=i/rg[1]*Math.PI*2+ri*.6+Math.random()*.3;
+        var rr=rg[0]*(0.86+Math.random()*.26);
+        nodes.push({x:cx+Math.cos(a)*rr,y:cy+Math.sin(a)*rr*.9,r:ri===0?3.4:(ri===1?2.6:2),ring:ri+1});}}
+    for(var n=0;n<nodes.length;n++){var nd=nodes[n];if(nd.core)continue;
+      var best=-1,bd=1e9;
+      for(var m=0;m<nodes.length;m++){var md=nodes[m];if(md===nd)continue;
+        var tr=(md.ring||0);if(tr!==(nd.ring-1)&&!(nd.ring===1&&md.core))continue;
+        var d2=(md.x-nd.x)*(md.x-nd.x)+(md.y-nd.y)*(md.y-nd.y);if(d2<bd){bd=d2;best=m}}
+      if(best>=0)edges.push([n,best]);}
+    for(var k=0;k<7;k++){var a2=1+Math.floor(Math.random()*(nodes.length-1)),
+      b2=1+Math.floor(Math.random()*(nodes.length-1));if(a2!==b2)edges.push([a2,b2,true]);}};
+  var fire=function(){var e=edges[Math.floor(Math.random()*edges.length)];
+    pulses.push({e:e,t:0,sp:.012+Math.random()*.012});};
+  var last=0,stop=false;
+  var draw=function(ts){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<edges.length;i++){var e=edges[i];
+      ctx.beginPath();ctx.moveTo(nodes[e[0]].x,nodes[e[0]].y);ctx.lineTo(nodes[e[1]].x,nodes[e[1]].y);
+      ctx.strokeStyle=e[2]?'rgba(12,124,143,.10)':'rgba(12,124,143,.26)';ctx.lineWidth=1;ctx.stroke();}
+    var keep=[];
+    for(i=0;i<pulses.length;i++){var p=pulses[i];p.t+=p.sp;if(p.t<=1)keep.push(p);
+      var a=nodes[p.e[0]],b=nodes[p.e[1]],x=a.x+(b.x-a.x)*p.t,y=a.y+(b.y-a.y)*p.t;
+      ctx.beginPath();ctx.arc(x,y,2.4,0,7);ctx.fillStyle='rgba(12,124,143,'+(1-p.t*.5)+')';ctx.fill();
+      ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fillStyle='rgba(12,124,143,.12)';ctx.fill();}
+    pulses=keep;
+    for(i=0;i<nodes.length;i++){var nd=nodes[i];
+      ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r,0,7);
+      ctx.fillStyle=nd.core?'#0C7C8F':(nd.ring===1?'#0C7C8F':'#3A99A8');ctx.fill();}
+    var c=nodes[0];ctx.beginPath();ctx.arc(c.x,c.y,11,0,7);
+    ctx.strokeStyle='rgba(12,124,143,.5)';ctx.lineWidth=1.5;ctx.stroke();
+    if(!stop){if(ts-last>520){fire();last=ts}raf(draw);}};
+  size();build();
+  try{ctx.fillRect(-1,-1,1,1);document.getElementById('plate').className+=' canvas-on'}catch(e0){}
+  var raf=window.requestAnimationFrame;
+  if(reduced||!raf){stop=true;for(var fi=0;fi<6;fi++){fire();pulses[pulses.length-1].t=Math.random()}draw(0)}
+  else{raf(draw)}
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){size();build()},150)});
+}catch(err){if(cv)cv.style.display='none'}})();
+
+/* ---------- hero schema inspector ---------- */
+(function(){try{
+var ov=document.getElementById('schema-ov');if(!ov)return;
+var nodes=document.querySelectorAll('.dnode'),core=document.getElementById('dcore');
+var SCHEMA={
+ Counsel:{type:'CLAUSE GRAPH',live:'1,840 clauses linked',
+   edges:['(Clause)-[:CONSTRAINS]->(Holding)','(Contract)-[:OBLIGATES]->(Entity)','(Clause)-[:LINKS]->(Capital.Covenant)']},
+ Capital:{type:'RESERVE SUBSTRATE',live:'1,294 decisions / 24h',
+   edges:['(Reserve)-[:FUNDS]->(Distribution)','(Covenant)-[:GOVERNS]->(Reserve)','(Reserve)-[:EXPOSES]->(Risk.Limit)']},
+ Risk:{type:'EXPOSURE LATTICE',live:'312 active covenants',
+   edges:['(Exposure)-[:THREATENS]->(Covenant)','(Signal)-[:TRIGGERS]->(Alert)','(Limit)-[:GATES]->(Capital.Move)']},
+ Estate:{type:'TRUST LEDGER',live:'126 structures modeled',
+   edges:['(Trust)-[:TRANSFERS]->(Beneficiary)','(Asset)-[:TAXED_BY]->(Jurisdiction)','(Trust)-[:HOLDS]->(Capital.Reserve)']},
+ Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',
+   edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']}
+};
+function show(k){
+  var d=SCHEMA[k];if(!d)return;
+  for(var i=0;i<nodes.length;i++){var n=nodes[i],is=n.getAttribute('data-k')===k;
+    n.classList.toggle('sel',is);n.classList.toggle('dim',!is)}
+  var e='';for(i=0;i<d.edges.length;i++)e+='<div class="edge">'+
+    d.edges[i].replace(/\[(.*?)\]/,'<span class="rel">[$1]</span>')+'</div>';
+  ov.innerHTML='<div class="sh"><span>(:'+k+') &middot; <b>'+d.type+'</b></span><span>SCHEMA</span></div>'+e+
+    '<div class="live">'+d.live+' &middot; one shared substrate</div>';
+  ov.classList.add('show');
+}
+function clear(){for(var i=0;i<nodes.length;i++)nodes[i].classList.remove('sel','dim');ov.classList.remove('show')}
+for(var i=0;i<nodes.length;i++)(function(n){var k=n.getAttribute('data-k');
+  n.onclick=function(){if(n.classList.contains('sel'))clear();else show(k)};
+  n.onmouseenter=function(){show(k)};
+  n.addEventListener('focus',function(){show(k)});
+})(nodes[i]);
+if(core)core.onclick=clear;
+}catch(e){}})();
+
+/* ---------- executable causal simulation ---------- */
+(function(){
+var stagesEl=document.getElementById('stages'),traceEl=document.getElementById('trace');
+if(!stagesEl)return;
+var POOL=6.0;
+var DOMAINS=[
+ {k:'Counsel',verb:'settlement disbursement',cstr:'Master Agreement §7.2 indemnity cap',stake:'Counsel, Risk, and Capital'},
+ {k:'Estate', verb:'trust distribution',     cstr:'the fiduciary reserve floor',          stake:'Estate, Counsel, and Capital'},
+ {k:'Capital',verb:'capital distribution',   cstr:'the liquidity floor and DSCR covenant COV-01',stake:'Capital, Treasury, and Risk'},
+ {k:'Signal', verb:'media budget reallocation',cstr:'the ROAS guardrail and spend cap',    stake:'Signal, Capital, and Risk'},
+ {k:'Risk',   verb:'exposure rebalance',      cstr:'the exposure limit and covenant DSCR', stake:'Risk, Capital, and Counsel'}
+];
+var amtEl=document.getElementById('sim-amt'),floorEl=document.getElementById('sim-floor'),
+    legalEl=document.getElementById('sim-legal'),runEl=document.getElementById('sim-run'),
+    readEl=document.getElementById('sim-readout'),domsEl=document.getElementById('sim-domains'),
+    idEl=document.getElementById('sim-id');
+var domIdx=2,legalClear=true,CUR=[],VERD='veto',anim=null;
+function fmt(m){return '$'+m.toFixed(1)+'M'}
+function rid(){var s='0123456789ABCDEF',o='';for(var i=0;i<4;i++)o+=s[Math.floor(Math.random()*16)];return o}
+
+each(DOMAINS,function(d,i){var b=document.createElement('button');
+  b.type='button';b.className='sim-dom'+(i===2?' on':'');b.textContent=d.k;
+  b.onclick=function(){domIdx=i;var bs=domsEl.children;for(var j=0;j<bs.length;j++)bs[j].classList.toggle('on',j===i);refresh()};
+  domsEl.appendChild(b);});
+
+legalEl.onclick=function(){legalClear=!legalClear;
+  legalEl.classList.toggle('on',legalClear);legalEl.classList.toggle('off',!legalClear);
+  legalEl.setAttribute('aria-pressed',legalClear?'true':'false');
+  legalEl.querySelector('.lab').textContent=legalClear?'Covenants clear':'Covenant breach';
+  refresh();};
+
+function model(){
+  var amt=amtEl.value/10,floor=floorEl.value/10;
+  var post=+(POOL-amt).toFixed(1),margin=+(post-floor).toFixed(1),liq=margin<-1e-9;
+  var marginPct=margin/POOL*100;
+  /* deterministic DEL score: wide headroom → eligible, thin headroom → operator gate,
+     breach or legal failure → veto band. Monotonic in margin and amount. */
+  var score=Math.round(62+marginPct*1.1-(amt/POOL)*6-(legalClear?0:45));
+  score=Math.max(0,Math.min(100,score));
+  var hard=(!legalClear)||liq;
+  var verdict=hard?'veto':(score>=80?'ok':(score>=60?'gate':'veto'));
+  var optB=+(Math.max(0,POOL-floor)).toFixed(1);
+  return {amt:amt,floor:floor,post:post,margin:margin,liq:liq,score:score,verdict:verdict,optB:optB};
+}
+function refresh(){
+  var m=model();
+  document.getElementById('sim-amtv').textContent=fmt(m.amt);
+  document.getElementById('sim-floorv').textContent=fmt(m.floor);
+  readEl.innerHTML='Reserve <b>'+fmt(POOL)+'</b> · post-transaction <b class="'+(m.liq?'breach':'')+'">'+fmt(m.post)+
+    '</b> · floor <b>'+fmt(m.floor)+'</b>';
+  return m;
+}
+amtEl.oninput=refresh;floorEl.oninput=refresh;
+
+function buildStages(m){
+  var d=DOMAINS[domIdx];
+  var vlabel=m.verdict==='veto'?'VETOED':(m.verdict==='gate'?'OPERATOR GATE':'ELIGIBLE');
+  var legalLine=legalClear?'consent + covenant attestations PASS':'covenant attestation FAIL';
+  var liqLine=m.liq?('post-transaction '+fmt(m.post)+' < floor '+fmt(m.floor)+' — BREACH')
+                   :('post-transaction '+fmt(m.post)+' ≥ floor '+fmt(m.floor)+' — PASS');
+  var vCls=(!legalClear||m.liq)?'veto':'pass';
+  var actLine,actCls,actState;
+  if(m.verdict==='ok'){actLine='Authorized. The '+fmt(m.amt)+' '+d.verb+' executes — scoped, reversible, and written to the immutable ledger as it runs.';actCls='pass';actState='Executed';}
+  else if(m.verdict==='gate'){actLine='Execution suspended. The action is routed to a human-in-the-loop key holder for review — nothing moves until a person signs.';actCls='gate';actState='Held';}
+  else{actLine='Vetoed. Re-routed to Option B — a '+fmt(m.optB)+' '+d.verb+' that holds the floor exactly. The original proposal never touches the business.';actCls='pass';actState='Re-routed';}
+  return [
+   {k:'Sense',lat:'12ms',state:'Ingested',
+    p:'Reserve '+fmt(POOL)+', floor '+fmt(m.floor)+', and the '+d.k+' cell stream into the temporal-causal knowledge graph. 12 active contracts and 3 covenants are pulled into context.',
+    tcls:'',tt:'sense · context assembled · domain '+d.k},
+   {k:'Reason',lat:'140ms',state:'Modeled',
+    p:d.k+' proposes a '+fmt(m.amt)+' '+d.verb+'. Cross-domain reasoning surfaces second-order effects across '+d.stake+'.',
+    tcls:'',tt:'reason · proposal · '+fmt(m.amt)+' '+d.verb},
+   {k:'Plan',lat:'88ms',state:'Sequenced',
+    p:'A candidate plan is sequenced with rollback points. Post-transaction reserve would settle at '+fmt(m.post)+'.',
+    tcls:'',tt:'plan · rollback armed · post '+fmt(m.post)},
+   {k:'Validate',lat:'210ms',state:(!legalClear||m.liq)?'Breach detected':'Cleared',
+    p:'The Counterfactual Simulation Engine runs the action against '+d.cstr+'. Legal: '+legalLine+'. Liquidity: '+liqLine+'.',
+    tcls:vCls,tt:'validate · '+(legalClear?'legal PASS':'legal FAIL')+' · '+(m.liq?'liquidity BREACH':'liquidity PASS')},
+   {k:'Decide',lat:'34ms',state:vlabel,
+    p:'The Decision Eligibility Layer scores this action '+m.score+'. The Decision Control Plane verdict: '+vlabel+(m.verdict==='ok'?' — at or above the autonomy threshold of 80.':(m.verdict==='gate'?' — below 80, above the veto line.':' — a binding constraint fails.')),
+    tcls:m.verdict,tt:'decide · DEL score '+m.score+' · DCP verdict: '+vlabel},
+   {k:'Act',lat:'19ms',state:actState,p:actLine,tcls:actCls,tt:'act · '+actState.toLowerCase()},
+   {k:'Learn',lat:'7ms',state:'Promoted',
+    p:'The full trace — proposal, simulation, verdict, and routing — is written to the immutable ledger and promoted into a reusable skill, so the same case is resolved faster next time.',
+    tcls:'pass',tt:'learn · trace #'+rid()+' appended · skill promoted'}
+  ];
+}
+function ts(i){var s=1+i;return '14:32:'+(s<10?'0'+s:s)}
+function stampFor(i){
+  if(VERD==='veto'){if(i===3&&CUR[3].tcls==='veto')return {t:'BREACH',c:'veto'};if(i>=4)return {t:'VETOED',c:'veto'};}
+  else if(VERD==='gate'){if(i===4)return {t:'REVIEW',c:'gate'};if(i>=5)return {t:'OP · GATE',c:'gate'};}
+  else{if(i===4)return {t:'ELIGIBLE',c:'ok'};if(i>=5)return {t:'EXECUTED',c:'ok'};}
+  return null;
+}
+function renderStages(){
+  stagesEl.innerHTML='';traceEl.innerHTML='';
+  each(CUR,function(s,i){
+    var d=document.createElement('div');
+    d.className='stage'+(s.tcls?' '+s.tcls:'');d.setAttribute('role','button');d.tabIndex=0;
+    d.innerHTML='<div class="k">0'+(i+1)+'</div><div class="n">'+s.k+'</div>';
+    d.onclick=function(){stop();setStage(i)};
+    d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();stop();setStage(i)}};
+    stagesEl.appendChild(d);
+    var t=document.createElement('div');t.className='tl '+(s.tcls||'');
+    t.innerHTML='<span class="dt"></span><span class="ts">'+ts(i)+'</span><span>'+
+      s.tt.replace(/VETOED|BREACH|FAIL/g,function(x){return '<span class="vt">'+x+'</span>'})
+          .replace(/executed|PASS|ELIGIBLE/g,function(x){return '<span class="pz">'+x+'</span>'})+'</span>';
+    traceEl.appendChild(t);
+  });
+}
+function setStage(i){
+  var st=stagesEl.children;
+  for(var j=0;j<st.length;j++){st[j].classList.toggle('active',j===i);st[j].classList.toggle('done',j<i)}
+  var tl=traceEl.children;for(j=0;j<tl.length;j++)tl[j].classList.toggle('on',j<=i);
+  var s=CUR[i];
+  document.getElementById('d-k').textContent='Stage 0'+(i+1);
+  document.getElementById('d-n').textContent=s.k;
+  document.getElementById('d-p').textContent=s.p;
+  document.getElementById('d-stage').textContent='0'+(i+1)+' / 07';
+  document.getElementById('d-lat').textContent=s.lat;
+  var se=document.getElementById('d-state');se.textContent=s.state;
+  se.style.color=s.tcls==='veto'?'#FF6B7C':(s.tcls==='gate'?'#E0A92E':(s.tcls==='pass'?'#41D695':'#fff'));
+  var stamp=document.getElementById('stamp'),sp=stampFor(i);
+  if(sp){stamp.textContent=sp.t;stamp.className='stamp show'+(sp.c==='ok'?' ok':(sp.c==='gate'?' gate':''))}
+  else stamp.className='stamp';
+}
+function stop(){if(anim){clearInterval(anim);anim=null}if(runEl){runEl.classList.remove('running');runEl.textContent='RUN AGAIN ▸'}}
+function run(){
+  var m=refresh();VERD=m.verdict;CUR=buildStages(m);renderStages();
+  var isDefault=domIdx===2&&Math.abs(m.amt-5)<.05&&Math.abs(m.floor-2)<.05&&legalClear;
+  if(idEl)idEl.textContent=isDefault?'ACT-991':('SIM-'+rid());
+  setStage(0);
+  var reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){for(var k=0;k<CUR.length;k++)setStage(k);stop();return}
+  runEl.classList.add('running');runEl.textContent='RUNNING SRPVDAL…';
+  var i=0;if(anim)clearInterval(anim);
+  anim=setInterval(function(){i++;if(i>=CUR.length){clearInterval(anim);anim=null;
+    runEl.classList.remove('running');runEl.textContent='RUN AGAIN ▸';return}setStage(i)},560);
+}
+runEl.onclick=run;runEl._auto=run;
+/* initial static render (animates when scrolled into view) */
+var m0=refresh();VERD=m0.verdict;CUR=buildStages(m0);renderStages();setStage(0);
+})();
+
+/* ---------- divisions ---------- */
+var DIV=[
+ {k:'Counsel',n:'Legal & Counsel',p:'A Mixture-of-Legal-Experts — Connecticut, Trust, Estate and Tax — reasons each matter into a single IRAC answer with cross-domain conflict detection, every clause linked to live operations through the shared graph.',
+  l:['Obligation & covenant extraction','IRAC across CT · Trust · Estate · Tax','Litigation pathway scoring','Regulatory compliance mapping'],ml:'Contracts under management',mv:'1,840',note:'Reasons over the same causal memory as Capital and Risk — so a clause and a cash movement are never evaluated in isolation.'},
+ {k:'Estate',n:'Estate & Trust',p:'Governed reasoning for multi-generational wealth transfer — trust structuring and tax-strategy analysis with full traceability.',
+  l:['Trust structure modeling','Tax-strategy simulation','Beneficiary impact analysis'],ml:'Structures modeled',mv:'126',note:'Every recommendation carries its counterfactual — what changes, for whom, and why.'},
+ {k:'Capital',n:'Treasury & Capital',p:'Capital allocation grounded in causal evidence, not spreadsheet assumptions. Covenant-breach forecasting and liquidity stress modeling.',
+  l:['Covenant breach forecasting','Liquidity stress modeling','Causal capital allocation'],ml:'Decisions / 24h',mv:'1,294',note:'Source domain of ACT-991 — its proposals are simulated and gated before any reserve moves.'},
+ {k:'Signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
+  l:['Causal attribution (uplift)','Autonomous bid optimization','Self-proving ROI'],ml:'Channels attributed',mv:'24',note:'Uplift measured with counterfactual rigor — no last-click fiction.'},
+ {k:'Risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
+  l:['Continuous verification','Regulatory monitoring','Live obligation tracking'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'}
+];
+var dtabs=document.getElementById('dtabs');
+each(DIV,function(d,i){var t=document.createElement('div');
+  t.className='dtab'+(i===0?' active':'');t.textContent=d.k;t.setAttribute('role','button');t.tabIndex=0;
+  t.onclick=function(){setDiv(i)};
+  t.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();setDiv(i)}};
+  dtabs.appendChild(t)});
+function setDiv(i){
+  var ts=document.querySelectorAll('.dtab');
+  for(var j=0;j<ts.length;j++)ts[j].classList.toggle('active',j===i);
+  var d=DIV[i],out='';
+  document.getElementById('dv-k').textContent=d.k;
+  document.getElementById('dv-n').textContent=d.n;
+  document.getElementById('dv-p').textContent=d.p;
+  for(j=0;j<d.l.length;j++)out+='<li>'+d.l[j]+'</li>';
+  document.getElementById('dv-l').innerHTML=out;
+  document.getElementById('dv-ml').textContent=d.ml;
+  document.getElementById('dv-mv').textContent=d.mv;
+  document.getElementById('dv-note').textContent=d.note;
+}
+setDiv(0);
+
+/* ---------- control plane sandbox ---------- */
+(function(){try{
+  var C=document.getElementById('sb-c'),P=document.getElementById('sb-p'),R=document.getElementById('sb-r');
+  if(!C)return;
+  var ZONES={
+    ok:{stamp:'ELIGIBLE',cls:'ok',color:'#1F8A5B',
+      expl:'All deterministic constraints satisfied. The action is eligible for autonomous execution — scoped, reversible, and written to the immutable ledger as it runs.'},
+    gate:{stamp:'OPERATOR GATE',cls:'gate',color:'#B07A18',
+      expl:'Score below the autonomy threshold but above the veto line. Execution is suspended and routed to a human-in-the-loop key holder for review — nothing moves until a person signs.'},
+    veto:{stamp:'VETOED',cls:'veto',color:'#C8273A',
+      expl:'A binding constraint fails in simulation. The Decision Control Plane vetoes the action and re-routes to a safe alternative. The original proposal never touches the business.'}
+  };
+  function calc(){
+    var c=+C.value,p=+P.value,r=+R.value;
+    document.getElementById('sb-cv').textContent=c+'%';
+    document.getElementById('sb-pv').textContent=p+'%';
+    document.getElementById('sb-rv').textContent=r+'%';
+    var del=Math.round(c*0.45+p*0.45-r*0.35);
+    if(del<0)del=0;if(del>100)del=100;
+    var z=del>=80?ZONES.ok:(del>=60?ZONES.gate:ZONES.veto);
+    var s=document.getElementById('sb-score');
+    s.innerHTML=del+'<small>/100</small>';s.style.color=z.color;
+    var f=document.getElementById('sb-fill');
+    f.style.width=del+'%';f.style.background=z.color;
+    var st=document.getElementById('sb-stamp');
+    st.textContent=z.stamp;st.className='sb-stamp '+z.cls;
+    document.getElementById('sb-expl').textContent=z.expl;
+    document.getElementById('sb-trace').innerHTML='decide &middot; DEL score '+del+' &middot; DCP verdict: <b class="'+z.cls+'">'+z.stamp+'</b>';
+  }
+  C.oninput=calc;P.oninput=calc;R.oninput=calc;
+  var ps=document.querySelectorAll('.preset');
+  for(var i=0;i<ps.length;i++)(function(b){
+    b.onclick=function(){C.value=b.getAttribute('data-c');P.value=b.getAttribute('data-p');R.value=b.getAttribute('data-r');calc()};
+  })(ps[i]);
+  calc();
+}catch(e){}})();
+
+/* ---------- observers: enhancement only ---------- */
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){each(es,function(e){
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  each(document.querySelectorAll('.reveal'),function(el){io.observe(el)});
+  var iop=new IntersectionObserver(function(es){each(es,function(e){
+    if(e.isIntersecting){var r=document.getElementById('sim-run');
+      if(r&&r._auto&&!r._ran){r._ran=1;r._auto()}}})},{threshold:.35});
+  iop.observe(document.getElementById('pipeline'));
+  var iog=new IntersectionObserver(function(es){each(es,function(e){if(e.isIntersecting){
+    document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.39);document.getElementById('arc').style.stroke='var(--veto)';
+    var v=0,g=document.getElementById('gscore');g.textContent='0';
+    var gi=setInterval(function(){v++;g.textContent=v;if(v>=39)clearInterval(gi)},16);
+    iog.disconnect();}})},{threshold:.5});
+  iog.observe(document.getElementById('control'));
+}else{
+  each(document.querySelectorAll('.reveal'),function(el){el.classList.add('in')});
+  document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.87);
+}
+})();
+</script>
+</body>
+</html>

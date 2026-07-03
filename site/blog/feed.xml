@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>MIZOKI3 Journal</title>
+  <link>https://mizoki3.com/blog/</link>
+  <description>Notes from the nervous system — decision intelligence, governed autonomy, and causal operating guidance.</description>
+  <language>en-us</language>
+  <item>
+    <title>Anatomy of a Veto</title>
+    <link>https://mizoki3.com/blog/anatomy-of-a-veto/</link>
+    <guid>https://mizoki3.com/blog/anatomy-of-a-veto/</guid>
+    <description>ACT-991, stage by stage: how a $5.0M capital move gets caught, stamped, and re-routed before it can touch the business.</description>
+    <author>hello@mizoki3.com (Boris Mizhen)</author>
+    <pubDate>Tue, 09 Jun 2026 12:00:00 +0000</pubDate>
+  </item>
+  <item>
+    <title>A Nervous System, Not a Brain</title>
+    <link>https://mizoki3.com/blog/nervous-system-not-brain/</link>
+    <guid>https://mizoki3.com/blog/nervous-system-not-brain/</guid>
+    <description>Why the metaphor matters: brains deliberate in one place; nervous systems sense, reflex, and act everywhere at once.</description>
+    <author>hello@mizoki3.com (Boris Mizhen)</author>
+    <pubDate>Tue, 02 Jun 2026 12:00:00 +0000</pubDate>
+  </item>
+  <item>
+    <title>Why Agents Need a Decision Control Plane</title>
+    <link>https://mizoki3.com/blog/why-agents-need-a-decision-control-plane/</link>
+    <guid>https://mizoki3.com/blog/why-agents-need-a-decision-control-plane/</guid>
+    <description>Autonomy without explicit arbitration between proposal, validation, and approval is just hope with an API key.</description>
+    <author>hello@mizoki3.com (Boris Mizhen)</author>
+    <pubDate>Mon, 18 May 2026 12:00:00 +0000</pubDate>
+  </item>
+  <item>
+    <title>How an Autonomous Decision Controller Thinks</title>
+    <link>https://mizoki3.com/blog/how-an-autonomous-decision-controller-thinks/</link>
+    <guid>https://mizoki3.com/blog/how-an-autonomous-decision-controller-thinks/</guid>
+    <description>SRPVDAL in plain English: the seven-stage reasoning loop behind disciplined autonomous execution.</description>
+    <author>hello@mizoki3.com (Boris Mizhen)</author>
+    <pubDate>Wed, 22 Apr 2026 12:00:00 +0000</pubDate>
+  </item>
+</channel></rss>

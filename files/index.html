@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MIZOKI3 — A Nervous System for Your Business.</title>
+<meta name="description" content="MIZOKI3 is a verifiable autonomous decision intelligence platform — a living nervous system for your business. It gives your whole organization a real-time, mathematical understanding of itself: a graph of metrics and prediction that replaces the CRM and backwards-looking analytics." />
+<meta property="og:title" content="MIZOKI3 — A Nervous System for Your Business." />
+<meta property="og:description" content="Real-time understanding of every part of your organization. A living graph of metrics and prediction — not another backwards-looking dashboard." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://mizoki3.com/" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#07080b;
+  --ink-1:#0a0c11;
+  --ink-2:#0e1118;
+  --ink-3:#141821;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --text:#e9ecf3;
+  --text-dim:#99a2b3;
+  --text-fog:#5d6677;
+  --signal:#3fdcf2;
+  --signal-deep:#0e6f82;
+  --pass:#34d399;
+  --flag:#f5b53d;
+  --veto:#ff5f6e;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--sans);
+  font-weight:400;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  position:relative;
+}
+/* grain + vignette atmosphere */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1200px 700px at 78% -10%, rgba(63,220,242,.10), transparent 60%),
+    radial-gradient(900px 600px at 8% 8%, rgba(79,143,255,.06), transparent 55%),
+    radial-gradient(1000px 800px at 50% 120%, rgba(168,85,247,.05), transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:2}
+a{color:inherit;text-decoration:none}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--text-fog);display:inline-flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--signal);opacity:.7}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.04;letter-spacing:-.01em}
+.serif-i{font-style:italic;color:var(--signal)}
+p.lead{color:var(--text-dim);font-size:clamp(16px,1.6vw,19px);max-width:54ch}
+
+/* ---------- nav ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  backdrop-filter:blur(14px);background:rgba(7,8,11,.55);
+  border-bottom:1px solid transparent;transition:border-color .3s,background .3s;
+}
+nav.scrolled{border-bottom-color:var(--line);background:rgba(7,8,11,.82)}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:16px 28px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--mono);font-weight:600;letter-spacing:.18em;font-size:15px;display:flex;align-items:center;gap:9px}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--signal);box-shadow:0 0 12px var(--signal);animation:pulse 3s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:14px;color:var(--text-dim);transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.btn{
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;font-weight:500;
+  padding:11px 18px;border-radius:2px;border:1px solid var(--line-2);
+  background:transparent;color:var(--text);cursor:pointer;transition:all .25s;display:inline-block;
+}
+.btn:hover{border-color:var(--signal);color:var(--signal);box-shadow:0 0 0 1px rgba(63,220,242,.2)}
+.btn-fill{background:var(--signal);color:#04141a;border-color:var(--signal);font-weight:600}
+.btn-fill:hover{background:#6ce8fa;color:#04141a;box-shadow:0 8px 30px rgba(63,220,242,.25)}
+@media(max-width:820px){.nav-links a:not(.btn){display:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:190px 0 110px;overflow:hidden}
+#graph{position:absolute;inset:0;z-index:1;opacity:.55}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:center}
+.hero h1{font-size:clamp(46px,7vw,92px);margin:22px 0 26px}
+.hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.tri{display:flex;gap:26px;margin-top:40px;flex-wrap:wrap}
+.tri .t{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--text-fog);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.tri .t b{color:var(--text);font-weight:500;letter-spacing:.04em}
+.tri .t::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--signal)}
+.telemetry{
+  border:1px solid var(--line);border-radius:4px;background:linear-gradient(180deg,rgba(20,24,33,.7),rgba(10,12,17,.7));
+  padding:20px 22px;font-family:var(--mono);font-size:12.5px;
+}
+.telemetry .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);color:var(--text-dim)}
+.telemetry .row:last-child{border:0;padding-bottom:0}
+.telemetry .row span:last-child{color:var(--text)}
+.telemetry .hd{display:flex;align-items:center;gap:8px;color:var(--text-fog);text-transform:uppercase;letter-spacing:.18em;font-size:10.5px;margin-bottom:8px}
+.live{width:7px;height:7px;border-radius:50%;background:var(--pass);box-shadow:0 0 9px var(--pass);animation:pulse 2s infinite}
+.num{color:var(--signal)!important}
+@media(max-width:880px){.hero .wrap{grid-template-columns:1fr}.telemetry{order:-1}}
+
+/* ---------- section frame ---------- */
+section{position:relative;z-index:2;padding:96px 0;border-top:1px solid var(--line)}
+.sec-head{max-width:64ch;margin-bottom:54px}
+.sec-head h2{font-size:clamp(30px,4.2vw,52px);margin:18px 0 0}
+.sec-head p{margin-top:18px}
+
+/* ---------- thesis split ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.split .cell{padding:34px 32px}
+.split .cell:first-child{border-right:1px solid var(--line);background:rgba(255,255,255,.012)}
+.split .tag{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-fog);margin-bottom:18px}
+.split .cell.hl .tag{color:var(--signal)}
+.split h3{font-size:25px;margin-bottom:12px}
+.split p{color:var(--text-dim);font-size:15px}
+.split .stack{display:flex;flex-direction:column;gap:9px;margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--text-fog)}
+.split .cell.hl{background:linear-gradient(180deg,rgba(63,220,242,.06),transparent)}
+.split .cell.hl .stack span{color:var(--text-dim)}
+@media(max-width:760px){.split{grid-template-columns:1fr}.split .cell:first-child{border-right:0;border-bottom:1px solid var(--line)}}
+
+/* ---------- SRPVDAL pipeline (centerpiece) ---------- */
+.pipe-stages{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:30px}
+.stage{
+  flex:1;min-width:96px;border:1px solid var(--line);border-radius:3px;padding:14px 12px;cursor:pointer;
+  background:rgba(255,255,255,.012);transition:all .25s;position:relative;overflow:hidden;
+}
+.stage .k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-fog)}
+.stage .n{font-family:var(--serif);font-size:19px;margin-top:6px;color:var(--text-dim)}
+.stage.active{border-color:var(--signal);background:linear-gradient(180deg,rgba(63,220,242,.1),transparent)}
+.stage.active .n{color:var(--text)}
+.stage.active .k{color:var(--signal)}
+.stage.done .n{color:var(--text)}
+.stage::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--signal);transition:width .4s}
+.stage.active::after,.stage.done::after{width:100%}
+.pipe-body{
+  border:1px solid var(--line);border-radius:5px;background:var(--ink-2);
+  display:grid;grid-template-columns:1fr 360px;min-height:300px;
+}
+.pipe-detail{padding:30px 32px}
+.pipe-detail .st-k{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
+.pipe-detail h3{font-size:30px;margin:10px 0 14px}
+.pipe-detail p{color:var(--text-dim);font-size:15.5px;max-width:46ch}
+.pipe-detail .meta{display:flex;gap:24px;margin-top:24px;font-family:var(--mono);font-size:12px}
+.pipe-detail .meta div span{display:block;color:var(--text-fog);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.pipe-detail .meta div b{color:var(--text);font-weight:500;font-size:15px}
+.pipe-trace{border-left:1px solid var(--line);background:rgba(0,0,0,.25);padding:24px;font-family:var(--mono);font-size:12px;display:flex;flex-direction:column;gap:0}
+.pipe-trace .th{color:var(--text-fog);letter-spacing:.18em;font-size:10px;text-transform:uppercase;margin-bottom:14px}
+.tl{display:flex;gap:11px;padding:7px 0;color:var(--text-dim);align-items:baseline;opacity:.35;transition:opacity .3s}
+.tl.on{opacity:1}
+.tl .ts{color:var(--text-fog);font-size:10.5px;flex-shrink:0}
+.tl .dt{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;background:var(--text-fog)}
+.tl.on .dt{background:var(--signal);box-shadow:0 0 7px var(--signal)}
+.tl.veto .dt{background:var(--veto);box-shadow:0 0 7px var(--veto)}
+.tl.pass .dt{background:var(--pass);box-shadow:0 0 7px var(--pass)}
+.tl .vt{color:var(--veto)}
+.tl .pz{color:var(--pass)}
+@media(max-width:860px){.pipe-body{grid-template-columns:1fr}.pipe-trace{border-left:0;border-top:1px solid var(--line)}}
+
+/* ---------- DCP / DEL gauge ---------- */
+.dcp{display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:stretch;margin-top:34px}
+.flow{display:flex;flex-direction:column;gap:10px}
+.fstep{border:1px solid var(--line);border-radius:4px;padding:16px 20px;display:flex;gap:16px;align-items:center;background:rgba(255,255,255,.012)}
+.fstep .ix{font-family:var(--mono);color:var(--signal);font-size:13px;width:26px}
+.fstep .ft b{font-family:var(--sans);font-weight:600;font-size:15px;color:var(--text)}
+.fstep .ft p{font-size:13px;color:var(--text-dim);margin:0}
+.gauge{border:1px solid var(--line);border-radius:5px;background:linear-gradient(180deg,rgba(20,24,33,.6),rgba(10,12,17,.6));padding:26px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.gauge .glabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-fog)}
+.gauge svg{margin:14px auto 6px;display:block}
+.gscore{font-family:var(--serif);font-size:52px;line-height:1;color:var(--text)}
+.gstate{font-family:var(--mono);font-size:12px;color:var(--pass);margin-top:8px;letter-spacing:.05em}
+.gnote{font-size:12px;color:var(--text-fog);margin-top:12px}
+@media(max-width:760px){.dcp{grid-template-columns:1fr}}
+
+/* ---------- divisions ---------- */
+.div-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.dtab{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;padding:10px 16px;border:1px solid var(--line);border-radius:2px;color:var(--text-dim);cursor:pointer;transition:all .2s}
+.dtab.active{border-color:var(--signal);color:var(--signal);background:rgba(63,220,242,.07)}
+.div-panel{border:1px solid var(--line);border-radius:5px;background:var(--ink-2);padding:36px 34px;display:grid;grid-template-columns:1fr 1fr;gap:34px;min-height:230px}
+.div-panel .dk{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--signal)}
+.div-panel h3{font-size:30px;margin:10px 0 14px}
+.div-panel p{color:var(--text-dim);font-size:15px}
+.div-panel ul{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:12px}
+.div-panel li{font-size:14px;color:var(--text-dim);padding-left:22px;position:relative}
+.div-panel li::before{content:"→";position:absolute;left:0;color:var(--signal)}
+.div-panel .side{border-left:1px solid var(--line);padding-left:30px;font-family:var(--mono);font-size:12.5px;color:var(--text-fog);display:flex;flex-direction:column;gap:14px}
+.div-panel .side .m b{display:block;color:var(--text);font-size:22px;font-family:var(--serif);font-weight:400}
+@media(max-width:760px){.div-panel{grid-template-columns:1fr}.div-panel .side{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:24px}}
+
+/* ---------- governance ---------- */
+.gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gcard{border:1px solid var(--line);border-radius:4px;padding:24px 22px;background:rgba(255,255,255,.012);transition:border-color .25s}
+.gcard:hover{border-color:var(--line-2)}
+.gcard .gi{font-family:var(--mono);color:var(--signal);font-size:12px;letter-spacing:.1em;margin-bottom:14px}
+.gcard b{display:block;font-family:var(--sans);font-weight:600;font-size:16px;margin-bottom:8px}
+.gcard p{font-size:13px;color:var(--text-dim)}
+@media(max-width:880px){.gov-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.gov-grid{grid-template-columns:1fr}}
+
+/* ---------- CTA ---------- */
+.cta{text-align:center;padding:120px 0}
+.cta h2{font-size:clamp(34px,5.5vw,66px);max-width:18ch;margin:18px auto 26px}
+.cta p{color:var(--text-dim);max-width:48ch;margin:0 auto 34px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:54px 0 60px;position:relative;z-index:2}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:30px}
+.foot .brand{margin-bottom:14px}
+.foot p{font-size:13px;color:var(--text-fog);max-width:34ch}
+.foot h4{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-fog);margin-bottom:16px;font-weight:500}
+.foot a{display:block;font-size:13.5px;color:var(--text-dim);padding:5px 0;transition:color .2s}
+.foot a:hover{color:var(--signal)}
+.foot-bar{display:flex;justify-content:space-between;margin-top:46px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--text-fog);flex-wrap:wrap;gap:12px}
+.badge{display:inline-flex;gap:8px;flex-wrap:wrap}
+.badge span{border:1px solid var(--line);border-radius:2px;padding:5px 10px}
+@media(max-width:760px){.foot{grid-template-columns:1fr 1fr}}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-in">
+    <a href="#top" class="brand"><span class="dot"></span>MIZOKI3</a>
+    <div class="nav-links">
+      <a href="#pipeline">Engine</a>
+      <a href="#control">Control Plane</a>
+      <a href="#divisions">Divisions</a>
+      <a href="/blog/">Blog</a>
+      <a href="/login" class="btn nav-signin">Sign In</a>
+      <a href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request" class="btn btn-fill">Executive Briefing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <canvas id="graph"></canvas>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Verifiable Autonomous Decision Intelligence</span>
+      <h1>A nervous system<br>for <span class="serif-i">your business.</span></h1>
+      <p class="lead">MIZOKI3 gives your organization a real-time, mathematical understanding of itself — a living graph of every metric, relationship, and prediction. It replaces the CRM and the backwards-looking dashboards with a system that senses, reasons, and acts across your entire business the moment something changes.</p>
+      <div class="hero-cta">
+        <a href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request" class="btn btn-fill">Schedule Executive Briefing</a>
+        <a href="#pipeline" class="btn">See the reflex arc</a>
+      </div>
+      <div class="tri">
+        <div class="t"><b>Real-time</b></div>
+        <div class="t"><b>Predictive</b></div>
+        <div class="t"><b>Defensible</b></div>
+      </div>
+    </div>
+    <div class="telemetry">
+      <div class="hd"><span class="live"></span> Live signal — Acme Holdings</div>
+      <div class="row"><span>Graph nodes sensed</span><span class="num" data-count="48213">48,213</span></div>
+      <div class="row"><span>Signals propagated / 24h</span><span class="num" data-count="1294">1,294</span></div>
+      <div class="row"><span>Understanding latency</span><span>backwards → <span class="num">real-time</span></span></div>
+      <div class="row"><span>Predictions in flight</span><span>312</span></div>
+      <div class="row"><span>Autonomous actions vetoed</span><span style="color:var(--flag)">7</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- THESIS -->
+<section id="thesis">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">What MIZOKI3 is</span>
+      <h2>Real-time understanding — <span class="serif-i">not a record of the past.</span></h2>
+      <p class="lead">A CRM and a dashboard describe what already happened. A nervous system feels what's happening across the whole organization — and what's about to. That's the difference between a ledger and a living system.</p>
+    </div>
+    <div class="split rv">
+      <div class="cell">
+        <div class="tag">The CRM era</div>
+        <h3>Linear. Backwards-looking.</h3>
+        <p>Rows, pipelines, and quarterly reports describe the past. By the time a dashboard refreshes, the moment that mattered has already passed and the decision is made by hand.</p>
+        <div class="stack">
+          <span>· Records what already happened</span>
+          <span>· Siloed, one table at a time</span>
+          <span>· No model of cause &amp; effect</span>
+          <span>· Humans reconcile it after the fact</span>
+        </div>
+      </div>
+      <div class="cell hl">
+        <div class="tag">MIZOKI3</div>
+        <h3>A living nervous system.</h3>
+        <p>A real-time mathematical graph of every metric and relationship in your business, continuously sensing and predicting. It doesn't report the past — it understands the present and anticipates what comes next.</p>
+        <div class="stack">
+          <span>· Senses the whole organization at once</span>
+          <span>· Models cause, effect &amp; prediction</span>
+          <span>· Simulates and validates before acting</span>
+          <span>· Acts — only when authorized</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SRPVDAL PIPELINE -->
+<section id="pipeline">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">The reflex arc · SRPVDAL</span>
+      <h2>Every signal travels <span class="serif-i">one governed pathway.</span></h2>
+      <p class="lead">When the nervous system senses something that demands action, the signal moves through seven governed stages. Nothing executes until it is simulated, validated against your constraints, and authorized by policy. Step through a live one — <b style="color:var(--text)">ACT-991</b>, a $5.0M capital distribution.</p>
+    </div>
+
+    <div class="rv">
+      <div class="pipe-stages" id="stages"></div>
+      <div class="pipe-body">
+        <div class="pipe-detail">
+          <div class="st-k" id="d-k">Stage 01</div>
+          <h3 id="d-n">Sense</h3>
+          <p id="d-p">Loading…</p>
+          <div class="meta">
+            <div><span>Stage</span><b id="d-stage">01 / 07</b></div>
+            <div><span>Latency</span><b id="d-lat">—</b></div>
+            <div><span>State</span><b id="d-state">—</b></div>
+          </div>
+        </div>
+        <div class="pipe-trace" id="trace">
+          <div class="th">Immutable decision trace · ACT-991</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTROL PLANE + GAUGE -->
+<section id="control">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Decision Control Plane</span>
+      <h2>Decisions you can <span class="serif-i">defend.</span></h2>
+      <p class="lead">Deterministic policy, human-in-the-loop keys, and an eligibility score gate every autonomous action before it touches the business.</p>
+    </div>
+    <div class="dcp rv">
+      <div class="flow">
+        <div class="fstep"><span class="ix">01</span><div class="ft"><b>Propose</b><p>Context-aware controllers suggest an operational action or capital movement.</p></div></div>
+        <div class="fstep"><span class="ix">02</span><div class="ft"><b>Validate</b><p>Counterfactual simulations run the action against contracts and legal frameworks.</p></div></div>
+        <div class="fstep"><span class="ix">03</span><div class="ft"><b>Authorize</b><p>The control plane applies deterministic policy and human-in-the-loop approval.</p></div></div>
+        <div class="fstep"><span class="ix">04</span><div class="ft"><b>Act</b><p>Secure, immutable execution with a tamper-evident audit trail.</p></div></div>
+      </div>
+      <div class="gauge">
+        <div class="glabel">Decision Eligibility Layer</div>
+        <svg width="170" height="170" viewBox="0 0 170 170">
+          <circle cx="85" cy="85" r="70" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+          <circle id="arc" cx="85" cy="85" r="70" fill="none" stroke="var(--signal)" stroke-width="10"
+                  stroke-linecap="round" stroke-dasharray="439.8" stroke-dashoffset="439.8"
+                  transform="rotate(-90 85 85)" style="transition:stroke-dashoffset 1.6s cubic-bezier(.2,.7,.2,1)"/>
+        </svg>
+        <div class="gscore" id="gscore">0</div>
+        <div class="gstate">ELIGIBLE FOR AUTONOMOUS ACTION</div>
+        <div class="gnote">Threshold ≥ 80 · scored per decision, per domain</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVISIONS -->
+<section id="divisions">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Adapts to your business — without limit</span>
+      <h2>It maps to your business. <span class="serif-i">Not the other way around.</span></h2>
+      <p class="lead">MIZOKI3 has no fixed shape. It senses your actual operating structure and grows a decision controller for every domain you have — three, forty, or something no one has built before — all reasoning over one shared graph. The lenses below aren't the product. They're simply how the customers we've onboarded happen to be structured today.</p>
+    </div>
+    <div class="rv">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-fog);margin-bottom:14px">Example deployments · current customers</div>
+      <div class="div-tabs" id="dtabs"></div>
+      <div class="div-panel">
+        <div>
+          <div class="dk" id="dv-k">Counsel</div>
+          <h3 id="dv-n">Legal &amp; Counsel</h3>
+          <p id="dv-p"></p>
+          <ul id="dv-l"></ul>
+        </div>
+        <div class="side">
+          <div class="m"><span id="dv-ml"></span><b id="dv-mv"></b></div>
+          <div id="dv-note"></div>
+        </div>
+      </div>
+      <div style="margin-top:18px;font-size:13.5px;color:var(--text-fog);font-family:var(--mono)">→ Your deployment is whatever your business is. There is no list to fit into.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNANCE -->
+<section id="governance">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Enterprise-ready by design</span>
+      <h2>You keep control. <span class="serif-i">The system handles complexity.</span></h2>
+    </div>
+    <div class="gov-grid rv">
+      <div class="gcard"><div class="gi">[ KMS ]</div><b>Customer-managed encryption</b><p>Your keys, your cloud. CMEK provisioned by Terraform across the reasoning substrate.</p></div>
+      <div class="gcard"><div class="gi">[ VPC ]</div><b>Isolated reasoning</b><p>Private VPC and isolated model environments. Reasoning never leaves your perimeter.</p></div>
+      <div class="gcard"><div class="gi">[ HITL ]</div><b>Deterministic overrides</b><p>Policy overrides and human-in-the-loop keys gate every authorized action.</p></div>
+      <div class="gcard"><div class="gi">[ LOG ]</div><b>Immutable audit trail</b><p>Every proposal, simulation, and authorization is written to a tamper-evident ledger.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="wrap rv">
+    <span class="eyebrow" style="justify-content:center">Outcomes compounded</span>
+    <h2>A nervous system for your business.</h2>
+    <p>Real-time understanding, prediction, and defensible action across your entire organization. See MIZOKI3 sense your own operating structure in a private executive briefing.</p>
+    <a href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20Request" class="btn btn-fill">Schedule Executive Briefing</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a href="#top" class="brand"><span class="dot"></span>MIZOKI3</a>
+        <p>A living nervous system for the enterprise. Real-time understanding, prediction, and governed action across your whole organization.</p>
+      </div>
+      <div>
+        <h4>Example domains</h4>
+        <a href="/counsel">Counsel</a>
+        <a href="/signal">Signal</a>
+        <a href="/capital">Capital</a>
+        <a href="/risk">Risk</a>
+        <a href="/estate">Estate</a>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <a href="#pipeline">Decision Engine</a>
+        <a href="#control">Control Plane</a>
+        <a href="/blog/">Blog</a>
+        <a href="/login">Sign In</a>
+        <a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <div class="badge"><span>GDPR-ready</span><span>Patented technology</span><span>Customer-managed encryption</span></div>
+      <div>© 2026 MIZOKI3 · <a href="mailto:hello@mizoki3.com?subject=Privacy">Privacy</a> · <a href="mailto:hello@mizoki3.com?subject=Terms">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- nav scroll ---------- */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>20));
+
+/* ---------- reveal ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* ---------- count up ---------- */
+function countUp(el){
+  const t=+el.dataset.count;let s=null;const dur=1400;
+  function step(ts){if(!s)s=ts;const p=Math.min((ts-s)/dur,1);
+    el.textContent=Math.floor(p*t).toLocaleString();if(p<1)requestAnimationFrame(step)}
+  requestAnimationFrame(step);
+}
+const ioc=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);ioc.unobserve(e.target)}}),{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>ioc.observe(el));
+
+/* ---------- knowledge-graph hero canvas ---------- */
+(function(){
+  const c=document.getElementById('graph'),x=c.getContext('2d');let w,h,nodes=[],raf;
+  const COL='63,220,242';
+  function size(){w=c.width=c.offsetWidth*devicePixelRatio;h=c.height=c.offsetHeight*devicePixelRatio}
+  function init(){nodes=[];const n=Math.min(46,Math.floor(w/38));
+    for(let i=0;i<n;i++)nodes.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:(Math.random()*1.6+.8)*devicePixelRatio})}
+  function draw(){x.clearRect(0,0,w,h);
+    for(let i=0;i<nodes.length;i++){const a=nodes[i];a.x+=a.vx;a.y+=a.vy;
+      if(a.x<0||a.x>w)a.vx*=-1;if(a.y<0||a.y>h)a.vy*=-1;
+      for(let j=i+1;j<nodes.length;j++){const b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy),max=150*devicePixelRatio;
+        if(d<max){x.strokeStyle='rgba('+COL+','+(.16*(1-d/max))+')';x.lineWidth=devicePixelRatio*.6;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+      x.fillStyle='rgba('+COL+',.65)';x.beginPath();x.arc(a.x,a.y,a.r,0,7);x.fill()}
+    raf=requestAnimationFrame(draw)}
+  size();init();draw();
+  addEventListener('resize',()=>{cancelAnimationFrame(raf);size();init();draw()});
+})();
+
+/* ---------- SRPVDAL interactive pipeline ---------- */
+const STAGES=[
+  {k:'Sense',lat:'12ms',state:'Ingested',p:'Telemetry, contracts, and ledger events stream into the temporal-causal knowledge graph. Q3 liquidity, 3 covenants, and 12 active contracts are pulled into context for ACT-991.',
+   trace:{ts:'14:32:01',cls:'on',txt:'sense · context assembled · 12 contracts linked'}},
+  {k:'Reason',lat:'140ms',state:'Modeled',p:'Cross-domain reasoning over the graph: Capital proposes reallocating $5.0M to the Series B reserve. The model surfaces second-order effects on Treasury and Risk.',
+   trace:{ts:'14:32:03',cls:'on',txt:'reason · proposal drafted · reallocate $5.0M → reserve'}},
+  {k:'Plan',lat:'88ms',state:'Sequenced',p:'A candidate action plan is sequenced with rollback points and the domains it touches — Treasury, Risk, and Counsel are flagged as stakeholders.',
+   trace:{ts:'14:32:04',cls:'on',txt:'plan · 3 stakeholder domains · rollback armed'}},
+  {k:'Validate',lat:'210ms',state:'Breach detected',p:'The Counterfactual Simulation Engine runs the action against every binding constraint. Covenant COV-01 (DSCR ≥ 1.25) passes; the Master Loan Agreement §7.2 passes; the $2.0M liquidity floor is breached.',
+   trace:{ts:'14:32:05',cls:'veto',txt:'validate · COV-01 PASS · §7.2 PASS · liquidity floor FLAG'}},
+  {k:'Decide',lat:'34ms',state:'Vetoed',p:'The Decision Eligibility Layer scores ACT-991 ineligible. The Decision Control Plane stamps it VETOED and re-routes to a safe Option B — a phased $3.2M reallocation that clears the floor.',
+   trace:{ts:'14:32:05',cls:'veto',txt:'decide · DEL score 41 · DCP verdict: VETOED'}},
+  {k:'Act',lat:'19ms',state:'Re-routed',p:'Only the authorized Option B executes — scoped, reversible, and bounded. The original $5.0M proposal never touches the business.',
+   trace:{ts:'14:32:06',cls:'pass',txt:'act · Option B executed · $3.2M phased · scoped + reversible'}},
+  {k:'Learn',lat:'7ms',state:'Promoted',p:'The full trace — proposal, simulation, veto, and re-route — is written to the immutable ledger and promoted into a reusable skill, so the same breach is caught faster next time.',
+   trace:{ts:'14:32:06',cls:'pass',txt:'learn · trace #8f2a appended · skill promoted'}}
+];
+const stagesEl=document.getElementById('stages'),traceEl=document.getElementById('trace');
+STAGES.forEach((s,i)=>{
+  const d=document.createElement('div');d.className='stage';d.dataset.i=i;
+  d.innerHTML='<div class="k">0'+(i+1)+'</div><div class="n">'+s.k+'</div>';
+  d.onclick=()=>setStage(i);stagesEl.appendChild(d);
+  const t=document.createElement('div');t.className='tl '+(s.trace.cls);t.dataset.i=i;
+  t.innerHTML='<span class="dt"></span><span class="ts">'+s.trace.ts+'</span><span class="vx">'+s.trace.txt
+    .replace('VETOED','<span class="vt">VETOED</span>').replace('FLAG','<span class="vt">FLAG</span>')
+    .replace(/executed/,'<span class="pz">executed</span>')+'</span>';
+  traceEl.appendChild(t);
+});
+function setStage(i){
+  document.querySelectorAll('.stage').forEach((el,j)=>{el.classList.toggle('active',j===i);el.classList.toggle('done',j<i)});
+  document.querySelectorAll('#trace .tl').forEach((el,j)=>el.classList.toggle('on',j<=i));
+  const s=STAGES[i];
+  document.getElementById('d-k').textContent='Stage 0'+(i+1);
+  document.getElementById('d-n').textContent=s.k;
+  document.getElementById('d-p').textContent=s.p;
+  document.getElementById('d-stage').textContent='0'+(i+1)+' / 07';
+  document.getElementById('d-lat').textContent=s.lat;
+  const st=document.getElementById('d-state');st.textContent=s.state;
+  st.style.color=(i===3||i===4)?'var(--veto)':(i>=5?'var(--pass)':'var(--text)');
+}
+let pi=0,ptimer;
+function autoPlay(){pi=(pi+1)%STAGES.length;setStage(pi)}
+const iop=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){setStage(0);pi=0;clearInterval(ptimer);ptimer=setInterval(autoPlay,2600)}
+  else clearInterval(ptimer);
+}),{threshold:.4});
+iop.observe(document.getElementById('pipeline'));
+stagesEl.addEventListener('click',()=>{clearInterval(ptimer)});
+
+/* ---------- DEL gauge ---------- */
+const iog=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.87);
+  let v=0;const gi=setInterval(()=>{v++;document.getElementById('gscore').textContent=v;if(v>=87)clearInterval(gi)},16);
+  iog.disconnect();
+}}),{threshold:.5});
+iog.observe(document.getElementById('control'));
+
+/* ---------- divisions ---------- */
+const DIV=[
+  {k:'Counsel',n:'Legal & Counsel',p:'Autonomous contract analysis, obligation mapping, and litigation-pathway scoring — every clause linked to live operations through the shared graph.',
+   l:['Obligation & covenant extraction','Litigation pathway scoring','Regulatory compliance mapping'],ml:'Contracts under management',mv:'1,840',note:'Reasons over the same causal memory as Capital and Risk — so a clause and a cash movement are never evaluated in isolation.'},
+  {k:'Estate',n:'Estate & Trust',p:'Governed reasoning for multi-generational wealth transfer — trust structuring and tax-strategy analysis with full traceability.',
+   l:['Trust structure modeling','Tax-strategy simulation','Beneficiary impact analysis'],ml:'Structures modeled',mv:'126',note:'Every recommendation carries its counterfactual — what changes, for whom, and why.'},
+  {k:'Capital',n:'Treasury & Capital',p:'Capital allocation grounded in causal evidence, not spreadsheet assumptions. Covenant-breach forecasting and liquidity stress modeling.',
+   l:['Covenant breach forecasting','Liquidity stress modeling','Causal capital allocation'],ml:'Decisions / 24h',mv:'1,294',note:'Source domain of ACT-991 — its proposals are simulated and gated before any reserve moves.'},
+  {k:'Signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
+   l:['Causal attribution (uplift)','Autonomous bid optimization','Self-proving ROI'],ml:'Channels attributed',mv:'24',note:'Uplift measured with counterfactual rigor — no last-click fiction.'},
+  {k:'Risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
+   l:['Continuous verification','Regulatory monitoring','Live obligation tracking','Active covenants tracked'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'}
+];
+const dtabs=document.getElementById('dtabs');
+DIV.forEach((d,i)=>{const t=document.createElement('div');t.className='dtab'+(i===0?' active':'');t.textContent=d.k;t.onclick=()=>setDiv(i);dtabs.appendChild(t)});
+function setDiv(i){
+  document.querySelectorAll('.dtab').forEach((el,j)=>el.classList.toggle('active',j===i));
+  const d=DIV[i];
+  document.getElementById('dv-k').textContent=d.k;
+  document.getElementById('dv-n').textContent=d.n;
+  document.getElementById('dv-p').textContent=d.p;
+  document.getElementById('dv-l').innerHTML=d.l.map(x=>'<li>'+x+'</li>').join('');
+  document.getElementById('dv-ml').textContent=d.ml;
+  document.getElementById('dv-mv').textContent=d.mv;
+  document.getElementById('dv-note').textContent=d.note;
+}
+setDiv(0);
+</script>
+</body>
+</html>
