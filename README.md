@@ -1,56 +1,96 @@
-# MIZOKI3 — Site
+# MIZOKI3 — Website
 
-Marketing site for **MIZOKI3 — Autonomous Strategic Intelligence Infrastructure**.
+Marketing site for **MIZOKI3 — a Verifiable Autonomous Decision Intelligence Platform**.
+Canonical hero line: **"A nervous system for your business."**
+
+Live at **[mizoki3.com](https://mizoki3.com)** on Google Cloud Run.
+
+## Positioning (read before touching copy)
+
+The metaphor is a **nervous system — never a "brain."** MIZOKI3 gives a business a real-time,
+mathematical understanding of every part of itself: a living graph of metrics, relationships, and
+**prediction**. It replaces the CRM and the linear, backwards-looking analytics stack with a
+forward-looking, predictive system.
+
+The domain **lenses (Counsel · Estate · Capital · Signal · Risk · Manufacturing) are _example
+deployments_** — the structures of customers onboarded so far — **not a fixed product.** The platform
+is unlimited and adaptive; always frame the lenses as examples, never as a fixed list. See
+[`CLAUDE.md`](CLAUDE.md) for the full messaging guide.
 
 ## Stack
 
-Pure static HTML / CSS / JS. No build step required for browsing — the site runs as-is.
+- **Server:** Python **Flask** app served by **Gunicorn**, routed in [`app.py`](app.py).
+- **Frontend:** self-contained HTML with **inline CSS + vanilla JS — no build step.**
+- **Deploy:** Docker container on **Google Cloud Run** (`mizoki-website`, `us-central1`); custom
+  domain `mizoki3.com`.
+- **Fonts:** Instrument Serif (display) · DM Sans (body) · JetBrains Mono (labels).
+- **Aesthetic:** light "ledger / filing" paper theme with a teal accent — an institutional
+  decision-terminal look.
 
-```
+## Structure
+
+```text
 .
-├── index.html           # Hero, animated Nexus, brain, 5 domains, flywheel, category, positioning
-├── counsel.html         # Legal Intelligence
-├── estate.html          # Wealth, Trust & Tax Intelligence
-├── capital.html         # Banking & Financial Intelligence
-├── signal.html          # Autonomous Acquisition Intelligence
-├── risk.html            # Verification & Compliance Intelligence
-├── assets/
-│   ├── css/styles.css   # Shared dark cinematic theme
-│   └── js/nexus.js      # Animated SVG hero (vanilla JS, no deps)
-└── _build_domains.py    # Regenerates the 5 domain pages from a single template
+├── index.html            # Homepage: hero graph + schema inspector, executable SRPVDAL simulation,
+│                         #   DEL gauge + authorization scorecard, control-plane sandbox, §04 domains
+│                         #   panel, and the 12-connector unified ingress gateway
+├── counsel/ estate/ capital/ signal/ risk/ manufacturing/   # Domain lens pages (each an index.html)
+├── blog/                 # Journal listing + articles
+├── privacy/  terms/  404.html
+├── app.py                # Flask routing — lenses, /console, /infrastructure, blog, sitemap, APIs
+├── mizoki3-site/         # CANONICAL — standalone /console + /infrastructure (Terraform). Do not rename.
+├── schemas/              # Canonical JourneyEvent + CanonicalEventEnvelope JSON schemas
+├── mizoki_runtime/       # Boss runtime, SRPVDAL loop, JourneyEvent / envelope / identity cells
+├── tests/                # Flask (test_app) + runtime (test_runtime) unit tests
+└── sitemap.xml  requirements.txt  Dockerfile  cloudbuild.yaml  deploy.sh
 ```
 
-## Local preview
+## Example domain lenses
+
+Six shown on the site — **example deployments, not a fixed offering:**
+
+| Lens | Focus |
+|------|-------|
+| Counsel | Legal & Counsel |
+| Estate | Estate & Trust |
+| Capital | Treasury & Capital |
+| Signal | Growth & Signal |
+| Risk | Risk & Compliance |
+| Manufacturing | Operations & Manufacturing |
+
+## Local development
+
+The site is a Flask app (routes such as `/manufacturing` are resolved server-side), so run it through
+Flask — not a plain static file server:
 
 ```bash
-python3 -m http.server 8000
-# open http://localhost:8000
+python3.13 -m pip install -r requirements.txt
+python3.13 app.py            # serves http://localhost:8080  (honors $PORT)
 ```
 
-## Editing domain pages
-
-The five domain pages share a template. Edit copy / lists in `_build_domains.py` and regenerate:
+Run the test suite before shipping:
 
 ```bash
-python3 _build_domains.py
+python3.13 -m unittest tests.test_app tests.test_runtime   # 73 passing
 ```
+
+> **Gotcha:** the machine's default `python3` is Homebrew 3.14 **without Flask**, so `tests.test_app`
+> ImportErrors there (only `test_runtime` runs). Use **`python3.13`** (has Flask) for the app tests
+> and the local server.
 
 ## Deployment
 
-The site is fully static, so any of the following work:
+Push to `main` → the **`deploy-cloudrun.yml`** GitHub Actions workflow (Workload Identity Federation —
+no long-lived keys) builds the Docker image and rolls a new Cloud Run revision in ~60s. Manual
+fallback: `./deploy.sh`.
 
-- **GitHub Pages** — enable Pages on `main`, set folder to root.
-- **Vercel / Netlify** — drag-and-drop or connect the repo, no build command.
-- **Cloudflare Pages** — same.
+## Recent updates (2026-07-03)
 
-## Design language
+- **Manufacturing** added as a first-class 6th example-domain lens — new `manufacturing/` page, wired
+  into the homepage hero graph, schema inspector, executable simulation, §04 divisions panel, and the
+  footer on every page; `/manufacturing` Flask route + sitemap entry.
+- **Homepage connector gateway expanded 9 → 12** — added Shopify, Meta Ads, Klaviyo, DV360 (removed
+  Stripe); §01 canonical-event copy now names Google Ads · Meta · Shopify.
+- Added the **Creative Single Point of Truth v1.0** canonical reference doc.
 
-- Dark, cinematic, technical
-- Inter (body) + JetBrains Mono (eyebrows / labels / code)
-- Cyan / violet gradient accent on the Nexus brand line
-- Per-domain accent colors:
-  - Counsel — cyan
-  - Estate — violet
-  - Capital — emerald
-  - Signal — amber
-  - Risk — rose
+See [`CLAUDE.md`](CLAUDE.md) → *Recent Work (July 2026)* for the full engineering log.

@@ -150,6 +150,31 @@ mizoki-website/
 
 ## Recent Work (July 2026)
 
+### Homepage Connector Gateway 9→12 + Creative Single-Point-of-Truth Docs (2026-07-03)
+
+Two follow-on changes the same day, after the Manufacturing lens shipped (entry below).
+
+**Connector gateway expanded 9 → 12 (`index.html`, deployed).** The founder uploaded a homepage
+draft (`~/Downloads/index_7.html`). A full diff against the live homepage showed the draft was an
+**older base** — its *only* net-new content over live was an expanded connector gateway, but adopting
+it wholesale would have **reverted four live fixes**: the Manufacturing wiring (shipped hours earlier),
+the hero-schema + divisions "View X dossier →" links (draft dropped the `slug` fields → 0 dossier
+links vs 3 live), the deliberate `39`-not-`87` DEL-gauge fix (2026-06-18), and the "Assurance" footer
+link. **Decision: port only the connector block, not the file.** Swapped the §02 unified-ingress
+gateway from 9 to 12 chips — added **Shopify, Meta Ads, Klaviyo, DV360**, removed **Stripe** — bumped
+the "Native connectors" stat to 12, and corrected the §01 canonical-event copy from "Google Ads,
+Stripe, …" to "Google Ads, **Meta, Shopify**, …" so the gateway matches the sources named in the copy
+(it previously named Meta/Shopify while the gateway showed Stripe). Everything else on the live
+homepage preserved. Verified: inline scripts pass `node --check`; HTML balanced; `test_client` `/` →
+200 with the 12 connectors + Manufacturing node + dossier links present and the Stripe chip gone.
+**Deployed** via commit **`21abf26`** → auto-deploy run **`28677928681`** green; live smoke on
+mizoki3.com confirmed all 12 chips + kept fixes.
+
+**Creative Single Point of Truth docs (`bdfdddc`).** Added `MIZOKI3_Creative_Single_Point_of_Truth_v1_0.md`
+(+ source `.docx`) as a tracked canonical creative reference. Per founder direction, the leftover
+scratch/duplicate trees (`site/` — a 704 KB stale copy of the whole site; `files/`;
+`mizoki-site-v4-RELEASE/`) were **left untracked on disk**, not committed.
+
 ### Manufacturing Example-Domain Lens — Full First-Class Integration + Stale-Branch Reconciliation (2026-07-03)
 
 Added **Manufacturing** as a first-class example-domain lens (a 6th alongside Counsel/Estate/
