@@ -14,6 +14,7 @@ from .journey_gemini import active_extractor_metadata
 from .journey_sinks import build_journey_sinks_from_env
 from .envelope import CanonicalEnvelopeBuilder
 from .identity import IdentityResolutionCell
+from .virtuoso import VirtuosoModelPlane
 
 
 STOP_WORDS = {
@@ -537,6 +538,12 @@ GRAPH_NODES = {
         "summary": "SENSE-stage connector layer that maps native Meta/Google Ads/SendGrid/OpenRTB payloads to the JourneyEvent schema, validates them against the schema gate, and upserts them idempotently on a stable event_id with full provenance.",
         "aliases": ("journey ingest", "event normalizer", "connector layer", "sense connectors"),
     },
+    "virtuoso_model_plane": {
+        "name": "Virtuoso Model Plane",
+        "type": "registry",
+        "summary": "Role-based flagship-model registry consolidated with the Boss Agent: every cell resolves its model through get_model(Role.X), retired model strings are rejected at boot, and every role fails over to one cross-vendor global fallback with served_by/primary_error surfaced so a degraded path is never silent.",
+        "aliases": ("virtuoso", "model registry", "model plane", "flagship registry", "virtuoso models"),
+    },
 }
 
 
@@ -580,6 +587,10 @@ GRAPH_EDGES = (
     ("journey_ingest", "validated_by", "validation_arbitration"),
     ("journey_event", "feeds", "sense"),
     ("openrtb_bidstream", "normalized_by", "journey_ingest"),
+    ("boss_agent", "resolves_models_through", "virtuoso_model_plane"),
+    ("virtuoso_model_plane", "serves", "srpvdal"),
+    ("journey_ingest", "stamps_provenance_from", "virtuoso_model_plane"),
+    ("virtuoso_model_plane", "governed_by", "decision_control_plane"),
 )
 
 GRAPH_NATIVE_STAGE_ORDER = ("sense", "reason", "plan", "validate", "decide", "act", "learn")
@@ -2307,6 +2318,7 @@ class BossAgent:
         journey: JourneyIngestCell,
         envelope_builder: CanonicalEnvelopeBuilder,
         identity_resolver: IdentityResolutionCell,
+        virtuoso: VirtuosoModelPlane,
         trace_file: Path,
     ) -> None:
         self.registry = registry
@@ -2318,6 +2330,7 @@ class BossAgent:
         self.journey = journey
         self.envelope_builder = envelope_builder
         self.identity_resolver = identity_resolver
+        self.virtuoso = virtuoso
         self.trace_file = trace_file
         self.trace_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -2351,6 +2364,7 @@ class BossAgent:
                 "identity_resolution": self.identity_resolver.discovery_block(),
                 "description": "Canonical JourneyEvent connector layer: normalizes Meta, Google Ads, SendGrid, and OpenRTB signals into one schema at SENSE with deterministic, idempotent upserts.",
             },
+            "virtuoso": self.virtuoso.discovery_block(),
             "capabilities": {
                 "skill_learning_tools": ["skills.learn", "skills.learn_from_loop"],
                 "tool_learning_tools": ["tools.register_alias"],
@@ -2862,6 +2876,9 @@ class BossRuntime:
             self.journey.schema,
         )
         self.identity_resolver = IdentityResolutionCell(self.data_dir / "identity_clusters.json")
+        # Boot-time model-registry guard: a retired model string or a
+        # fallback-as-primary override refuses to start the runtime.
+        self.virtuoso = VirtuosoModelPlane(self.data_dir / "mii_reasoning_traces.jsonl")
         self.skill_store = SkillStore(self.data_dir / "boss_skills.json")
         self.registry = ToolRegistry(self.data_dir / "tool_aliases.json")
         self._register_tools()
@@ -2876,6 +2893,7 @@ class BossRuntime:
             journey=self.journey,
             envelope_builder=self.envelope_builder,
             identity_resolver=self.identity_resolver,
+            virtuoso=self.virtuoso,
             trace_file=self.data_dir / "boss_decision_log.jsonl",
         )
 
@@ -3065,6 +3083,51 @@ class BossRuntime:
                 parameters=(),
                 tags=("identity", "resolution", "stats"),
                 handler=lambda payload: self.identity_cluster_stats(),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="virtuoso.registry",
+                description="Report the Virtuoso model-plane registry: every role's resolved flagship (env overrides applied), the cross-vendor global fallback, image delegates, forbidden legacy patterns, and the SRPVDAL phase note.",
+                category="virtuoso",
+                parameters=(),
+                tags=("virtuoso", "models", "registry", "fallback", "discover"),
+                handler=lambda _: self.virtuoso_registry(),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="virtuoso.resolve_model",
+                description="Resolve the flagship model serving a Virtuoso role (data_causal, coding_arch, creative_mm, devops_ops) — the get_model(Role.X) lookup that replaces hardcoded model strings.",
+                category="virtuoso",
+                parameters=(
+                    ToolParameter("role", "string", "Virtuoso role: data_causal, coding_arch, creative_mm, or devops_ops.", required=True),
+                ),
+                tags=("virtuoso", "models", "resolve", "role"),
+                handler=lambda payload: self.resolve_virtuoso_model(payload["role"]),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="virtuoso.scan_legacy",
+                description="Scan a config/code snippet for retired model strings (the WIRING purge list). Returns the violations so a legacy id is caught before it reaches a deploy.",
+                category="virtuoso",
+                parameters=(
+                    ToolParameter("text", "string", "Text to scan for retired model strings.", required=True),
+                    ToolParameter("source", "string", "Label for where the text came from.", default="inline"),
+                ),
+                tags=("virtuoso", "legacy", "guard", "scan", "purge"),
+                handler=lambda payload: self.scan_legacy_model_strings(payload["text"], payload["source"]),
+            )
+        )
+        self.registry.register(
+            ToolDefinition(
+                name="virtuoso.reasoning_traces",
+                description="Return recent MII reasoning-distillation trace rows persisted from virtuoso_call responses that carried a reasoning_summary.",
+                category="virtuoso",
+                parameters=(ToolParameter("limit", "integer", "Maximum number of trace rows to return.", default=10),),
+                tags=("virtuoso", "mii", "reasoning", "traces", "distillation"),
+                handler=lambda payload: {"traces": self.recent_reasoning_traces(payload["limit"])},
             )
         )
         self.registry.register(
@@ -3277,6 +3340,8 @@ class BossRuntime:
             "programmatic_run_count": len(self.programmatic.recent_runs(limit=100)),
             "journey_event_count": self.journey.store.count(),
             "identity_cluster_count": self.identity_resolver.stats()["clusters"],
+            "virtuoso_role_count": len(self.virtuoso.registry_snapshot()["roles"]),
+            "mii_trace_count": self.virtuoso.trace_count(),
         }
 
     def list_tools(self) -> list[dict[str, Any]]:
@@ -3418,6 +3483,18 @@ class BossRuntime:
 
     def identity_cluster_stats(self) -> dict[str, Any]:
         return self.identity_resolver.stats()
+
+    def virtuoso_registry(self) -> dict[str, Any]:
+        return self.virtuoso.registry_snapshot()
+
+    def resolve_virtuoso_model(self, role: Any) -> dict[str, Any]:
+        return self.virtuoso.resolve(role)
+
+    def scan_legacy_model_strings(self, text: Any, source: str = "inline") -> dict[str, Any]:
+        return self.virtuoso.scan_text(text, source=source)
+
+    def recent_reasoning_traces(self, limit: int = 10) -> list[dict[str, Any]]:
+        return self.virtuoso.recent_traces(limit=limit)
 
 
 def create_runtime(base_dir: Path | None = None, data_dir: Path | None = None) -> BossRuntime:

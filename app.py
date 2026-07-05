@@ -600,6 +600,35 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def boss_identity_stats():
         return jsonify(run_runtime_call(lambda: get_runtime().identity_cluster_stats()))
 
+    @app.route("/api/boss/virtuoso/registry", methods=["GET"])
+    def boss_virtuoso_registry():
+        return jsonify(run_runtime_call(lambda: get_runtime().virtuoso_registry()))
+
+    @app.route("/api/boss/virtuoso/resolve", methods=["POST"])
+    def boss_virtuoso_resolve():
+        payload = require_json_payload()
+        role = payload.get("role")
+        if not isinstance(role, str) or not role.strip():
+            abort(400, description="Field 'role' must be a non-empty string.")
+        return jsonify(run_runtime_call(lambda: get_runtime().resolve_virtuoso_model(role)))
+
+    @app.route("/api/boss/virtuoso/scan", methods=["POST"])
+    def boss_virtuoso_scan():
+        payload = require_json_payload()
+        text = payload.get("text")
+        source = payload.get("source", "inline")
+        if not isinstance(text, str):
+            abort(400, description="Field 'text' must be a string.")
+        if not isinstance(source, str):
+            abort(400, description="Field 'source' must be a string.")
+        return jsonify(run_runtime_call(lambda: get_runtime().scan_legacy_model_strings(text, source=source)))
+
+    @app.route("/api/boss/virtuoso/traces", methods=["GET"])
+    def boss_virtuoso_traces():
+        limit = request.args.get("limit", default=10, type=int)
+        limit = max(1, min(limit, 100))
+        return jsonify({"traces": run_runtime_call(lambda: get_runtime().recent_reasoning_traces(limit=limit))})
+
     @app.route("/api/boss/skills/learn", methods=["POST"])
     def learn_boss_skill():
         payload = require_json_payload()

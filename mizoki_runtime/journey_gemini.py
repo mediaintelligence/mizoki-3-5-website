@@ -22,11 +22,20 @@ from copy import deepcopy
 from typing import Any, Callable
 
 from .journey import JourneyEventNormalizer, sha256_hex
+from .virtuoso import Role, get_model
 
 
 # Pinned defaults — override via env so a deployment can bump the model/revision
 # without a code change (and the pin is recorded in provenance per row).
-DEFAULT_GEMINI_MODEL = "gemini-3.5-pro"
+# The model default is no longer a local string: it resolves through the Virtuoso
+# registry's DATA_CAUSAL slot so the registry and the event store agree on which
+# flagship produced each row (VIRTUOSO_MODEL_DATA_CAUSAL overrides it globally;
+# MIZOKI_GEMINI_MODEL remains the extractor-local override with precedence).
+def _registry_default_model(env: dict[str, str] | None = None) -> str:
+    return get_model(Role.DATA_CAUSAL, env=env).model
+
+
+DEFAULT_GEMINI_MODEL = _registry_default_model()
 DEFAULT_GEMINI_API_REVISION = "2026-06-01"
 DEFAULT_VERTEX_LOCATION = "us-central1"
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
@@ -46,7 +55,7 @@ class GeminiJourneyExtractor:
         transport: Transport | None = None,
     ) -> None:
         self.normalizer = normalizer
-        self.model = model or os.environ.get("MIZOKI_GEMINI_MODEL") or DEFAULT_GEMINI_MODEL
+        self.model = model or os.environ.get("MIZOKI_GEMINI_MODEL") or _registry_default_model()
         self.api_revision = api_revision or os.environ.get("MIZOKI_GEMINI_API_REVISION") or DEFAULT_GEMINI_API_REVISION
         self.api_key = api_key if api_key is not None else os.environ.get("GEMINI_API_KEY")
         self._transport = transport
@@ -142,7 +151,8 @@ def gemini_extractor_metadata(env: dict[str, str] | None = None) -> dict[str, An
     source = os.environ if env is None else env
     return {
         "provider": "google-gemini",
-        "model": source.get("MIZOKI_GEMINI_MODEL") or DEFAULT_GEMINI_MODEL,
+        "model": source.get("MIZOKI_GEMINI_MODEL") or _registry_default_model(source),
+        "registry_role": Role.DATA_CAUSAL.value,
         "api_revision": source.get("MIZOKI_GEMINI_API_REVISION") or DEFAULT_GEMINI_API_REVISION,
         "strict_response_format": True,
         "configured": bool((source.get("GEMINI_API_KEY") or "").strip()),
@@ -213,7 +223,7 @@ class VertexGeminiJourneyExtractor:
         client: Any = None,
     ) -> None:
         self.normalizer = normalizer
-        self.model = model or os.environ.get("MIZOKI_GEMINI_MODEL") or DEFAULT_GEMINI_MODEL
+        self.model = model or os.environ.get("MIZOKI_GEMINI_MODEL") or _registry_default_model()
         self.project = project if project is not None else _resolve_vertex_project(os.environ)
         self.location = location or os.environ.get("MIZOKI_GEMINI_LOCATION") or DEFAULT_VERTEX_LOCATION
         self._client = client
@@ -283,7 +293,8 @@ def vertex_extractor_metadata(env: dict[str, str] | None = None) -> dict[str, An
     return {
         "provider": "google-vertex-ai",
         "auth": "application-default-credentials",
-        "model": source.get("MIZOKI_GEMINI_MODEL") or DEFAULT_GEMINI_MODEL,
+        "model": source.get("MIZOKI_GEMINI_MODEL") or _registry_default_model(source),
+        "registry_role": Role.DATA_CAUSAL.value,
         "location": source.get("MIZOKI_GEMINI_LOCATION") or DEFAULT_VERTEX_LOCATION,
         "strict_response_format": True,
         "configured": bool(project),

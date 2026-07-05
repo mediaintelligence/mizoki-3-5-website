@@ -306,6 +306,50 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn("must be an object", response.get_json()["error"])
 
+    def test_virtuoso_registry_endpoint_reports_roles_and_fallback(self) -> None:
+        response = self.client.get("/api/boss/virtuoso/registry")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertEqual("claude-opus-4-8", payload["global_fallback"])
+        self.assertEqual(4, len(payload["roles"]))
+        self.assertEqual("gemini-3.5-pro", payload["roles"]["data_causal"]["model"])
+
+    def test_virtuoso_resolve_endpoint_resolves_and_validates_role(self) -> None:
+        response = self.client.post("/api/boss/virtuoso/resolve", json={"role": "coding_arch"})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("claude-opus-4-8", response.get_json()["model"])
+
+        unknown = self.client.post("/api/boss/virtuoso/resolve", json={"role": "brain"})
+        self.assertEqual(400, unknown.status_code)
+        self.assertIn("unknown virtuoso role", unknown.get_json()["error"])
+
+        missing = self.client.post("/api/boss/virtuoso/resolve", json={})
+        self.assertEqual(400, missing.status_code)
+
+    def test_virtuoso_scan_endpoint_flags_retired_strings(self) -> None:
+        response = self.client.post(
+            "/api/boss/virtuoso/scan",
+            json={"text": "model = 'grok-code-fast'", "source": "cells/ops.yaml"},
+        )
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertFalse(payload["clean"])
+        self.assertEqual(["grok-code-fast"], payload["violations"])
+        self.assertEqual("cells/ops.yaml", payload["source"])
+
+        clean = self.client.post("/api/boss/virtuoso/scan", json={"text": "gemini-3.5-pro"})
+        self.assertTrue(clean.get_json()["clean"])
+
+    def test_virtuoso_traces_endpoint_and_discover_block(self) -> None:
+        traces = self.client.get("/api/boss/virtuoso/traces")
+        self.assertEqual(200, traces.status_code)
+        self.assertEqual([], traces.get_json()["traces"])
+
+        discover = self.client.get("/api/boss/discover")
+        block = discover.get_json()["virtuoso"]
+        self.assertEqual("claude-opus-4-8", block["global_fallback"])
+        self.assertIn("virtuoso.scan_legacy", block["tools"])
+
 
 if __name__ == "__main__":
     unittest.main()

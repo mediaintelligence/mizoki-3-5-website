@@ -150,6 +150,67 @@ mizoki-website/
 
 ## Recent Work (July 2026)
 
+### Virtuoso Model Plane — Boss Agent Consolidation (2026-07-05)
+
+Consolidated the founder's **`virtuoso_models` role-based flagship registry** (spec: the
+MIZOKICloudRun WIRING.md) with the Boss Agent runtime. New `mizoki_runtime/virtuoso.py` —
+deterministic, dependency-free, no vendor SDKs imported; the dispatcher runs through
+injectable per-vendor adapters so failover semantics are fully unit-tested with no network.
+
+**What it is:** one source of truth for which frontier model serves each role —
+`Role.DATA_CAUSAL` (`gemini-3.5-pro`, SENSE/REASON/DECIDE extraction + causal cells),
+`Role.CODING_ARCH` (`claude-opus-4-8`, Boss/codegen/architecture), `Role.CREATIVE_MM`
+(`gpt-5.5`, provisional), `Role.DEVOPS_OPS` (`grok-5`, provisional) — plus a cross-vendor
+**global fallback** (`claude-opus-4-8`) every role fails over to after a primary failure
+(never first-choice; responses carry `served_by`/`primary_error` so a degraded path is
+never silent; `fallback=False` opts out; CODING_ARCH's failover is a no-op re-raise).
+`VIRTUOSO_MODEL_<ROLE>` env overrides are honored but **rejected if they resolve to a
+retired string** (the WIRING §2 purge list: gemini-2.0-flash, grok-4-1/-fast/-0709,
+grok-code-fast, claude-opus-4-6/-7, gpt-5.2, imagen-4.0, image-preview).
+`assert_fallback_not_primary` runs on every call; `validate_registry` runs as a **boot
+guard in `BossRuntime.__init__`** — a misconfigured registry refuses to start.
+
+**Reconciliations vs. WIRING.md (deliberate):** (1) DATA_CAUSAL defaults to
+`gemini-3.5-pro` because this repo already pinned it (founder pin, in prod); the
+`VIRTUOSO_GEMINI_35_PRO_GA` flag is accepted for env parity and resolves to the same
+string. (2) The repo's existing JourneyEvent layer stays canonical (WIRING §9 describes
+the MIZOKICloudRun copy of the same layer); instead of duplicating it, the **extractor
+model default now resolves through the registry** — `journey_gemini.py`'s two extractors
+and both metadata functions use `get_model(Role.DATA_CAUSAL).model` (precedence: explicit
+arg > `MIZOKI_GEMINI_MODEL` > registry incl. `VIRTUOSO_MODEL_DATA_CAUSAL`), so the
+registry and the event store agree on which flagship produced each row. Discovery now
+reports `registry_role: data_causal` on the extractor block. (3) Seven-phase SRPVDAL
+remains authoritative (WIRING §9 concurs); roles and phases are orthogonal. (4)
+CREATIVE_MM / DEVOPS_OPS / image-delegate ids are marked `provisional: true` pending the
+actual `virtuoso_models` package values — override via env, no code change.
+
+**MII distillation hook (WIRING §6):** `virtuoso_call` responses carrying a
+`reasoning_summary` are persisted by `VirtuosoModelPlane` to
+`data/mii_reasoning_traces.jsonl` (covered by the `data/*.jsonl` gitignore; same
+ephemeral-disk caveat as the v1 store). Gemini's None summaries (encrypted signatures)
+are never persisted.
+
+**Wiring (`runtime.py`, `app.py`):** MCP tools `virtuoso.registry`,
+`virtuoso.resolve_model`, `virtuoso.scan_legacy`, `virtuoso.reasoning_traces` (new
+`virtuoso` category); Flask `GET /api/boss/virtuoso/registry`, `POST
+/api/boss/virtuoso/resolve`, `POST /api/boss/virtuoso/scan`, `GET
+/api/boss/virtuoso/traces`; `discover().virtuoso` block (roles resolved with overrides
+applied, fallback, image delegates, purge patterns, phase note); `health_snapshot()`
+gains `virtuoso_role_count` + `mii_trace_count`; KG entity `virtuoso_model_plane` with
+edges from `boss_agent`/`journey_ingest` and into `srpvdal`/`decision_control_plane`.
+Legacy-string purge grep run against this repo: **zero hits** (the only model string,
+the extractor's `gemini-3.5-pro`, now comes from the registry).
+
+**Verification:** `python3 -m py_compile` clean on all four touched Python files;
+`python3 -m unittest tests.test_app tests.test_runtime` → **96 passing** (+23: registry
+defaults/overrides/GA-flag/legacy rejection, fallback-not-primary guard, legacy scan,
+primary/failover/opt-out/no-op-reraise/double-failure dispatch, plane boot guard + role
+parsing + MII persistence (None summaries skipped) + snapshot + scan, runtime
+discover/tools/health integration, extractor-metadata registry threading + local-pin
+precedence, 4 Flask endpoint tests). Smoked via `test_client`: registry/resolve/scan/
+traces endpoints, `/api/health` counts, `/api/boss/discover` virtuoso block + extractor
+`registry_role`, MII row visible via `GET /api/boss/virtuoso/traces` after a plane call.
+
 ### Homepage Connector Gateway 9→12 + Creative Single-Point-of-Truth Docs (2026-07-03)
 
 Two follow-on changes the same day, after the Manufacturing lens shipped (entry below).
