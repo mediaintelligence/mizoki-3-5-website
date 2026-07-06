@@ -150,6 +150,79 @@ mizoki-website/
 
 ## Recent Work (July 2026)
 
+### Virtuoso Model Plane — Boss Agent Consolidation (2026-07-05)
+
+Consolidated the founder's **`virtuoso_models` role-based flagship registry** with the
+Boss Agent runtime. New `mizoki_runtime/virtuoso.py` — deterministic, dependency-free, no
+vendor SDKs imported; the dispatcher runs through injectable per-vendor adapters so
+failover semantics are fully unit-tested with no network. Registry data is **synced from
+the canonical package** (`MIZOKICloudRun` `src/shared/virtuoso_models/model_registry.py`
+@ `2cb00d6`, cloned into the session and diffed — the pasted WIRING.md turned out to be
+an older revision; the real registry, updated 2026-07-04, superseded several values).
+
+**What it is:** one source of truth for which frontier model serves each role —
+`Role.DATA_CAUSAL` (base `gemini-3.1-pro-preview`, **auto-flipped to `gemini-3.5-flash`**
+since the 2026-07-04 GA; Boss directive: Flash tier, an explicit cost/latency choice),
+`Role.CODING_ARCH` (`claude-opus-4-8`, Boss/codegen/architecture), `Role.CREATIVE_MM`
+(`gpt-5.5`), `Role.DEVOPS_OPS` (`grok-4.3`) — plus a cross-vendor **global fallback**
+(`claude-opus-4-8`) every role fails over to after a primary failure (never first-choice;
+responses carry `served_by`/`primary_error` so a degraded path is never silent;
+`fallback=False` opts out; CODING_ARCH's failover is a no-op re-raise). Image delegates:
+`IMAGE_MODELS = {google_flagship: gemini-3-pro-image, google_fast: gemini-3.1-flash-image}`
+(Imagen retired). `VIRTUOSO_MODEL_<ROLE>` env overrides are honored but **rejected if
+they contain a retired string** (per-role `forbidden_legacy` lists + image legacy, exact
+strings synced from the canonical registry: gemini-2.0-flash*, gemini-3-pro-preview,
+gemini-2.5-flash*, claude-opus-4-6/-7, gpt-5.2*/gpt-5.3-chat-latest, grok-4-1-fast-*/
+grok-4-fast-*/grok-4-0709/grok-code-fast-1/grok-3, imagen-4.0-*, *-image-preview).
+`VIRTUOSO_GEMINI_35_FLASH_GA=1` forces the Flash flip when the module constant is off.
+`assert_fallback_not_primary` runs on every call; `validate_registry` runs as a **boot
+guard in `BossRuntime.__init__`** — a misconfigured registry refuses to start.
+`assert_no_legacy_strings()` with no args self-audits the live registry.
+
+**Reconciliations (deliberate):** (1) **The extractor default model changed
+`gemini-3.5-pro` → `gemini-3.5-flash`**: the founder's 3.5-pro pin (2026-06-25) predates
+the Boss's 2026-07-04 Flash directive, and the registry is the single source of truth —
+`journey_gemini.py`'s two extractors and both metadata functions now use
+`get_model(Role.DATA_CAUSAL).model` (precedence: explicit arg > `MIZOKI_GEMINI_MODEL` >
+registry incl. `VIRTUOSO_MODEL_DATA_CAUSAL`), so the registry and the event store agree
+on which flagship produced each row; set `MIZOKI_GEMINI_MODEL=gemini-3.5-pro` in prod to
+re-pin without a code change. Discovery reports `registry_role: data_causal` on the
+extractor block. (2) The repo's existing JourneyEvent layer stays canonical (WIRING §9
+describes the MIZOKICloudRun copy of the same layer) — not duplicated. (3) Seven-phase
+SRPVDAL remains authoritative (WIRING §9 concurs); roles and phases are orthogonal.
+(4) `get_model`/guards accept an injectable env mapping (canonical package reads
+`os.getenv`) so resolution is testable without patching the process environment.
+
+**MII distillation hook (WIRING §6):** `virtuoso_call` responses carrying a
+`reasoning_summary` are persisted by `VirtuosoModelPlane` to
+`data/mii_reasoning_traces.jsonl` (covered by the `data/*.jsonl` gitignore; same
+ephemeral-disk caveat as the v1 store). Gemini's None summaries (encrypted signatures)
+are never persisted.
+
+**Wiring (`runtime.py`, `app.py`):** MCP tools `virtuoso.registry`,
+`virtuoso.resolve_model`, `virtuoso.scan_legacy`, `virtuoso.reasoning_traces` (new
+`virtuoso` category); Flask `GET /api/boss/virtuoso/registry`, `POST
+/api/boss/virtuoso/resolve`, `POST /api/boss/virtuoso/scan`, `GET
+/api/boss/virtuoso/traces`; `discover().virtuoso` block (roles resolved with overrides
+applied, fallback, image delegates, purge patterns, phase note); `health_snapshot()`
+gains `virtuoso_role_count` + `mii_trace_count`; KG entity `virtuoso_model_plane` with
+edges from `boss_agent`/`journey_ingest` and into `srpvdal`/`decision_control_plane`.
+Legacy-string purge grep run against this repo: **zero hits** (the only model string,
+the extractor's `gemini-3.5-pro`, now comes from the registry).
+
+**Verification:** `python3 -m py_compile` clean on all four touched Python files;
+`python3 -m unittest tests.test_app tests.test_runtime` → **96 passing** (+23: registry
+defaults/overrides/GA-flag/legacy rejection, fallback-not-primary guard, legacy scan,
+primary/failover/opt-out/no-op-reraise/double-failure dispatch, plane boot guard + role
+parsing + MII persistence (None summaries skipped) + snapshot + scan, runtime
+discover/tools/health integration, extractor-metadata registry threading + local-pin
+precedence, 4 Flask endpoint tests). Smoked via `test_client`: registry/resolve/scan/
+traces endpoints, `/api/health` counts, `/api/boss/discover` virtuoso block + extractor
+`registry_role`, MII row visible via `GET /api/boss/virtuoso/traces` after a plane call.
+Second pass after cloning the real MIZOKICloudRun package (2026-07-06): registry values
+re-synced (gemini-3.5-flash flip, grok-4.3, Nano Banana image strings, exact per-role
+forbidden lists, no-arg self-audit mode), suite still **96 passing**.
+
 ### Homepage Connector Gateway 9→12 + Creative Single-Point-of-Truth Docs (2026-07-03)
 
 Two follow-on changes the same day, after the Manufacturing lens shipped (entry below).
