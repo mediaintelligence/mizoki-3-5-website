@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from mizoki_runtime import create_runtime
 from mizoki_runtime.journey import JourneyIngestCell, sha256_hex
@@ -547,8 +548,10 @@ class BossRuntimeTestCase(unittest.TestCase):
         self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
         self.assertEqual("mizoki/ingest/llm", event["provenance"]["pipeline"])
         # The request pins the model + enforces the strict schema response_format.
+        # (The request model comes from the Virtuoso registry's DATA_CAUSAL slot;
+        # the event provenance records what the response actually reported.)
         self.assertTrue(captured["body"]["response_format"]["strict"])
-        self.assertEqual("gemini-3.5-pro", captured["body"]["model_version"])
+        self.assertEqual("gemini-3.5-flash", captured["body"]["model_version"])
         self.assertEqual("2026-06-01", captured["headers"]["X-Api-Revision"])
 
     def test_gemini_extractor_requires_credentials_without_transport(self) -> None:
@@ -596,7 +599,9 @@ class BossRuntimeTestCase(unittest.TestCase):
     def test_gemini_extractor_metadata_reports_pinned_model(self) -> None:
         meta = gemini_extractor_metadata({})
         self.assertEqual("google-gemini", meta["provider"])
-        self.assertEqual("gemini-3.5-pro", meta["model"])
+        # Default resolves through the Virtuoso registry's DATA_CAUSAL slot
+        # (gemini-3.5-flash since the 2026-07-04 GA flip).
+        self.assertEqual("gemini-3.5-flash", meta["model"])
         self.assertTrue(meta["strict_response_format"])
         self.assertFalse(meta["configured"])
         self.assertTrue(gemini_extractor_metadata({"GEMINI_API_KEY": "x"})["configured"])
@@ -826,11 +831,13 @@ def _seat_events(seat, exchange, *, total, wins, revenue_per_win, consent=True):
 
 class VirtuosoRegistryTestCase(unittest.TestCase):
     def test_registry_defaults_resolve_expected_flagships(self) -> None:
-        self.assertEqual("gemini-3.5-pro", get_model(Role.DATA_CAUSAL, env={}).model)
+        # Synced from MIZOKICloudRun src/shared/virtuoso_models (2026-07-04).
+        self.assertEqual("gemini-3.5-flash", get_model(Role.DATA_CAUSAL, env={}).model)
         self.assertEqual(GLOBAL_FALLBACK, get_model(Role.CODING_ARCH, env={}).model)
+        self.assertEqual("gpt-5.5", get_model(Role.CREATIVE_MM, env={}).model)
+        self.assertEqual("grok-4.3", get_model(Role.DEVOPS_OPS, env={}).model)
         for role in Role:
             spec = get_model(role, env={})
-            self.assertEqual("registry", spec.source)
             self.assertTrue(spec.model)
             self.assertTrue(spec.api_key_env)
 
@@ -842,10 +849,19 @@ class VirtuosoRegistryTestCase(unittest.TestCase):
             get_model(Role.DATA_CAUSAL, env={"VIRTUOSO_MODEL_DATA_CAUSAL": "gemini-2.0-flash"})
         self.assertIn("VIRTUOSO_MODEL_DATA_CAUSAL", str(ctx.exception))
 
-    def test_gemini_ga_flag_resolves_to_ga_string(self) -> None:
-        spec = get_model(Role.DATA_CAUSAL, env={"VIRTUOSO_GEMINI_35_PRO_GA": "1"})
-        self.assertEqual("gemini-3.5-pro", spec.model)
-        self.assertEqual("ga-flag", spec.source)
+    def test_gemini_flash_ga_flip_and_base_revert(self) -> None:
+        # Flag is on in the canonical registry -> DATA_CAUSAL flips to Flash.
+        spec = get_model(Role.DATA_CAUSAL, env={})
+        self.assertEqual("gemini-3.5-flash", spec.model)
+        self.assertEqual("ga-flip", spec.source)
+        # Clearing the constant reverts to the base preview string...
+        with mock.patch("mizoki_runtime.virtuoso.GEMINI_35_FLASH_IS_GA", False):
+            base = get_model(Role.DATA_CAUSAL, env={})
+            self.assertEqual("gemini-3.1-pro-preview", base.model)
+            self.assertEqual("registry", base.source)
+            # ...unless the env flag forces the flip back on.
+            forced = get_model(Role.DATA_CAUSAL, env={"VIRTUOSO_GEMINI_35_FLASH_GA": "1"})
+            self.assertEqual("gemini-3.5-flash", forced.model)
 
     def test_fallback_not_primary_guard(self) -> None:
         with self.assertRaises(ValueError):
@@ -858,13 +874,17 @@ class VirtuosoRegistryTestCase(unittest.TestCase):
         self.assertEqual(GLOBAL_FALLBACK, resolved.model)
 
     def test_legacy_string_scan_finds_retired_ids(self) -> None:
-        text = "model: grok-4-fast\nfallback: gemini-2.0-flash-lite\nok: claude-opus-4-8"
+        text = "model: grok-4-fast-reasoning\nfallback: gemini-2.0-flash-lite\nok: claude-opus-4-8"
         found = find_legacy_strings(text)
-        self.assertEqual(["grok-4-fast", "gemini-2.0-flash"], found)
+        self.assertIn("grok-4-fast-reasoning", found)
+        self.assertIn("gemini-2.0-flash-lite", found)
+        self.assertNotIn("claude-opus-4-8", found)
         with self.assertRaises(ValueError) as ctx:
             assert_no_legacy_strings(text, source="cells/reason.yaml")
         self.assertIn("cells/reason.yaml", str(ctx.exception))
-        assert_no_legacy_strings("claude-opus-4-8 gemini-3.5-pro", source="clean.yaml")
+        assert_no_legacy_strings("claude-opus-4-8 gemini-3.5-flash", source="clean.yaml")
+        # No-arg mode self-audits the live registry (resolved primaries + image models).
+        assert_no_legacy_strings()
 
 
 class VirtuosoDispatchTestCase(unittest.TestCase):
@@ -884,7 +904,7 @@ class VirtuosoDispatchTestCase(unittest.TestCase):
             env={},
         )
         self.assertEqual("primary", response.served_by)
-        self.assertEqual("gemini-3.5-pro", response.model)
+        self.assertEqual("gemini-3.5-flash", response.model)
         self.assertIsNone(response.primary_error)
         self.assertEqual("because", response.reasoning_summary)
 
@@ -919,7 +939,7 @@ class VirtuosoDispatchTestCase(unittest.TestCase):
         with self.assertRaises(RuntimeError) as ctx:
             virtuoso_call(Role.DEVOPS_OPS, [], adapters={"xai": self._boom}, env={})
         message = str(ctx.exception)
-        self.assertIn("grok-5", message)
+        self.assertIn("grok-4.3", message)
         self.assertIn(GLOBAL_FALLBACK, message)
 
 
@@ -936,7 +956,7 @@ class VirtuosoModelPlaneTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             VirtuosoModelPlane(
                 Path(self.temp_dir.name) / "other.jsonl",
-                env={"VIRTUOSO_MODEL_DEVOPS_OPS": "grok-4-fast"},
+                env={"VIRTUOSO_MODEL_DEVOPS_OPS": "grok-4-fast-reasoning"},
             )
         with self.assertRaises(ValueError):
             VirtuosoModelPlane(
@@ -945,8 +965,8 @@ class VirtuosoModelPlaneTestCase(unittest.TestCase):
             )
 
     def test_resolve_accepts_value_or_name_and_rejects_unknown(self) -> None:
-        self.assertEqual("gemini-3.5-pro", self.plane.resolve("data_causal")["model"])
-        self.assertEqual("gemini-3.5-pro", self.plane.resolve("DATA_CAUSAL")["model"])
+        self.assertEqual("gemini-3.5-flash", self.plane.resolve("data_causal")["model"])
+        self.assertEqual("gemini-3.5-flash", self.plane.resolve("DATA_CAUSAL")["model"])
         with self.assertRaises(ValueError):
             self.plane.resolve("brain")
 
@@ -977,7 +997,8 @@ class VirtuosoModelPlaneTestCase(unittest.TestCase):
             ["sense", "reason", "plan", "validate", "decide", "act", "learn"],
             snapshot["srpvdal_phases"],
         )
-        self.assertIn("google_flagship", snapshot["image_models"])
+        self.assertEqual("gemini-3-pro-image", snapshot["image_models"]["google_flagship"])
+        self.assertEqual("gemini-3.1-flash-image", snapshot["image_models"]["google_fast"])
 
     def test_scan_text_reports_violations(self) -> None:
         result = self.plane.scan_text("pin claude-opus-4-6 here", source="app.yaml")
@@ -998,7 +1019,7 @@ class VirtuosoRuntimeIntegrationTestCase(unittest.TestCase):
         block = self.runtime.discover()["virtuoso"]
         self.assertEqual(GLOBAL_FALLBACK, block["global_fallback"])
         self.assertIn("virtuoso.resolve_model", block["tools"])
-        self.assertEqual("gemini-3.5-pro", block["roles"]["data_causal"]["model"])
+        self.assertEqual("gemini-3.5-flash", block["roles"]["data_causal"]["model"])
 
     def test_virtuoso_tools_are_callable_through_mcp(self) -> None:
         resolved = self.runtime.call_tool("virtuoso.resolve_model", {"role": "coding_arch"})

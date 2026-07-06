@@ -1,35 +1,40 @@
 """Virtuoso model plane — role-based flagship registry consolidated with the Boss Agent.
 
-This is the in-repo counterpart of the ``virtuoso_models`` package that WIRING.md
-drops into MIZOKICloudRun: one source of truth for which frontier model serves each
-role, a hard guard against retired model strings, and a cross-vendor global-fallback
-contract. The Boss Agent stops carrying vendor model ids of its own and resolves
-everything through ``get_model(Role.X)`` — the same lookup the SRPVDAL cells use —
-so the registry and every provenance stamp agree on which flagship produced a row.
+This is the in-repo counterpart of the ``virtuoso_models`` package that lives in
+MIZOKICloudRun (``src/shared/virtuoso_models``): one source of truth for which
+frontier model serves each role, a hard guard against retired model strings, and a
+cross-vendor global-fallback contract. The Boss Agent stops carrying vendor model
+ids of its own and resolves everything through ``get_model(Role.X)`` — the same
+lookup the SRPVDAL cells use — so the registry and every provenance stamp agree on
+which flagship produced a row.
+
+Registry data is synced from the canonical package (model_registry.py as of
+2026-07-04):
+  DATA_CAUSAL   -> Google    gemini-3.5-flash   (GA flip 2026-07-04; base gemini-3.1-pro-preview)
+  CODING_ARCH   -> Anthropic claude-opus-4-8
+  CREATIVE_MM   -> OpenAI    gpt-5.5
+  DEVOPS_OPS    -> xAI       grok-4.3
+  GLOBAL BACKUP -> Anthropic claude-opus-4-8    (all roles, cross-vendor)
 
 Kept in the house style: deterministic, dependency-free, unit-testable. No vendor
 SDK is imported here; ``virtuoso_call`` dispatches through injectable per-vendor
 adapters, so the failover semantics (served_by / primary_error / opt-out) are fully
-exercised in-process with no network and no keys.
+exercised in-process with no network and no keys. ``get_model`` additionally
+accepts an injectable env mapping (the canonical package reads ``os.getenv``
+directly) so resolution is testable without patching the process environment.
 
-Reconciliation notes vs. WIRING.md (intentional, documented):
-- The DATA_CAUSAL slot defaults to ``gemini-3.5-pro`` because this repo already
-  pinned that model for the JourneyEvent extractor (founder pin, 2026-06) and it is
-  what production stamps into provenance. The ``VIRTUOSO_GEMINI_35_PRO_GA`` flag is
-  still accepted for env parity with MIZOKICloudRun cells; it resolves to the same
-  string here.
-- The seven-phase SRPVDAL loop is authoritative in this repo (WIRING §9 encodes the
-  same); roles (which flagship runs) and phases (pipeline position) are orthogonal.
+The seven-phase SRPVDAL loop is authoritative in this repo (the canonical WIRING §9
+encodes the same); roles (which flagship runs) and phases (pipeline position) are
+orthogonal.
 """
 
 from __future__ import annotations
 
 import json
-import os
-import re
 import time
 from dataclasses import dataclass, replace
 from enum import Enum
+from os import environ
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
@@ -37,10 +42,10 @@ from typing import Any, Callable, Mapping
 class Role(str, Enum):
     """Which flagship serves a class of work — not where it sits in the loop."""
 
-    DATA_CAUSAL = "data_causal"  # SENSE/REASON/DECIDE extraction + causal cells
-    CODING_ARCH = "coding_arch"  # Boss Agent / codegen / architecture
-    CREATIVE_MM = "creative_mm"  # creative & asset generation (multimodal)
-    DEVOPS_OPS = "devops_ops"  # deploy / incident / ops agents
+    DATA_CAUSAL = "data_causal"  # data science, strategy, causal inference (SENSE/REASON/DECIDE cells)
+    CODING_ARCH = "coding_arch"  # coding & software architecture (Boss Agent, codegen)
+    CREATIVE_MM = "creative_mm"  # creative direction, multimodal generation
+    DEVOPS_OPS = "devops_ops"  # devops, deploy, operations
 
 
 # The seven-phase SRPVDAL loop is authoritative (matches the JourneyEvent
@@ -54,38 +59,34 @@ SRPVDAL_PHASES = ("sense", "reason", "plan", "validate", "decide", "act", "learn
 GLOBAL_FALLBACK = "claude-opus-4-8"
 GLOBAL_FALLBACK_VENDOR = "anthropic"
 
-# Retired / superseded model strings (WIRING §2). A config or env override that
-# resolves to any of these is a misconfiguration, rejected at startup.
-FORBIDDEN_LEGACY_PATTERNS = (
-    r"gemini-2\.0-flash",
-    r"gemini-3-pro-preview",
-    r"grok-4-1",
-    r"grok-4-fast",
-    r"grok-4-0709",
-    r"grok-code-fast",
-    r"claude-opus-4-6",
-    r"claude-opus-4-7",
-    r"gpt-5\.2",
-    r"imagen-4\.0",
-    r"image-preview",
-)
-_LEGACY_RE = re.compile("|".join(f"({pattern})" for pattern in FORBIDDEN_LEGACY_PATTERNS))
+# Gemini 3.5 Flash auto-flip — GA confirmed on Vertex 2026-07-04, flag flipped True
+# in the canonical registry. Boss directive 2026-07-04: DATA_CAUSAL's flip target is
+# the FLASH tier (not 3.5 Pro) — an explicit cost/latency choice that overrides
+# "capability over cost" for this one role. Env VIRTUOSO_GEMINI_35_FLASH_GA=1 also
+# forces it on; clearing the constant reverts to the gemini-3.1-pro-preview base.
+GEMINI_35_FLASH_IS_GA = True
+GEMINI_35_FLASH_STRING = "gemini-3.5-flash"
+GEMINI_GA_FLAG = "VIRTUOSO_GEMINI_35_FLASH_GA"
 
 ENV_OVERRIDE_PREFIX = "VIRTUOSO_MODEL_"
-GEMINI_GA_FLAG = "VIRTUOSO_GEMINI_35_PRO_GA"
-IMAGE_OVERRIDE_ENV = "VIRTUOSO_IMAGE_GOOGLE_FLAGSHIP"
 
 
 @dataclass(frozen=True)
 class ModelSpec:
     role: Role
-    model: str
+    model: str  # exact API model string (the PRIMARY)
     vendor: str
-    sdk: str
+    endpoint: str
     api_key_env: str
+    effort_param: str
+    effort_default: str
+    exposes_reasoning_summary: bool  # usable for MII distillation capture
     srpvdal_stages: tuple[str, ...]
-    rationale: str
-    provisional: bool = False
+    notes: str
+    forbidden_legacy: tuple[str, ...] = ()
+    # In-family upgrade target announced but gated on a GA flag. Cross-vendor is
+    # NOT allowed here — this is the in-family successor only.
+    pending_upgrade: str | None = None
     source: str = "registry"
 
     def to_dict(self) -> dict[str, Any]:
@@ -93,133 +94,195 @@ class ModelSpec:
             "role": self.role.value,
             "model": self.model,
             "vendor": self.vendor,
-            "sdk": self.sdk,
+            "endpoint": self.endpoint,
             "api_key_env": self.api_key_env,
+            "effort_param": self.effort_param,
+            "effort_default": self.effort_default,
+            "exposes_reasoning_summary": self.exposes_reasoning_summary,
             "srpvdal_stages": list(self.srpvdal_stages),
-            "rationale": self.rationale,
-            "provisional": self.provisional,
+            "notes": self.notes,
+            "pending_upgrade": self.pending_upgrade,
             "source": self.source,
             "global_fallback": GLOBAL_FALLBACK,
         }
 
 
-_PRIMARIES: dict[Role, ModelSpec] = {
+REGISTRY: dict[Role, ModelSpec] = {
     Role.DATA_CAUSAL: ModelSpec(
         role=Role.DATA_CAUSAL,
-        model="gemini-3.5-pro",
+        model="gemini-3.1-pro-preview",
         vendor="google",
-        sdk="google-genai",
+        endpoint="https://aiplatform.googleapis.com",  # Vertex AI; location=global
         api_key_env="GEMINI_API_KEY",
+        effort_param="thinking_level",
+        effort_default="high",
+        exposes_reasoning_summary=False,  # thought signatures are ENCRYPTED — not distillable
         srpvdal_stages=("sense", "reason", "decide"),
-        rationale=(
+        notes=(
             "Extraction + causal cells (incl. Cell 26/27 X-/DR-Learner framing prompts). "
-            "GA pin already applied in this repo (JourneyEvent extractor, 2026-06)."
+            "Resolves to gemini-3.5-flash while the GA flag is on (Boss directive "
+            "2026-07-04: Flash tier, an explicit cost/latency choice). "
+            "Global fallback: claude-opus-4-8 (cross-vendor)."
         ),
+        forbidden_legacy=(
+            "gemini-2.0-flash",  # SHUTDOWN 2026-06-01
+            "gemini-2.0-flash-lite",
+            "gemini-2.0-flash-001",
+            "gemini-2.0-flash-lite-001",
+            "gemini-3-pro-preview",  # shut down 2026-03-09, silently aliased
+            "gemini-2.5-flash",  # cost-tier: barred by capability-over-cost rule
+            "gemini-2.5-flash-lite",
+        ),
+        pending_upgrade=GEMINI_35_FLASH_STRING,
     ),
     Role.CODING_ARCH: ModelSpec(
         role=Role.CODING_ARCH,
         model="claude-opus-4-8",
         vendor="anthropic",
-        sdk="anthropic",
+        endpoint="https://api.anthropic.com",
         api_key_env="ANTHROPIC_API_KEY",
+        effort_param="effort",
+        effort_default="xhigh",
+        exposes_reasoning_summary=True,  # richest MII signal
         srpvdal_stages=("plan", "act"),
-        rationale=(
-            "Boss Agent / codegen / architecture. Legitimately shares the global-fallback "
-            "string; its failover is a no-op re-raise."
+        notes=(
+            "Boss Agent / codegen / architecture. This is also the GLOBAL FALLBACK "
+            "model; on this role the primary and fallback are the same, so failover "
+            "is a no-op re-raise."
+        ),
+        forbidden_legacy=(
+            "claude-opus-4-6-20260201",
+            "claude-opus-4-6",
+            "claude-opus-4-7",
         ),
     ),
     Role.CREATIVE_MM: ModelSpec(
         role=Role.CREATIVE_MM,
         model="gpt-5.5",
         vendor="openai",
-        sdk="openai",
+        endpoint="https://api.openai.com",
         api_key_env="OPENAI_API_KEY",
+        effort_param="reasoning.effort",
+        effort_default="high",
+        exposes_reasoning_summary=True,
         srpvdal_stages=("act",),
-        rationale=(
-            "Creative & asset generation; image work delegates to "
-            "IMAGE_MODELS['google_flagship']."
+        notes=(
+            "Creative direction & asset generation; image work delegates to "
+            "IMAGE_MODELS. Global fallback: claude-opus-4-8 (cross-vendor)."
         ),
-        provisional=True,
+        forbidden_legacy=(
+            "gpt-5.2-chat-latest",  # deprecated 2026-05-08
+            "gpt-5.3-chat-latest",
+            "gpt-5.2",
+            "chatgpt-5.2",
+        ),
     ),
     Role.DEVOPS_OPS: ModelSpec(
         role=Role.DEVOPS_OPS,
-        model="grok-5",
+        model="grok-4.3",
         vendor="xai",
-        sdk="openai-compatible",
+        endpoint="https://api.x.ai",
         api_key_env="XAI_API_KEY",
+        effort_param="reasoning_effort",
+        effort_default="high",  # incident/deploy reasoning: never default-low
+        exposes_reasoning_summary=True,
         srpvdal_stages=("act", "learn"),
-        rationale=(
-            "Deploy / incident / ops agents. Watch the api.x.ai -> SpaceXAI endpoint "
-            "migration (12+ mo)."
+        notes=(
+            "Deploy / incident / ops agents. Retired 4.1/4-fast slugs silently "
+            "redirect here at LOW effort — pin the string AND the effort. "
+            "Global fallback: claude-opus-4-8 (cross-vendor)."
         ),
-        provisional=True,
+        forbidden_legacy=(
+            "grok-4-1-fast-reasoning",  # retired 2026-05-15, silent redirect
+            "grok-4-1-fast-non-reasoning",
+            "grok-4-fast-reasoning",
+            "grok-4-fast-non-reasoning",
+            "grok-4-0709",
+            "grok-code-fast-1",
+            "grok-3",
+        ),
     ),
 }
 
+# Image-generation strings (Creative role delegates to these; Imagen shut down
+# 2026-06-24, the *-preview strings shut down 2026-06-25):
+IMAGE_MODELS = {
+    "google_flagship": "gemini-3-pro-image",  # Nano Banana Pro (GA string)
+    "google_fast": "gemini-3.1-flash-image",  # Nano Banana 2 (GA string)
+}
+FORBIDDEN_IMAGE_LEGACY = (
+    "imagen-4.0-generate-001",
+    "imagen-4.0-ultra-generate-001",
+    "imagen-4.0-fast-generate-001",
+    "gemini-3.1-flash-image-preview",
+    "gemini-3-pro-image-preview",
+)
+
+
+def all_forbidden_strings() -> tuple[str, ...]:
+    return FORBIDDEN_IMAGE_LEGACY + tuple(
+        legacy for spec in REGISTRY.values() for legacy in spec.forbidden_legacy
+    )
+
 
 def find_legacy_strings(text: str) -> list[str]:
-    """Return every retired model string present in ``text`` (deduped, in order)."""
-    seen: list[str] = []
-    for match in _LEGACY_RE.finditer(text or ""):
-        value = match.group(0)
-        if value not in seen:
-            seen.append(value)
-    return seen
+    """Return every retired model string present in ``text`` (deduped)."""
+    return [legacy for legacy in dict.fromkeys(all_forbidden_strings()) if legacy in (text or "")]
 
 
-def assert_no_legacy_strings(text: str, source: str = "config") -> None:
-    """Startup guard: refuse to boot if a retired string sneaks back in."""
+def assert_no_legacy_strings(text: str | None = None, source: str = "config") -> None:
+    """Startup guard: refuse to boot if a retired string sneaks back in.
+
+    With ``text`` given, scans that config blob. With no args, self-audits the
+    live registry — every string it would actually serve (resolved primaries +
+    image models) must itself be clean.
+    """
+    if text is None:
+        resolved = [get_model(role).model for role in Role] + list(IMAGE_MODELS.values())
+        text = " ".join(resolved)
+        source = "registry:self-audit"
     violations = find_legacy_strings(text)
     if violations:
         raise ValueError(
             f"retired model string(s) {violations} found in {source}; "
-            "replace with a get_model(Role.X).model lookup"
+            "these are shut down or silently redirected — replace with a "
+            "get_model(Role.X).model lookup"
         )
 
 
-def image_model(key: str = "google_flagship", env: Mapping[str, str] | None = None) -> dict[str, Any]:
-    """Image generation delegates (CREATIVE_MM). Provisional pending vendor GA cards."""
-    source = os.environ if env is None else env
-    if key != "google_flagship":
-        raise ValueError(f"unknown image model key: {key!r}")
-    override = (source.get(IMAGE_OVERRIDE_ENV) or "").strip()
-    if override:
-        assert_no_legacy_strings(override, source=IMAGE_OVERRIDE_ENV)
-    return {
-        "key": key,
-        "model": override or "imagen-5",
-        "vendor": "google",
-        "provisional": not override,
-    }
+def _gemini_35_flash_is_ga(env: Mapping[str, str]) -> bool:
+    return GEMINI_35_FLASH_IS_GA or env.get(GEMINI_GA_FLAG) == "1"
 
 
 def get_model(role: Role, env: Mapping[str, str] | None = None) -> ModelSpec:
-    """Resolve the flagship serving ``role``: env override first, else the registry.
+    """Resolve the active PRIMARY for a role: env override > GA auto-flip > base.
 
-    Overrides (``VIRTUOSO_MODEL_<ROLE>``) are rejected if they resolve to a retired
+    Overrides (``VIRTUOSO_MODEL_<ROLE>``) are rejected if they contain a retired
     string, so a legacy id can never be reintroduced through configuration.
+    Stateless: returns a resolved copy; the REGISTRY entry is never mutated, so
+    flips/overrides revert cleanly when their condition goes away.
     """
-    source = os.environ if env is None else env
-    spec = _PRIMARIES[role]
+    source = environ if env is None else env
+    spec = REGISTRY[role]
     override = (source.get(f"{ENV_OVERRIDE_PREFIX}{role.name}") or "").strip()
     if override:
         assert_no_legacy_strings(override, source=f"{ENV_OVERRIDE_PREFIX}{role.name}")
-        return replace(spec, model=override, provisional=False, source="env")
-    if role is Role.DATA_CAUSAL and (source.get(GEMINI_GA_FLAG) or "").strip() == "1":
-        # Env parity with MIZOKICloudRun cells; this repo's default is already the
-        # GA string, so the flag confirms rather than flips.
-        return replace(spec, model="gemini-3.5-pro", source="ga-flag")
+        return replace(spec, model=override, source="env")
+    if spec.pending_upgrade and role is Role.DATA_CAUSAL and _gemini_35_flash_is_ga(source):
+        return replace(spec, model=spec.pending_upgrade, source="ga-flip")
     return spec
 
 
 def assert_fallback_not_primary(role: Role, env: Mapping[str, str] | None = None) -> ModelSpec:
     """A non-Anthropic role whose primary resolves to the fallback string is a
-    misconfiguration — the failover path would mask itself. Runs on every call."""
+    misconfiguration — it would mask an outage as 'normal'. Runs on every call."""
     resolved = get_model(role, env)
-    if resolved.model == GLOBAL_FALLBACK and role is not Role.CODING_ARCH:
+    if resolved.vendor != GLOBAL_FALLBACK_VENDOR and resolved.model == GLOBAL_FALLBACK:
         raise ValueError(
-            f"role {role.value} primary resolves to the global fallback "
-            f"({GLOBAL_FALLBACK}); fix the {ENV_OVERRIDE_PREFIX}{role.name} override"
+            f"role {role.value} primary resolved to the global fallback "
+            f"({GLOBAL_FALLBACK}) but its vendor is '{resolved.vendor}'; a fallback "
+            f"must never silently become the primary — fix the "
+            f"{ENV_OVERRIDE_PREFIX}{role.name} override"
         )
     return resolved
 
@@ -364,13 +427,13 @@ class VirtuosoModelPlane:
 
     def registry_snapshot(self) -> dict[str, Any]:
         snapshot = validate_registry(self._env)
-        snapshot["image_models"] = {"google_flagship": image_model(env=self._env)}
+        snapshot["image_models"] = dict(IMAGE_MODELS)
         snapshot["srpvdal_phases"] = list(SRPVDAL_PHASES)
         snapshot["phase_note"] = (
             "seven-phase SRPVDAL is authoritative; roles (which flagship runs) and "
             "phases (pipeline position) are orthogonal"
         )
-        snapshot["forbidden_legacy_patterns"] = list(FORBIDDEN_LEGACY_PATTERNS)
+        snapshot["forbidden_legacy_strings"] = list(dict.fromkeys(all_forbidden_strings()))
         snapshot["mii_trace_count"] = self.trace_count()
         return snapshot
 

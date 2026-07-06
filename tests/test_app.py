@@ -312,7 +312,8 @@ class FlaskAppTestCase(unittest.TestCase):
         payload = response.get_json()
         self.assertEqual("claude-opus-4-8", payload["global_fallback"])
         self.assertEqual(4, len(payload["roles"]))
-        self.assertEqual("gemini-3.5-pro", payload["roles"]["data_causal"]["model"])
+        self.assertEqual("gemini-3.5-flash", payload["roles"]["data_causal"]["model"])
+        self.assertEqual("grok-4.3", payload["roles"]["devops_ops"]["model"])
 
     def test_virtuoso_resolve_endpoint_resolves_and_validates_role(self) -> None:
         response = self.client.post("/api/boss/virtuoso/resolve", json={"role": "coding_arch"})
@@ -329,15 +330,15 @@ class FlaskAppTestCase(unittest.TestCase):
     def test_virtuoso_scan_endpoint_flags_retired_strings(self) -> None:
         response = self.client.post(
             "/api/boss/virtuoso/scan",
-            json={"text": "model = 'grok-code-fast'", "source": "cells/ops.yaml"},
+            json={"text": "model = 'grok-code-fast-1'", "source": "cells/ops.yaml"},
         )
         self.assertEqual(200, response.status_code)
         payload = response.get_json()
         self.assertFalse(payload["clean"])
-        self.assertEqual(["grok-code-fast"], payload["violations"])
+        self.assertEqual(["grok-code-fast-1"], payload["violations"])
         self.assertEqual("cells/ops.yaml", payload["source"])
 
-        clean = self.client.post("/api/boss/virtuoso/scan", json={"text": "gemini-3.5-pro"})
+        clean = self.client.post("/api/boss/virtuoso/scan", json={"text": "gemini-3.5-flash"})
         self.assertTrue(clean.get_json()["clean"])
 
     def test_virtuoso_traces_endpoint_and_discover_block(self) -> None:
