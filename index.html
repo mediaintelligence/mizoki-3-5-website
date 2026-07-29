@@ -401,10 +401,6 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 @media(max-width:680px){.sc-grid{grid-template-columns:1fr}.sc-item{border-right:0!important}}
 @media(max-width:680px){.sim-inputs{grid-template-columns:1fr}}
 
-.d-link{margin-top:22px;padding-top:18px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:12px;letter-spacing:.06em}
-.d-link a{color:var(--teal);font-weight:600}
-.d-link a:hover{color:var(--ink)}
-
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
@@ -470,7 +466,6 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
             <button class="dnode" type="button" data-k="Risk" style="left:83%;top:45%"><span class="pip"></span>RISK</button>
             <button class="dnode" type="button" data-k="Estate" style="left:17%;top:45%"><span class="pip"></span>ESTATE</button>
             <button class="dnode" type="button" data-k="Signal" style="left:50%;top:63%"><span class="pip"></span>SIGNAL</button>
-            <button class="dnode" type="button" data-k="Manufacturing" style="left:64%;top:73%"><span class="pip"></span>MANUFACTURING</button>
             <button class="dcore" id="dcore" type="button">TCKG CORE</button>
           </div>
           <div class="schema-ov" id="schema-ov" aria-live="polite"></div>
@@ -538,7 +533,7 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
         <div class="reveal" style="margin:32px 0 40px">
           <div class="tag" style="margin-bottom:14px">UNIFIED INGRESS · CONNECTOR GATEWAY</div>
           <p class="sec-lede" style="margin-top:0">Before a signal can travel the pathway it enters through one governed gateway, where every external source is normalized into a single canonical business event. Nothing goes from raw signal straight to action.</p>
-          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">GML</div><div><h4>Gmail</h4><p>Mail &amp; thread signals.</p></div></div><div class="ent"><div class="ic">DRV</div><div><h4>Drive</h4><p>Documents &amp; contracts.</p></div></div><div class="ent"><div class="ic">GIT</div><div><h4>GitHub</h4><p>Code, issues &amp; CI.</p></div></div><div class="ent"><div class="ic">CAL</div><div><h4>Calendar</h4><p>Commitments &amp; timing.</p></div></div><div class="ent"><div class="ic">BQ</div><div><h4>BigQuery</h4><p>Warehoused facts.</p></div></div><div class="ent"><div class="ic">NEO</div><div><h4>Neo4j</h4><p>Graph relationships.</p></div></div><div class="ent"><div class="ic">VTX</div><div><h4>Vertex AI</h4><p>Reasoning &amp; embeddings.</p></div></div><div class="ent"><div class="ic">SHP</div><div><h4>Shopify</h4><p>Commerce, orders &amp; revenue.</p></div></div><div class="ent"><div class="ic">ADS</div><div><h4>Google Ads</h4><p>Search acquisition signals.</p></div></div><div class="ent"><div class="ic">MTA</div><div><h4>Meta Ads</h4><p>Facebook &amp; Instagram signals.</p></div></div><div class="ent"><div class="ic">KLV</div><div><h4>Klaviyo</h4><p>Email &amp; lifecycle marketing.</p></div></div><div class="ent"><div class="ic">DV3</div><div><h4>DV360</h4><p>Programmatic display &amp; video.</p></div></div></div>
+          <div class="ent-grid" style="margin-top:18px"><div class="ent"><div class="ic">GML</div><div><h4>Gmail</h4><p>Mail &amp; thread signals.</p></div></div><div class="ent"><div class="ic">DRV</div><div><h4>Drive</h4><p>Documents &amp; contracts.</p></div></div><div class="ent"><div class="ic">GIT</div><div><h4>GitHub</h4><p>Code, issues &amp; CI.</p></div></div><div class="ent"><div class="ic">CAL</div><div><h4>Calendar</h4><p>Commitments &amp; timing.</p></div></div><div class="ent"><div class="ic">BQ</div><div><h4>BigQuery</h4><p>Warehoused facts.</p></div></div><div class="ent"><div class="ic">NEO</div><div><h4>Neo4j</h4><p>Graph relationships.</p></div></div><div class="ent"><div class="ic">VTX</div><div><h4>Vertex AI</h4><p>Reasoning &amp; embeddings.</p></div></div><div class="ent"><div class="ic">SHP</div><div><h4>Shopify</h4><p>Commerce, orders &amp; revenue.</p></div></div><div class="ent"><div class="ic">ADS</div><div><h4>Google Ads</h4><p>Search acquisition signals.</p></div></div><div class="ent"><div class="ic">MTA</div><div><h4>Meta Ads</h4><p>Facebook &amp; Instagram signals.</p></div></div><div class="ent"><div class="ic">KLV</div><div><h4>Klaviyo</h4><p>Email &amp; lifecycle marketing.</p></div></div><div class="ent"><div class="ic">TTD</div><div><h4>The Trade Desk</h4><p>Programmatic display &amp; video.</p></div></div></div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:22px"><div style="background:var(--card);padding:18px 20px"><div class="k">Native connectors</div><div class="v">12</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">Legal domain experts</div><div class="v">4</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">SRPVDAL stages</div><div class="v">7</div></div><div style="background:var(--card);padding:18px 20px"><div class="k">Governed MCP tools</div><div class="v">650+</div></div></div>
         </div>
         <div class="term reveal" id="sim">
@@ -688,7 +683,6 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
               <h3 id="dv-n">Legal &amp; Counsel</h3>
               <p id="dv-p"></p>
               <ul id="dv-l"></ul>
-              <p class="d-link"><a href="/counsel" id="dv-link">View Counsel dossier →</a></p>
             </div>
             <div class="dside">
               <div><div class="ml" id="dv-ml"></div><div class="mv" id="dv-mv"></div></div>
@@ -752,11 +746,11 @@ if(!(window.CSS&&CSS.supports&&CSS.supports('gap','1px')))document.documentEleme
       </div>
       <div>
         <h5>Example domains</h5>
-        <a href="/counsel">Counsel</a><a href="/signal">Signal</a><a href="/capital">Capital</a><a href="/risk">Risk</a><a href="/estate">Estate</a><a href="/manufacturing">Manufacturing</a>
+        <a href="/counsel">Counsel</a><a href="/signal">Signal</a><a href="/capital">Capital</a><a href="/risk">Risk</a><a href="/estate">Estate</a>
       </div>
       <div>
         <h5>Platform</h5>
-        <a href="#pipeline">Decision Engine</a><a href="#control">Control Plane</a><a href="#enterprise">Assurance</a><a href="/blog/">Blog</a><a href="/login">Sign In</a><a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
+        <a href="#pipeline">Decision Engine</a><a href="#control">Control Plane</a><a href="/blog/">Blog</a><a href="/login">Sign In</a><a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
       </div>
     </div>
     <div class="f-bottom">
@@ -827,18 +821,16 @@ function each(list,fn){for(var i=0;i<list.length;i++)fn(list[i],i)}
 var ov=document.getElementById('schema-ov');if(!ov)return;
 var nodes=document.querySelectorAll('.dnode'),core=document.getElementById('dcore');
 var SCHEMA={
- Counsel:{type:'CLAUSE GRAPH',live:'1,840 clauses linked',slug:'counsel',
+ Counsel:{type:'CLAUSE GRAPH',live:'1,840 clauses linked',
    edges:['(Clause)-[:CONSTRAINS]->(Holding)','(Contract)-[:OBLIGATES]->(Entity)','(Clause)-[:LINKS]->(Capital.Covenant)']},
- Capital:{type:'RESERVE SUBSTRATE',live:'1,294 decisions / 24h',slug:'capital',
+ Capital:{type:'RESERVE SUBSTRATE',live:'1,294 decisions / 24h',
    edges:['(Reserve)-[:FUNDS]->(Distribution)','(Covenant)-[:GOVERNS]->(Reserve)','(Reserve)-[:EXPOSES]->(Risk.Limit)']},
- Risk:{type:'EXPOSURE LATTICE',live:'312 active covenants',slug:'risk',
+ Risk:{type:'EXPOSURE LATTICE',live:'312 active covenants',
    edges:['(Exposure)-[:THREATENS]->(Covenant)','(Signal)-[:TRIGGERS]->(Alert)','(Limit)-[:GATES]->(Capital.Move)']},
- Estate:{type:'TRUST LEDGER',live:'126 structures modeled',slug:'estate',
+ Estate:{type:'TRUST LEDGER',live:'126 structures modeled',
    edges:['(Trust)-[:TRANSFERS]->(Beneficiary)','(Asset)-[:TAXED_BY]->(Jurisdiction)','(Trust)-[:HOLDS]->(Capital.Reserve)']},
- Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',slug:'signal',
-   edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']},
- Manufacturing:{type:'OPERATIONS LATTICE',live:'48 production lines monitored',slug:'manufacturing',
-   edges:['(Line)-[:YIELDS]->(Output)','(Defect)-[:PROPAGATES]->(Risk.Exposure)','(Throughput)-[:FEEDS]->(Capital.Forecast)']}
+ Signal:{type:'ATTRIBUTION MESH',live:'24 channels attributed',
+   edges:['(Channel)-[:ATTRIBUTES]->(Conversion)','(Spend)-[:DRIVES]->(Uplift)','(Uplift)-[:FEEDS]->(Capital.Forecast)']}
 };
 function show(k){
   var d=SCHEMA[k];if(!d)return;
@@ -847,7 +839,7 @@ function show(k){
   var e='';for(i=0;i<d.edges.length;i++)e+='<div class="edge">'+
     d.edges[i].replace(/\[(.*?)\]/,'<span class="rel">[$1]</span>')+'</div>';
   ov.innerHTML='<div class="sh"><span>(:'+k+') &middot; <b>'+d.type+'</b></span><span>SCHEMA</span></div>'+e+
-    '<div class="live"><a href="/'+d.slug+'" style="color:var(--cy)">View '+k+' dossier →</a> · '+d.live+' · one shared substrate</div>';
+    '<div class="live">'+d.live+' &middot; one shared substrate</div>';
   ov.classList.add('show');
 }
 function clear(){for(var i=0;i<nodes.length;i++)nodes[i].classList.remove('sel','dim');ov.classList.remove('show')}
@@ -869,8 +861,7 @@ var DOMAINS=[
  {k:'Estate', verb:'trust distribution',     cstr:'the fiduciary reserve floor',          stake:'Estate, Counsel, and Capital'},
  {k:'Capital',verb:'capital distribution',   cstr:'the liquidity floor and DSCR covenant COV-01',stake:'Capital, Treasury, and Risk'},
  {k:'Signal', verb:'media budget reallocation',cstr:'the ROAS guardrail and spend cap',    stake:'Signal, Capital, and Risk'},
- {k:'Risk',   verb:'exposure rebalance',      cstr:'the exposure limit and covenant DSCR', stake:'Risk, Capital, and Counsel'},
- {k:'Manufacturing',verb:'production line shutdown',cstr:'the throughput floor and safety covenant',stake:'Manufacturing, Capital, and Risk'}
+ {k:'Risk',   verb:'exposure rebalance',      cstr:'the exposure limit and covenant DSCR', stake:'Risk, Capital, and Counsel'}
 ];
 var amtEl=document.getElementById('sim-amt'),floorEl=document.getElementById('sim-floor'),
     legalEl=document.getElementById('sim-legal'),runEl=document.getElementById('sim-run'),
@@ -1006,18 +997,16 @@ var m0=refresh();VERD=m0.verdict;CUR=buildStages(m0);renderStages();setStage(0);
 
 /* ---------- divisions ---------- */
 var DIV=[
- {k:'Counsel',slug:'counsel',n:'Legal & Counsel',p:'A Mixture-of-Legal-Experts — Connecticut, Trust, Estate and Tax — reasons each matter into a single IRAC answer with cross-domain conflict detection, every clause linked to live operations through the shared graph.',
+ {k:'Counsel',n:'Legal & Counsel',p:'A Mixture-of-Legal-Experts — Connecticut, Trust, Estate and Tax — reasons each matter into a single IRAC answer with cross-domain conflict detection, every clause linked to live operations through the shared graph.',
   l:['Obligation & covenant extraction','IRAC across CT · Trust · Estate · Tax','Litigation pathway scoring','Regulatory compliance mapping'],ml:'Contracts under management',mv:'1,840',note:'Reasons over the same causal memory as Capital and Risk — so a clause and a cash movement are never evaluated in isolation.'},
- {k:'Estate',slug:'estate',n:'Estate & Trust',p:'Governed reasoning for multi-generational wealth transfer — trust structuring and tax-strategy analysis with full traceability.',
+ {k:'Estate',n:'Estate & Trust',p:'Governed reasoning for multi-generational wealth transfer — trust structuring and tax-strategy analysis with full traceability.',
   l:['Trust structure modeling','Tax-strategy simulation','Beneficiary impact analysis'],ml:'Structures modeled',mv:'126',note:'Every recommendation carries its counterfactual — what changes, for whom, and why.'},
- {k:'Capital',slug:'capital',n:'Treasury & Capital',p:'Capital allocation grounded in causal evidence, not spreadsheet assumptions. Covenant-breach forecasting and liquidity stress modeling.',
+ {k:'Capital',n:'Treasury & Capital',p:'Capital allocation grounded in causal evidence, not spreadsheet assumptions. Covenant-breach forecasting and liquidity stress modeling.',
   l:['Covenant breach forecasting','Liquidity stress modeling','Causal capital allocation'],ml:'Decisions / 24h',mv:'1,294',note:'Source domain of ACT-991 — its proposals are simulated and gated before any reserve moves.'},
- {k:'Signal',slug:'signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
+ {k:'Signal',n:'Growth & Signal',p:'Causal attribution and autonomous bid optimization — governed media that proves its own ROI instead of asserting it.',
   l:['Causal attribution (uplift)','Autonomous bid optimization','Self-proving ROI'],ml:'Channels attributed',mv:'24',note:'Uplift measured with counterfactual rigor — no last-click fiction.'},
- {k:'Risk',slug:'risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
-  l:['Continuous verification','Regulatory monitoring','Live obligation tracking'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'},
- {k:'Manufacturing',slug:'manufacturing',n:'Operations & Manufacturing',p:'Predictive maintenance, yield forecasting, and throughput optimization — shop-floor telemetry reasoned over the same graph as capital and risk.',
-  l:['Predictive maintenance','Yield & defect forecasting','Supply-disruption propagation'],ml:'Production lines monitored',mv:'48',note:'Connects shop-floor yield to Capital and Risk — a defect trend and a covenant are never reasoned over in isolation.'}
+ {k:'Risk',n:'Risk & Compliance',p:'Continuous verification and regulatory monitoring, connecting compliance obligations to live operations through the shared graph.',
+  l:['Continuous verification','Regulatory monitoring','Live obligation tracking'],ml:'Active covenants',mv:'312',note:'The domain that caught ACT-991 — the liquidity-floor breach surfaced here first.'}
 ];
 var dtabs=document.getElementById('dtabs');
 each(DIV,function(d,i){var t=document.createElement('div');
@@ -1037,8 +1026,6 @@ function setDiv(i){
   document.getElementById('dv-ml').textContent=d.ml;
   document.getElementById('dv-mv').textContent=d.mv;
   document.getElementById('dv-note').textContent=d.note;
-  document.getElementById('dv-link').href='/'+d.slug;
-  document.getElementById('dv-link').textContent='View '+d.k+' dossier →';
 }
 setDiv(0);
 
@@ -1096,7 +1083,7 @@ if('IntersectionObserver' in window){
   iog.observe(document.getElementById('control'));
 }else{
   each(document.querySelectorAll('.reveal'),function(el){el.classList.add('in')});
-  document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.39);document.getElementById('arc').style.stroke='var(--veto)';
+  document.getElementById('arc').style.strokeDashoffset=439.8*(1-0.87);
 }
 })();
 </script>
