@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MIZ OKI 3.5 — Executive Briefing</title>
+    <meta
+      name="description"
+      content="Domain-adaptive executive briefing for MIZ OKI 3.5. A clear process from exposure to decision across logistics, HR, finance, ops, CX, and supply chain."
+    />
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/briefing.css" />
+  </head>
+  <body>
+    <!--
+      MIZ OKI 3.5 Executive Briefing
+      Standalone page or embed target for mizoki3.com
+
+      Site integration options:
+      1) Full page: host this folder at /executive-briefing/
+      2) Modal/iframe: load index.html in iframe; listen for postMessage
+      3) Inline: include #mizoki-briefing + scripts on any page
+
+      Optional config before app.js:
+      window.MIZOKI_CONFIG = {
+        contactUrl: 'https://mizoki3.com/#contact',
+        onDecisionConfirmed: function (payload) { ... }
+      };
+    -->
+    <div id="mizoki-briefing" role="application" aria-label="MIZ OKI executive briefing"></div>
+
+    <script>
+      // Override on the marketing site as needed
+      window.MIZOKI_CONFIG = window.MIZOKI_CONFIG || {
+        contactUrl: "mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20%E2%80%94%20next%20step",
+      };
+    </script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
