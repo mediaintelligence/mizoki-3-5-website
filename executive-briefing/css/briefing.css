@@ -2,31 +2,30 @@
    Premium dark, decision-grade. No CDN dependency. */
 
 :root {
-  --bg: #0a0a0b;
-  --bg-elevated: #121214;
-  --bg-subtle: #1a1a1e;
-  --bg-muted: #222228;
-  --fg: #f4f4f5;
-  --fg-muted: #a1a1aa;
-  --fg-subtle: #71717a;
+  --bg: #0A1418;
+  --bg-elevated: #0B1E26;
+  --bg-subtle: #123039;
+  --bg-muted: #16323C;
+  --fg: #F4F6F7;
+  --fg-muted: #93A0A6;
+  --fg-subtle: #5E6E75;
   --border: color-mix(in oklab, var(--fg) 12%, transparent);
   --border-strong: color-mix(in oklab, var(--fg) 22%, transparent);
-  --accent: #d4d8e0;
-  --accent-fg: #0a0a0b;
-  --signal: #6ee7b7;
+  --accent: #3FDCF2;
+  --accent-fg: #06262C;
+  --signal: #41D695;
   --signal-fg: #052e1c;
-  --warn: #fbbf24;
-  --danger: #f87171;
-  --info: #93c5fd;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --warn: #D9A83C;
+  --danger: #FF6B7C;
+  --info: #8FC2E8;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
   --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --shadow: 0 1px 0 color-mix(in oklab, var(--fg) 6%, transparent),
-    0 12px 40px color-mix(in oklab, #000 45%, transparent);
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --shadow: none;
   --motion-fast: 250ms;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --max: 72rem;
