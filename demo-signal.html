@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — Signal Factory · Live Demo</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="description" content="Watch raw marketing signals get manufactured into governed autonomous decisions through the 7-stage SRPVDAL pipeline with a visible ReLU gate and guardrails." />
+  <link rel="canonical" href="https://mizoki3.com/demo/signal" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZOKI3 — Signal Factory · Live Demo" />
+  <meta property="og:description" content="Raw signals in. Governed decisions out. The 7-stage SRPVDAL pipeline with a visible ReLU gate — live on the production runtime." />
+  <meta property="og:url" content="https://mizoki3.com/demo/signal" />
+  <meta property="og:image" content="https://mizoki3.com/assets/img/og/og-signal.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/demo-extras.css" />
+  <style>
+    :root {
+      --demo-cyan: #3FDCF2;
+      --demo-blue: #5FA0DC;
+      --demo-purple: #9D7BE8;
+      --demo-green: #41D695;
+      --demo-orange: #D9A83C;
+      --demo-red: #FF6B7C;
+      --panel: #0B1E26;
+      --panel-deep: #0A1418;
+    }
+    body { background: var(--panel-deep); }
+    .sf-wrap { font-family: "DM Sans", var(--sans); }
+    .sf-hero {
+      padding: 130px 0 44px;
+      background:
+        radial-gradient(ellipse 55% 45% at 50% -5%, rgba(63, 220, 242, 0.13), transparent),
+        linear-gradient(180deg, #0A1418 0%, #0B1E26 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .sf-hero h1 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(2rem, 4.4vw, 3.1rem);
+      color: var(--text-0);
+      margin: 0 0 12px;
+    }
+    .sf-hero p { color: var(--text-2); max-width: 720px; }
+    .sf-label {
+      font-family: "JetBrains Mono", var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--demo-purple);
+      margin-bottom: 16px;
+    }
+    /* Controls */
+    .sf-controls {
+      display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+      padding: 26px 0;
+    }
+    .sf-controls select {
+      background: var(--panel);
+      border: 1px solid var(--line-strong);
+      color: var(--text-0);
+      font-family: "JetBrains Mono", var(--mono);
+      font-size: 13px;
+      border-radius: 2px;
+      padding: 12px 16px;
+      min-width: 280px;
+    }
+    .sf-btn {
+      font-family: "JetBrains Mono", var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      border-radius: 2px;
+      padding: 12px 26px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .sf-btn.start { background: var(--demo-cyan); color: #04141a; font-weight: 600; }
+    .sf-btn.start:hover { box-shadow: none; }
+    .sf-btn.start:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+    .sf-btn.reset { background: transparent; color: var(--text-2); border-color: var(--line-strong); }
+    .sf-btn.reset:hover { color: var(--text-0); border-color: var(--text-2); }
+    .sf-status {
+      font-family: "JetBrains Mono", var(--mono);
+      font-size: 12px; color: var(--text-3); margin-left: auto;
+    }
+    .sf-status .live { color: var(--demo-green); }
+    /* Section frames */
+    .sf-section { padding: 34px 0 8px; }
+    .sf-section h2 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400; font-size: 1.45rem; color: var(--text-0); margin-bottom: 4px;
+    }
+    .sf-section .hint { font-size: 0.86rem; color: var(--text-3); margin-bottom: 18px; }
+    /* Event rail */
+    .event-rail {
+      display: flex; gap: 10px; overflow-x: auto; padding: 16px;
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; min-height: 120px; scrollbar-width: thin;
+    }
+    .evt-chip {
+      flex: 0 0 auto; width: 168px;
+      background: var(--panel-deep);
+      border: 1px solid var(--line-strong);
+      border-radius: 2px; padding: 10px 12px;
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      color: var(--text-2);
+      opacity: 0; transform: translateX(14px);
+      transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+    }
+    .evt-chip.on { opacity: 1; transform: translateX(0); }
+    .evt-chip .src {
+      display: inline-block; border-radius: 2px; padding: 1px 7px;
+      font-size: 9.5px; font-weight: 600; letter-spacing: 0.05em;
+      margin-bottom: 6px; text-transform: uppercase;
+    }
+    .src-google_ads { background: rgba(95, 160, 220,0.16); color: var(--demo-blue); }
+    .src-ga4       { background: rgba(217, 168, 60,0.16); color: var(--demo-orange); }
+    .src-meta      { background: rgba(63, 220, 242,0.16); color: var(--demo-purple); }
+    .src-email     { background: rgba(63, 220, 242,0.14);  color: var(--demo-cyan); }
+    .src-crm       { background: rgba(65, 214, 149,0.16); color: var(--demo-green); }
+    .evt-chip .ent { color: var(--text-0); font-size: 11px; margin: 2px 0; }
+    .evt-chip.canonical { border-color: rgba(63, 220, 242, 0.55); }
+    .evt-chip .can-tag {
+      display: none; margin-top: 7px; padding-top: 7px;
+      border-top: 1px dashed rgba(63, 220, 242,0.35); color: var(--demo-cyan);
+    }
+    .evt-chip.canonical .can-tag { display: block; }
+    /* ReLU gate */
+    .gate-grid { display: grid; grid-template-columns: 1fr 150px 1fr; gap: 16px; align-items: stretch; }
+    .gate-col {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 16px; min-height: 210px;
+    }
+    .gate-col h4 {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3);
+      margin-bottom: 12px;
+    }
+    .gate-glyph { display: flex; align-items: center; justify-content: center; }
+    .sig-row {
+      border: 1px solid var(--line-strong); border-radius: 2px;
+      padding: 9px 11px; margin-bottom: 9px;
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px; color: var(--text-1);
+      opacity: 0; transform: translateY(6px);
+      transition: all 0.35s ease;
+    }
+    .sig-row.on { opacity: 1; transform: translateY(0); }
+    .sig-row .bar-track {
+      height: 5px; background: rgba(220, 233, 237,0.07); border-radius: 2px; margin-top: 7px; overflow: hidden;
+    }
+    .sig-row .bar { height: 100%; width: 0; border-radius: 2px; transition: width 0.7s ease; }
+    .sig-row.pass { border-color: rgba(63, 220, 242,0.6); box-shadow: 0 0 18px rgba(63, 220, 242,0.12); }
+    .sig-row.pass .bar { background: var(--demo-cyan); }
+    .sig-row.fail { border-color: rgba(255, 107, 124,0.4); }
+    .sig-row.fail .bar { background: var(--demo-red); }
+    .sig-row .why { color: var(--demo-red); font-size: 10px; display: block; margin-top: 6px; }
+    .sig-row .score { color: var(--text-3); font-size: 10px; }
+    .filter-tray {
+      margin-top: 16px; background: rgba(255, 107, 124,0.05);
+      border: 1px dashed rgba(255, 107, 124,0.35); border-radius: 2px; padding: 14px 16px;
+    }
+    .filter-tray h4 {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--demo-red); margin-bottom: 8px;
+    }
+    /* SRPVDAL strip */
+    .stage-strip { display: flex; flex-wrap: wrap; gap: 8px; }
+    .stage-node {
+      flex: 1 1 110px;
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 13px 8px; text-align: center;
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px;
+      color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em;
+      cursor: pointer; transition: all 0.3s ease; user-select: none;
+    }
+    .stage-node .dot {
+      display: block; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--text-3); opacity: 0.4; margin: 0 auto 8px;
+    }
+    .stage-node.lit { color: var(--text-0); border-color: rgba(63, 220, 242,0.55); }
+    .stage-node.lit .dot { background: var(--demo-cyan); opacity: 1; box-shadow: 0 0 10px rgba(63, 220, 242,0.8); }
+    .stage-node.lit.blocked { border-color: rgba(255, 107, 124,0.6); }
+    .stage-node.lit.blocked .dot { background: var(--demo-red); box-shadow: 0 0 10px rgba(255, 107, 124,0.8); }
+    .stage-node.open { background: #133039; }
+    .stage-panel {
+      display: none; margin-top: 14px;
+      background: var(--panel); border: 1px solid var(--line-strong);
+      border-radius: 2px; padding: 20px 22px;
+    }
+    .stage-panel.open { display: block; }
+    .stage-panel .summary { color: var(--text-1); font-size: 0.94rem; margin-bottom: 14px; }
+    .stage-panel .items {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11.5px;
+      color: var(--text-2); display: grid; gap: 7px;
+    }
+    .stage-panel .items .row {
+      border-left: 2px solid var(--line-strong); padding: 4px 0 4px 12px;
+    }
+    .guard-check { display: flex; gap: 9px; align-items: baseline; padding: 4px 0; }
+    .guard-check .mark { font-weight: 700; }
+    .guard-check.ok .mark { color: var(--demo-green); }
+    .guard-check.bad .mark { color: var(--demo-red); }
+    .guard-block-banner {
+      background: rgba(255, 107, 124,0.08); border: 1px solid rgba(255, 107, 124,0.5);
+      border-radius: 2px; padding: 12px 16px; margin: 10px 0;
+      color: #fca5a5; font-size: 0.92rem;
+    }
+    /* Decision card */
+    .decision-card {
+      display: none;
+      background: linear-gradient(180deg, #0B1E26, #0A1418);
+      border: 1px solid rgba(63, 220, 242,0.45);
+      box-shadow: none;
+      border-radius: 2px; padding: 30px 32px; margin-top: 10px;
+    }
+    .decision-card.on { display: block; }
+    .decision-card h3 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      color: var(--text-0); font-size: 1.5rem; margin-bottom: 4px;
+    }
+    .decision-card .trace {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px; color: var(--text-3); margin-bottom: 20px;
+    }
+    .funnel { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+    .funnel .cell {
+      flex: 1 1 110px; background: var(--panel-deep);
+      border: 1px solid var(--line-strong); border-radius: 2px; padding: 13px;
+      text-align: center;
+    }
+    .funnel .cell .num {
+      font-family: "JetBrains Mono", var(--mono); font-size: 1.6rem; color: var(--demo-cyan);
+    }
+    .funnel .cell .cap {
+      font-family: "JetBrains Mono", var(--mono); font-size: 9.5px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 3px;
+    }
+    .prov-chain { display: grid; gap: 8px; }
+    .causal-truth {
+      margin-top: 22px; padding: 16px 18px;
+      background: var(--panel-deep);
+      border: 1px solid var(--line-strong);
+      border-left: 3px solid var(--demo-cyan);
+      border-radius: 2px;
+    }
+    .causal-truth .ct-label {
+      display: block; font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--demo-cyan); margin-bottom: 6px;
+    }
+    .causal-truth p { font-size: 0.93rem; color: var(--text-1); line-height: 1.65; margin: 0; }
+    .prov-step {
+      display: grid; grid-template-columns: 110px 1fr; gap: 14px;
+      font-size: 0.88rem; color: var(--text-2);
+      border-left: 2px solid rgba(63, 220, 242,0.4); padding: 5px 0 5px 14px;
+    }
+    .prov-step .tag {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--demo-cyan);
+    }
+    /* ORACLE — anticipatory intent strip */
+    .oracle-stages { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .o-stage {
+      flex: 1 1 150px; background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 12px 14px;
+      font-family: "JetBrains Mono", var(--mono); font-size: 11.5px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2);
+    }
+    .o-stage span { display: block; font-size: 9.5px; color: var(--text-3); margin-bottom: 6px; letter-spacing: 0.16em; }
+    .o-stage.hot { border-color: rgba(157, 123, 232, 0.55); color: var(--demo-purple); }
+    .oracle-facts { display: grid; gap: 8px; }
+    .o-fact {
+      background: var(--panel); border: 1px solid var(--line); border-left: 2px solid var(--demo-purple);
+      border-radius: 2px; padding: 12px 16px; font-size: 0.88rem; color: var(--text-2);
+    }
+    .o-fact .k {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--demo-purple);
+      display: inline-block; margin-right: 10px;
+    }
+    .oracle-link { margin-top: 16px; font-size: 0.9rem; }
+    .sf-cta { padding: 60px 0 110px; text-align: center; }
+    @media (max-width: 760px) {
+      .gate-grid { grid-template-columns: 1fr; }
+      .gate-glyph svg { transform: rotate(90deg); }
+      .prov-step { grid-template-columns: 1fr; gap: 3px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .evt-chip, .sig-row, .sig-row .bar, .stage-node, .demo-card { transition: none !important; }
+    }
+  </style>
+</head>
+<body class="sf-wrap">
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="/counsel">Counsel</a></li>
+        <li><a href="/estate">Estate</a></li>
+        <li><a href="/capital">Capital</a></li>
+        <li><a href="/signal">Signal</a></li>
+        <li><a href="/risk">Risk</a></li>
+        <li><a href="/demo" class="active">Live Demos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="sf-hero">
+    <div class="container">
+      <div class="sf-label">// SIGNAL FACTORY · Live on the production runtime</div>
+      <h1>Raw signals in. Governed decisions out.</h1>
+      <p>Pick a scenario and press Start. Raw events stream onto the factory floor, normalize into canonical events, form entity signals, face the ReLU gate, and run the SRPVDAL pipeline — including one deliberate guardrail block you'll see in red.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="sf-controls">
+      <select id="scenario" aria-label="Demo scenario"></select>
+      <label class="dx-seed-wrap" for="seedInput">remix this run
+        <input id="seedInput" type="number" value="42" min="0" step="1" aria-label="Deterministic seed — remix this run" />
+      </label>
+      <button class="sf-btn start" id="startBtn">▶ Start run</button>
+      <button class="sf-btn reset" id="resetBtn">Reset</button>
+      <span class="sf-status" id="status" aria-live="polite">idle</span>
+    </div>
+
+    <section class="sf-section">
+      <h2>1 · Event rail</h2>
+      <p class="hint">Raw connector events arrive left-to-right. Each one is normalized into a canonical event — cyan seam — before anything downstream may touch it. Nothing goes straight from connector to action.</p>
+      <div class="event-rail" id="eventRail" aria-live="polite"></div>
+    </section>
+
+    <section class="sf-section">
+      <h2>2 · ReLU gate</h2>
+      <p class="hint">score = max(0, uplift) × confidence × log(1 + n) — pass requires uplift ≥ 5%, confidence ≥ 0.70, n ≥ 15. Failures drop to the filtered tray with their reason, verbatim from the engine.</p>
+      <div class="gate-grid">
+        <div class="gate-col"><h4>Signals in</h4><div id="gateIn"></div></div>
+        <div class="gate-col gate-glyph">
+          <svg width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="ReLU gate">
+            <defs>
+              <linearGradient id="gateGrad" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" stop-color="#9D7BE8"/><stop offset="1" stop-color="#3FDCF2"/>
+              </linearGradient>
+            </defs>
+            <line x1="10" y1="115" x2="60" y2="115" stroke="#5E6E75" stroke-width="3"/>
+            <line x1="60" y1="115" x2="110" y2="35" stroke="url(#gateGrad)" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="60" cy="115" r="6" fill="#0A1418" stroke="#3FDCF2" stroke-width="2.5"/>
+            <text x="60" y="142" fill="#5E6E75" font-size="10" text-anchor="middle" font-family="JetBrains Mono, monospace">max(0, uplift)</text>
+          </svg>
+        </div>
+        <div class="gate-col"><h4>Passed — glowing cyan</h4><div id="gateOut"></div></div>
+      </div>
+      <div class="filter-tray" id="filterTray" hidden>
+        <h4>Filtered at the gate</h4>
+        <div id="gateFiltered"></div>
+      </div>
+    </section>
+
+    <section class="sf-section">
+      <h2>3 · SRPVDAL pipeline</h2>
+      <p class="hint">Seven stages light in sequence. Click any lit stage to expand its trace. Validate carries the deliberate red block.</p>
+      <div class="stage-strip" id="stageStrip"></div>
+      <div id="stagePanels"></div>
+    </section>
+
+    <section class="sf-section">
+      <h2>4 · Decision card</h2>
+      <p class="hint">The executed action with its full provenance chain — raw → canonical → signal → gate → guardrails → decision — and the funnel that got it here.</p>
+      <div class="decision-card" id="decisionCard">
+        <h3 id="dcTitle">—</h3>
+        <div class="trace" id="dcTrace"></div>
+        <div class="funnel" id="dcFunnel" aria-live="polite"></div>
+        <div class="prov-chain" id="dcChain"></div>
+        <div class="causal-truth" id="dcTruthWrap" hidden>
+          <span class="ct-label">Causal truth</span>
+          <p id="dcTruth"></p>
+        </div>
+        <div class="dx-lead">
+          <a class="dx-lead-cta" href="/contact?source=demo-signal" data-telemetry="lead_click">Request an enterprise pilot →</a>
+        </div>
+      </div>
+      <div id="demoExtras"></div>
+      <div id="govDrawer"></div>
+    </section>
+
+    <section class="sf-section">
+      <h2>5 · ORACLE — anticipatory intent</h2>
+      <p class="hint">The factory you just ran is the governed chassis ORACLE rides on. Latent Intent Inference reads consent-gated micro-signals and scores every person and account into four intent stages — with calibrated probabilities and explanation paths, never certainties. Anticipatory intent with proof of causal lift; not mind-reading.</p>
+      <div class="oracle-stages">
+        <div class="o-stage"><span>Stage 01</span>Awareness</div>
+        <div class="o-stage"><span>Stage 02</span>Consideration</div>
+        <div class="o-stage hot"><span>Stage 03</span>In-market</div>
+        <div class="o-stage hot"><span>Stage 04</span>Purchase-imminent</div>
+      </div>
+      <div class="oracle-facts">
+        <div class="o-fact"><span class="k">Serve</span>Intent Scoring API — intent vectors, predicted next interests with calibrated probabilities, stage classification, and the explanation path, served sub-100ms (Cell 28).</div>
+        <div class="o-fact"><span class="k">Prove</span>The caused-vs-anticipated credit ledger — holdout, ghost-bid, and geo experiments with X-Learner / DR-Learner uplift and DoWhy refutation before any estimate is trusted (Cells 26–27, 35).</div>
+        <div class="o-fact"><span class="k">Govern</span>Observe-only by default. Promotion gates: Brier ≤ 0.20 · AUC ≥ 0.72 · stable lift ≥ 2 purchase cycles. Consent-first ingestion, sensitive-topic deny-list, no audio signals — ever.</div>
+      </div>
+      <p class="oracle-link"><a href="/signal">Explore the Signal Intelligence division — anticipatory intent with proof of causal lift →</a></p>
+    </section>
+
+    <div class="sf-cta">
+      <a href="/demo/nexus" class="btn btn-ghost">Next: run the Nexus →</a>
+      <a href="/demo/counsel" class="btn btn-ghost" style="margin-left:12px;">Enter the Counsel Room</a>
+      <a href="/walkthrough.html" class="btn btn-ghost" style="margin-left:12px;">Platform walkthrough</a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© MIZOKI3 · MediaIntelligence.ai</span>
+        <span>// Signal Factory demo — deterministic, seeded, on-runtime</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/demo-signal.js" defer></script>
+  <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      window.MizokiDemoExtras.init({
+        demo: "signal",
+        scenarioSelect: "scenario",
+        seedInput: "seedInput",
+        startButton: "startBtn",
+        defaultScenario: "ecommerce_roas",
+        runEndpoint: "/api/demo/signal/run",
+        mcpName: "demo.signal.run",
+        governance: true
+      });
+    });
+  </script>
+</body>
+</html>

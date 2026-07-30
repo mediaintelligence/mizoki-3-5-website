@@ -84,3 +84,24 @@ same commit → merge → Actions → "Deploy MIZ OKI 3.5 Homepage" → type `AP
 4. Parity pushes to the mirror always use `[skip ci]`.
 5. Homepage edits must keep the 16-item fingerprint suite passing — run
    the checker before and after.
+
+---
+
+## 7. Post-lock approved change — ORACLE / Signal Intelligence (2026-07-30)
+
+Owner instruction: *"incorporate this into the single intelligence marketing
+page and demo"* (the Signal Intelligence Division / ORACLE capabilities doc).
+That instruction is the specific human approval required by §3.
+
+| Item | What shipped to `main` (NOT deployed — awaits `APPROVED` dispatch) |
+|:--|:--|
+| `signal.html` | Rewritten as the Signal Intelligence Division page (ORACLE / Latent Intent Inference): claim-strip hero ("What we say / What we never say"), crystal-ball-plus-proof plates, 4 intent stages, 6 capability cards (Cells 33/28/34), proof section (X-Learner/DR-Learner + DoWhy + holdout/ghost-bid/geo + caused-vs-anticipated ledger), claim-labeled targets (−40% CAC / +35% ROAS / +67% ROI as design targets), 5 playbooks, governance plate, cell map. Night-dossier vocabulary throughout; not canon-pinned; `/signal` test contract intact. |
+| `demo-signal.html` | New static section "5 · ORACLE — anticipatory intent" (stage strip + SERVE/PROVE/GOVERN + promotion gates + `/signal` link). Canon-pinned → `canon.lock.json` re-pinned in the same commit (new sha for `demo-signal.html`; lock `locked` note records the approval). Demo runtime untouched — interactive run re-verified. |
+| Doc archive | `docs/SIGNAL_INTELLIGENCE_ORACLE_CAPABILITIES.md` (owner-supplied source, verbatim, with incorporation header). |
+| Verification | Canon `CANON OK 19/19` after re-pin; suite 260 tests with only the 2 pre-existing dossier-swap homepage failures; Playwright renders of both pages; live demo run smoke (decision card produced). |
+
+Claim discipline embedded in the copy: "anticipatory intent with proof of
+causal lift", never "mind-reading"; calibrated probabilities, never "will buy";
+"proven-incremental" only after refutation; targets labeled, never guaranteed;
+no audio ever; consent-first; observe-only default (Brier ≤ 0.20 · AUC ≥ 0.72 ·
+stable lift ≥ 2 purchase cycles to promote).

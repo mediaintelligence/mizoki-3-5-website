@@ -69,3 +69,12 @@ this site: the workflow no longer declares `push` paths, so the Router skips it.
 | v1.2 + Executive Briefing two-track | `ed67bdb3` | rev 00128-gjn |
 | v1.3 site-wide dossier unification | homepage unchanged | rev 00129-rvc |
 | **v1.4/v1.5 night dossier + flagship briefing domains (LOCKED)** | **`35a7e5d3`** | rev 00132-z5s + v1.5 deploy, 2026-07-30 |
+
+**Approved re-pins on v1.5** (canon version unchanged; homepage untouched):
+
+- 2026-07-30 — **ORACLE / Signal Intelligence incorporation** (explicit owner
+  instruction): `signal.html` rewritten as the Signal Intelligence Division page
+  (not canon-pinned) and `demo-signal.html` gained the static "5 · ORACLE —
+  anticipatory intent" section (canon-pinned → re-pinned in the same commit).
+  Source doc: `docs/SIGNAL_INTELLIGENCE_ORACLE_CAPABILITIES.md`. Awaiting a human
+  `APPROVED` dispatch to ship.

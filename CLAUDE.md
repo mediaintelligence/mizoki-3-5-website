@@ -1,56 +1,35 @@
 # CLAUDE.md - AI Assistant Context
 
-## 🔒 SOURCE OF TRUTH & DEPLOY GOVERNANCE (LOCKED 2026-07-30)
-
-**This repo is a source MIRROR.** The production source of truth lives in
-`mediaintelligence/MIZOKICloudRun` under `# MIZ OKI 3.5/` — its `README.md` +
-`CLAUDE.md` are the only authoritative docs, and the v1.5 "night dossier" look
-and feel is LOCKED (`canon.lock.json`, 19 sha256-pinned surfaces;
-`docs/DESIGN_CANON.md`). `/demo` + the Executive Briefing are the core of the
-operation.
-
-**Nothing ships to production without specific human approval:**
-
-- Production deploys happen ONLY via MIZOKICloudRun's `deploy-homepage.yml` —
-  manual-dispatch with a typed `APPROVED` token + a passing canon check.
-- This repo's `deploy-cloudrun.yml` is manual-dispatch-only (push trigger
-  removed 2026-07-30) and must not be run except as a deliberate, human-
-  approved exception.
-- `deploy.sh` / `master-deploy.sh` here carry the same approval gate.
-- Agents: never deploy from this repo, and never edit canon-pinned files
-  without an explicit human instruction. Parity commits use `[skip ci]`.
-
-
 ## Project Overview
 
 **MIZ OKI 3.5** is a Verifiable Autonomous Decision Intelligence Platform. This repository contains the marketing website deployed on Google Cloud Run.
 
+## 🔒 DESIGN CANON & DEPLOY GOVERNANCE — READ FIRST (2026-07-30)
+
+**The v1.5 "night dossier" look and feel is the LOCKED source of truth**, and
+`/demo` + the Executive Briefing are the core of the operation. The canon is
+pinned in [`canon.lock.json`](canon.lock.json) (19 core surfaces, sha256) and
+documented in [`docs/DESIGN_CANON.md`](docs/DESIGN_CANON.md).
+
+**Every production upload requires specific human approval.** The deploy
+workflow (`.github/workflows/deploy-homepage.yml`) is manual-dispatch-ONLY and
+demands a typed `APPROVED` token plus a passing canon check
+(`python3 scripts/check_design_canon.py`). There is no push-triggered deploy
+and the Deploy Router no longer matches this workflow.
+
+Rules for any agent or human working here:
+
+1. Do NOT modify the files listed in `canon.lock.json` without an explicit,
+   specific human instruction for that change.
+2. If a change is human-approved, re-pin with
+   `python3 scripts/check_design_canon.py --update` and commit the lockfile
+   together with the change.
+3. Never dispatch the deploy workflow yourself — a human runs it from the
+   Actions UI and types `APPROVED`.
+4. Homepage content is additionally fingerprint-governed (16-item suite;
+   sha256 `35a7e5d3…66ac08ac`).
+
 ---
-
-## Positioning & Messaging (CANONICAL — read before touching copy)
-
-The metaphor is a **nervous system**, never a "brain." MIZOKI3 gives a business a
-real-time, mathematical understanding of *every* part of itself — a living graph of
-metrics, relationships, and **prediction**. It senses the whole organization at once
-and acts the moment something changes. It **replaces the CRM and the linear,
-backwards-looking analytics stack** (which only record what already happened) with a
-forward-looking, predictive system.
-
-**Say:** nervous system · real-time understanding · living/mathematical graph of
-metrics and prediction · senses across the whole organization · adapts to your
-business · replaces the CRM and backwards-looking dashboards · reflex arc (for SRPVDAL).
-
-**Never say:** "brain," "one brain," "the brain of your business." No "Living Brain"
-visualizer.
-
-**Divisions are NOT the product.** The system is unlimited and adaptive — it grows a
-decision controller for whatever domains a business actually has (3, 40, or entirely
-its own). The five lenses (Counsel / Estate / Capital / Signal / Risk) are **only the
-structures of customers we've onboarded so far** — they are *example deployments*, not
-a fixed offering or a list to fit into. Always frame them as examples; never imply the
-platform ships as five departments.
-
-Canonical hero line: **"A nervous system for your business."**
 
 ## Architecture
 
@@ -59,7 +38,7 @@ Canonical hero line: **"A nervous system for your business."**
 - **Domain**: mizoki3.com (Cloud Run custom domain)
 - **Routing**: Client and API routes managed natively in Flask (`app.py`)
 
-## Core Technology (7-Stage SRDPV-DAL Pipeline)
+## Core Technology (7-Stage SRPVDAL Pipeline)
 
 ```
 SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN
@@ -77,44 +56,20 @@ Key innovations:
 
 ```
 mizoki-website/
-├── index.html                    # Homepage — nervous-system design (1,068 lines, vanilla JS)
-│                                 # Hero graph + schema inspector, executable SRPVDAL sim,
-│                                 # DEL gauge + scorecard, control-plane sandbox, domain tabs
-├── how-it-works.html             # Legacy — 301s to / via app.py
-├── platform.html                 # Legacy — 301s to / via app.py
-├── security.html                 # Legacy — 301s to / via app.py
-├── industries.html               # Legacy — 301s to / via app.py
-├── pricing.html                  # Legacy — 301s to / via app.py
-├── case-studies.html             # Legacy — 301s to / via app.py
-├── resources.html                # Legacy — 301s to / via app.py
-├── roi.html                      # Legacy — 301s to / via app.py
-├── walkthrough.html              # Legacy — 301s to / via app.py
-├── investor.html                 # Legacy — 301s to / via app.py
-├── sales-one-pager.html          # Legacy — 301s to / via app.py
+├── index.html                    # Homepage
+├── how-it-works.html             # Technical deep dive
+├── platform.html                 # Architecture overview
+├── security.html                 # Security & compliance
+├── industries.html               # Industry templates
+├── pricing.html                  # Pricing tiers
+├── case-studies.html             # Customer success stories
+├── resources.html                # Documentation hub
+├── roi.html                      # ROI calculator
+├── walkthrough.html              # Demo request
+├── investor.html                 # Investor overview
+├── sales-one-pager.html          # Sales summary
 │
-├── counsel.html                  # Domain lens — Counsel (legal)
-├── estate.html                   # Domain lens — Estate
-├── capital.html                  # Domain lens — Capital
-├── signal.html                   # Domain lens — Signal (renamed from Media Acquisition)
-├── risk.html                     # Domain lens — Risk
-│
-├── mizoki3-site/                 # CANONICAL — Flask /console + /infrastructure
-│   │                             # routes hard-code this path. Do not rename.
-│   ├── README.md                 # Package documentation (4 deploy options)
-│   ├── console/index.html        # Standalone Decision Control Plane
-│   │                             # (Risk Arbitration Console UI)
-│   └── infrastructure/main.tf    # Google Cloud Terraform — VPC, Spanner +
-│                                 # Neo4j TCKG, Pub/Sub, Cloud Run orchestrator,
-│                                 # Vertex AI (Claude) reasoning isolation, KMS
-│
-├── MIZOKI3-Site (1)/             # Sibling React/Vite/Tailwind build of the
-│   │                             # same site. Standalone — own Dockerfile,
-│   │                             # nginx.conf, cloudbuild.yaml, infrastructure/
-│   ├── src/components/           # 15 React components
-│   ├── public/console/index.html
-│   └── infrastructure/main.tf
-│
-├── blog/                        # Thought leadership content
+├── blog/                         # Thought leadership content
 │   ├── index.html                # Blog listing
 │   ├── decision-control-plane.html
 │   └── relu-lens-meta-algorithm.html  # ReLU Lens article
@@ -129,16 +84,13 @@ mizoki-website/
 │   └── pdf/                      # Downloadable resources
 │
 ├── app.py                        # Python/Flask routing engine
-├── schemas/
-│   └── journey-event.json        # Canonical JourneyEvent schema (Meta/Google Ads/SendGrid/OpenRTB → one SENSE shape)
 ├── mizoki_runtime/
 │   ├── __init__.py
-│   ├── runtime.py                # Boss runtime, MCP registry, GraphRAG, KG, and graph-native SRPVDAL loop
-│   └── journey.py                # JourneyEvent connector mappers, schema validator, idempotent store, SENSE ingest cell
+│   └── runtime.py                # Boss runtime, MCP registry, GraphRAG, KG, and graph-native SRPVDAL loop
 ├── tests/
 │   ├── test_app.py               # Flask API coverage
 │   └── test_runtime.py           # Boss/MCP runtime coverage
-├── requirements.txt              # Python dependencies (Flask 3.1.3 + gunicorn)
+├── requirements.txt              # Python dependencies
 ├── Dockerfile                    # Container definition (Gunicorn)
 ├── nginx.conf                    # Legacy Nginx config (deprecated)
 ├── cloudbuild.yaml               # Cloud Build config
@@ -167,919 +119,262 @@ mizoki-website/
 ./github-push.sh
 ```
 
+## Production secrets
+
+`cloudbuild.yaml` deploys with `--set-secrets` so two values are read from Secret Manager at runtime:
+
+| Secret | Env var | Purpose |
+|:-------|:--------|:--------|
+| `mizoki-website-secret-key` | `SECRET_KEY` | Flask session signing key (pinned → sessions survive restarts) |
+| `mizoki-website-demo-users` | `MIZOKI_DEMO_USERS_JSON` | `{email: password}` map for `/admin/login` |
+
+One-time setup is documented in `docs/PRODUCTION_SECRETS_SETUP.md`. The deploy also sets `ENVIRONMENT=production` (flips session cookies to `Secure`) and `MIZOKI_REQUIRE_AUTH_FOR_APIS=false` (public API surface; set to `true` to gate `/api/mcp/*` and `/api/boss/*` behind admin sign-in).
+
+## Backend admin
+
+A real admin dashboard lives at `/admin` (auth-gated by Flask session):
+
+- `GET /admin/login` — sign-in form
+- `POST /admin/login` — validates against `MIZOKI_DEMO_USERS_JSON`
+- `GET /admin` — runtime health, MCP tool grid, in-browser tool runner, recent decision traces
+- `GET /admin/logout` — clear session
+
+`/api/health` is always public. `/api/mcp/*` and `/api/boss/*` are public **by default** so the on-page chat demo keeps working; flip `MIZOKI_REQUIRE_AUTH_FOR_APIS=true` to require an admin session.
+
+## Blog feeds
+
+- `GET /blog/feed.xml` — RSS 2.0
+- `GET /blog/feed.json` — JSON Feed 1.1
+- `GET /blog/posts.json` — raw manifest
+
+All three are rendered from `blog/posts.json`; add a new post by dropping `blog/<slug>.html` and appending an entry to the manifest.
+
+## Site-wide mobile / iPad nav
+
+`assets/js/nav-mobile.js` is a single shared script wired into every page with `<script src="/assets/js/nav-mobile.js" defer></script>`. It auto-detects `.nav-links`, injects a 44×44 hamburger + slide-down sheet, and is theme-aware (works on both dark `index.html` and light `theme-light` pages).
+
+---
+
+## Live demo platform (July 2026)
+
+Five-division + Nexus demos are first-class Flask routes (not static-only). `/api/demo/*` is **public** (not gated by `MIZOKI_REQUIRE_AUTH_FOR_APIS`).
+
+| Page | Player / engine |
+|:-----|:----------------|
+| `/demo` | Hub |
+| `/demo/signal` | `demo-signal.js` + Signal engine |
+| `/demo/counsel` | Counsel Room |
+| `/demo/estate` | `demo-estate.js` |
+| `/demo/capital` | `demo-pipeline.js` + **`demo-capital.js`** + SSE `/api/demo/capital/stream` |
+| `/demo/risk` | `demo-risk.js` |
+| `/demo/nexus` | `demo-nexus.js` |
+| `/walkthrough` | Guided walkthrough — **root-absolute** CSS/nav only |
+| `/login` | Redirects to `/admin/login` |
+
+Engines live under `mizoki_runtime/demo_*.py`. MCP tools: `demo.*.list_scenarios` / `demo.*.run`. Gunicorn: `2` workers × `8` threads, **`--timeout 120`**.
+
+**Hygiene (PR `#580`, July 22):** division/walkthrough absolute asset URLs; Sign-In links use `/login` (never hardcode `mizoki.mizoki3.com`); named Capital JS entrypoint. Notes: `docs/DEMO_V4_BUILD_NOTES.md`.
+
+```bash
+python -m unittest discover tests   # includes test_demo_platform, test_demo_capital, …
+```
+
 ---
 
 ## Recent Work (July 2026)
 
-### Virtuoso Model Plane — Boss Agent Consolidation (2026-07-05)
-
-Consolidated the founder's **`virtuoso_models` role-based flagship registry** with the
-Boss Agent runtime. New `mizoki_runtime/virtuoso.py` — deterministic, dependency-free, no
-vendor SDKs imported; the dispatcher runs through injectable per-vendor adapters so
-failover semantics are fully unit-tested with no network. Registry data is **synced from
-the canonical package** (`MIZOKICloudRun` `src/shared/virtuoso_models/model_registry.py`
-@ `2cb00d6`, cloned into the session and diffed — the pasted WIRING.md turned out to be
-an older revision; the real registry, updated 2026-07-04, superseded several values).
-
-**What it is:** one source of truth for which frontier model serves each role —
-`Role.DATA_CAUSAL` (base `gemini-3.1-pro-preview`, **auto-flipped to `gemini-3.5-flash`**
-since the 2026-07-04 GA; Boss directive: Flash tier, an explicit cost/latency choice),
-`Role.CODING_ARCH` (`claude-opus-4-8`, Boss/codegen/architecture), `Role.CREATIVE_MM`
-(`gpt-5.5`), `Role.DEVOPS_OPS` (`grok-4.3`) — plus a cross-vendor **global fallback**
-(`claude-opus-4-8`) every role fails over to after a primary failure (never first-choice;
-responses carry `served_by`/`primary_error` so a degraded path is never silent;
-`fallback=False` opts out; CODING_ARCH's failover is a no-op re-raise). Image delegates:
-`IMAGE_MODELS = {google_flagship: gemini-3-pro-image, google_fast: gemini-3.1-flash-image}`
-(Imagen retired). `VIRTUOSO_MODEL_<ROLE>` env overrides are honored but **rejected if
-they contain a retired string** (per-role `forbidden_legacy` lists + image legacy, exact
-strings synced from the canonical registry: gemini-2.0-flash*, gemini-3-pro-preview,
-gemini-2.5-flash*, claude-opus-4-6/-7, gpt-5.2*/gpt-5.3-chat-latest, grok-4-1-fast-*/
-grok-4-fast-*/grok-4-0709/grok-code-fast-1/grok-3, imagen-4.0-*, *-image-preview).
-`VIRTUOSO_GEMINI_35_FLASH_GA=1` forces the Flash flip when the module constant is off.
-`assert_fallback_not_primary` runs on every call; `validate_registry` runs as a **boot
-guard in `BossRuntime.__init__`** — a misconfigured registry refuses to start.
-`assert_no_legacy_strings()` with no args self-audits the live registry.
-
-**Reconciliations (deliberate):** (1) **The extractor default model changed
-`gemini-3.5-pro` → `gemini-3.5-flash`**: the founder's 3.5-pro pin (2026-06-25) predates
-the Boss's 2026-07-04 Flash directive, and the registry is the single source of truth —
-`journey_gemini.py`'s two extractors and both metadata functions now use
-`get_model(Role.DATA_CAUSAL).model` (precedence: explicit arg > `MIZOKI_GEMINI_MODEL` >
-registry incl. `VIRTUOSO_MODEL_DATA_CAUSAL`), so the registry and the event store agree
-on which flagship produced each row; set `MIZOKI_GEMINI_MODEL=gemini-3.5-pro` in prod to
-re-pin without a code change. Discovery reports `registry_role: data_causal` on the
-extractor block. (2) The repo's existing JourneyEvent layer stays canonical (WIRING §9
-describes the MIZOKICloudRun copy of the same layer) — not duplicated. (3) Seven-phase
-SRPVDAL remains authoritative (WIRING §9 concurs); roles and phases are orthogonal.
-(4) `get_model`/guards accept an injectable env mapping (canonical package reads
-`os.getenv`) so resolution is testable without patching the process environment.
-
-**MII distillation hook (WIRING §6):** `virtuoso_call` responses carrying a
-`reasoning_summary` are persisted by `VirtuosoModelPlane` to
-`data/mii_reasoning_traces.jsonl` (covered by the `data/*.jsonl` gitignore; same
-ephemeral-disk caveat as the v1 store). Gemini's None summaries (encrypted signatures)
-are never persisted.
-
-**Wiring (`runtime.py`, `app.py`):** MCP tools `virtuoso.registry`,
-`virtuoso.resolve_model`, `virtuoso.scan_legacy`, `virtuoso.reasoning_traces` (new
-`virtuoso` category); Flask `GET /api/boss/virtuoso/registry`, `POST
-/api/boss/virtuoso/resolve`, `POST /api/boss/virtuoso/scan`, `GET
-/api/boss/virtuoso/traces`; `discover().virtuoso` block (roles resolved with overrides
-applied, fallback, image delegates, purge patterns, phase note); `health_snapshot()`
-gains `virtuoso_role_count` + `mii_trace_count`; KG entity `virtuoso_model_plane` with
-edges from `boss_agent`/`journey_ingest` and into `srpvdal`/`decision_control_plane`.
-Legacy-string purge grep run against this repo: **zero hits** (the only model string,
-the extractor's `gemini-3.5-pro`, now comes from the registry).
-
-**Verification:** `python3 -m py_compile` clean on all four touched Python files;
-`python3 -m unittest tests.test_app tests.test_runtime` → **96 passing** (+23: registry
-defaults/overrides/GA-flag/legacy rejection, fallback-not-primary guard, legacy scan,
-primary/failover/opt-out/no-op-reraise/double-failure dispatch, plane boot guard + role
-parsing + MII persistence (None summaries skipped) + snapshot + scan, runtime
-discover/tools/health integration, extractor-metadata registry threading + local-pin
-precedence, 4 Flask endpoint tests). Smoked via `test_client`: registry/resolve/scan/
-traces endpoints, `/api/health` counts, `/api/boss/discover` virtuoso block + extractor
-`registry_role`, MII row visible via `GET /api/boss/virtuoso/traces` after a plane call.
-Second pass after cloning the real MIZOKICloudRun package (2026-07-06): registry values
-re-synced (gemini-3.5-flash flip, grok-4.3, Nano Banana image strings, exact per-role
-forbidden lists, no-arg self-audit mode), suite still **96 passing**.
-
-### Homepage Connector Gateway 9→12 + Creative Single-Point-of-Truth Docs (2026-07-03)
-
-Two follow-on changes the same day, after the Manufacturing lens shipped (entry below).
-
-**Connector gateway expanded 9 → 12 (`index.html`, deployed).** The founder uploaded a homepage
-draft (`~/Downloads/index_7.html`). A full diff against the live homepage showed the draft was an
-**older base** — its *only* net-new content over live was an expanded connector gateway, but adopting
-it wholesale would have **reverted four live fixes**: the Manufacturing wiring (shipped hours earlier),
-the hero-schema + divisions "View X dossier →" links (draft dropped the `slug` fields → 0 dossier
-links vs 3 live), the deliberate `39`-not-`87` DEL-gauge fix (2026-06-18), and the "Assurance" footer
-link. **Decision: port only the connector block, not the file.** Swapped the §02 unified-ingress
-gateway from 9 to 12 chips — added **Shopify, Meta Ads, Klaviyo, DV360**, removed **Stripe** — bumped
-the "Native connectors" stat to 12, and corrected the §01 canonical-event copy from "Google Ads,
-Stripe, …" to "Google Ads, **Meta, Shopify**, …" so the gateway matches the sources named in the copy
-(it previously named Meta/Shopify while the gateway showed Stripe). Everything else on the live
-homepage preserved. Verified: inline scripts pass `node --check`; HTML balanced; `test_client` `/` →
-200 with the 12 connectors + Manufacturing node + dossier links present and the Stripe chip gone.
-**Deployed** via commit **`21abf26`** → auto-deploy run **`28677928681`** green; live smoke on
-mizoki3.com confirmed all 12 chips + kept fixes.
-
-**Creative Single Point of Truth docs (`bdfdddc`).** Added `MIZOKI3_Creative_Single_Point_of_Truth_v1_0.md`
-(+ source `.docx`) as a tracked canonical creative reference. Per founder direction, the leftover
-scratch/duplicate trees (`site/` — a 704 KB stale copy of the whole site; `files/`;
-`mizoki-site-v4-RELEASE/`) were **left untracked on disk**, not committed.
-
-### Manufacturing Example-Domain Lens — Full First-Class Integration + Stale-Branch Reconciliation (2026-07-03)
-
-Added **Manufacturing** as a first-class example-domain lens (a 6th alongside Counsel/Estate/
-Capital/Signal/Risk) and shipped it to production. The work started from the stale
-`cursor/add-manufacturing-lens` branch, which had gone **32 commits behind `origin/main`**
-(forked at `afa5599`, only 1 commit ahead) and predated the entire homepage rework — merging it
-would have reverted the SRPVDAL spiral, Decision Authorization Scorecard, sim playground, the
-JourneyEvent / CanonicalEventEnvelope v2 / identity-resolver cells, and the Node-24 CI bump.
-**Decision: rebuild the lens onto current `main`, not merge the stale branch.**
-
-**What shipped (branch `feat/manufacturing-lens` off current `origin/main`, commit `7c36d87`):**
-- **`manufacturing/index.html`** — new lens page cloned from the *current* 485-line lens template
-  (Capital), not the stale branch's 420-line one, so it matches the reworked lens layout (crumb
-  nav, `REINFORCES` cross-links, "example deployment, not a product ceiling" copy). **FILE F**
-  (Counsel=A … Capital=C, Risk=E → Manufacturing=F). Content: shop-floor telemetry / yield /
-  supply-chain; reinforces Capital · Risk · Counsel · Signal; metric "48 production lines monitored".
-- **`index.html`** — Manufacturing wired into **all four** homepage domain systems (the stale
-  commit only touched two): the hero graph node (`data-k="Manufacturing"` at 64%/73%), the `SCHEMA`
-  inspector (`OPERATIONS LATTICE`, edges to `Risk.Exposure` / `Capital.Forecast`), the
-  executable-simulation `DOMAINS` scenarios (`production line shutdown`, appended at index 5 so the
-  ACT-991 Capital default `domIdx=2` is unchanged), and the §04 `DIV` divisions panel — **with the
-  `slug` field** the current array requires (the stale commit's entry lacked it, which would have
-  broken the dossier link).
-- **Footer "Example domains"** — Manufacturing appended on all **15 tracked pages** (homepage, six
-  lenses incl. Manufacturing, five blog pages, privacy, terms, 404) via one verified perl pass over
-  the exact-match footer line; the untracked `site/` Decision-Ledger scratch copies were deliberately
-  excluded.
-- **`app.py`** — `/manufacturing` + `/manufacturing/` + `/manufacturing.html` → `serve_dir_page("manufacturing")`.
-- **`sitemap.xml`** — `/manufacturing/` entry.
-- **Repo hygiene** — removed three tracked deploy-junk zips (`mizoki3-final-*.zip`). Also restored a
-  phantom working-tree deletion of `mizoki3-site/` (README/console/main.tf — **identical blob SHAs on
-  both sides**, the recurring Drive-sync gotcha; a recovery, never committed).
-
-**Verification:** `python3 -m py_compile app.py mizoki_runtime/runtime.py` clean; `python3 -m unittest
-tests.test_app tests.test_runtime` → **73 passing**; `app.test_client()` smoke of
-`/manufacturing{,/,.html}`, all five existing lenses, `/`, `/sitemap.xml`, `/blog/`, and a 404 — all
-correct; all four inline homepage `<script>` blocks pass `node --check`; HTML structurally balanced
-(HTMLParser). Homepage confirmed carrying all four Manufacturing hooks.
-
-**Deploy (2026-07-03).** Pushed `ceb9c1e..7c36d87` to `main` (clean fast-forward) → WIF auto-deploy
-`deploy-cloudrun.yml` run **`28676737392`** built + rolled a new `mizoki-website` Cloud Run revision
-green in **58s**. Live smoke on **mizoki3.com**: `/manufacturing{,/,.html}` 200 with "Operations &
-Manufacturing" / "FILE F"; homepage footer + hero node + `DIV` entry present; `/sitemap.xml` carries
-`/manufacturing/`; `/capital` + `/` regression-clean.
-
-**Loose ends re-checked this session (both resolved — no action needed):**
-- **Node 20→24 CI bump — already done** on `main` (`c7719d0`); deploy actions are now
-  `checkout@v5` / `auth@v3` / `setup-gcloud@v3`.
-- **Dependabot — 0 open alerts.** All 30 historical alerts are `fixed` (6 high / 18 medium / 6 low);
-  the six highs were all `vite` from the untracked `Noah_gemini/` React scratch tree, cleared by
-  `42a35a8` (untrack), with gunicorn 23 / Flask 3.1.3 covering the Python ones. The "28 vulns (6
-  high)" flagged 2026-06-12 is resolved.
-- Untracked clutter kept on disk per direction: `site/`, `files/`, `mizoki-site-v4-RELEASE/`, and
-  `MIZOKI3_Creative_Single_Point_of_Truth_v1_0.{docx,md}`. Deleted only deploy-junk zips.
-
-**Gotcha for future agents:** the local default `python3` is Homebrew **3.14 without Flask**, so
-`tests.test_app` ImportErrors there (only `test_runtime` runs). Use **`python3.13`** (has Flask 3.0.3)
-to run the app tests and `test_client` smokes locally.
-
----
-
-## Recent Work (June 2026)
-
-### Identity Resolver Cell — Cross-Event Cluster Stitching (2026-06-25)
-
-Closed the v2 envelope's one deliberate gap: `identity.identity_cluster` was emitted `null`
-("pending a stateful resolver"). Added that resolver. New `mizoki_runtime/identity.py` —
-`IdentityClusterResolver` (persistent union-find) + `IdentityResolutionCell`. Deterministic,
-dependency-free, in-process JSON snapshot (same ephemeral-disk caveat as the v1 store).
-
-**Mechanism:** connected components over **strong** identifier tokens (`user_id` / `email` /
-`phone_sha256` / `device_ifa`). Weak `ip` is **deliberately not stitched** (shared NAT/office IPs
-would over-merge distinct people). Cluster id = `Cluster:<sha256(anchor_root)[:16]>`. **Anchor rule
-(the subtle part):** the union anchors on an *already-established* root when one exists, so a
-brand-new identifier joining a known cluster **adopts** that cluster's id rather than relabeling it;
-only an event bridging >1 previously-separate known clusters relabels (deterministic min root) and is
-surfaced as `newly_merged`. (First implementation used union-by-min-root, which flipped a cluster's id
-whenever a lexicographically-smaller token joined — caught by the shared-email smoke; fixed.)
-
-**Wiring (`runtime.py`, `app.py`):** `BossRuntime.build_journey_envelope` now resolves the actor and
-populates `identity.identity_cluster` (then re-validates), returning `identity_resolution`. New
-`resolve_identity`/`identity_cluster_stats`; MCP tools `identity.resolve` + `identity.cluster_stats`
-(new `identity` category); Flask `POST /api/boss/identity/resolve` + `GET /api/boss/identity/stats`;
-`discover().journey.identity_resolution` block (method, stitch_keys, excluded `ip`, live stats);
-`health_snapshot().identity_cluster_count`.
-
-**Verification:** `python3 -m py_compile mizoki_runtime/identity.py mizoki_runtime/runtime.py app.py`
-clean; `python3 -m unittest tests.test_app tests.test_runtime` → **73 passing** (+7: shared-key
-stitching, previously-separate-cluster merge + `newly_merged`, ip-only ignored, cross-instance
-persistence, envelope populates a resolved cluster idempotently, resolve endpoint + actor validation,
-discover block). Smoked: two events sharing a (normalized) email land in one stable cluster as a
-device_ifa accretes; ip-only → null. Purely additive; v1 + v2 envelope unchanged.
-
-### CanonicalEventEnvelope v2 — Reasoning-Native Layered Contract (2026-06-25)
-
-Evolved the canonical layer from an *event* (`JourneyEvent` v1) toward a canonical *reasoning
-envelope* per founder direction (the 20-layer "BGI substrate" review). **Decision: wrap, not
-replace** — the v2 `CanonicalEventEnvelope` embeds the in-prod v1 `JourneyEvent` as
-`canonical_payload`, so v1 stays live and the migration is non-breaking. Same discipline as the rest
-of the layer: deterministic, dependency-free, unit-testable.
-
-**Split of concerns (important):** SENSE-computable layers are populated deterministically at ingest;
-reasoning-derived layers are initialized as **typed empty scaffolds** for later SRPVDAL cells to fill
-(we do not fake them at SENSE).
-- **Populated at SENSE:** `metadata`, `provenance` (+ version vector: `schema/policy/governance/
-  ontology/reasoning_version`), `classification` (deterministic domain/category/subcategory/intent by
-  source+type), `identity` (strongest-key resolution → `identity_id`, `resolution_method`, confidence,
-  `anonymous`; cross-event `identity_cluster` left null pending a stateful resolver), `kg_refs`
-  (`Campaign:/Creative:/Order:/Customer:/Identity:…` node ids for deterministic Neo4j MERGE),
-  `relationships` (BELONGS_TO/ATTRIBUTED_TO/RESULTED_IN/IDENTIFIED_AS/GENERATED_BY edges),
-  `time_intelligence` (event/source/ingest/processing time, latency_ms, watermark), `security`
-  (PII set, classification, retention, consent), `data_quality` (schema_valid + v1 validation errors,
-  completeness, freshness), `observability` (trace/span/workflow/execution/agent/cell ids),
-  `field_confidence` (1.0 rule-based; threaded from the LLM path), `srpvdal_state` (current=SENSE,
-  next=REASON, phase_history), `audit`.
-- **Scaffolds (loop-filled):** `evaluation`, `actions`, `learning`, `causal` effects, `intelligence`,
-  plus reference-style `business_context`/`reasoning_context` (store ids/versions, not copies).
-
-**New files:**
-- `schemas/canonical-event-envelope.json` — v2 schema (`schema_version` 2.0.0); served at
-  **`GET /schemas/canonical-event-envelope.json`** (`application/schema+json`).
-- `mizoki_runtime/envelope.py` — `CanonicalEnvelopeBuilder` (deterministic `build`/`build_and_validate`),
-  classification map, identity resolution, kg_refs + relationship derivation, version vector
-  (env-overridable: `MIZOKI_POLICY_VERSION`/`MIZOKI_GOVERNANCE_VERSION`/`MIZOKI_ONTOLOGY_VERSION`/
-  `MIZOKI_REASONING_VERSION`). Reuses the v1 `JourneyEventSchema` as a generic validator.
-
-**Wiring (`runtime.py`, `app.py`):** MCP tool `journey.build_envelope`; `BossRuntime.build_journey_envelope`
-(normalize v1 → wrap → validate, returns `{envelope, valid, errors, canonical_valid, canonical_errors}`);
-`discover().journey.envelope` block (schema id, version, 21 layers, version vector). Flask `POST
-/api/boss/journey/envelope` (+ optional `business_context`/`reasoning_context`/`causal`/`intelligence`)
-and the schema route. `envelope_id = "env-<event_id>"` (idempotent-linked to the canonical event).
-
-**Verification:** `python3 -m py_compile mizoki_runtime/envelope.py mizoki_runtime/runtime.py app.py`
-clean; `python3 -m unittest tests.test_app tests.test_runtime` → **66 passing** (+6: full-layer build +
-schema-validate, openrtb classification, deterministic build, envelope schema served, envelope endpoint,
-discover envelope block). Smoked: meta Purchase → Advertising/Conversion/Purchase/Commercial,
-`Campaign:111`/`Creative:333`/`Order:A123`, identity `email+ip`, edges BELONGS_TO/RESULTED_IN, SENSE→REASON.
-v1 `JourneyEvent` and its endpoints are unchanged; this is purely additive. No site copy touched.
-
-### Canonical JourneyEvent Schema — Multi-Connector SENSE Normalization (2026-06-24)
-
-Added a **canonical `JourneyEvent` ingestion layer** so events from **Meta (Conversions
-API/Webhooks), Google Ads (GAQL rows), SendGrid (Event Webhook/Inbound Parse), and OpenRTB
-(bid request/win/loss)** all normalize into **one schema** and enter SRPVDAL at the **SENSE**
-stage deterministically and idempotently. Built in the same deterministic, in-process,
-dependency-free style as Cell 27 (no external services, no new pip deps — fully unit-testable).
-
-**Founder supplied two reference designs.** The first was the rich multi-connector
-`JourneyEvent` (`event_source`/`event_type`/`actor`/`context`/`provenance`); the second was a
-thinner Gemini-extraction shape plus a cURL/Node/Python flow (pin model + API revision, strict
-`response_format` json_schema, capture provenance, hash the schema, idempotent upsert by
-`event_id`). **Reconciliation:** the multi-connector shape is canonical (it's the only one that
-can carry `campaign_id`/`auction_id`/`bidfloor`/`search_term`/`message_id`, which is the whole
-point). The two **agree on the mechanics**, so those are first-class: `provenance` carries
-`model_version` · `request_id` · `prompt_hash` · `response_schema_hash` · `connector_version`,
-and the normalizer accepts optional `model_version`/`prompt`/`request_id` overrides so an
-**LLM strict-schema path (Gemini, pinned model)** and the rule-based connectors produce
-**audit-identical rows under one schema**.
-
-**New files:**
-- `schemas/journey-event.json` — canonical schema (draft 2020-12). Refined the founder draft to
-  be self-consistent: added top-level `source_payload_hash` (matches the documented hashing note
-  + the BQ table column; the draft had `additionalProperties:false` but omitted it). Served live
-  at **`GET /schemas/journey-event.json`** (`application/schema+json`) so it's a real `$ref`
-  target for a Gemini `response_format`.
-- `mizoki_runtime/journey.py` — deterministic per-source mappers, a **dependency-free JSON Schema
-  validator** (type unions/enum/required/properties/additionalProperties; `format` is annotation-
-  only per spec), `JourneyEventNormalizer`, an **idempotent JSONL `JourneyEventStore`**, and the
-  SENSE-stage `JourneyIngestCell` (normalize → validate gate → upsert → fan-out to the
-  `event_store`/`knowledge_graph`/`bigquery`/`audit_log` sinks).
-- `mizoki_runtime/journey_sinks.py` + `schemas/journey-event.bigquery.sql` — **optional** external
-  upsert sinks (the founder's second-prompt Firestore/BigQuery flow). `FirestoreJourneySink`
-  (doc per `event_id`) and `BigQueryJourneySink` (idempotent `MERGE` on `event_id`) **lazily import**
-  `google-cloud-firestore`/`google-cloud-bigquery` only inside the upsert path — nothing added to
-  `requirements.txt`, default deploy stays dependency-free. The cell delegates inserted/updated
-  events (duplicates are skipped to keep replays no-ops) and **degrades gracefully**: a missing
-  client lib or credential records a per-sink `error` instead of failing the SENSE batch. Wired
-  via env: `MIZOKI_JOURNEY_FIRESTORE_COLLECTION` / `MIZOKI_JOURNEY_BIGQUERY_TABLE` (unset → in-process
-  JSONL only). The MERGE SQL + event→row projection are pure functions, unit-testable without the cloud.
-- `mizoki_runtime/journey_gemini.py` — **optional** Gemini strict-schema extraction connector (the
-  second-prompt LLM path), with two backends that both thread the model provenance
-  (`model_version`/`request_id`/`prompt_hash`/`response_schema_hash`) through the normalizer's
-  `assemble_from_extraction` so an LLM-extracted row is **shape-identical** to the rule-based
-  connectors:
-  - **`VertexGeminiJourneyExtractor` (the chosen Cloud Run path, 2026-06-24).** Uses Vertex AI via
-    the **`google-genai` SDK** with **Application Default Credentials** — i.e. the Cloud Run service
-    account, **no API key**. The SDK is imported lazily, and an injected `client` makes the parse →
-    provenance → canonicalize path unit-testable with no SDK and no network. `to_vertex_response_schema`
-    projects the served `journey-event.json` onto the OpenAPI subset Vertex controlled-generation
-    accepts (drops `$schema`/`$id`/`additionalProperties`, rewrites `["T","null"]` unions to
-    `type` + `nullable`); the in-process validator stays the authoritative gate. Config via env:
-    `MIZOKI_GEMINI_PROJECT` (or `GOOGLE_CLOUD_PROJECT`/`GCP_PROJECT_ID`), `MIZOKI_GEMINI_LOCATION`
-    (default `us-central1`), `MIZOKI_GEMINI_MODEL` (default **`gemini-3.5-pro`**). **`google-genai==2.10.0`
-    added to `requirements.txt`** — it ships in the image but the extractor stays dormant until a project is set.
-  - **`GeminiJourneyExtractor` (API-key REST, retained).** Calls `generativelanguage.googleapis.com`
-    with a pinned model + API revision via **stdlib `urllib`** (no dep), fires only when
-    `GEMINI_API_KEY` is set; injectable `transport` for network-free tests.
-
-  `discover().journey.llm_extractor` reports the **Vertex** backend (`provider:google-vertex-ai`,
-  `auth:application-default-credentials`, pinned model/location, `configured` = project present).
-
-  **Cloud Run ops to activate it (operator, GCP-side):** (1) grant the Cloud Run *runtime* service
-  account `roles/aiplatform.user`; (2) set env vars `MIZOKI_GEMINI_PROJECT` (or rely on
-  `GOOGLE_CLOUD_PROJECT`), `MIZOKI_GEMINI_LOCATION`, and a **Vertex-valid** `MIZOKI_GEMINI_MODEL`
-  (default `gemini-3.5-pro` — confirm it's the approved Vertex publisher-model id in your project/region
-  before enabling). No secret/API key required.
-
-**Idempotency (matches the documented recipe):** `event_id = sha256(event_source || event_type ||
-stable_keys_from_source)` — **never** over volatile timestamps; `source_payload_hash =
-sha256(canonical_compact_json(payload))`. Store upsert: first sight → `inserted`; same id + same
-payload hash → `duplicate` (no write, replays are no-ops); same id + changed payload → `updated`.
-
-**Wiring (`runtime.py`, `app.py`):** MCP tools `journey.normalize_event`, `journey.ingest_events`,
-`journey.recent_events` (new `journey` category, discoverable via `/api/mcp/tools` +
-`/api/boss/discover`). Flask: `POST /api/boss/journey/normalize`, `POST /api/boss/journey/ingest`,
-`GET /api/boss/journey/events`, plus the schema route. KG grounding: new entities
-`journey_event` (schema) and `journey_ingest` (cell) wired into `sense`/`srpvdal`/
-`validation_arbitration` and to `openrtb_bidstream`. `discover()` gains a `journey` block;
-`health_snapshot()` adds `journey_event_count`.
-
-**Verification:** `python3 -m py_compile mizoki_runtime/journey.py mizoki_runtime/journey_sinks.py
-mizoki_runtime/journey_gemini.py mizoki_runtime/runtime.py app.py` clean; `python3 -m unittest
-tests.test_app tests.test_runtime` → **54 passing** (the Vertex backend added 4: ADC-client
-provenance threading via a fake google-genai client, project-required guard, Vertex-compatible
-schema transform, extractor metadata) (the JourneyEvent layer added 18: 14 runtime — per-connector
-normalization + schema validity, pinned provenance + schema-hash, stable `event_id` + idempotent
-replay, sink fan-out + persistence, validation-gate rejection, bad-source/payload guards,
-external-sink forwarding + duplicate-skip, graceful sink-error degradation, Firestore upsert via
-fake client, BigQuery MERGE SQL + row projection, env sink builder, Gemini extractor provenance
-threading + strict-schema request via fake transport, Gemini creds-required guard, extractor
-metadata; 4 app — schema served, normalize endpoint, idempotent ingest endpoint, event-array
-validation). Smoked `app.test_client()`: schema route 200 `application/schema+json`,
-`/api/health` carries `journey_event_count`, `/api/boss/discover` carries `journey`, MCP
-`journey.ingest_events` returns `{inserted:1}` then `{duplicate:1}` on replay, and Gemini-style
-provenance (`model_version=gemini-…`, custom `request_id`) threads through with a matching
-`response_schema_hash`. Run traces persist to `data/journey_events.jsonl` (already covered by the
-`data/*.jsonl` gitignore rule). No homepage/site copy touched; positioning untouched.
-
-**Production deploy (2026-06-24).** Shipped via **PR #11** (*Canonical JourneyEvent schema +
-multi-connector SENSE normalization*) merged to `main` at merge commit **`19e65e52`**. The WIF
-auto-deploy workflow `deploy-cloudrun.yml` run **`28119426946`** built + pushed the image and rolled
-a new `mizoki-website` Cloud Run revision green in ~60s (all steps success: Build → Push → Deploy to
-Cloud Run 18:07:39→18:07:57 UTC). **Live smoke on mizoki3.com** (all pass): `GET
-/schemas/journey-event.json` → 200 `application/schema+json`; `/api/health` carries
-`journey_event_count`; `/api/boss/discover` carries the `journey` block (5 sources, 3 tools,
-`llm_extractor` pinned to `gemini-2.0-pro-exp-02-05` @ rev `2026-06-01`, `configured:false` — no
-`GEMINI_API_KEY` set in prod); `POST /api/boss/journey/normalize` (openrtb) returns a valid
-canonical event; `POST /api/boss/journey/ingest` returns `{inserted:1}` then `{duplicate:1}` on
-replay. **Caveat for future agents:** the default in-process JSONL `JourneyEventStore` lives on the
-Cloud Run instance's ephemeral disk, so idempotency holds **per instance/revision**, not across
-scale-out or restarts; for durable, cross-instance idempotency set `MIZOKI_JOURNEY_FIRESTORE_COLLECTION`
-and/or `MIZOKI_JOURNEY_BIGQUERY_TABLE` (and install the optional `google-cloud-firestore`/
-`google-cloud-bigquery` clients) so the canonical `event_id` upsert lands in durable storage. The
-Gemini extractor stays dormant until `GEMINI_API_KEY` is provided.
-
-**Post-merge review hardening (2026-06-25).** Automated reviewers (gemini-code-assist, copilot,
-codex) flagged robustness issues on the merged PR #12; addressed in a follow-up: (1) **malformed
-model JSON no longer crashes** — both extractors route the response through `_safe_json_load`, so a
-truncated/invalid response becomes a `valid:false` row with an error string instead of a
-`JSONDecodeError`; (2) `to_vertex_response_schema` now **only collapses the nullable `["T","null"]`
-case** and preserves genuine multi-type unions (no silent narrowing); (3) the Vertex extractor
-**requires a project even when a client is injected**, so `model_provenance.raw_uri` is always
-well-formed; (4) `discover().journey.llm_extractor` uses `active_extractor_metadata()` to report the
-**backend that is actually configured** (Vertex if a project is set, else API-key if a key is set,
-else the dormant Vertex default); (5) **idempotency preserved on the LLM path** — valid responses
-hash the parsed object's `canonical_compact_json` (order/format-independent) while only malformed
-responses hash raw bytes, so a re-formatted replay stays a `duplicate` rather than an `updated`.
-`python3 -m unittest tests.test_app tests.test_runtime` → **60 passing**.
-
-### Homepage §03 ARCHITECTURE — Interactive SRPVDAL Spiral + Subsystem Ownership (2026-06-19)
-
-Integrated a founder-supplied investor slide (the "SRPVDAL spiral" — SENSE → REASON → PLAN →
-VALIDATE → DECIDE → ACT → LEARN with three component callouts) into the homepage as a real,
-interactive section rather than a static export. Built in the canonical single-file vanilla-JS
-`index.html` (no build step), matching the existing exhibit pattern (SVG generated in JS like the
-§02 reflex arc and §05 divisions).
-
-**New section `#architecture` (§03 ARCHITECTURE), inserted between §02 reflex arc and the control
-plane.** Renders an SVG **spiral** of the seven SRPVDAL stages (outer SENSE spiraling inward to
-LEARN, with a center `↻ LOOP TIGHTENS` glyph to convey the continuous, compounding loop) and maps
-each stage to the subsystem that owns it:
-
-- **Knowledge Graph** (Temporal-Causal Knowledge Graph) → owns **Reason · Plan** — teal.
-- **Financial Model** (Counterfactual Simulation Engine) → owns **Validate · Decide** — amber.
-- **Orchestrator** (Boss Agent) → owns **Act · Learn** — green.
-- **Sense** is the neutral entry node (where signals enter), unowned by the three — faithful to the
-  slide.
-
-**Interaction:** hovering/clicking a legend chip or a stage node isolates that subsystem (colors its
-arc + the two stages it owns, dims the rest) and updates a detail panel describing its role; the
-center glyph (or clicking an active chip) resets to an overview. Keyboard path is the three `<button>`
-legend chips; the SVG nodes are mouse/hover enhancement. Honors `prefers-reduced-motion` (it's
-interactive, not animated). Wrapped in try/catch — if it ever throws, the section hides itself rather
-than showing an empty card.
-
-**Positioning honored:** nervous-system framing, no "brain" metaphor; subsystems named in
-site-consistent vocabulary (TCKG / Counterfactual Simulation Engine), with the founder's exact
-callout labels (Knowledge Graph / Financial Model / Boss Agent) surfaced as the subsystem names.
-Divisions framing untouched.
-
-**Renumbering (folios are sequential ledger numbers):** new section is §03; CONTROL PLANE §03→§04,
-DOMAINS §04→§05, ASSURANCE §05→§06, final filing §06→§07. Nav gained `§03 LOOP` (→`#architecture`)
-and bumped CONTROL→§04 / DOMAINS→§05. Anchor hrefs (`#pipeline`, `#control`, `#divisions`) unchanged.
-
-**Files:** `index.html` only — added spiral CSS (`.spiral`/`.sp-*`), the section markup, and one
-`SRPVDAL spiral` IIFE (SVG built with `createElementNS`). No `app.py`, runtime, route, or test
-changes.
-
-**Verification:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` clean; `python3 -m
-unittest tests.test_app tests.test_runtime` → **32 passing**; `node --check` on the extracted
-homepage script clean; HTMLParser structural balance passes (no unclosed/stray tags); `app.test_client()`
-smoke of `/` → 200 with all new markers (`id="architecture"`, `id="sp-svg"`, `WHO OWNS EACH STAGE`,
-`§03 LOOP`, renumbered folios §04–§07) and no `§03 CONTROL` nav regression; all 7 spiral node + label
-coordinates confirmed within the viewBox (no clipping).
-
-**Investor-framing enhancement (same session, follow-up after PR #8 merged + deployed).** Per founder
-direction, layered an investor storytelling pass onto the §03 spiral while **keeping the canonical
-7-stage SRPVDAL** (the founder's framing pitched a 5-stage SRDAL ring; we kept 7 for consistency with
-§02 and the rest of the site, and mapped the narrative onto all seven stages). Added:
-(1) a **key-artifact second label under each stage node** — Signals · Causal Graph · Action Plan ·
-Simulation · Decision Slate · Executions · Learning Records; (2) **stage-level hover/click detail**
-(`showStage`) surfacing each stage's artifact + a one-line investor description ("causal drivers, not
-correlations" / "rank by expected value and risk" / "secure connectors execute the approved change" /
-"predicted-vs-actual deltas feed back"); (3) a **compounding-ROI inset** (`.sp-roi`) — a thin line
-rising one notch per lap with `ROI ↑ EACH LAP`; (4) an **A/B tagline slot** `#sp-tagline` populated
-from a `TAGLINES` array, swappable via the `data-i` attribute in the HTML (0 = "From data to decision
-to lift—on repeat.", 1 = "Every cycle smarter: sense it, reason it, ship it, learn it."); (5) refreshed
-lede + overview copy ("turns raw signals into compounding ROI", "each lap written to one shared
-memory"). viewBox enlarged 560×470 → 600×500 (cx/cy 300/250, rOut 190) to give the two-line labels
-margin. Verification: py_compile clean; 32 unittest pass; `node --check` clean; HTML balanced;
-`/` smoke 200 with all new markers (`sp-tagline`, both taglines, artifacts, `ROI ↑ EACH LAP`,
-`THE COMPOUNDING LOOP`); all 7 node labels + artifact second-lines + ROI inset numerically confirmed
-within the viewBox with no label/label or label/ROI overlap. Lands on `claude/nifty-knuth-mhvohu`
-(ahead of `main` again post-#8-merge — needs a fresh PR/merge to deploy).
-
-### Homepage Polish — Live-vs-Repo Audit, DEL Gauge Fix, Illustrative Disclaimer (2026-06-18)
-
-Reviewed a founder-supplied `index.html` paste against **live mizoki3.com** and repo
-`index.html`. Finding: the paste was **not a full redesign** — production already shipped
-the June-13 interactive homepage (executable SRPVDAL sim, hero schema inspector, authorization
-scorecard, control-plane sandbox). The paste was a **polish pass** with four meaningful deltas
-over live. Repo root `index.html` was already byte-identical to live (1,067 lines / 71,671 bytes)
-before this session; an older ~827-line static reflex-arc version must **not** be redeployed —
-that would roll back all interactivity.
-
-**Four deltas cherry-picked and shipped (`index.html` only — no `app.py`, runtime, route, or test changes):**
-
-1. **DEL gauge narrative fix (§03).** Live had an internal contradiction: copy cited ACT-991 at
-   **39** (vetoed) while the gauge displayed **87** and animated to 87 (eligible). Fixed initial
-   HTML to `39` with `var(--veto)` styling, label `DEL SCORE · ACT-991 VETOED`, arc fill
-   `439.8*(1-0.39)` with veto stroke, and IntersectionObserver animation counting to 39 (both
-   observer and no-JS fallback branches). Aligns gauge with simulation default, scorecard, and
-   "ACT-991 at 39" copy. Control-plane **sandbox** left at 82/ELIGIBLE default — intentional;
-   it is an independent interactive demo, not tied to ACT-991.
-2. **Illustrative figures disclaimer.** Added strip footer under the five metric cells:
-   `ILLUSTRATIVE FIGURES · REPRESENTATIVE OF A DEPLOYED MIZOKI3 SYSTEM` — enterprise liability
-   hygiene on synthetic stats (48,213 nodes, 1,294 signals/24h, etc.).
-3. **Domains copy (§04).** Replaced "how the **customers we've onboarded** happen to be structured
-   **today**" with "how a **typical deployment tends to be structured**" — matches canonical
-   positioning that divisions are example deployments, not a fixed product shape. Kept footer line
-   "Your deployment is whatever your business is. There is no list to fit into."
-4. **Hero plate label.** `EXHIBIT A — ORGANIZATIONAL GRAPH · ILLUSTRATIVE` (was missing
-   `· ILLUSTRATIVE`). `▸ INSPECT NODES` unchanged.
-
-**Not changed (already correct on live):** executable sim controls and deterministic model
-(`post = $6.0M − amount`; breach if `post < floor`; DEL `= 62 + marginPct·1.1 − (amount/pool)·6 −
-(legal ? 0 : 45)`; default Capital · $5.0M · floor $2.0M → score 39, VETO, Option B $4.0M);
-hero schema inspector (Counsel CLAUSE GRAPH overlay, five `dnode`s + TCKG core); authorization
-scorecard (four gates, fiduciary BREACH); sandbox presets; no `/manufacturing` footer link.
-
-**Branch / deploy:** `cursor/homepage-polish-deltas-c454` → **PR #6** squash-merged to `main`
-at `13e2061` (*Homepage polish: DEL gauge fix, illustrative disclaimer, domains copy*). WIF
-auto-deploy workflow `deploy-cloudrun.yml` run **`27796329844`** built + rolled Cloud Run green
-in ~48s.
-
-**Verification before merge:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` clean;
-`python3 -m unittest tests.test_app tests.test_runtime` → **32 passing**; `app.test_client()`
-smoke of `/` → 200 with markers `sim-run`, `schema-ov`, `ILLUSTRATIVE FIGURES`,
-`ACT-991 VETOED`, `typical deployment tends`, `EXECUTABLE CAUSAL SIMULATION`; ACT-991 model
-probed (amt 5.0, floor 2.0, post 1.0, score 39, verdict veto, optB 4.0).
-
-**Post-deploy audit (mizoki3.com vs founder reference paste):** repo `index.html` and live HTML
-confirmed **byte-identical** after deploy. Full section-by-section audit — 43 content markers PASS
-(top bar `DOC. MZK3-2026 · REV 4`, nav §02/§03/§04, hero nervous-system copy, exhibit + schema
-inspector, metrics + disclaimer, §02 "Run one yourself" sim, §03 gauge 39 + scorecard + sandbox,
-§04 typical-deployment copy, §05 assurance, §06 CTA, footer five example domains only). Regressions
-checked: no gauge 87, no "customers we've onboarded" on page, no `IMMUTABLE DECISION TRACE`
-header, no `/manufacturing` link, no "brain" product metaphor.
-
-**Gotcha for future agents:** if `index.html` is ~827 lines with a static `STAGES` array and no
-`sim-inputs` / `schema-ov` IDs, that is **stale** — fetch live or use current `main` before editing.
-Interactive homepage lives entirely in root `index.html` (single-file vanilla JS, no build step).
-
-### Homepage Strategic Upgrades — Executable Simulation + Schema Inspector + Dynamic Gating (2026-06-13)
-
-Turned the homepage (`index.html`) into a **physical demonstration of the system's deterministic
-physics** to kill the "is this just a static script / ChatGPT wrapper?" sales friction. Three
-interactive upgrades, all built in the canonical single-file vanilla-JS `index.html` (no build
-step) — **not** in a React `src/App.jsx`. (The task brief referenced replacing `src/App.jsx`, but
-the only `App.jsx` files in this repo live under the untracked scratch `Noah_gemini/` tree and
-never deploy; the production homepage that serves on `mizoki3.com` is the Flask static
-`index.html`, so the upgrades landed there to actually ship.)
-
-1. **Executable Causal Simulation (§02 reflex arc).** The old auto-playing static ACT-991 trace is
-   now an input-driven SRPVDAL state machine. Controls: **transaction amount** ($0.5M–$10.0M),
-   **liquidity / fiduciary floor** ($1.0M–$5.0M), **domain cell** (Counsel / Estate / Capital /
-   Signal / Risk), and a **legal-compliance toggle** (covenants clear ↔ covenant breach). "RUN
-   DIAGNOSTIC SIMULATION" runs a deterministic local model — `post = $6.0M reserve − amount`;
-   liquidity breach if `post < floor`; DEL score `= 62 + marginPct·1.1 − (amount/pool)·6 −
-   (legal ? 0 : 45)`, clamped 0–100 — then dynamically rebuilds the 7-stage trace + ledger with the
-   real numbers and animates it. Hard constraints (legal fail or floor breach) force a VETO
-   regardless of score; otherwise ≥80 ELIGIBLE, ≥60 OPERATOR GATE, else VETO. On veto it re-routes
-   to a computed **Option B = pool − floor** (the largest transaction that holds the floor). Default
-   inputs reproduce ACT-991 (Capital · $5.0M · floor $2.0M · clear → VETO, score 39, Option B $4.0M).
-2. **Interactive Graph Schema Inspector (hero).** The hero "EXHIBIT A" graph gained five clickable/
-   hoverable domain nodes + a TCKG core. Selecting a node isolates it (dims the rest) and prints its
-   Cypher-style relationship schema into a dark inspection overlay — e.g. Capital shows
-   `(Reserve)-[:FUNDS]->(Distribution)`, `(Covenant)-[:GOVERNS]->(Reserve)`,
-   `(Reserve)-[:EXPOSES]->(Risk.Limit)`. Every domain carries one cross-domain edge (e.g.
-   `(Clause)-[:LINKS]->(Capital.Covenant)`) to make the **shared substrate** visible. Core node
-   clears the selection.
-3. **Dynamic Visual Gating.** Upgrades 1+3 are the same wiring — moving the sliders/toggle reactively
-   flips the terminal between VETOED / OPERATOR GATE / ELIGIBLE with matching stamp + state colors,
-   so a buyer can physically trigger the DCP veto. All three states are reachable (verified the GATE
-   band is not a dead zone). The pre-existing §03 DEL-gauge sandbox (abstract confidence/policy/risk
-   sliders) is left untouched as a complementary demo.
-
-**Implementation notes:** new CSS for `.dnode/.dcore/.schema-ov` (hero inspector) and
-`.sim-inputs/.sim-dom/.sim-toggle/.sim-run` (sim console) + a `.stamp.gate` amber stamp and
-`.tl.gate` trace dot. The old static `STAGES` array / `startPlay` auto-player was replaced by the
-sim-engine IIFE; the pipeline IntersectionObserver now fires one auto-run (`runEl._auto`) when the
-section scrolls into view instead of looping. Honors `prefers-reduced-motion` (renders final state
-without animation). No `app.py`, runtime, route, or test changes.
-
-**Verification:** `python3 -m py_compile` clean; **32 unittest pass**; `node --check` on the extracted
-homepage script clean; `app.test_client()` smoke of `/` → 200 with all new IDs/markers present
-(`sim-run`, `schema-ov`, `dnode`, domain `data-k`s, "EXECUTABLE CAUSAL SIMULATION", "▸ INSPECT
-NODES"); HTMLParser structural balance check passes; model probed in node to confirm
-veto/gate/eligible verdicts match intended inputs. Shipped on branch
-`claude/mizoki3-strategic-upgrades-s1almy`.
-
-### Decision Ledger Site Deployed to Cloud Run / mizoki3.com (2026-06-12)
-
-Shipped the two pending Decision Ledger commits (the `/4/` sandbox replacement
-`d8c1ad1` and the root promotion `3dd848a` — both entries below) to production.
-Local `main` was 2 ahead of `origin/main` with nothing dirty besides untracked
-junk (`site/`, `files/`, several `mizoki3-complete-site*.zip` — none deploy, all
-left alone).
-
-**Process:** re-ran the verification standard (py_compile clean, 32 unittest
-pass), pushed `c206d13..3dd848a` to `main` → WIF auto-deploy workflow
-(`deploy-cloudrun.yml`, run `27432720438`) built and rolled the new
-`mizoki-website` Cloud Run revision green in ~45s.
-
-**Live smoke (mizoki3.com):** all 200 — `/` (title *"MIZOKI3 — A Nervous System
-for Your Business"*), the five division directories ± trailing slash, `/blog/`,
-`/blog/feed.xml`, `/privacy`, `/terms`, `/console`, slots `/1` `/3` `/4/`,
-`/sitemap.xml`. Unknown paths 404 with the ledger "This page was vetoed." body.
-Note: the feed lives at `/blog/feed.xml` only — there is intentionally no root
-`/feed.xml` (it 404s).
-
-**Loose ends flagged (not addressed):** (1) GitHub Actions warns the deploy
-workflow's actions (`actions/checkout@v4`, `google-github-actions/auth@v2`,
-`google-github-actions/setup-gcloud@v2`) run on Node 20, which GitHub forces to
-Node 24 starting **2026-06-16** — bump them in `deploy-cloudrun.yml` soon.
-(2) The 28 Dependabot vulnerabilities (6 high) on the default branch remain
-outstanding. (3) The untracked zips/`site/`/`files/` clutter remains in the tree.
-
-### "Decision Ledger" Promoted to Site Root — mizoki3.com (2026-06-12)
-
-Immediately after landing in `/4/` (entry below), the founder directed the Decision
-Ledger site to run as the **main site**. The pristine un-rewritten `site/` copy (root-
-absolute links) was promoted to the repo root: new `index.html` (ledger v3 homepage),
-division dossiers as directories (`counsel/`, `estate/`, `capital/`, `signal/`, `risk/`
-— old flat `counsel.html` etc. deleted), `privacy/`, `terms/`, `404.html`, robots/
-sitemap/favicons/og-image, and the four new blog articles + new `blog/index.html` +
-`feed.xml` merged into `blog/` (legacy `relu-lens-meta-algorithm.html` and
-`decision-control-plane.html` kept and still routed).
-
-**Flask changes (`app.py`):** division routes serve `<dir>/index.html` via new
-`serve_dir_page()`; new `/privacy` + `/terms` routes; `blog_post()` resolves
-directory-style slugs before `.html` fallback; 404 handler now serves the ledger
-`404.html` ("This page was vetoed."). `/login` intentionally **kept** as the redirect
-to the command-center UI (the kit's login shell posts to an unwired `/auth/login`);
-the v4 `login/` page was not copied to root. The `/4/` slot remains as the sandbox
-duplicate.
-
-**Verification:** py_compile clean, 32 unittest pass, 23-route smoke all PASS
-(divisions ± trailing slash, new + legacy blog slugs, policies, feeds, statics,
-slots, 404 body, login redirect).
-
-### /4/ Slot Replaced with "Decision Ledger" v4 Sandbox Site (2026-06-12)
-
-Replaced the old `/4/` React slot with the 16-page static "Decision Ledger" site from
-`mizoki3-site-v4-sandbox.zip` (unzipped source kept at `site/`, untracked). All
-root-absolute internal links (`href="/..."`, og/canonical `https://mizoki3.com/...`,
-sitemap/feed/robots URLs) were rewritten to `/4/`-prefixed so the slot is
-self-contained — links no longer escape to the main site. The login form's
-`action="/auth/login"` was left as-is (backend still unwired, per the kit's DEPLOY.md).
-
-**Flask change:** `app4_asset()` in `app.py` now resolves directory-style pages —
-`/4/counsel/`, `/4/blog/<slug>/` serve their own `index.html` before the SPA-style
-fallback to the slot root. Other slots (`/1`–`/3`) untouched.
-
-**Verification:** py_compile clean, 32 unittest pass, test_client smoke of 22 routes
-(all `/4/` pages + root + `/console` + `/1` + `/3`) all 200 with correct page bodies.
-
-### Diverged-Branch Reconciliation + Cloud Run Deploy (2026-06-12)
-
-Brought local and `origin/main` back in sync and shipped to production. Going in, the
-branch had **diverged**: local was 1 commit ahead (`58f7315` *Ship nervous-system
-homepage + canonical positioning docs*) and remote was 4 ahead (the Cell 27 work +
-the 2026-06-09 homepage-provenance docs). The apparent "two homepages" scare turned out
-to be a non-issue.
-
-**Key finding — the homepage was never in conflict.** `index.html` was **byte-identical**
-on both sides (same blob SHA `d6f728ae`, 590 lines). The local "homepage rebuild" commit
-and the remote one had converged on the same nervous-system `index.html`; the deployed
-site already carried it. The only files local `58f7315` uniquely added/changed were
-`POSITIONING_AND_MESSAGING.md`, doc edits in `CLAUDE.md`, and a small `app.py`/blog touch.
-
-**Reconciliation method — rebase, not merge:**
-
-- Stashed the dirty working-tree junk (the `mizoki3-final-*.zip` deletions + `Noah_gemini/`
-  deletions) into stash `deploy-zip-junk` so only real content rebased. Untracked
-  `files/` and `mizoki3-complete-site*.zip` were left alone — none of it deploys.
-- `git rebase origin/main`: `app.py` auto-merged clean; the **only conflict was in
-  `CLAUDE.md`**, and it was purely additive — HEAD's 2026-06-09 entries (Cell 27 +
-  homepage provenance) vs. local's 2026-06-02 messaging-correction entry. Resolved by
-  **keeping both**, newest-first. Result landed as `c437821`.
-
-**Verification before push:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` clean;
-`python3 -m unittest tests.test_app tests.test_runtime` → **32 passing**.
-
-**Deploy:** pushed `7b12eb9..c437821` to `main` → WIF auto-deploy workflow
-(`deploy-cloudrun.yml`, run `27429133149`) built + rolled a new Cloud Run revision green
-in ~1 min. Live smoke test 200 on `/`, `/console`, `/blog`, `/1`, `/3`.
-
-**Loose ends flagged (not addressed this session):** stash `deploy-zip-junk` still holds
-the zip/`Noah_gemini` deletions; untracked `files/` + `mizoki3-complete-site*.zip` remain
-in the tree. GitHub Dependabot reports **28 vulnerabilities (6 high, 18 moderate, 4 low)**
-on the default branch — unrelated to this deploy.
-
-### Provenance-Note Deploy + "Docs Deploy but Aren't Served" Verification (2026-06-10)
-
-Landed the 2026-06-09 homepage-provenance addendum (entry below) to `main` and ran the
-deploy end-to-end to confirm production actually picked it up.
-
-**Branch handling — used the fresh-branch pattern, not the prescribed
-`claude/add-monitoring-dashboard-ENme0`.** That branch, recreated off an older base,
-re-added the Cell 27 H3 that already lived on `main`, so **PR #3** went
-`mergeable_state: dirty` on a duplicate heading that git couldn't reconcile. Abandoned it:
-cut `claude/docs-homepage-provenance-2026-06` from current `main` (`41d52ec`) carrying
-**only** the provenance section, opened **PR #4** (clean diff), squash-merged to `main` at
-`7b12eb9`, and closed PR #3 as superseded. (This is the `7b12eb9` that the 2026-06-12
-Diverged-Branch entry above rebased onto.)
-
-**Deploy confirmed.** The merge to `main` triggered `deploy-cloudrun.yml` (run
-`27294723804`): built + pushed `gcr.io/spry-bus-425315-p6/mizoki-website@sha256:1f2244…a5c26`
-and rolled Cloud Run revision **`mizoki-website-00066-gzj`** to 100% traffic in ~60s
-(17:43→17:44 UTC). Live smoke: `mizoki3.com/` → 200, `last-modified` matched the deploy window.
-
-**Gotcha worth keeping — this is exactly why a docs push can look like "it didn't deploy":**
-
-- The deploy workflow has **no path filter.** *Every* push to `main`, including docs-only
-  commits, runs the full Docker build → GCR push → `gcloud run deploy` and produces a new
-  Cloud Run revision. (Build context transfers the whole repo — `.dockerignore` is ~2 bytes —
-  but Flask still serves from `BASE_DIR`, so this is cost/noise, not a correctness issue.)
-- **`CLAUDE.md` and the other dev docs are not served by Flask** — `app.py` has no
-  `/CLAUDE.md` route. So a docs-only deploy ships a brand-new revision with **zero
-  user-visible change** on `mizoki3.com`.
-- **Therefore: don't read "nothing changed on the live site" as "the deploy failed."**
-  Verify the real outcome from the `gcloud run deploy` step log (the
-  `revision [...] has been deployed and is serving 100 percent of traffic` line) or by
-  diffing `curl -sI https://mizoki3.com/`'s `last-modified` against the run time — not by
-  eyeballing the homepage.
-
-### Cell 27 — Programmatic Intelligence: OpenRTB Bidstream → SRPVDAL Alignment (2026-06-09)
-
-Added a **graph-native programmatic intelligence cell (Cell 27)** so OpenRTB bidstream signals enter the platform at the SENSE stage and flow through the *entire* SRPVDAL spiral instead of being routed straight into decisioning. The **VALIDATE stage is the hard safety gate** — no optimization reaches ACT without clearing it.
-
-**Where it lives:** `mizoki_runtime/runtime.py`, class `ProgrammaticIntelligenceCell` (deterministic, no external services — the bidstream "sinks", DSP/budget APIs, and backtests are modeled in-process so the pipeline is reproducible and unit-testable).
-
-**Per-stage behavior:**
-- **SENSE** — `ingest_bidstream()` normalizes loosely OpenRTB-shaped records (requests, win/loss notices, buyer IDs, exchange/seat metadata, floors, currency, consent) into canonical auction/impression events with full provenance, then fans them out to the `bigquery`, `knowledge_graph`, `event_store`, and `audit_log` sinks. Consent is evaluated (GDPR/TCF + US-privacy opt-out).
-- **REASON** — per-exchange/seat aggregation (win rate, ROAS, CPM, floor pressure), identity resolution, anomaly detection (`consent_gap`, `spend_no_return`, `low_roas`, `low_win_rate`, `floor_pressure`), opportunities, insights, predictions.
-- **PLAN** — candidate action objects (`increase_bid`, `decrease_bid`, `adjust_bid_to_floor`, `suppress_seat/exchange`, `reallocate_budget`, `expand_inventory`, `modify_audience`) each carrying `expected_roas_lift` + `confidence`, plus a `hold` baseline.
-- **VALIDATE** — policy checks (budget, brand-safety, consent/legal), KG historical-conflict check, and a simulation/backtest check; every plan labeled `pass` / `escalate` / `fail`. Scaling spend on non-consented supply is a hard `fail`.
-- **DECIDE** — ranks validated plans by `expected_roas_lift × confidence` net of risk/cost, selects the top N, emits a reasoning chain + `requires_approval` flag. Defaults to **needs_approval** unless `auto_execute=True` and nothing escalated.
-- **ACT** — executes approved low-risk actions against the mapped API surface with a rollback token + provenance record; otherwise holds them `pending_approval`. Audit log always written.
-- **LEARN** — measures realized vs. expected lift, emits a reward signal, proposes policy/threshold updates, and feeds KG/agent-memory updates (incl. a recommended skill seed).
-
-**Surfaces:**
-- MCP tools: `programmatic.ingest_bidstream`, `programmatic.run_pipeline`, `programmatic.recent_runs` (registered in the `programmatic` category; discoverable via `/api/mcp/tools` and `/api/boss/discover`).
-- Flask endpoints: `POST /api/boss/programmatic/ingest`, `POST /api/boss/programmatic/run`, `GET /api/boss/programmatic/runs`.
-- KG grounding: new entities `programmatic_intelligence` (Cell 27) and `openrtb_bidstream`, wired into `sense`/`srpvdal`/`decision_control_plane`/`validation_arbitration`.
-- Discovery + health: `/api/boss/discover` gains a `programmatic` block (cell id, sinks, tools, recent runs); `health_snapshot()` adds `programmatic_run_count`.
-- Policy thresholds are overridable per run via the `constraints` channel (e.g. `"min_roas=2"`, `"target_roas=4"`). Optional `budget` cap drives the VALIDATE budget check. `auto_execute` (default off) and `max_actions` (default 3) bound the ACT stage.
-
-**Repository hygiene:** added `data/*.jsonl` and `data/*.json` to `.gitignore` so the Boss runtime's generated artifacts (decision logs, graph-native loop traces, the new `programmatic_runs.jsonl`, learned skills, tool aliases) no longer pollute `git status` — only `data/.gitkeep` stays tracked. Mirrors the May-2026 bytecode-hygiene precedent.
-
-**Verification:** `python3 -m py_compile mizoki_runtime/runtime.py app.py` and `python3 -m unittest tests.test_runtime tests.test_app` — now **32 passing tests** (added 7: full-pipeline + persistence, safety-gate blocks unsafe scaling, auto-execute approves a scale opportunity, ingest-only SENSE, empty/invalid-event rejection, plus the two API tests). Also smoke-tested the live API path end-to-end via `app.test_client()`: a waste signal produced `spend_no_return` anomalies → suppress plans → validated `pass` → DECIDE `approved` → ACT `executed` with rollback tokens + provenance → LEARN reward signal. Shipped on branch `claude/openrtb-srpvdal-alignment-607lkw` (commit `65c9b62`). Run traces persist to `data/programmatic_runs.jsonl`.
-
-### Homepage Merge — Provenance Note (2026-06-09)
-
-Bookkeeping addendum to the 2026-05-22 "Decision OS Homepage + React Sibling Project" entry below. Records how the rebuilt `index.html` (the commit referenced there as `6c95d5a`) was actually assembled — source material, merge rules, verification — none of which was captured the first time. No functional change to the live site.
-
-**Source material — three competing drafts that fed the merge**:
-
-1. **React/Lucide draft** (≈225 lines, single React component). Cinematic dark background, knowledge-graph blob backdrop, four-quadrant industry section. Built around five SRPVDAL stages, not seven. No interactivity beyond an auto-cycling loop.
-2. **Plain-HTML draft** (≈100 lines, single self-contained file). Tight and declarative. Twelve sections: hero with TCKG visualizer + concentric nodes, status-quo vs paradigm, full 7-stage SRPVDAL loop, Decision Control Plane scorecard, replay timeline, media wedge, divisions grid, demo CTA. Zero JS handlers.
-3. **Interactive-HTML draft** (≈900 lines, Tailwind CDN + lucide + JetBrains Mono / Inter). Richest of the three: animated TCO-KG hero, clickable 7-stage SRPVDAL inspector with per-stage JSON payload, tabbed domain cells (four — Counsel/Estate/Risk/Media), execution sandbox terminal with three live-trace scenarios.
-
-**Merge rules applied**:
-
-- Took the visual identity, dependency stack (Tailwind CDN + lucide + Inter + JetBrains Mono), and interactivity scaffold from draft 3.
-- Took the section roster, hero structural framing, and replay-timeline content from draft 2.
-- Took the multi-tier blur backdrop and divisions framing from draft 1.
-- **Renamed draft-3 domain cells from four to five** to match this repo's canonical five-division naming (Counsel / Estate / Capital / Signal / Risk). Draft 3 had "Media Acquisition" — collapsed into Signal per the May 18 consolidation. Added a Capital cell that none of the three drafts had.
-- Wired all domain links to existing Flask routes (`/counsel`, `/estate`, `/capital`, `/signal`, `/risk`), the live-console pill to `/console`, and the demo CTA to `mailto:hello@mizoki3.com`.
-- Stripped any `pilot@mizoki3.com` / `sales@mizoki.com` slip-throughs in favor of the canonical `hello@mizoki3.com`.
-
-**Verification done before the original push**:
-
-- Python `HTMLParser` structural check on the assembled file — stack balanced, no unclosed tags. (`<br />` / `<meta />` raise XHTML-style warnings only; not actual structural errors.)
-- Every JS handler (`selectEngineStage`, `selectDomainCell`, `activateSandboxScenario`, `triggerSandboxSimulation`, `resetSandboxTerminal`, `triggerDemoToast`) was traced against the DOM IDs it touches — all targets present.
-- Every lucide icon name used (28 distinct: `globe-lock`, `network`, `scale`, `landmark`, `trending-up`, `radio-tower`, `shield-alert`, `shield-check`, `eye`, `brain-circuit`, `git-merge`, `layers`, `zap`, `activity`, `history`, `database`, `clock`, `gauge`, `bar-chart-3`, `rotate-cw`, `file-check`, `terminal`, `rewind`, `play`, `arrow-right`, `info`, `chevron-right`, `x`, `check`) was checked against the lucide.dev catalog.
-- No Flask route, runtime, or test file touched. `tests/test_app.py` and `tests/test_runtime.py` unaffected; the 25-test baseline holds.
-
-**Lifecycle of the homepage branch**:
-
-- Original branch `claude/add-monitoring-dashboard-ENme0` first created off `main` at `4efddc2`.
-- Commit `6c95d5a` pushed to that branch with the merged `index.html` (88KB / ~1340 lines).
-- Branch merged into `main` (post-merge head `487ee4e`) and deleted.
-- This bookkeeping addendum lands separately via branch `claude/docs-homepage-provenance-2026-06` cut from `main` at `41d52ec`. A first attempt to re-use `claude/add-monitoring-dashboard-ENme0` (PR #3) hit a structural conflict — the recreated branch predated the Cell 27 entry that landed on main in the interim, and git couldn't reconcile the duplicate H3.
-
-### Messaging Correction + Homepage Rebuild to the Nervous-System Positioning (2026-06-02)
-
-Per direct founder correction, two framing errors that had propagated through the live
-site and this file were fixed:
-
-- **"Brain" → "nervous system."** The product is a living nervous system that gives the
-  business real-time understanding of every part of itself — a mathematical graph of
-  metrics and prediction — and **replaces the CRM and the linear, backwards-looking
-  analytics** stack. The old "One brain. Your business." hero and the "Living Brain"
-  visualizer language are retired. See the new **Positioning & Messaging** section at the
-  top of this file (now canonical).
-- **Divisions are example deployments, not the product.** Counsel/Estate/Capital/Signal/
-  Risk are only the structures of currently-onboarded customers. The system is unlimited
-  and adapts to any business. The homepage divisions section is reframed as
-  "Example deployments — current customers," with copy stating there is no list to fit into.
-
-**New `index.html`** (single-file, inline CSS + vanilla JS, no build step — drop-in to the
-Flask static server like the rest of the repo):
-- Hero: *"A nervous system for your business."* with an animated knowledge-graph canvas.
-- Thesis section contrasts the **CRM era (linear, backwards-looking)** vs **a living nervous
-  system (real-time, predictive)**.
-- Interactive **7-stage SRPVDAL "reflex arc"** that runs the ACT-991 covenant-breach decision
-  ($5.0M distribution → liquidity-floor breach → VETOED → safe Option B) with a live immutable trace.
-- Animated **DEL eligibility gauge** (87, "Eligible for Autonomous Action").
-- **Adaptive divisions** section (five shown as example deployments only) + governance cards
-  mapped to the Terraform (CMEK, VPC isolation, HITL, immutable ledger).
-- Honors the brand system: Instrument Serif (display) / DM Sans (body) / JetBrains Mono
-  (labels), dark-ink palette. Institutional "decision terminal" aesthetic.
-
-**Known drift to reconcile:** the Drive mirror of `index.html` (May-22 "Decision OS" build)
-lags the deployed `mizoki3.com`, which had already moved to a cleaner "One brain. Your
-business." page. Both are now superseded by this nervous-system rebuild. Deploy path
-unchanged: replace `index.html`, run `python3 -m unittest tests.test_app`, then `./deploy.sh`
-(or push to `main` for WIF auto-deploy).
-
----
-
-## Recent Work (May 2026)
-
-### Slotted React Apps + Sweep of Redundant Files / Services (2026-05-24)
-
-**Four React/Vite siblings mounted under `mizoki3.com/<N>/`** via three commits (`04c0cae`, `a1f9b7d`, `ec57378`) that landed during this session:
-
-- `/1/` — Vite-built React app (ChatGPT, single-page rebuild of the marketing site)
-- `/2/` — Vite single-page MIZOKI3 site (Claude, single-page + standalone `console/`)
-- `/3/` — Vite multi-page React+Router app (ChatGPT, the differentiated one: Simulator, Engine, Control Plane, Divisions, Governance, KPIs, Blog, Contact pages with `framer-motion` and `KnowledgeGraphBackground`)
-- `/4/` — Vite single-page React + `console/` (Claude, branded /4/)
-
-**Shipped architecture** (chose this over per-slot Cloud Run services):
-- Each slot is a flat pre-built `<N>/` directory at the repo root, containing `index.html`, `assets/`, and (for /2, /4) `console/`.
-- `app.py` has three routes per slot: `/<N>`, `/<N>/`, `/<N>/<path:filename>`. Catch-all serves `BASE_DIR / "<N>" / filename` if the file exists, else falls back to `BASE_DIR / "<N>" / "index.html"` so React Router can resolve the client-side route.
-- Single Cloud Run service (`mizoki-website`) carries every slot via the existing WIF auto-deploy. No LB url-map changes, no per-slot service to monitor, no Node in the runtime Dockerfile.
-- The dist/ outputs are **committed directly** — externally built (`npm install && npm run build` with `vite.config.js base: '/<N>/'` and React Router `basename="/<N>"`), then the resulting `dist/` contents land in the flat `<N>/` directory.
-
-**Architecture pivot mid-session:** an earlier attempt this session built per-slot standalone Cloud Run services (`mizoki3-v3`, `mizoki3-v4`) wired by `mizoki-lb` URL maps with prefix-strip rewrites. Tossed for being over-engineered relative to the chosen pattern. The `mizoki3-v3` standalone was retained briefly as backup; `mizoki3-v4` was torn down. By end of day both are deleted — see "Cloud Run cleanup" below.
-
-**Sweep of redundant local files / Cloud Run services:**
-- **Deleted folders:** `MIZOKI3-Site (1)/` (orphan Claude React sibling, identical product to the live site), `mizoki-website-all-files/` (13MB stale snapshot of the repo inside the repo — its inner CLAUDE.md only went up to "March 2026"), `legacy_mizoki_site/` (10MB pre-MIZOKI3 backup), `files (19)/` (earlier upload scratch), `Mizoki3_Site_Blog_Meta_ReLU_Deploy_Kit/` (one-time deploy kit).
-- **Deleted source zips:** `mizoki3-final-production-pages_chatgpt.zip` (already extracted as `/3/`), `mizoki3-site-deploy_1.zip`, `Mizoki3_Site_Blog_Meta_ReLU_Deploy_Kit.zip`, `files.zip` (timestamp-only churn, content byte-identical to long-since-deployed state).
-- **Deleted duplicate HTMLs:** `mizoki3_complete_enterprise_terminal{,(1),(1_gemini)}.html` — three byte-identical copies of the same single-file terminal page, not referenced by the live site.
-- **Deleted scratch screenshots:** 17 ChatGPT-generated reference PNGs at the repo root from May 13 / 18 / 19 / 22 (none referenced by served HTML).
-- **Deleted misc scratch:** `Claude Final Sitebudget balance sheet` (Pages doc), `MIZOKI Cannonical Lopp.png` (typo'd reference image), `preview.html` (single-file design preview), `01_relu_gate.png` at the repo root (duplicate of `assets/img/relu-article/01_relu_gate.svg`), `README_Captions_AltText.txt`, `LinkedIn_Meta_ReLU_Article.{pages,txt}` (drafts of the now-shipped blog post), `mizoki3-site.textClipping`.
-- **Cloud Run cleanup:** deleted `mizoki3-v3` and `mizoki3-v4` standalone services. The flat-dir Flask pattern is the only production serving path now.
-
-**Live route verification (post-cleanup):** `/`, `/1`, `/2`, `/3`, `/4`, `/console`, `/infrastructure/main.tf`, `/blog` — all 200 from `mizoki3.com`.
-
-### Decision OS Homepage + React Sibling Project + Operational Cleanup (2026-05-22)
-
-**Homepage replaced with the "Decision OS" rebuild.** Merged `claude/add-monitoring-dashboard-ENme0` (1 commit, `6c95d5a`) into main. New `index.html`:
-
-- Tailwind via CDN + lucide icons + Inter / JetBrains Mono (no build step — still drop-in to the Flask static server).
-- Title: *"MIZOKI3 // The Decision OS for Autonomous Enterprise Cognition"*.
-- Hero with animated TCO-KG nervous-system visualizer and live telemetry pill.
-- Status Quo vs. MIZOKI3 paradigm comparison.
-- Interactive **7-stage SRPVDAL inspector** (Sense → Reason → Plan → Validate → Decide → Act → Learn) with per-stage payload and metrics.
-- Decision Control Plane authorization scorecard.
-- Tabbed Domain Cells (Counsel / Estate / Capital / Signal / Risk) with deep links to `/counsel`, `/estate`, `/capital`, `/signal`, `/risk`.
-- Architecture & Trust governance cards, Operational KPIs grid.
-- **Decision Replay** flight-recorder timeline.
-- **Interactive Execution Sandbox** terminal with three modes (Liquidity / Compliance / ROAS).
-- Five-division grid + Demo CTA. Live Console pill in the nav links to `/console`.
-
-Naming + email conventions preserved: Counsel/Estate/Capital/Signal/Risk; `hello@mizoki3.com`; `/console` deep link.
-
-**React sibling project added: `MIZOKI3-Site (1)/`** (40 files, 468K). Vite + Tailwind + React + lucide. Self-contained — its own `Dockerfile`, `nginx.conf`, `cloudbuild.yaml`, `package.json`, `vite.config.js`, `tailwind.config.js`, `src/components/`, and a parallel `infrastructure/main.tf`. Treated as a **sibling deliverable**, not a replacement for the Flask static site. Awkward folder name (literal "MIZOKI3-Site (1)") is the downloaded-zip artifact — rename if you want; nothing depends on the path.
-
-Also committed: `preview.html` (standalone single-file design preview), 2 ChatGPT reference screenshots from 2026-05-19.
-
-**Operational cleanup performed earlier on 2026-05-22:**
-
-- **Branch cleanup on the `MIZOKICloudRun` repo** (sibling repo in the same org — not this repo): deleted 4 stale branches that were 0-files-different vs main — `claude/mizoki3-homepage-Rp13x`, `copilot/sub-pr-524`, `copilot/sub-pr-559`, `copilot/sub-pr-559-again`. Only `main` remains.
-- **Restarted the boss agent** on Cloud Run: rolled `boss-agent-adk` from revision `00218-w9m` → `00219-9zh` via `gcloud run services update boss-agent-adk --update-env-vars RESTARTED_AT=…`. The `RESTARTED_AT` env var is the kick mechanism; it doesn't carry meaning. Use the same trick to roll any other service. Of the five boss-related services (`boss-agent`, `boss-agent-adk`, `boss-agent-backend`, `boss-agent-service`, `boss-rewoo-orchestrator`), `boss-agent-adk` is the most active (rev 218+) and the de-facto primary.
-
-#### Operational lore — gotchas worth remembering
-
-- **Watch for accidental `mizoki3-site/` renames.** On 2026-05-22 the folder was renamed by a Finder drag to `mizoki3-site_claude'/` (trailing apostrophe, looks like a typo). The Flask routes `/console`, `/console/<path>`, and `/infrastructure/main.tf` hard-code the canonical path, so a rename breaks the live site instantly. If you see `mizoki3-site/` "deleted" in git status alongside a similar-looking untracked folder, **don't push the deletion** — diff the file SHAs against `origin/main:mizoki3-site/*` first; if they match, it's a recovery, not a content change. Restore with `mv "mizoki3-site_<whatever>" mizoki3-site`.
-- **Google Drive sync makes `git add` on directories with many small files extremely slow** (or hangs entirely — process consumes ~0s of CPU but never returns). If `git add` on a directory like `MIZOKI3-Site (1)/` doesn't finish in a few seconds, kill it (`kill <pid>`), `rm -f .git/index.lock`, and stage the files in smaller batches.
-- **Sign In wiring** lives in two places that must stay in sync: `app.py` constants `EXTERNAL_LOGIN_URL` + `EXTERNAL_DASHBOARD_URL`, and `index.html` `<a class="nav-signin" href="/login">`. Both should point at the command-center Cloud Run service. As of 2026-05-19 the canonical command center is `https://miz-oki-command-center-ui-ehqxake3ia-uc.a.run.app`. The legacy `https://mizoki.mizoki3.com` subdomain is dead — don't restore it.
-
-### Sign In Routing (2026-05-19)
-- Fixed homepage Sign In: `index.html` `nav-signin` now `href="/login"` (was `href="#contact"`, an in-page anchor that scrolled to the contact section — "the weird spot").
-- `app.py` constants `EXTERNAL_LOGIN_URL` and `EXTERNAL_DASHBOARD_URL` updated from the dead `https://mizoki.mizoki3.com` to `https://miz-oki-command-center-ui-ehqxake3ia-uc.a.run.app/{login,dashboard}` — the live command-center UI Cloud Run service.
-- The legacy marketing HTMLs (`investor.html`, `industries.html`, `roi.html`, `walkthrough.html`, `resources.html`, `how-it-works.html`, `sales-one-pager.html`, `demo-opener.html`, `pricing.html`, and the `11/` and `legacy_mizoki_site/` mirrors) still hardcode `https://mizoki.mizoki3.com` in their Login buttons. They all 301 to `/` via `legacy_marketing_page()` so users never see them — flag if you want them scrubbed.
-
-### Python Bytecode Hygiene (2026-05-19)
-Added `__pycache__/`, `*.py[cod]`, `*.pyo` to `.gitignore` and removed 7 previously-tracked `.pyc` files (`app.cpython-313.pyc` and friends). Bytecode no longer pollutes `git status`.
-
-### Homepage Rebuild to Five-Division MIZOKI3 Design (2026-05-18)
-Full rebuild of `index.html` to match the official MIZOKI3.com mockups:
-- Hero: "One Intelligence. Many Domains. Shared Causal Memory." with a NEXUS nervous-system SVG showing example-customer division nodes signaling across the graph. (NOTE 2026-06-02: "brain" metaphor retired — see Positioning & Messaging.)
-- MIZOKI3 Flywheel: five-step compounding loop (Signal Enters → Graph Updates → Cross-Domain Impact → Better Decisions → Lasting Memory) with live stats strip.
-- SRPVDAL Orchestration: seven-stage iconed loop.
-- Decision Control Plane summary panel that deep-links into the standalone `/console`.
-- One-System-Many-Lenses bento: COUNSEL, ESTATE, CAPITAL, SIGNAL, RISK — shown as example customer deployments, not a fixed five-part product. Replaces the old per-cell narrative.
-- Live Nexus Snapshot: Acme Holdings entity graph + recent-activity feed.
-- Governance: Counterfactual Simulation Engine chart + Decision Eligibility Layer score gauge (87 → "Eligible for Autonomous Action").
-- Use cases, demo flow, CTA, footer.
-
-Naming consolidation: Legal → **Counsel**, Media Acquisition → **Signal**. The standalone console sidebar was updated to add the Signal lens so the five-division naming is consistent everywhere (homepage, console, Flask routes).
-
-Late-day refinement (2026-05-18, evening):
-- New Chapter 06 "Verification & Arbitration" between the Decision Control Plane and Divisions: an animated execution trace of ACT-991 (Capital proposes a $5M distribution, V&A detects the COV-01 covenant breach, DEL scores it ineligible, DCP stamps VETOED, system re-routes to a safe Option B). The decision shown two ways — animated veto trace + the existing static liquidity chart.
-- SOC 2 / ISO 27001 badge removed from the hero (the company is not certified yet — claiming an in-progress cert on an infrastructure site sold to regulated buyers is a real liability). Replaced with "Customer-Managed Encryption", which is true since the Terraform provisions CMEK.
-- Contact email canonical at `hello@mizoki3.com` (a stray `pilot@mizoki3.com` from an alternate draft was rejected).
-
-Added `mizoki3-site/README.md` packaging doc that walks through four deploy options (any static host / GCS / Cloud Run / Firebase) plus Terraform usage.
-
-### `mizoki3-site/` Sub-Tree (2026-05-17)
-- `mizoki3-site/console/index.html` — standalone Decision Control Plane (Risk Arbitration Console UI). Sidebar carries Counsel/Estate/Capital/Signal/Risk + Nexus TCKG substrate + Decision Control. SRPVDAL execution trace, TCKG subgraph SVG, decision queue.
-- `mizoki3-site/infrastructure/main.tf` — Google Cloud Terraform module for the fiduciary substrate. Matches the actual stack: private VPC, Cloud Spanner with the GoogleSQL property-graph schema for TCKG, Pub/Sub event bus, Cloud Run for SRPVDAL/LangGraph orchestration, Vertex AI Model Garden for Claude reasoning isolation (publisher-model IAM condition pinning), Cloud KMS for encryption.
-  - **Outstanding:** the Vertex AI binding pins `claude-3-5-sonnet-v2@20241022`. Bump to the current approved Claude model on Vertex AI Model Garden before any production apply.
-  - **Migration note:** an earlier draft of this file used AWS (Bedrock, Neptune, MSK, EKS) — replaced 2026-05-18 because the website and orchestration actually run on Cloud Run, and reasoning runs on Vertex AI, not Bedrock.
-
-### Flask Routes for Console + Infrastructure (2026-05-17)
-Added in `app.py` (mirrors the `/blog/` and `/11/` patterns):
-- `/console`, `/console/`, `/console/index.html` → serves `mizoki3-site/console/index.html`.
-- `/console/<path:filename>` → serves any sub-asset under that directory.
-- `/infrastructure/main.tf` → serves the Terraform module as `text/plain`.
-
-Background: the homepage "Launch the Live Console" button pointed at `console/index.html`, but the file lived under `mizoki3-site/console/` with no Flask route, so it 404-ed on the live site. Routes resolved that.
-
-### Branch Cleanup + Dependabot Bump (2026-05-17)
-- Cherry-picked dependabot commit `54153c8` into main: Flask `3.0.3 → 3.1.3` in both `requirements.txt` and `mizoki-website-all-files/requirements.txt`.
-- Deleted `origin/pre-migration-backup` (held the pre-MIZOKI3 MIZ OKI 3.5 site — kept only as a git-history reference, no longer needed; closed Copilot PR #2 as a side effect).
-- Deleted `origin/dependabot/pip/pip-6f6034b2da` after the cherry-pick landed.
-- Local safety tag `pre-backup-merge-safety` left in place (points at `f747688`) — not pushed; remove with `git tag -d pre-backup-merge-safety` when no longer wanted.
-
-### Deployment Pipeline Status
-- **Auto-deploy on push to `main` works as of 2026-05-18.** Every push triggers `.github/workflows/deploy-cloudrun.yml`, which builds the Docker image with Cloud Build, pushes to `gcr.io/spry-bus-425315-p6/mizoki-website:<sha>`, and rolls out a new Cloud Run revision. End-to-end run time: ~60 seconds.
-- Service: `mizoki-website`, region `us-central1`, project `spry-bus-425315-p6`. Custom domain: `mizoki3.com`.
-- **Manual fallback:** `./deploy.sh` still works the same way (Cloud Build → GCR → `gcloud run deploy`) when you need to deploy from your laptop without going through git.
-
-#### GitHub Actions auth — Workload Identity Federation
-The workflow authenticates via WIF, not a service-account key. No long-lived secrets in GitHub.
-
-GCP setup (one-time, lives in `spry-bus-425315-p6`):
-- Workload identity pool: `github-actions` (location `global`)
-- OIDC provider: `github`, `issuer-uri=https://token.actions.githubusercontent.com`, `attribute-condition=assertion.repository_owner=='mediaintelligence'`
-- Service account: `miz-oki-website-deployer@spry-bus-425315-p6.iam.gserviceaccount.com`
-  - Roles: `run.admin`, `cloudbuild.builds.builder`, `iam.serviceAccountUser`, `storage.admin`, `serviceusage.serviceUsageAdmin`
-- Binding (`roles/iam.workloadIdentityUser`) is `principalSet://…/attribute.repository/mediaintelligence/mizoki-3-5-website` — scoped to this repo only. No other GitHub repo can impersonate the deployer SA.
-
-Repo secrets (set via `gh secret set`):
-- `GCP_PROJECT_ID` = `spry-bus-425315-p6`
-- `WIF_PROVIDER` = `projects/698171499447/locations/global/workloadIdentityPools/github-actions/providers/github`
-- `WIF_SERVICE_ACCOUNT` = `miz-oki-website-deployer@spry-bus-425315-p6.iam.gserviceaccount.com`
-
-To rotate the trust: delete and recreate the WIF provider in GCP, or revoke the principalSet binding on the deployer SA. To extend to another repo: add another `principalSet://…/attribute.repository/<owner>/<repo>` binding on the SA — don't widen the attribute condition.
-
-### Verification Standard for May 2026 Changes
-- `python3 -m py_compile mizoki_runtime/runtime.py app.py`
-- `python3 -m unittest tests.test_app tests.test_runtime` — 25 passing tests.
-- Smoke-test new routes via `app.test_client()` before pushing.
-
----
+### Signal Intelligence / ORACLE incorporated (2026-07-30)
+
+Owner-supplied "Signal Intelligence Division — Marketing Capabilities" documentation
+(ORACLE / Latent Intent Inference) incorporated into the public site, per explicit
+owner instruction ("incorporate this into the single intelligence marketing page and
+demo"):
+
+- **`signal.html` rewritten** as the full Signal Intelligence Division page in the
+  locked v1.5 night-dossier vocabulary: crystal-ball-plus-proof positioning, the four
+  intent stages (awareness → consideration → in-market → purchase-imminent), ORACLE
+  capability cards (Cells 33/28/34 — consent-gated micro-signals, sub-100ms Intent
+  Scoring API, Neo4j intent graph with SHOWED_INTEREST/PRECEDES edges), the proof
+  half (X-Learner/DR-Learner, DoWhy refutation, holdout/ghost-bid/geo experiments,
+  the caused-vs-anticipated credit ledger, iROAS vs platform ROAS), consumes/produces
+  anatomy, claim-labeled targets, five playbooks, governance plate, and a cell map.
+  `signal.html` is NOT canon-pinned; the `/signal` test contract
+  (`test_division_pages_wired_to_demos`: `/demo/signal` + `/demo` links, root-absolute
+  assets) is preserved.
+- **`demo-signal.html` gained section "5 · ORACLE — anticipatory intent"** (static:
+  stage strip, SERVE/PROVE/GOVERN facts, promotion gates, `/signal` link). This file
+  IS canon-pinned — the owner instruction is the specific human approval, and
+  `canon.lock.json` was re-pinned in the same commit. Demo runtime/JS untouched
+  (interactive run re-verified).
+- **Claim discipline is binding on both pages**: "anticipatory intent with proof of
+  causal lift", never "mind-reading"; calibrated probabilities, never "will buy";
+  "proven-incremental" only after refutation passes; 40% CAC / 35% ROAS / 67% ROI are
+  labeled design targets, never guaranteed; no audio ever; consent-first; observe-only
+  default with promotion gates Brier ≤ 0.20 · AUC ≥ 0.72 · stable lift ≥ 2 cycles.
+- **Source doc archived** at `docs/SIGNAL_INTELLIGENCE_ORACLE_CAPABILITIES.md`.
+- Suite: 260 tests, only the 2 pre-existing dossier-swap homepage assertions fail
+  (they request `/`, untouched). **Not deployed** — ships only when a human runs
+  Actions → "Deploy MIZ OKI 3.5 Homepage" and types `APPROVED`.
+
+### Site-wide favicon (2026-07-27)
+
+`/favicon.ico` 404'd site-wide. Fixed, and the icon set is now consistent across
+**every** served surface.
+
+- **Canonical assets live in `assets/img/`**: `favicon.svg` (brand mark — the nav
+  logo "M", `#04060f` plate, ink→`#4cc9ff` gradient), `favicon.ico` (real 3-frame
+  16/32/48 ICO), `apple-touch-icon.png` (180px).
+- **Path moved** `assets/svg/favicon.svg` → `assets/img/favicon.svg`. 14 pages had
+  pointed at the old path (an off-brand cyan zigzag); 18 pages + all 6 Flask
+  templates had no favicon at all. All 38 surfaces now carry the same three links.
+  The old file is left in place but is **unreferenced by the live site** — only
+  `archive/` still mentions it.
+- **`app.py`** serves `/favicon.ico`, `/apple-touch-icon.png` and
+  `/apple-touch-icon-precomposed.png` at the root, since clients request those
+  regardless of `<link>` tags.
+- **Regenerate with `scripts/generate_favicon.py`** (pure stdlib — no Pillow). The
+  "M" is drawn as geometry, not text: favicons never load a webfont, so a
+  text-based mark would render inconsistently.
+
+⚠️ **Two traps, both now test-enforced** (`tests/test_demo_platform.py`, 251 tests):
+`test_demo_platform` already asserted the favicon path, so moving it broke two
+tests — the path is a contract, update the assertions deliberately. And a `--`
+inside an XML comment (e.g. writing `--nexus` in a note) makes the whole SVG
+unparseable and the browser renders **nothing**; `test_favicon_assets_exist_on_disk`
+now parses the SVG to catch it.
+
+### Homepage presentation pass — demo elevated, omnichannel + pricing added (2026-07-27)
+
+**Round 3** of the landing-remix review (`docs/LANDING_REMIX_ADOPTION_NOTES.md`). Rounds
+1–2 built the live teaser but left it at section 12 of 14; this closes the *presentation*
+findings the earlier rounds never addressed.
+
+- **`#live` is now section 2** — the `#liveTeaser` block moved out of `#action-flow` to
+  sit directly after the hero. Every `lt*` element ID was preserved, so
+  `assets/js/home-demo.js` binds unchanged and still drives the real `/api/demo/*`
+  runtime. **Invariant: keep it there.** It is the page's primary proof.
+- **Animated SRPVDAL rail** on the static `#orchestration` loop (`.srp-rail` +
+  `.srp-stage.lit/.done`), reusing the `.lt-stage` visual language and
+  `--nexus`/`--estate` tokens. `IntersectionObserver`, fires once, snaps complete under
+  `prefers-reduced-motion`.
+- **New `#omnichannel`** (Meta / Google Ads / lifecycle email / programmatic) accented
+  `var(--signal)` — capability description only, **zero performance numbers** (the
+  source's "31% CPA drop" style metrics are fabricated and were rejected).
+- **New `#pricing` preview** mapped to the autonomy ladder, consistent with
+  `pricing.html`. No dollar figures.
+- **Density:** nav 11 → 6 items, hero lede 6 lines → 4, "Run a Live Decision" promoted to
+  primary CTA, long section sub-copy trimmed.
+
+Tests: 248 passing. Deployed via the Deploy Router (bot merge → router → `deploy-homepage`
+`workflow_dispatch`, no manual sweep). Production verified: same seed-42 trace id as local.
+
+Plan + reusable prompt: `docs/HOMEPAGE_MERGE_PLAN_2026-07.md`.
+
+### Homepage live teaser + Causal Truth + pricing rebuild (2026-07-23)
+
+Three adoptions distilled from an external landing-page review — the UX ideas were kept,
+the mocked implementation was not:
+
+1. **Homepage live teaser (`index.html` + `assets/js/home-demo.js`)** — an interactive
+   widget inside `#action-flow`: three scenario cards (Capital covenant veto — default,
+   Capital growth reallocation, Signal ROAS), a 7-stage SRPVDAL strip, a timestamped
+   execution log, and an outcome panel (real confidence, causal truth, trace id).
+   It POSTs to the real `/api/demo/{capital,signal}/run` with **seed 42** and replays the
+   returned trace — no mocked numbers, no `Math.random` (a test enforces this). Honors
+   `prefers-reduced-motion`; degrades to a `/demo` link if the backend is unreachable.
+2. **`causal_truth` on decision cards** — `demo_signal.build_causal_truth()` (reused by
+   `demo_capital` with `constraint_noun="the covenant"`) composes a plain-English "why"
+   from run data only: winner's gate numbers + ranking arithmetic, then the vetoed move
+   quoting the failing guardrail check's own detail ("The veto is not an opinion — it is
+   arithmetic against …"). Rendered by both `demo-pipeline.js` and `demo-signal.js` into a
+   `#dcTruthWrap` slot on `/demo/capital` and `/demo/signal` (graceful when absent).
+3. **`pricing.html` rebuilt** in the modern MIZOKI3 design system (was a stale legacy
+   "MIZ OKI" page that `app.py` 301-redirected to `/`). Now served at `/pricing` +
+   `/pricing.html`, listed in the sitemap, and linked from the homepage nav. Tiers map to
+   the autonomy ladder — Starter "Core Intelligence" (L0–L1 approval-first), Scale
+   "Operational Autonomy" (L2–L3 bounded thresholds, featured), Enterprise "Full
+   Governance Suite" (L0–L5 per-scope grants). CTAs are live (`hello@mizoki3.com`,
+   `/demo`); no performance claims anywhere on the page (claims-governance safe).
+
+**Round 2 (same day):** a detailed re-comparison against the source remix surfaced four
+remaining gaps, all closed:
+
+- **`dividend_covenant_veto`** — a new capital scenario where the ONE planned move
+  (`special_distribution +16% → holdco_dividend`) models covenant headroom 7% vs the
+  15% floor and is blocked, so **nothing executes** (`funnel.executed == 0`,
+  `executed_action is None`). The pure-veto flagship, echoing ACT-991. Default card in
+  the homepage teaser; selectable on `/demo/capital`.
+- **VETOED as a hero outcome state** — pure-veto runs render a red
+  "VETOED — nothing executed · human override required" status and hide the confidence
+  block; both demo players title a null action "No action executed — the veto held".
+  `build_causal_truth` prepends "No move earned execution this run — the desk held."
+- **Pipeline progress line + ✓ stage marks** in the teaser.
+- **Hero ghost CTA** now "Run a Live Decision" → `#action-flow`.
+
+Full adopted/adapted/rejected ledger: `docs/LANDING_REMIX_ADOPTION_NOTES.md`.
+
+Tests: 248 passing (`python -m unittest discover tests`), including
+`HomepageLiveTeaserTestCase`, `CausalTruthMarkupTestCase`, `PricingPageTestCase`,
+engine-level `causal_truth` assertions, and the pure-veto scenario test.
+
+### Homepage demo hygiene + Capital Desk JS (2026-07-22)
+
+Merged via monorepo PR `#580` (`claude/demo-fixes-v2`): gunicorn timeout 120s; walkthrough + division landings root-absolute; stale external Sign-In fixed; `assets/js/demo-capital.js` added and wired from `demo-capital.html`. Preceded by flagship demo v4 (PR `#578`) and Signal/Counsel demos.
+
+## Previous Work (June 2026)
+
+### Google Ads API Version + GAQL Compatibility Pre-Flight (2026-06-30)
+
+Closed a latent operational risk around the Google Ads API: it churns ~3 versions/year and
+**sunsets** old ones on a published schedule (e.g. v19 sunset early 2026), so requests against a
+removed version hard-fail, and a GAQL query selecting/filtering/sorting a field that is invalid for
+the targeted **version + resource** combination hard-fails too. Added a deterministic,
+dependency-free pre-flight that embodies the official guidance (check field availability with
+`GoogleAdsFieldService` + the Query Validator before constructing complex queries) — no Google Ads
+client, no network, fully unit-testable.
+
+**New file `mizoki_runtime/google_ads_gaql.py`:**
+- **Version deprecation schedule** (`GOOGLE_ADS_API_VERSIONS`, v16–v21 with release/sunset dates).
+  `version_status(version, as_of)` *computes* `supported` / `deprecated` / `sunset` / `unreleased`
+  / `unknown` relative to a date (never hard-coded) — `deprecated` once within
+  `DEPRECATION_WARNING_WINDOW_DAYS` (120) of sunset; `usable` flips false on sunset. Bump the table
+  as Google publishes versions.
+- **GoogleAdsFieldService-style field registry** keyed by resource (campaign, ad_group,
+  ad_group_ad, ad_group_criterion, search_term_view, keyword_view, customer) carrying
+  `selectable`/`filterable`/`sortable` flags + version windows (`available_since`/`deprecated_in`/
+  `removed_in`). Shared SEGMENT + METRIC field sets (metrics are not filterable in WHERE; the legacy
+  `metrics.average_position` is modeled removed → a hard error on modern versions).
+- **Dependency-free GAQL parser** (`parse_gaql`) extracting SELECT / FROM / WHERE / ORDER BY / LIMIT
+  field references.
+- **`GaqlValidator`** — pre-flights a query: version gate (sunset/unreleased → error, deprecated →
+  warning), unknown-resource, per-field unknown/unavailable/not-selectable/not-filterable/
+  not-sortable errors, deprecated-field warnings. Returns a structured
+  `{valid, errors[], warnings[], fields[], version_status, cache_key}` report.
+- **`GaqlValidationCache`** — keys on (normalized query, version, **day**) so a template reused
+  across thousands of MCC accounts validates once, and a verdict that flips when a version sunsets is
+  not served stale across day boundaries.
+- **`GoogleAdsCompatibilityCell`** (`cell.31`) — `validate_query` / `validate_batch` (the MCC sweep)
+  / `version_status` / `field_metadata` / `recent_validations`, persisting traces to
+  `data/google_ads_validations.jsonl`.
+
+**Wiring (`runtime.py`, `app.py`):** MCP tools `google_ads.validate_gaql`,
+`google_ads.validate_gaql_batch`, `google_ads.version_status`, `google_ads.field_metadata` (new
+`google_ads` category). `BossRuntime` methods + Flask `POST /api/boss/google-ads/validate`,
+`POST /api/boss/google-ads/validate-batch`, `GET /api/boss/google-ads/versions`,
+`GET /api/boss/google-ads/fields`, `GET /api/boss/google-ads/validations`. `discover()` gains a
+`google_ads` block (default/latest/supported versions, resources, tools, cache stats);
+`health_snapshot()` adds `gaql_validation_count`. Purely additive — no site copy, no existing
+endpoint touched.
+
+**Verification:** `python3 -m py_compile mizoki_runtime/google_ads_gaql.py mizoki_runtime/runtime.py
+app.py` clean; `python3 -m unittest discover -s tests` → **77 passing** (+41: a new
+`tests/test_google_ads_gaql.py` covering version lifecycle, parser, validator error/warning codes,
+the (query, version, day) cache, field metadata, and the cell; plus runtime + app integration
+tests). Smoked via `app.test_client()` with a fixed `as_of=2026-06-30`: v19 fails
+(`api_version_sunset`), v21 passes clean, batch validation hits the cache, `/api/boss/discover`
+carries the `google_ads` block. (Note: the JSONL trace store is per-instance ephemeral on Cloud Run;
+the cache is in-process per revision — both fine for stateless pre-flight. Version dates are
+representative-but-approximate; true them up against Google's published schedule as needed.)
 
 ## Previous Work (March 2026)
 
@@ -1111,7 +406,7 @@ To rotate the trust: delete and recreate the WIF provider in GCP, or revoke the 
 ### Why These Changes Were Made
 - The initial task history mixed this website repository with a different multi-agent Python service layout.
 - The real goal here was not to document graph-native decision intelligence conceptually, but to make the local Boss runtime actually usable, discoverable, and safe.
-- The review phase therefore focused on closing the gap between “tools exist"” and “the Boss Agent uses them correctly with the right parameters and the right sequencing.”
+- The review phase therefore focused on closing the gap between “tools exist” and “the Boss Agent uses them correctly with the right parameters and the right sequencing.”
 
 ### Current Verification Standard
 - `python3 -m py_compile mizoki_runtime/runtime.py app.py`
@@ -1175,7 +470,7 @@ Brand colors used throughout:
 1. **HTML**: Self-contained pages with inline CSS (no build step required)
 2. **Fonts**: JetBrains Mono (code), Instrument Serif (headings), DM Sans (body)
 3. **Images**: SVG preferred for scalability; include alt text for accessibility
-4. **Deployment**: Changes go live via `./deploy.sh` or `./master-deploy.sh`
+4. **Deployment**: HUMAN-APPROVED ONLY — Actions → "Deploy MIZ OKI 3.5 Homepage" with the `APPROVED` token (see Design Canon governance above). `./deploy.sh` / `./master-deploy.sh` are legacy and must not be run without the same approval
 
 ---
 
