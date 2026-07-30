@@ -24,10 +24,28 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const saved = JSON.parse(raw);
-      Object.assign(state, saved);
+      if (saved && typeof saved === "object") Object.assign(state, saved);
     } catch (_) {
-      /* ignore */
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (_ignored) {
+        /* ignore */
+      }
     }
+    // Saved state from an older pack version — or hand-edited storage — must
+    // never brick render: re-anchor anything that no longer resolves.
+    if (!MIZOKI.DOMAINS[state.domain]) state.domain = "logistics";
+    if (!MIZOKI.ROLES.some((r) => r.id === state.role)) state.role = "coo";
+    if (!MIZOKI.SIZES.some((s) => s.id === state.companySize)) state.companySize = "upper";
+    const stage = parseInt(state.stageIndex, 10);
+    state.stageIndex = Math.min(Math.max(isNaN(stage) ? 0 : stage, 0), MIZOKI.STAGES.length - 1);
+    state.resolved = Array.isArray(state.resolved)
+      ? state.resolved.filter((id) => typeof id === "string")
+      : [];
+    if (["pilot", "board", "deep-dive"].indexOf(state.decisionIntent) === -1) state.decisionIntent = null;
+    if (typeof state.activeSignal !== "string") state.activeSignal = null;
+    if (typeof state.companyName !== "string") state.companyName = "";
+    state.started = state.started === true;
   }
 
   function save() {

@@ -1,0 +1,27 @@
+{
+  "version": "v1.5-night-dossier",
+  "locked": "2026-07-30 (re-pinned to main union: v1.5 + executive-briefing production integration 16b324f/d8d9160)",
+  "authority": "Human-approved source of truth for MIZOKI3 look and feel. Changes to these files require specific human approval BEFORE deploy; re-pin via scripts/check_design_canon.py --update as part of the approved change.",
+  "canonical_homepage_sha256": "35a7e5d33a486725b7f997263885d287340c944d980f6f7b1121185e66ac08ac",
+  "files": {
+    "index.html": "35a7e5d33a486725b7f997263885d287340c944d980f6f7b1121185e66ac08ac",
+    "assets/css/styles.css": "55dfa022834ebd21defd8d873458d234fffda6d4244d16b4f7da794dc053097c",
+    "assets/css/demo-extras.css": "e8b4a935573116f4092214d266337be7f536fcad88283effb6e94debdcd8bcce",
+    "demo.html": "8e5d24c1fe948a2e1c782ec7a0da69aef262e1abab888b03b87f8203e9e5c116",
+    "demo-signal.html": "1faa007b8baaf8e7d1cfe70d4269e868874769dccdad1acde2fbbc7e14f16fb6",
+    "demo-counsel.html": "f2488ed5faab7ed05dfcec63a6a51eebc158f966df66652a9c086b8d8060129c",
+    "demo-estate.html": "12f03f35f211726ea117625211f66b4c4c94a69ac071b980d6d4a903c3b29b6a",
+    "demo-capital.html": "aa94cd671f8d9b63c81ca49558a0b113d0c4d081306c0f239715c74c34df1c21",
+    "demo-risk.html": "48e70d023d56141feef65900c344497ef9f31c872a760ba2f0f2626233bb6f62",
+    "demo-nexus.html": "7fd0c4d92e7e4988d24dd874fd2bef26b010d8176f419b9002ff117b7207b091",
+    "walkthrough.html": "6acdc265e20af7cf2a2904b3707ce8ea062bf59abf8ca81012f956ca887155fc",
+    "executive-briefing/index.html": "6d81394f36192fc241675f9b47371c7d4c9b3f97948b4343b6c2be7eb41b2b47",
+    "executive-briefing/css/briefing.css": "1f2115296c64a41002cefcaf1aaf6f4abbc89e674140867aec1bfabf34235855",
+    "executive-briefing/js/app.js": "66f9adb0ed09dd18573cbce874a3417649bf3a0341d3177011c7762e2bc8e730",
+    "executive-briefing/js/data.js": "eb7c6688444cd26b1aad0b7e5598142fba37b51ad3604c0fc04f2a78b776b8bf",
+    "pricing.html": "8e090e20a30503242f84b86bca0ab146f27404319db628afec7b03860cfd684d",
+    "privacy.html": "e7d1c3f091c5850e47dab6735c7a4432e670d046580a789f689fb0e0b3506ec1",
+    "terms.html": "87f1e9a1fab92e45d5bde253e0309a2513bb004a7608d376cd2ddec4c5ad0449",
+    "assets/js/nav-mobile.js": "c6e4289123e6aae70c9892a27af6d40fa4bd9ca83a0f30a925451b7e18511431"
+  }
+}

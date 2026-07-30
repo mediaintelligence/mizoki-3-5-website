@@ -36,9 +36,50 @@
     <div id="mizoki-briefing" role="application" aria-label="MIZ OKI executive briefing"></div>
 
     <script>
-      // Override on the marketing site as needed
+      // Site integration: confirmed decisions route through the site's real
+      // lead path (/contact, which already reads ?source=). Intent + domain
+      // travel as query params; company/role stay out of the URL — the contact
+      // page prefers them from sessionStorage. An embedding page can still
+      // supply its own MIZOKI_CONFIG before this script to override.
       window.MIZOKI_CONFIG = window.MIZOKI_CONFIG || {
-        contactUrl: "mailto:hello@mizoki3.com?subject=MIZOKI3%20Executive%20Briefing%20%E2%80%94%20next%20step",
+        contactUrl: "/contact",
+        onDecisionConfirmed: function (payload) {
+          var allowedIntents = { pilot: true, board: true, "deep-dive": true };
+          if (!payload || allowedIntents[payload.intent] !== true) {
+            console.error("Invalid Executive Briefing decision payload.");
+            return;
+          }
+          var domains = (window.MIZOKI && window.MIZOKI.DOMAINS) || {};
+          var decision = {
+            intent: String(payload.intent),
+            domain: Object.prototype.hasOwnProperty.call(domains, payload.domain)
+              ? String(payload.domain)
+              : "",
+            role: String(payload.role || ""),
+            companyName: String(payload.companyName || ""),
+            companySize: String(payload.companySize || ""),
+            source: "executive-briefing",
+            confirmedAt: new Date().toISOString(),
+          };
+          try {
+            sessionStorage.setItem(
+              "mizoki.executiveBriefing.decision",
+              JSON.stringify(decision)
+            );
+          } catch (error) {
+            console.warn("Unable to persist briefing decision.", error);
+          }
+          var url = new URL(
+            window.MIZOKI_CONFIG.contactUrl || "/contact",
+            window.location.origin
+          );
+          url.searchParams.set("source", "executive-briefing");
+          url.searchParams.set("intent", decision.intent);
+          if (decision.domain) {
+            url.searchParams.set("domain", decision.domain);
+          }
+          window.location.assign(url.toString());
+        },
       };
     </script>
     <script src="js/data.js"></script>

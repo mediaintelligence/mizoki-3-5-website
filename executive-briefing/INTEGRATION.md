@@ -66,13 +66,25 @@ Set before `app.js`:
 
 ```js
 window.MIZOKI_CONFIG = {
-  contactUrl: "https://mizoki3.com/#contact",
+  contactUrl: "/contact",
   onDecisionConfirmed: function (payload) {
-    // payload.intent: pilot | board | deep-dive
+    // payload: { intent: pilot|board|deep-dive, domain, role, companyName, companySize }
     // Send to analytics / form endpoint
   },
 };
 ```
+
+This page's own `index.html` ships a default `MIZOKI_CONFIG` (guarded by
+`window.MIZOKI_CONFIG || {…}`, so an embedding page set before these scripts
+still wins) that implements the deployed handoff:
+
+1. validates `intent` against `pilot | board | deep-dive` and `domain` against
+   the packs in `js/data.js`;
+2. stores `{ intent, domain, role, companyName, companySize, source,
+   confirmedAt }` in `sessionStorage` under `mizoki.executiveBriefing.decision`;
+3. navigates to `/contact?source=executive-briefing&intent=…&domain=…` —
+   company/role deliberately stay out of the URL; the contact page prefills
+   them from the sessionStorage payload.
 
 Public API:
 
@@ -85,14 +97,25 @@ MIZOKI_Briefing.getState();
 ## Production notes
 
 - CSS is self-contained (no CDN framework). Fonts load from Google Fonts; self-host if preferred.
-- State persists in `localStorage` key `mizoki-exec-briefing-v1`.
+- `css/briefing.css` styles the page shell (`html`, `body`, `*`, `button`
+  globals). That is safe for the full route and for iframe embeds (separate
+  document); the inline "`#mizoki-briefing` on any page" option would leak
+  those globals — scope them first if you ever embed inline.
+- Progress persists in `localStorage` key `mizoki-exec-briefing-v1`; saved
+  state is re-validated on load, so a stale or hand-edited value can never
+  brick the page. Confirmed decisions persist in `sessionStorage` key
+  `mizoki.executiveBriefing.decision`.
 - Metrics in domain packs are **illustrative** until replaced with customer data in `js/data.js`.
 - Mobile-first; primary targets ≥ 44px.
 
-## CTA mapping suggestions for mizoki3.com
+## Deployed on mizoki3.com (this repository)
 
-| Site CTA | Action |
-|----------|--------|
-| Hero “See it for your domain” | `/executive-briefing/` |
-| Demo modal | iframe embed |
-| Pricing “Talk to us” | after `decision_confirmed` → contact / Calendly |
+| Concern | Implementation |
+|---------|----------------|
+| Canonical path | `/executive-briefing/` (trailing slash — asset links are relative). Flask serves it in `app.py`; the bare path 308-redirects to the canonical form. |
+| Assets | `/executive-briefing/<path>` route with extension allowlist + traversal check; css/js verified to serve `text/css` / `text/javascript`. |
+| Decision handoff | Default `MIZOKI_CONFIG` above → `/contact` (the site's real lead path), which prefills company/interest/message from the sessionStorage payload — never raw JSON. |
+| CTAs | Homepage (§06 card, §07 plate, footer), `/pricing` enterprise tier, `/demo` hub banner, `/walkthrough` hero cross-link, `demo-opener.html` audience note — all linking `/executive-briefing/`. |
+| Two-track positioning | Executive Briefing = executive decision track (~9 min); Technical Walkthrough + live demos = evaluator track. |
+| Sitemap | `/executive-briefing/` listed in the generated `/sitemap.xml`. |
+| Tests | `python -m unittest tests.test_executive_briefing` (routes, redirect, MIME, traversal, handoff wiring, CTAs, sitemap) — part of `python -m unittest discover tests`. |
