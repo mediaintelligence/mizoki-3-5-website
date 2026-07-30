@@ -11,7 +11,7 @@
     started: false,
     stageIndex: 0,
     role: "coo",
-    domain: "logistics",
+    domain: "signal",
     companyName: "",
     companySize: "upper",
     resolved: [],
@@ -75,6 +75,10 @@
         '<path d="M3 11v4a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M15 11v4a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2Z"/><path d="M4 15v-3a8 8 0 0 1 16 0v3"/>',
       package:
         '<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+      signalIcon:
+        '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.48 12H2"/>',
+      scale:
+        '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
       arrowRight: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
       arrowLeft: '<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
       check:
@@ -179,7 +183,7 @@
       "<div>" +
       '<p class="mb-kicker">Executive product demo</p>' +
       '<h1 class="mb-title mb-title-lg">A clear process for executives who need to know — in one sitting — if this belongs in the company.</h1>' +
-      '<p class="mb-lead">MIZ OKI 3.5 is verifiable autonomous BI. This briefing is not a feature tour. It is a structured path from your domain reality to a board-ready decision — logistics, HR, finance, ops, CX, or supply chain — with the Decision Control Plane in the loop.</p>' +
+      '<p class="mb-lead">MIZ OKI 3.5 is verifiable autonomous BI. This briefing is not a feature tour. It is a structured path from your domain reality to a board-ready decision — marketing, legal, logistics, HR, finance, ops, CX, or supply chain — with the Decision Control Plane in the loop.</p>' +
       '<div class="mb-actions" style="justify-content:flex-start;margin-top:2rem">' +
       '<button type="button" class="mb-btn mb-btn-primary mb-btn-lg mb-btn-block mb-btn-block-sm" id="mb-start">' +
       "Begin executive briefing " +
@@ -189,7 +193,7 @@
       "</div>" +
       '<ul class="mb-grid-3 mb-mt-8" style="list-style:none;padding:0;margin-top:2.5rem">' +
       featureCard("clock", "Time-boxed", "Five stages with stated purpose and duration. No open-ended wander.") +
-      featureCard("target", "Domain-true", "Scenarios for logistics, HR, finance, production, CX, and supply.") +
+      featureCard("target", "Domain-true", "Scenarios for marketing, legal, logistics, HR, finance, CX, and supply.") +
       featureCard("shield", "Decision-grade", "Exposure, live action, ROI, and a pilot path you can take to the board.") +
       "</ul></div>" +
       '<aside class="mb-panel">' +
@@ -265,7 +269,7 @@
     return (
       '<div class="mb-enter"><p class="mb-kicker">Stage 01 · Context</p>' +
       '<h2 class="mb-title mb-title-md">Anchor this briefing to your reality</h2>' +
-      '<p class="mb-lead">Choose the operating domain you care about most. Exposure math, live scenario, and pilot recommendation all adapt — logistics and HR are fully different worlds; so are finance, production, CX, and supply.</p>' +
+      '<p class="mb-lead">Choose the operating domain you care about most. Exposure math, live scenario, and pilot recommendation all adapt — media and legal are fully different worlds; so are logistics, HR, finance, CX, and supply.</p>' +
       '<div class="mb-grid-2 mb-mt-8">' +
       "<section><h3 class=\"mb-section-title\">Operating domain</h3>" +
       '<p class="mb-hint">Select one primary lens for this session</p>' +
@@ -339,9 +343,11 @@
     const lag =
       state.domain === "hr"
         ? "11–18 days"
-        : state.domain === "finance"
-          ? "5–12 days"
-          : "18–48 hrs";
+        : state.domain === "legal"
+          ? "6–15 days"
+          : state.domain === "finance"
+            ? "5–12 days"
+            : "18–48 hrs";
 
     return (
       '<div class="mb-enter"><p class="mb-kicker">Stage 02 · Exposure</p>' +
@@ -711,7 +717,7 @@
           started: false,
           stageIndex: 0,
           role: "coo",
-          domain: "logistics",
+          domain: "signal",
           companyName: "",
           companySize: "upper",
           resolved: [],
@@ -888,7 +894,7 @@
         started: false,
         stageIndex: 0,
         role: "coo",
-        domain: "logistics",
+        domain: "signal",
         companyName: "",
         companySize: "upper",
         resolved: [],
