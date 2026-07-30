@@ -10,7 +10,7 @@
 <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="theme-color" content="#F4F6F7">
+<meta name="theme-color" content="#0A1418">
 <meta property="og:title" content="MIZOKI3 — A Nervous System for Your Business">
 <meta property="og:description" content="Real-time understanding of every part of your organization. A living graph of metrics and prediction — not another backwards-looking dashboard.">
 <meta property="og:type" content="website">
@@ -24,11 +24,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F4F6F7; --paper2:#EDF0F2; --card:#FBFCFC;
-  --ink:#0B1E26; --ink2:#33454D; --mute:#5E6E75; --faint:#93A0A6;
-  --rule:#D4DBDE; --rule2:#C3CCD0;
-  --teal:#0C7C8F; --teal2:#0A6675; --wash:#E3EEF0;
-  --veto:#C8273A; --pass:#1F8A5B; --warn:#B07A18;
+  --paper:#0A1418; --paper2:#0E1B21; --card:#0D2027;
+  --ink:#E8F1F4; --ink2:#B9C9CF; --mute:#93A0A6; --faint:#5E7780;
+  --rule:#1C2E36; --rule2:#24404A;
+  --teal:#3FDCF2; --teal2:#2FB8CC; --wash:#0F2A33;
+  --veto:#FF6B7C; --pass:#41D695; --warn:#E0A92E;
   --dark:#0A1418; --dark2:#0E1B21; --dline:#1C2E36; --dtext:#DCE9ED; --cy:#3FDCF2;
   --serif:'Instrument Serif',Georgia,serif;
   --sans:'DM Sans',-apple-system,'Segoe UI',sans-serif;
@@ -53,7 +53,7 @@ a{color:inherit;text-decoration:none}
 .topline{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--mute);
   border-bottom:1px solid var(--rule);background:var(--paper2)}
 .topline .wrap{display:flex;justify-content:space-between;padding-top:8px;padding-bottom:8px}
-nav{position:sticky;top:0;z-index:50;background:rgba(244,246,247,.92);
+nav{position:sticky;top:0;z-index:50;background:rgba(10,20,24,.88);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule2)}
 .nav-in{max-width:var(--max);margin:0 auto;padding:0 36px;height:62px;
   display:flex;align-items:center;justify-content:space-between}
@@ -67,7 +67,7 @@ nav{position:sticky;top:0;z-index:50;background:rgba(244,246,247,.92);
   padding:12px 24px;border:1px solid var(--ink);color:var(--ink);transition:all .2s;cursor:pointer;background:transparent}
 .btn:hover{background:var(--wash)}
 .btn.primary{background:var(--ink);color:var(--paper)}
-.btn.primary:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.primary:hover{background:var(--teal);border-color:var(--teal);color:#06262C}
 .btn:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
 @media(max-width:780px){.nav-links a.hide-m{display:none}}
 
@@ -251,8 +251,8 @@ h2 em{font-style:italic;color:var(--teal)}
 @media(max-width:780px){.ent-grid{grid-template-columns:1fr}.ent:nth-child(odd){border-right:0}.ent:nth-last-child(2){border-bottom:1px solid var(--rule)}}
 
 /* ---------- final ---------- */
-.final{background:var(--ink);color:var(--paper);padding:120px 0;text-align:center}
-.final h2{margin:0 auto;color:#fff;max-width:none}
+.final{background:var(--dark2);color:var(--dtext);border-top:1px solid var(--dline);padding:120px 0;text-align:center}
+.final h2{margin:0 auto;color:#F4F6F7;max-width:none}
 .final h2 em{color:var(--cy)}
 .final .sec-lede{margin:22px auto 0;color:#B9C6CB}
 .final .cta-row{justify-content:center;margin-top:40px}
@@ -326,11 +326,11 @@ footer{border-top:1px solid var(--rule2);padding:60px 0 40px;background:var(--pa
 .nodes-ov{position:absolute;inset:0;pointer-events:none;z-index:3}
 .dnode{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
   font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;color:var(--teal2);
-  background:rgba(251,252,252,.9);border:1px solid var(--rule2);padding:5px 9px;border-radius:2px;
+  background:rgba(10,20,24,.92);border:1px solid var(--rule2);padding:5px 9px;border-radius:2px;
   display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all .2s}
 .dnode .pip{width:6px;height:6px;border-radius:50%;background:var(--teal);flex:none}
 .dnode:hover,.dnode:focus-visible{border-color:var(--teal);box-shadow:0 0 0 3px var(--wash);outline:none}
-.dnode.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dnode.sel{background:var(--ink);color:#06262C;border-color:var(--ink)}
 .dnode.sel .pip{background:var(--cy)}
 .dnode.dim{opacity:.34}
 .dcore{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
