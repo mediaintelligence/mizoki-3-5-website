@@ -1,5 +1,26 @@
 # CLAUDE.md - AI Assistant Context
 
+## 🔒 SOURCE OF TRUTH & DEPLOY GOVERNANCE (LOCKED 2026-07-30)
+
+**This repo is a source MIRROR.** The production source of truth lives in
+`mediaintelligence/MIZOKICloudRun` under `# MIZ OKI 3.5/` — its `README.md` +
+`CLAUDE.md` are the only authoritative docs, and the v1.5 "night dossier" look
+and feel is LOCKED (`canon.lock.json`, 19 sha256-pinned surfaces;
+`docs/DESIGN_CANON.md`). `/demo` + the Executive Briefing are the core of the
+operation.
+
+**Nothing ships to production without specific human approval:**
+
+- Production deploys happen ONLY via MIZOKICloudRun's `deploy-homepage.yml` —
+  manual-dispatch with a typed `APPROVED` token + a passing canon check.
+- This repo's `deploy-cloudrun.yml` is manual-dispatch-only (push trigger
+  removed 2026-07-30) and must not be run except as a deliberate, human-
+  approved exception.
+- `deploy.sh` / `master-deploy.sh` here carry the same approval gate.
+- Agents: never deploy from this repo, and never edit canon-pinned files
+  without an explicit human instruction. Parity commits use `[skip ci]`.
+
+
 ## Project Overview
 
 **MIZ OKI 3.5** is a Verifiable Autonomous Decision Intelligence Platform. This repository contains the marketing website deployed on Google Cloud Run.

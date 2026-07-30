@@ -6,6 +6,24 @@
 
 set -euo pipefail
 
+#######################################################################
+# 🔒 HUMAN-APPROVAL GATE (design-canon governance, 2026-07-30)
+# This repo is a MIRROR — production deploys go through MIZOKICloudRun's
+# human-approved workflow. Running this script requires explicit human
+# approval and is an exception, not the path.
+#######################################################################
+if [ "${MIZOKI_DEPLOY_APPROVED:-}" != "APPROVED" ]; then
+  echo "🔒 This deploys mizoki3.com from the MIRROR repo. Specific human approval required."
+  read -r -p "Type APPROVED to continue: " _ans
+  if [ "${_ans}" != "APPROVED" ]; then
+    echo "Refused — no human approval token. Aborting."; exit 1
+  fi
+fi
+if command -v python3 >/dev/null 2>&1 && [ -f "$(dirname "$0")/scripts/check_design_canon.py" ]; then
+  python3 "$(dirname "$0")/scripts/check_design_canon.py" || {
+    echo "Refused — design canon check failed."; exit 1; }
+fi
+
 # Bypass gcloud auth config permission issues
 cp -a ~/.config/gcloud /tmp/gcloud || true
 export CLOUDSDK_CONFIG=/tmp/gcloud
