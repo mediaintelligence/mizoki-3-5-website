@@ -72,6 +72,12 @@ this site: the workflow no longer declares `push` paths, so the Router skips it.
 
 **Approved re-pins on v1.5** (canon version unchanged; homepage untouched):
 
+- 2026-07-31 — **Boss voice docent** (explicit owner instruction): guided
+  salesman tour on `/demo/signal` via new `assets/js/boss-docent.js`
+  (output-only voice — no microphone ever; scripted claims-linted narration;
+  one soft CTA; cooperative take-over). `demo-signal.html` gained the script
+  wiring → re-pinned in the same commit. Awaiting a human `APPROVED` dispatch.
+
 - 2026-07-30 — **ORACLE / Signal Intelligence incorporation** (explicit owner
   instruction): `signal.html` rewritten as the Signal Intelligence Division page
   (not canon-pinned) and `demo-signal.html` gained the static "5 · ORACLE —

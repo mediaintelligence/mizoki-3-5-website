@@ -105,3 +105,17 @@ causal lift", never "mind-reading"; calibrated probabilities, never "will buy";
 "proven-incremental" only after refutation; targets labeled, never guaranteed;
 no audio ever; consent-first; observe-only default (Brier ≤ 0.20 · AUC ≥ 0.72 ·
 stable lift ≥ 2 purchase cycles to promote).
+
+---
+
+## 8. Post-lock approved change — Boss voice docent (2026-07-31)
+
+Owner instruction: give the Boss a voice on the demo — walk viewers through
+every action and why, cooperatively, as a salesman who never pushes.
+
+| Item | What shipped to `main` (ships via human `APPROVED` dispatch) |
+|:--|:--|
+| `assets/js/boss-docent.js` | Self-injecting guided-tour engine: Web Speech **synthesis only** (no mic / SpeechRecognition / getUserMedia — test-enforced), captions always on, dossier-styled launch button + bottom docent bar. Narration = pre-vetted copy + dynamic slots read from the run's own DOM (gate rows, verbatim guardrail veto, causal truth, decision title) — the Boss never invents a number. Presses Start itself; yields on any visitor control touch; closing chips: replay-remixed / executive briefing / one pilot CTA. Tour epochs kill stopped-tour leakage; minimum caption reading time survives voiceless-speechSynthesis browsers. |
+| `demo-signal.html` | Script wiring + `MizokiBossDocent.init()` — canon re-pinned in the same commit. Player (`demo-signal.js`) untouched. |
+| `tests/test_boss_docent.py` | 6 tests: wiring + claims-lint of every speakable string (banned sales/claims vocabulary absent; disclosures present; exactly one pilot CTA; no audio-capture APIs). |
+| Verification | 3 Playwright end-to-end runs (full tour in captions mode, take-over courtesy, restart-from-fresh); suite 266 with only the 2 pre-existing homepage failures; `CANON OK 19/19` after re-pin. |

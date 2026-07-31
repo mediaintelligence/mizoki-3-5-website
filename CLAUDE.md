@@ -183,6 +183,41 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (July 2026)
 
+### Boss voice docent — guided salesman tour on /demo/signal (2026-07-31)
+
+Owner instruction: add the Boss's voice to the demo so it can walk viewers
+through every action and why, as a salesman who never pushes. Shipped as
+`assets/js/boss-docent.js` (zero-dependency, self-injecting) wired into
+canon-pinned `demo-signal.html` (canon re-pinned in the same commit).
+
+Design decisions (binding for future desks):
+
+- **Voice is OUTPUT-ONLY** — Web Speech synthesis; no microphone, no
+  SpeechRecognition, no getUserMedia (test-enforced). Mirrors the ORACLE
+  bright line: "I speak — I never listen."
+- **Scripted, not LLM** — narration is pre-vetted copy plus dynamic slots read
+  from the run's own DOM (gate rows, the verbatim guardrail veto, `causal_truth`,
+  decision title). The Boss never invents a number, so it cannot violate claim
+  discipline out loud. `tests/test_boss_docent.py` claims-lints every JS string
+  literal (banned: mind-reading / will buy / guarantee / act-now vocabulary;
+  required: output-only disclosure, "Illustrative scenario", replayability).
+- **Not pushy, structurally** — exactly ONE pilot CTA
+  (`/contact?source=demo-signal-docent`, test-enforced count == 1), "No
+  pressure" framing, and the sales pitch is the deliberate red veto ("the part
+  most demos hide").
+- **Cooperative** — the docent presses Start itself and yields the moment the
+  visitor touches Start/Reset/scenario ("Taking my hands off the controls");
+  closing chips offer replay-remixed / executive briefing / pilot. DOM-driven
+  sync (no changes to `demo-signal.js`); tour epochs prevent stopped tours
+  leaking into restarts; minimum per-caption reading time keeps captions
+  readable even when a browser exposes speechSynthesis with no working voice
+  (headless behavior, verified).
+
+Verified: 3 Playwright end-to-end runs (full tour incl. captions-only mode,
+take-over courtesy, restart), suite 266 w/ only the 2 pre-existing homepage
+failures. Rollout to the other desks is a per-desk beat map away — the engine
+is generic. NOT deployed — ships via human `APPROVED` dispatch.
+
 ### Signal Intelligence / ORACLE incorporated (2026-07-30)
 
 Owner-supplied "Signal Intelligence Division — Marketing Capabilities" documentation

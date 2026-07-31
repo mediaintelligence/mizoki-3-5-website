@@ -426,9 +426,11 @@
 
   <script src="/assets/js/demo-signal.js" defer></script>
   <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/boss-docent.js" defer></script>
   <script src="/assets/js/nav-mobile.js" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      if (window.MizokiBossDocent) { window.MizokiBossDocent.init(); }
       window.MizokiDemoExtras.init({
         demo: "signal",
         scenarioSelect: "scenario",
