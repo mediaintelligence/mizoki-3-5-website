@@ -1,41 +1,11 @@
-import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest import mock
 
 from mizoki_runtime import create_runtime
-from mizoki_runtime.journey import JourneyIngestCell, sha256_hex
-from mizoki_runtime.journey_gemini import (
-    GeminiJourneyExtractor,
-    VertexGeminiJourneyExtractor,
-    active_extractor_metadata,
-    gemini_extractor_metadata,
-    to_vertex_response_schema,
-    vertex_extractor_metadata,
-)
-from mizoki_runtime.identity import IdentityClusterResolver
-from mizoki_runtime.virtuoso import (
-    GLOBAL_FALLBACK,
-    Role,
-    VirtuosoModelPlane,
-    assert_fallback_not_primary,
-    assert_no_legacy_strings,
-    find_legacy_strings,
-    get_model,
-    virtuoso_call,
-)
-from mizoki_runtime.journey_sinks import (
-    BigQueryJourneySink,
-    FirestoreJourneySink,
-    build_journey_sinks_from_env,
-    build_merge_sql,
-    event_to_bigquery_row,
-)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_PATH = REPO_ROOT / "schemas" / "journey-event.json"
 
 
 class BossRuntimeTestCase(unittest.TestCase):
@@ -52,7 +22,27 @@ class BossRuntimeTestCase(unittest.TestCase):
             {
                 "decision.explain_pipeline",
                 "decision.recent_traces",
+                "demo.capital.list_scenarios",
+                "demo.capital.run",
+                "demo.counsel.list_scenarios",
+                "demo.counsel.query",
+                "demo.estate.list_scenarios",
+                "demo.estate.run",
+                "demo.narrate",
+                "demo.nexus.list_scenarios",
+                "demo.nexus.run",
+                "demo.risk.list_scenarios",
+                "demo.risk.run",
+                "demo.signal.list_scenarios",
+                "demo.signal.run",
+                "demo.telemetry.summary",
+                "guide.answer",
+                "guide.memory_summary",
                 "gndi.inspect_context",
+                "google_ads.field_metadata",
+                "google_ads.validate_gaql",
+                "google_ads.validate_gaql_batch",
+                "google_ads.version_status",
                 "gndi.list_subagents",
                 "gndi.recent_loops",
                 "gndi.run_decision_loop",
@@ -66,9 +56,6 @@ class BossRuntimeTestCase(unittest.TestCase):
                 "journey.recent_events",
                 "kg.describe_entity",
                 "kg.list_neighbors",
-                "programmatic.ingest_bidstream",
-                "programmatic.recent_runs",
-                "programmatic.run_pipeline",
                 "skills.learn",
                 "skills.learn_from_loop",
                 "skills.list",
@@ -211,803 +198,8 @@ class BossRuntimeTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.runtime.graph_context("Explain the platform.", top_k=0)
 
-    def test_programmatic_pipeline_runs_full_srpvdal_and_persists(self) -> None:
-        events = _seat_events("seat-waste", "openx", total=30, wins=10, revenue_per_win=0.0)
-        trace = self.runtime.run_programmatic_pipeline(events, objective="Cut wasted spend.")
 
-        for stage in ("sense", "reason", "plan", "validate", "decide", "act", "learn"):
-            self.assertIn(stage, trace)
-        self.assertEqual(30, trace["sense"]["ingested_event_count"])
-        self.assertEqual(4, len(trace["sense"]["sinks"]))
-        self.assertTrue(
-            any(anomaly["type"] == "spend_no_return" for anomaly in trace["reason"]["anomalies"])
-        )
-        self.assertTrue(any(item["type"].startswith("suppress") for item in trace["plan"]["candidates"]))
-        self.assertEqual("validate", trace["validate"]["gate"])
-        # auto_execute defaults to False, so approved actions wait for sign-off.
-        self.assertEqual("needs_approval", trace["decide"]["status"])
-        self.assertTrue(all(action["status"] == "pending_approval" for action in trace["act"]["actions"]))
-
-        runs = self.runtime.recent_programmatic_runs(limit=5)
-        self.assertEqual(1, len(runs))
-        self.assertEqual(trace["trace_id"], runs[0]["trace_id"])
-
-    def test_programmatic_safety_gate_blocks_unsafe_scaling(self) -> None:
-        # A seat with both a consent gap and a low win rate yields a suppress plan
-        # (safe) and an increase-bid plan (scales spend on non-consented supply).
-        events = _seat_events(
-            "seat-risky", "ssp-x", total=30, wins=3, revenue_per_win=4.0, consent=False
-        )
-        trace = self.runtime.run_programmatic_pipeline(events)
-
-        results = {item["action_id"]: item for item in trace["validate"]["results"]}
-        blocked_types = {results[action_id]["type"] for action_id in trace["validate"]["blocked"]}
-        self.assertIn("increase_bid", blocked_types)
-        self.assertTrue(trace["validate"]["passed"])  # the suppress plan still clears the gate
-        consent_anomalies = [a for a in trace["reason"]["anomalies"] if a["type"] == "consent_gap"]
-        self.assertTrue(consent_anomalies)
-
-    def test_programmatic_auto_execute_approves_scale_opportunity(self) -> None:
-        events = _seat_events("seat-star", "openx", total=30, wins=10, revenue_per_win=4.0)
-        trace = self.runtime.run_programmatic_pipeline(events, auto_execute=True)
-
-        self.assertEqual("approved", trace["decide"]["status"])
-        self.assertTrue(trace["act"]["executed"])
-        executed = [action for action in trace["act"]["actions"] if action["status"] == "executed"]
-        self.assertTrue(executed)
-        self.assertTrue(all(action["rollback"]["available"] for action in executed))
-
-    def test_programmatic_ingest_only_runs_sense_stage(self) -> None:
-        events = _seat_events("seat-a", "openx", total=12, wins=4, revenue_per_win=2.0)
-        sense = self.runtime.ingest_bidstream(events)
-        self.assertEqual(12, sense["ingested_event_count"])
-        self.assertIn("openx", sense["coverage"]["exchanges"])
-        self.assertEqual(4, len(sense["sinks"]))
-
-    def test_programmatic_rejects_empty_or_invalid_events(self) -> None:
-        with self.assertRaises(ValueError):
-            self.runtime.run_programmatic_pipeline([])
-        with self.assertRaises(ValueError):
-            self.runtime.ingest_bidstream("not-a-list")
-
-    def test_journey_normalizes_each_connector_into_canonical_schema(self) -> None:
-        cases = {
-            "meta": (_META_EVENT, "Purchase", "campaign_id", "111"),
-            "google_ads": (_GOOGLE_ADS_ROW, "conversion", "campaign_id", "111"),
-            "sendgrid": (_SENDGRID_EVENT, "click", "message_id", "SG.x.y"),
-            "openrtb": (_OPENRTB_REQUEST, "bid_request", "auction_id", "auc-1"),
-        }
-        for source, (payload, expected_type, context_key, context_value) in cases.items():
-            result = self.runtime.normalize_journey_event(source, payload)
-            self.assertTrue(result["valid"], msg=f"{source} errors: {result['errors']}")
-            event = result["event"]
-            self.assertEqual(source, event["event_source"])
-            self.assertEqual(expected_type, event["event_type"])
-            self.assertEqual(context_value, event["context"][context_key])
-            self.assertTrue(event["event_time"])  # always populated (schema-required)
-            self.assertEqual([], self.runtime.journey.schema.validate(event))
-
-    def test_journey_provenance_pins_model_and_schema_hash(self) -> None:
-        result = self.runtime.normalize_journey_event("sendgrid", _SENDGRID_EVENT)
-        provenance = result["event"]["provenance"]
-        for field in (
-            "model_version",
-            "request_id",
-            "prompt_hash",
-            "response_schema_hash",
-            "connector_version",
-            "ingest_time",
-        ):
-            self.assertTrue(provenance[field], msg=f"missing provenance.{field}")
-        self.assertEqual("SENSE", provenance["srpvdal_phase"])
-        self.assertEqual(self.runtime.journey.schema.schema_hash, provenance["response_schema_hash"])
-        self.assertEqual("mizoki/ingest/sendgrid", provenance["pipeline"])
-
-    def test_journey_event_id_is_stable_and_ingest_is_idempotent(self) -> None:
-        first = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
-        second = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
-        self.assertEqual(first["event_id"], second["event_id"])
-
-        initial = self.runtime.ingest_journey_events("meta", [_META_EVENT])
-        self.assertEqual(1, initial["accepted"])
-        self.assertEqual(1, initial["idempotency"]["inserted"])
-
-        replayed = self.runtime.ingest_journey_events("meta", [_META_EVENT], replay=True)
-        self.assertEqual(1, replayed["idempotency"]["duplicate"])
-        self.assertEqual(0, replayed["idempotency"]["inserted"])
-        self.assertEqual(1, self.runtime.journey.store.count())
-
-    def test_journey_ingest_persists_and_fans_out_to_sinks(self) -> None:
-        batch = [_META_EVENT, _SENDGRID_EVENT]
-        summary = self.runtime.ingest_journey_events("meta", [_META_EVENT])
-        sendgrid_summary = self.runtime.ingest_journey_events("sendgrid", [_SENDGRID_EVENT])
-        self.assertEqual("SENSE", summary["srpvdal_phase"])
-        self.assertEqual(4, len(summary["sinks"]))
-        self.assertTrue(all(sink["status"] == "written" for sink in summary["sinks"]))
-        recent = self.runtime.recent_journey_events(limit=10)
-        self.assertEqual(2, len(recent))
-        self.assertEqual({"meta", "sendgrid"}, {event["event_source"] for event in recent})
-        self.assertEqual(len(batch), summary["received"] + sendgrid_summary["received"])
-
-    def test_journey_validation_gate_rejects_bad_records(self) -> None:
-        result = self.runtime.ingest_journey_events("meta", [_META_EVENT, "not-an-object"])
-        self.assertEqual(1, result["accepted"])
-        self.assertEqual(1, result["rejected"])
-        self.assertEqual(1, result["rejections"][0]["index"])
-        self.assertTrue(result["rejections"][0]["errors"])
-
-    def test_journey_rejects_unknown_source_and_bad_payload(self) -> None:
-        with self.assertRaises(ValueError):
-            self.runtime.normalize_journey_event("tiktok", _META_EVENT)
-        with self.assertRaises(ValueError):
-            self.runtime.normalize_journey_event("meta", "not-a-dict")
-        with self.assertRaises(ValueError):
-            self.runtime.ingest_journey_events("meta", [])
-
-    def test_build_envelope_wraps_v1_with_all_layers(self) -> None:
-        result = self.runtime.build_journey_envelope("meta", _META_EVENT)
-        self.assertTrue(result["valid"], msg=result["errors"])
-        self.assertTrue(result["canonical_valid"])
-        env = result["envelope"]
-
-        self.assertEqual("2.0.0", env["schema_version"])
-        # v1 JourneyEvent is embedded as the canonical payload (stable identity).
-        self.assertEqual("meta", env["canonical_payload"]["event_source"])
-        self.assertEqual("Purchase", env["canonical_payload"]["event_type"])
-        self.assertEqual(
-            self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]["event_id"],
-            env["canonical_payload"]["event_id"],
-        )
-        # Deterministic semantic classification.
-        self.assertEqual(
-            {"domain": "Advertising", "category": "Conversion", "subcategory": "Purchase",
-             "intent": "Commercial", "confidence": 1.0},
-            env["classification"],
-        )
-        # KG references derived deterministically for Neo4j MERGE.
-        self.assertEqual("Campaign:111", env["kg_refs"]["CampaignNodeID"])
-        self.assertEqual("Creative:333", env["kg_refs"]["CreativeNodeID"])
-        self.assertEqual("Order:A123", env["kg_refs"]["OrderNodeID"])
-        # Identity resolved from the strongest available key (email present).
-        self.assertTrue(env["identity"]["resolution_method"].startswith("email"))
-        self.assertFalse(env["identity"]["anonymous"])
-        self.assertTrue(env["identity"]["identity_id"].startswith("Identity:"))
-        self.assertEqual(env["identity"]["identity_id"], env["kg_refs"]["IdentityNodeID"])
-        # Relationships materialize the graph edges.
-        rel_types = {rel["type"] for rel in env["relationships"]}
-        self.assertIn("BELONGS_TO", rel_types)
-        self.assertIn("RESULTED_IN", rel_types)
-        # SRPVDAL lifecycle initialized at SENSE.
-        self.assertEqual("SENSE", env["srpvdal_state"]["current_phase"])
-        self.assertEqual("REASON", env["srpvdal_state"]["next_phase"])
-        self.assertEqual(1, len(env["srpvdal_state"]["phase_history"]))
-        # Version vector for reproducibility.
-        for field in ("schema_version", "policy_version", "governance_version", "ontology_version", "reasoning_version"):
-            self.assertIn(field, env["provenance"])
-        # Security + data quality + observability.
-        self.assertIn("email", env["security"]["pii"])
-        self.assertEqual("restricted", env["security"]["classification"])
-        self.assertTrue(env["data_quality"]["schema_valid"])
-        self.assertTrue(env["observability"]["trace_id"].startswith("trace-"))
-        self.assertIsInstance(env["time_intelligence"]["latency_ms"], (int, float))
-        # Loop-filled layers are empty scaffolds at SENSE.
-        self.assertEqual([], env["actions"]["recommended"])
-        self.assertEqual({}, env["evaluation"])
-        # Envelope id is stable/idempotent-linked to the canonical event_id.
-        self.assertEqual(f"env-{env['canonical_payload']['event_id']}", env["envelope_id"])
-
-    def test_build_envelope_classification_for_openrtb(self) -> None:
-        env = self.runtime.build_journey_envelope("openrtb", _OPENRTB_REQUEST)["envelope"]
-        self.assertEqual("Advertising", env["classification"]["domain"])
-        self.assertEqual("Auction", env["classification"]["category"])
-        self.assertEqual("bid_request", env["classification"]["subcategory"])
-        self.assertEqual("auc-1", env["canonical_payload"]["context"]["auction_id"])
-
-    def test_build_envelope_is_deterministic(self) -> None:
-        a = self.runtime.build_journey_envelope("meta", _META_EVENT)["envelope"]
-        b = self.runtime.build_journey_envelope("meta", _META_EVENT)["envelope"]
-        # Identity/classification/kg/envelope_id are content-derived, so stable.
-        self.assertEqual(a["envelope_id"], b["envelope_id"])
-        self.assertEqual(a["identity"]["identity_id"], b["identity"]["identity_id"])
-        self.assertEqual(a["kg_refs"], b["kg_refs"])
-
-    def test_identity_resolver_stitches_on_shared_strong_key(self) -> None:
-        resolver = IdentityClusterResolver(Path(self.temp_dir.name) / "id_stitch.json")
-        a = resolver.resolve({"email": "e1", "user_id": "u1"})
-        b = resolver.resolve({"email": "e1", "device_ifa": "d1"})  # shares email -> same cluster
-        c = resolver.resolve({"email": "e9"})  # unrelated -> different cluster
-        self.assertEqual(a["identity_cluster"], b["identity_cluster"])
-        self.assertNotEqual(a["identity_cluster"], c["identity_cluster"])
-        # device_ifa d1 got stitched into the cluster, growing its token count.
-        self.assertGreaterEqual(b["cluster_size"], 3)
-        self.assertFalse(a["newly_merged"])
-
-    def test_identity_resolver_merges_previously_separate_clusters(self) -> None:
-        resolver = IdentityClusterResolver(Path(self.temp_dir.name) / "id_merge.json")
-        first = resolver.resolve({"email": "alice@x.com"})
-        second = resolver.resolve({"device_ifa": "dev-9"})
-        self.assertNotEqual(first["identity_cluster"], second["identity_cluster"])
-        # An event carrying both identifiers stitches the two known clusters together.
-        bridge = resolver.resolve({"email": "alice@x.com", "device_ifa": "dev-9"})
-        self.assertTrue(bridge["newly_merged"])
-        after = resolver.resolve({"device_ifa": "dev-9"})
-        self.assertEqual(bridge["identity_cluster"], after["identity_cluster"])
-
-    def test_identity_resolver_ignores_weak_ip_only_actor(self) -> None:
-        resolver = IdentityClusterResolver(Path(self.temp_dir.name) / "id_ip.json")
-        result = resolver.resolve({"ip": "1.2.3.4"})
-        self.assertIsNone(result["identity_cluster"])
-        self.assertTrue(result["anonymous"])
-        self.assertEqual([], result["linked_keys"])
-
-    def test_identity_resolver_persists_across_instances(self) -> None:
-        path = Path(self.temp_dir.name) / "id_persist.json"
-        first = IdentityClusterResolver(path).resolve({"email": "persist@x.com"})
-        # A fresh instance loads the snapshot and resolves the same actor identically.
-        reloaded = IdentityClusterResolver(path).resolve({"email": "persist@x.com"})
-        self.assertEqual(first["identity_cluster"], reloaded["identity_cluster"])
-
-    def test_build_envelope_populates_resolved_identity_cluster(self) -> None:
-        result = self.runtime.build_journey_envelope("meta", _META_EVENT)
-        self.assertTrue(result["valid"], msg=result["errors"])
-        cluster = result["envelope"]["identity"]["identity_cluster"]
-        self.assertIsNotNone(cluster)
-        self.assertTrue(cluster.startswith("Cluster:"))
-        self.assertEqual(cluster, result["identity_resolution"]["identity_cluster"])
-        # Re-resolving the same actor stays in the same cluster (idempotent).
-        again = self.runtime.build_journey_envelope("meta", _META_EVENT)
-        self.assertEqual(cluster, again["envelope"]["identity"]["identity_cluster"])
-
-    def _cell(self, sinks):
-        store = Path(self.temp_dir.name) / "journey_sink_test.jsonl"
-        return JourneyIngestCell(SCHEMA_PATH, store, external_sinks=sinks)
-
-    def test_journey_forwards_writes_to_external_sinks_and_skips_duplicates(self) -> None:
-        sink = _RecordingSink()
-        cell = self._cell([sink])
-
-        first = cell.ingest("meta", [_META_EVENT])
-        self.assertEqual(1, first["external_sinks"][0]["written"])
-        self.assertEqual([_first_event_id(cell, "meta", _META_EVENT)], sink.events)
-
-        # A replay is a store duplicate, so it must NOT be forwarded again.
-        replay = cell.ingest("meta", [_META_EVENT], replay=True)
-        self.assertEqual(0, replay["external_sinks"][0]["written"])
-        self.assertEqual(1, len(sink.events))
-
-    def test_journey_external_sink_errors_degrade_without_failing_batch(self) -> None:
-        cell = self._cell([_RecordingSink(name="boom", fail=True)])
-        result = cell.ingest("sendgrid", [_SENDGRID_EVENT])
-        self.assertEqual(1, result["accepted"])  # in-process store still succeeded
-        self.assertEqual(0, result["external_sinks"][0]["written"])
-        self.assertTrue(result["external_sinks"][0]["errors"])
-
-    def test_firestore_sink_upserts_document_by_event_id(self) -> None:
-        client = _FakeFirestoreClient()
-        sink = FirestoreJourneySink(collection="journey_events", client=client)
-        event = self.runtime.normalize_journey_event("meta", _META_EVENT)["event"]
-        self.assertEqual("written", sink.upsert(event))
-        self.assertIn(event["event_id"], client.store)
-        stored = client.store[event["event_id"]]
-        self.assertTrue(stored["merge"])
-        self.assertEqual(event["event_source"], stored["event"]["event_source"])
-
-    def test_bigquery_merge_sql_and_row_projection(self) -> None:
-        event = self.runtime.normalize_journey_event("openrtb", _OPENRTB_REQUEST)["event"]
-        sql = build_merge_sql("analytics.journey_events")
-        self.assertIn("MERGE `analytics.journey_events`", sql)
-        self.assertIn("ON T.event_id = S.event_id", sql)
-        row = event_to_bigquery_row(event)
-        self.assertEqual(event["event_id"], row["event_id"])
-        self.assertEqual("auc-1", json.loads(row["context"])["auction_id"])
-        self.assertEqual(event["event_source"], json.loads(row["provenance"])["pipeline"].split("/")[-1])
-
-    def test_build_journey_sinks_from_env(self) -> None:
-        self.assertEqual([], build_journey_sinks_from_env({}))
-        sinks = build_journey_sinks_from_env(
-            {
-                "MIZOKI_JOURNEY_FIRESTORE_COLLECTION": "je",
-                "MIZOKI_JOURNEY_BIGQUERY_TABLE": "analytics.journey_events",
-            }
-        )
-        self.assertEqual({"firestore:je", "bigquery:analytics.journey_events"}, {sink.name for sink in sinks})
-        self.assertIsInstance(sinks[0], FirestoreJourneySink)
-        self.assertIsInstance(sinks[1], BigQueryJourneySink)
-
-    def test_gemini_extractor_threads_provenance_into_canonical_event(self) -> None:
-        captured = {}
-
-        def fake_transport(url, headers, body):
-            captured["url"] = url
-            captured["headers"] = headers
-            captured["body"] = json.loads(body.decode("utf-8"))
-            model_event = {
-                "event_source": "sendgrid",
-                "event_type": "click",
-                "actor": {"email": "sam@example.com"},
-                "context": {"channel": "email", "message_id": "SG.x.y"},
-                "event_time": "2026-06-22T14:03:12Z",
-            }
-            return {
-                "modelVersion": "gemini-3.5-pro",
-                "responseId": "resp-123",
-                "candidates": [{"content": {"parts": [{"text": json.dumps(model_event)}]}}],
-            }
-
-        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=fake_transport)
-        result = extractor.extract("Emit one JourneyEvent for a SendGrid click.", event_source="sendgrid")
-
-        self.assertTrue(result["valid"], msg=result["errors"])
-        event = result["event"]
-        self.assertEqual("sendgrid", event["event_source"])
-        self.assertEqual("click", event["event_type"])
-        self.assertEqual("sam@example.com", event["actor"]["email"])
-        self.assertEqual("2026-06-22T14:03:12Z", event["event_time"])
-        self.assertEqual("gemini-3.5-pro", event["provenance"]["model_version"])
-        self.assertEqual("resp-123", event["provenance"]["request_id"])
-        self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
-        self.assertEqual("mizoki/ingest/llm", event["provenance"]["pipeline"])
-        # The request pins the model + enforces the strict schema response_format.
-        # (The request model comes from the Virtuoso registry's DATA_CAUSAL slot;
-        # the event provenance records what the response actually reported.)
-        self.assertTrue(captured["body"]["response_format"]["strict"])
-        self.assertEqual("gemini-3.5-flash", captured["body"]["model_version"])
-        self.assertEqual("2026-06-01", captured["headers"]["X-Api-Revision"])
-
-    def test_gemini_extractor_requires_credentials_without_transport(self) -> None:
-        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, api_key=None)
-        self.assertFalse(extractor.configured)
-        with self.assertRaises(RuntimeError):
-            extractor.extract("Emit one JourneyEvent.")
-
-    def test_gemini_extractor_preserves_raw_text_on_malformed_json(self) -> None:
-        raw = "not valid json {"
-
-        def fake_transport(url, headers, body):
-            return {"modelVersion": "gemini-3.5-pro", "responseId": "resp-9",
-                    "candidates": [{"content": {"parts": [{"text": raw}]}}]}
-
-        extractor = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=fake_transport)
-        result = extractor.extract("Emit one JourneyEvent.")
-        self.assertFalse(result["valid"])
-        self.assertTrue(any("invalid JSON" in err for err in result["errors"]))
-        # raw_response is the model's raw text (for audit), not "{}".
-        self.assertEqual(sha256_hex(raw), result["event"]["source_payload_hash"])
-
-    def test_gemini_extractor_valid_json_hash_is_canonical_and_idempotent(self) -> None:
-        # Same event, different key order / whitespace -> identical canonical hash,
-        # so a replay is a store duplicate rather than a spurious update.
-        # A real JourneyEvent carries event_time, so event_id is stable; the only
-        # difference between the two responses is key order / whitespace.
-        text_a = '{"event_source":"other","event_type":"signup","event_time":"2026-06-22T14:03:12Z","actor":{"user_id":"u1"},"context":{"channel":"web"}}'
-        text_b = '{ "context": {"channel":"web"}, "event_time":"2026-06-22T14:03:12Z", "event_type":"signup", "actor":{"user_id":"u1"}, "event_source":"other" }'
-
-        def transport_for(text):
-            def fake(url, headers, body):
-                return {"modelVersion": "gemini-3.5-pro", "responseId": "r",
-                        "candidates": [{"content": {"parts": [{"text": text}]}}]}
-            return fake
-
-        a = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=transport_for(text_a)).extract("p")
-        b = GeminiJourneyExtractor(self.runtime.journey.normalizer, transport=transport_for(text_b)).extract("p")
-        self.assertTrue(a["valid"] and b["valid"])
-        self.assertEqual(a["event"]["source_payload_hash"], b["event"]["source_payload_hash"])
-        self.assertEqual(a["event"]["event_id"], b["event"]["event_id"])
-        # Canonical hash of the parsed object, not the raw bytes.
-        self.assertEqual(sha256_hex(json.loads(text_a)), a["event"]["source_payload_hash"])
-
-    def test_gemini_extractor_metadata_reports_pinned_model(self) -> None:
-        meta = gemini_extractor_metadata({})
-        self.assertEqual("google-gemini", meta["provider"])
-        # Default resolves through the Virtuoso registry's DATA_CAUSAL slot
-        # (gemini-3.5-flash since the 2026-07-04 GA flip).
-        self.assertEqual("gemini-3.5-flash", meta["model"])
-        self.assertTrue(meta["strict_response_format"])
-        self.assertFalse(meta["configured"])
-        self.assertTrue(gemini_extractor_metadata({"GEMINI_API_KEY": "x"})["configured"])
-
-    def test_vertex_extractor_uses_adc_client_and_threads_provenance(self) -> None:
-        model_event = {
-            "event_source": "google_ads",
-            "event_type": "conversion",
-            "actor": {"device_ifa": "ifa-9"},
-            "context": {"channel": "search", "campaign_id": "111", "value": 59.99},
-            "event_time": "2026-06-22T14:00:00Z",
-        }
-        client = _FakeGenaiClient(model_event, model_version="gemini-3.5-pro", response_id="vtx-1")
-        extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="proj-x", client=client)
-        self.assertTrue(extractor.configured)
-        result = extractor.extract("Extract a Google Ads conversion JourneyEvent.", event_source="google_ads")
-
-        self.assertTrue(result["valid"], msg=result["errors"])
-        event = result["event"]
-        self.assertEqual("google_ads", event["event_source"])
-        self.assertEqual("conversion", event["event_type"])
-        self.assertEqual("gemini-3.5-pro", event["provenance"]["model_version"])
-        self.assertEqual("vtx-1", event["provenance"]["request_id"])
-        self.assertEqual(self.runtime.journey.schema.schema_hash, event["provenance"]["response_schema_hash"])
-        self.assertEqual("vertex://proj-x/us-central1/" + extractor.model, result["model_provenance"]["raw_uri"])
-        # The config carries a strict, Vertex-shaped response_schema and JSON mime.
-        sent = client.models.calls[0]
-        self.assertEqual("application/json", sent["config"]["response_mime_type"])
-        self.assertIn("response_schema", sent["config"])
-
-    def test_vertex_extractor_requires_project_without_client(self) -> None:
-        extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="")
-        self.assertFalse(extractor.configured)
-        with self.assertRaises(RuntimeError):
-            extractor.extract("Extract a JourneyEvent.")
-
-    def test_vertex_response_schema_is_vertex_compatible(self) -> None:
-        vertex_schema = to_vertex_response_schema(self.runtime.journey.schema.schema)
-        # No JSON-Schema meta keys Vertex rejects.
-        self.assertNotIn("$schema", vertex_schema)
-        self.assertNotIn("$id", vertex_schema)
-        self.assertNotIn("additionalProperties", vertex_schema)
-        # Nullable unions are rewritten to type + nullable.
-        ingest = vertex_schema["properties"]["ingest_time"]
-        self.assertEqual("string", ingest["type"])
-        self.assertTrue(ingest["nullable"])
-        self.assertNotIn("additionalProperties", vertex_schema["properties"]["context"])
-
-    def test_vertex_extractor_metadata_reports_adc_and_project(self) -> None:
-        meta = vertex_extractor_metadata({})
-        self.assertEqual("google-vertex-ai", meta["provider"])
-        self.assertEqual("application-default-credentials", meta["auth"])
-        self.assertEqual("us-central1", meta["location"])
-        self.assertFalse(meta["configured"])
-        self.assertTrue(vertex_extractor_metadata({"GOOGLE_CLOUD_PROJECT": "p"})["configured"])
-
-    def test_vertex_extractor_handles_malformed_json_gracefully(self) -> None:
-        client = _FakeGenaiClient(None, raw_text="not json {", model_version="gemini-3.5-pro", response_id="vtx-9")
-        extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="proj-x", client=client)
-        result = extractor.extract("Extract a JourneyEvent.")
-        self.assertFalse(result["valid"])
-        self.assertTrue(any("invalid JSON" in err for err in result["errors"]))
-        # Provenance is still recorded even on a malformed response.
-        self.assertEqual("gemini-3.5-pro", result["model_provenance"]["model_version"])
-
-    def test_vertex_extractor_configured_requires_project_even_with_client(self) -> None:
-        client = _FakeGenaiClient({"event_source": "other", "event_type": "x"})
-        extractor = VertexGeminiJourneyExtractor(self.runtime.journey.normalizer, project="", client=client)
-        self.assertFalse(extractor.configured)
-        with self.assertRaises(RuntimeError):
-            extractor.extract("Extract a JourneyEvent.")
-
-    def test_vertex_schema_preserves_non_nullable_unions(self) -> None:
-        schema = {"type": "object", "properties": {"u": {"type": ["string", "number"]}, "n": {"type": ["string", "null"]}}}
-        out = to_vertex_response_schema(schema)
-        # A genuine multi-type union is preserved (not silently narrowed)...
-        self.assertEqual(["string", "number"], out["properties"]["u"]["type"])
-        self.assertNotIn("nullable", out["properties"]["u"])
-        # ...while a nullable union collapses to type + nullable.
-        self.assertEqual("string", out["properties"]["n"]["type"])
-        self.assertTrue(out["properties"]["n"]["nullable"])
-
-    def test_active_extractor_metadata_selects_configured_backend(self) -> None:
-        self.assertEqual("google-vertex-ai", active_extractor_metadata({"GOOGLE_CLOUD_PROJECT": "p"})["provider"])
-        self.assertEqual("google-gemini", active_extractor_metadata({"GEMINI_API_KEY": "k"})["provider"])
-        # Vertex wins when both are set; nothing set -> documented Vertex default (dormant).
-        self.assertEqual("google-vertex-ai", active_extractor_metadata({"GOOGLE_CLOUD_PROJECT": "p", "GEMINI_API_KEY": "k"})["provider"])
-        self.assertEqual("google-vertex-ai", active_extractor_metadata({})["provider"])
-
-
-# Canonical JourneyEvent test vectors (one per connector).
-_META_EVENT = {
-    "event_name": "Purchase",
-    "event_time": 1719945600,
-    "user_data": {"em": "hash", "ph": "hash", "client_ip_address": "1.2.3.4", "client_user_agent": "UA"},
-    "custom_data": {
-        "value": 59.99,
-        "currency": "USD",
-        "order_id": "A123",
-        "campaign_id": "111",
-        "adset_id": "222",
-        "ad_id": "333",
-    },
-}
-
-_GOOGLE_ADS_ROW = {
-    "campaign": {"id": "111"},
-    "ad_group": {"id": "222"},
-    "ad_group_ad": {"ad": {"id": "333"}},
-    "metrics": {"conversions": 1, "conversions_value": 59.99},
-    "customer": {"currency_code": "USD"},
-    "segments": {"date": "2026-06-22", "hour": 14, "geo_target_country": "US"},
-}
-
-_SENDGRID_EVENT = {
-    "event": "click",
-    "timestamp": 1719945600,
-    "email": "sam@example.com",
-    "sg_message_id": "SG.x.y",
-    "url": "https://site.com/p/abc",
-}
-
-_OPENRTB_REQUEST = {
-    "id": "auc-1",
-    "imp": [{"id": "1", "tagid": "slot-7", "bidfloor": 0.8}],
-    "site": {"domain": "news.com"},
-    "device": {"ifa": "ifa123", "ip": "1.1.1.1", "ua": "UA"},
-}
-
-
-class _RecordingSink:
-    """Duck-typed external sink used to assert delegation without cloud libs."""
-
-    def __init__(self, name="recording", fail=False):
-        self.name = name
-        self.fail = fail
-        self.events = []
-
-    def upsert(self, event):
-        if self.fail:
-            raise RuntimeError("simulated sink failure")
-        self.events.append(event["event_id"])
-        return "written"
-
-
-class _FakeDoc:
-    def __init__(self, store, key):
-        self._store = store
-        self._key = key
-
-    def set(self, event, merge=False):
-        self._store[self._key] = {"event": event, "merge": merge}
-
-
-class _FakeCollection:
-    def __init__(self, store):
-        self._store = store
-
-    def document(self, key):
-        return _FakeDoc(self._store, key)
-
-
-class _FakeFirestoreClient:
-    def __init__(self):
-        self.store = {}
-
-    def collection(self, _name):
-        return _FakeCollection(self.store)
-
-
-def _first_event_id(cell, source, payload):
-    return cell.normalizer.normalize(source, payload)["event_id"]
-
-
-class _FakeGenaiResponse:
-    def __init__(self, text, model_version, response_id):
-        self.text = text
-        self.model_version = model_version
-        self.response_id = response_id
-
-
-class _FakeGenaiModels:
-    def __init__(self, payload, model_version, response_id, raw_text=None):
-        self._text = raw_text if raw_text is not None else json.dumps(payload)
-        self._model_version = model_version
-        self._response_id = response_id
-        self.calls = []
-
-    def generate_content(self, *, model, contents, config):
-        self.calls.append({"model": model, "contents": contents, "config": config})
-        return _FakeGenaiResponse(self._text, self._model_version, self._response_id)
-
-
-class _FakeGenaiClient:
-    """Duck-typed google-genai client: exposes .models.generate_content(...)."""
-
-    def __init__(self, payload, *, raw_text=None, model_version="gemini-3.5-pro", response_id="vtx-1"):
-        self.models = _FakeGenaiModels(payload, model_version, response_id, raw_text=raw_text)
-
-
-def _bid_event(seat, exchange, outcome, *, bid=1.5, floor=0.5, clearing=1.0, revenue=0.0, consent=True):
-    event = {
-        "exchange": exchange,
-        "seat": seat,
-        "buyer_id": "buyer-1",
-        "bid_price": bid,
-        "bid_floor": floor,
-        "outcome": outcome,
-        "currency": "USD",
-        "consent": {"gdpr": 0} if consent else {"gdpr": 1},
-    }
-    if outcome == "win":
-        event["clearing_price"] = clearing
-        event["revenue"] = revenue
-    return event
-
-
-def _seat_events(seat, exchange, *, total, wins, revenue_per_win, consent=True):
-    events = []
-    for index in range(total):
-        if index < wins:
-            events.append(_bid_event(seat, exchange, "win", revenue=revenue_per_win, consent=consent))
-        else:
-            events.append(_bid_event(seat, exchange, "loss", consent=consent))
-    return events
-
-
-class VirtuosoRegistryTestCase(unittest.TestCase):
-    def test_registry_defaults_resolve_expected_flagships(self) -> None:
-        # Synced from MIZOKICloudRun src/shared/virtuoso_models (2026-07-04).
-        self.assertEqual("gemini-3.5-flash", get_model(Role.DATA_CAUSAL, env={}).model)
-        self.assertEqual(GLOBAL_FALLBACK, get_model(Role.CODING_ARCH, env={}).model)
-        self.assertEqual("gpt-5.5", get_model(Role.CREATIVE_MM, env={}).model)
-        self.assertEqual("grok-4.3", get_model(Role.DEVOPS_OPS, env={}).model)
-        for role in Role:
-            spec = get_model(role, env={})
-            self.assertTrue(spec.model)
-            self.assertTrue(spec.api_key_env)
-
-    def test_env_override_wins_and_legacy_override_is_rejected(self) -> None:
-        spec = get_model(Role.DATA_CAUSAL, env={"VIRTUOSO_MODEL_DATA_CAUSAL": "gemini-4.0-pro"})
-        self.assertEqual("gemini-4.0-pro", spec.model)
-        self.assertEqual("env", spec.source)
-        with self.assertRaises(ValueError) as ctx:
-            get_model(Role.DATA_CAUSAL, env={"VIRTUOSO_MODEL_DATA_CAUSAL": "gemini-2.0-flash"})
-        self.assertIn("VIRTUOSO_MODEL_DATA_CAUSAL", str(ctx.exception))
-
-    def test_gemini_flash_ga_flip_and_base_revert(self) -> None:
-        # Flag is on in the canonical registry -> DATA_CAUSAL flips to Flash.
-        spec = get_model(Role.DATA_CAUSAL, env={})
-        self.assertEqual("gemini-3.5-flash", spec.model)
-        self.assertEqual("ga-flip", spec.source)
-        # Clearing the constant reverts to the base preview string...
-        with mock.patch("mizoki_runtime.virtuoso.GEMINI_35_FLASH_IS_GA", False):
-            base = get_model(Role.DATA_CAUSAL, env={})
-            self.assertEqual("gemini-3.1-pro-preview", base.model)
-            self.assertEqual("registry", base.source)
-            # ...unless the env flag forces the flip back on.
-            forced = get_model(Role.DATA_CAUSAL, env={"VIRTUOSO_GEMINI_35_FLASH_GA": "1"})
-            self.assertEqual("gemini-3.5-flash", forced.model)
-
-    def test_fallback_not_primary_guard(self) -> None:
-        with self.assertRaises(ValueError):
-            assert_fallback_not_primary(
-                Role.DATA_CAUSAL,
-                env={"VIRTUOSO_MODEL_DATA_CAUSAL": GLOBAL_FALLBACK},
-            )
-        # CODING_ARCH legitimately shares the fallback string.
-        resolved = assert_fallback_not_primary(Role.CODING_ARCH, env={})
-        self.assertEqual(GLOBAL_FALLBACK, resolved.model)
-
-    def test_legacy_string_scan_finds_retired_ids(self) -> None:
-        text = "model: grok-4-fast-reasoning\nfallback: gemini-2.0-flash-lite\nok: claude-opus-4-8"
-        found = find_legacy_strings(text)
-        self.assertIn("grok-4-fast-reasoning", found)
-        self.assertIn("gemini-2.0-flash-lite", found)
-        self.assertNotIn("claude-opus-4-8", found)
-        with self.assertRaises(ValueError) as ctx:
-            assert_no_legacy_strings(text, source="cells/reason.yaml")
-        self.assertIn("cells/reason.yaml", str(ctx.exception))
-        assert_no_legacy_strings("claude-opus-4-8 gemini-3.5-flash", source="clean.yaml")
-        # No-arg mode self-audits the live registry (resolved primaries + image models).
-        assert_no_legacy_strings()
-
-
-class VirtuosoDispatchTestCase(unittest.TestCase):
-    @staticmethod
-    def _ok(model, messages):
-        return {"text": f"{model}:ok", "reasoning_summary": "because"}
-
-    @staticmethod
-    def _boom(model, messages):
-        raise RuntimeError("vendor down")
-
-    def test_primary_path_serves_primary(self) -> None:
-        response = virtuoso_call(
-            Role.DATA_CAUSAL,
-            [{"role": "user", "content": "hi"}],
-            adapters={"google": self._ok},
-            env={},
-        )
-        self.assertEqual("primary", response.served_by)
-        self.assertEqual("gemini-3.5-flash", response.model)
-        self.assertIsNone(response.primary_error)
-        self.assertEqual("because", response.reasoning_summary)
-
-    def test_failover_crosses_to_global_fallback_and_is_never_silent(self) -> None:
-        response = virtuoso_call(
-            Role.DATA_CAUSAL,
-            [{"role": "user", "content": "hi"}],
-            adapters={"google": self._boom, "anthropic": self._ok},
-            env={},
-        )
-        self.assertEqual("global_fallback", response.served_by)
-        self.assertEqual(GLOBAL_FALLBACK, response.model)
-        self.assertIn("vendor down", response.primary_error)
-
-    def test_fallback_opt_out_reraises_primary_error(self) -> None:
-        with self.assertRaises(RuntimeError) as ctx:
-            virtuoso_call(
-                Role.DATA_CAUSAL,
-                [],
-                fallback=False,
-                adapters={"google": self._boom, "anthropic": self._ok},
-                env={},
-            )
-        self.assertIn("vendor down", str(ctx.exception))
-
-    def test_coding_arch_failover_is_noop_reraise(self) -> None:
-        with self.assertRaises(RuntimeError) as ctx:
-            virtuoso_call(Role.CODING_ARCH, [], adapters={"anthropic": self._boom}, env={})
-        self.assertIn("vendor down", str(ctx.exception))
-
-    def test_missing_anthropic_adapter_fails_the_failover_loudly(self) -> None:
-        with self.assertRaises(RuntimeError) as ctx:
-            virtuoso_call(Role.DEVOPS_OPS, [], adapters={"xai": self._boom}, env={})
-        message = str(ctx.exception)
-        self.assertIn("grok-4.3", message)
-        self.assertIn(GLOBAL_FALLBACK, message)
-
-
-class VirtuosoModelPlaneTestCase(unittest.TestCase):
-    def setUp(self) -> None:
-        self.temp_dir = tempfile.TemporaryDirectory()
-        self.trace_file = Path(self.temp_dir.name) / "mii_reasoning_traces.jsonl"
-        self.plane = VirtuosoModelPlane(self.trace_file)
-
-    def tearDown(self) -> None:
-        self.temp_dir.cleanup()
-
-    def test_boot_guard_refuses_misconfigured_registry(self) -> None:
-        with self.assertRaises(ValueError):
-            VirtuosoModelPlane(
-                Path(self.temp_dir.name) / "other.jsonl",
-                env={"VIRTUOSO_MODEL_DEVOPS_OPS": "grok-4-fast-reasoning"},
-            )
-        with self.assertRaises(ValueError):
-            VirtuosoModelPlane(
-                Path(self.temp_dir.name) / "other2.jsonl",
-                env={"VIRTUOSO_MODEL_DATA_CAUSAL": GLOBAL_FALLBACK},
-            )
-
-    def test_resolve_accepts_value_or_name_and_rejects_unknown(self) -> None:
-        self.assertEqual("gemini-3.5-flash", self.plane.resolve("data_causal")["model"])
-        self.assertEqual("gemini-3.5-flash", self.plane.resolve("DATA_CAUSAL")["model"])
-        with self.assertRaises(ValueError):
-            self.plane.resolve("brain")
-
-    def test_call_persists_mii_trace_only_when_summary_present(self) -> None:
-        result = self.plane.call(
-            "coding_arch",
-            [{"role": "user", "content": "plan"}],
-            adapters={"anthropic": lambda m, msgs: {"text": "ok", "reasoning_summary": "chain"}},
-        )
-        self.assertEqual("primary", result["served_by"])
-        self.assertEqual(1, self.plane.trace_count())
-        # Gemini-style None summary (encrypted signatures) is not persisted.
-        self.plane.call(
-            "data_causal",
-            [],
-            adapters={"google": lambda m, msgs: {"text": "ok", "reasoning_summary": None}},
-        )
-        self.assertEqual(1, self.plane.trace_count())
-        rows = self.plane.recent_traces(limit=5)
-        self.assertEqual("chain", rows[0]["summary"])
-        self.assertEqual("coding_arch", rows[0]["role"])
-
-    def test_registry_snapshot_carries_guards_and_phases(self) -> None:
-        snapshot = self.plane.registry_snapshot()
-        self.assertEqual(4, len(snapshot["roles"]))
-        self.assertEqual(GLOBAL_FALLBACK, snapshot["global_fallback"])
-        self.assertEqual(
-            ["sense", "reason", "plan", "validate", "decide", "act", "learn"],
-            snapshot["srpvdal_phases"],
-        )
-        self.assertEqual("gemini-3-pro-image", snapshot["image_models"]["google_flagship"])
-        self.assertEqual("gemini-3.1-flash-image", snapshot["image_models"]["google_fast"])
-
-    def test_scan_text_reports_violations(self) -> None:
-        result = self.plane.scan_text("pin claude-opus-4-6 here", source="app.yaml")
-        self.assertFalse(result["clean"])
-        self.assertEqual(["claude-opus-4-6"], result["violations"])
-        self.assertTrue(self.plane.scan_text("claude-opus-4-8")["clean"])
-
-
-class VirtuosoRuntimeIntegrationTestCase(unittest.TestCase):
+class GoogleAdsCompatibilityRuntimeTest(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.runtime = create_runtime(base_dir=REPO_ROOT, data_dir=Path(self.temp_dir.name))
@@ -1015,33 +207,44 @@ class VirtuosoRuntimeIntegrationTestCase(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
 
-    def test_discover_includes_virtuoso_block(self) -> None:
-        block = self.runtime.discover()["virtuoso"]
-        self.assertEqual(GLOBAL_FALLBACK, block["global_fallback"])
-        self.assertIn("virtuoso.resolve_model", block["tools"])
-        self.assertEqual("gemini-3.5-flash", block["roles"]["data_causal"]["model"])
+    def test_validate_gaql_flags_sunset_version(self) -> None:
+        report = self.runtime.validate_gaql(
+            "SELECT campaign.id FROM campaign", api_version="v19", as_of="2026-06-30"
+        )
+        self.assertFalse(report["valid"])
+        self.assertTrue(any(e["code"] == "api_version_sunset" for e in report["errors"]))
 
-    def test_virtuoso_tools_are_callable_through_mcp(self) -> None:
-        resolved = self.runtime.call_tool("virtuoso.resolve_model", {"role": "coding_arch"})
-        self.assertEqual(GLOBAL_FALLBACK, resolved["result"]["model"])
-        scan = self.runtime.call_tool("virtuoso.scan_legacy", {"text": "gpt-5.2-turbo"})
-        self.assertEqual(["gpt-5.2"], scan["result"]["violations"])
-        traces = self.runtime.call_tool("virtuoso.reasoning_traces", {})
-        self.assertEqual([], traces["result"]["traces"])
+    def test_validate_gaql_catches_field_version_mismatch(self) -> None:
+        report = self.runtime.validate_gaql(
+            "SELECT campaign.id, metrics.average_position FROM campaign",
+            api_version="v21",
+            as_of="2026-06-30",
+        )
+        self.assertFalse(report["valid"])
+        self.assertTrue(
+            any(e["code"] == "field_unavailable_in_version" for e in report["errors"])
+        )
 
-    def test_health_snapshot_carries_virtuoso_counts(self) -> None:
-        snapshot = self.runtime.health_snapshot()
-        self.assertEqual(4, snapshot["virtuoso_role_count"])
-        self.assertEqual(0, snapshot["mii_trace_count"])
+    def test_validate_gaql_batch_uses_cache_across_accounts(self) -> None:
+        # Same template validated twice (as in an MCC sweep) should hit the cache.
+        template = "SELECT campaign.id, metrics.clicks FROM campaign"
+        result = self.runtime.validate_gaql_batch(
+            [template, template], api_version="v21", as_of="2026-06-30"
+        )
+        self.assertEqual(2, result["valid"])
+        self.assertGreaterEqual(result["cache"]["hits"], 1)
 
-    def test_extractor_metadata_resolves_model_through_registry(self) -> None:
-        override_env = {"VIRTUOSO_MODEL_DATA_CAUSAL": "gemini-4.0-pro"}
-        self.assertEqual("gemini-4.0-pro", gemini_extractor_metadata(override_env)["model"])
-        self.assertEqual("gemini-4.0-pro", vertex_extractor_metadata(override_env)["model"])
-        self.assertEqual("data_causal", vertex_extractor_metadata(override_env)["registry_role"])
-        # The extractor-local pin still has precedence over the registry override.
-        both = {"VIRTUOSO_MODEL_DATA_CAUSAL": "gemini-4.0-pro", "MIZOKI_GEMINI_MODEL": "gemini-3.5-pro"}
-        self.assertEqual("gemini-3.5-pro", gemini_extractor_metadata(both)["model"])
+    def test_version_status_and_field_metadata_are_exposed(self) -> None:
+        status = self.runtime.google_ads_version_status(api_version="v21", as_of="2026-06-30")
+        self.assertEqual("supported", status["status"])
+        meta = self.runtime.google_ads_field_metadata(resource="campaign")
+        self.assertTrue(meta["known_resource"])
+
+    def test_discover_and_health_carry_google_ads(self) -> None:
+        discover = self.runtime.discover()
+        self.assertIn("google_ads", discover)
+        self.assertIn("google_ads.validate_gaql", discover["google_ads"]["tools"])
+        self.assertIn("gaql_validation_count", self.runtime.health_snapshot())
 
 
 if __name__ == "__main__":

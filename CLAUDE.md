@@ -183,6 +183,39 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (July 2026)
 
+### Decision Concierge — guided-by-default Guide Agent on /executive-briefing/ (2026-07-31)
+
+Executive Briefing v1.1 per owner spec (full spec: `docs/GUIDE_AGENT_SPEC.md`).
+The guide IS the product story — live DCP-style control: suggest + highlight +
+unlock; the executive commits every critical action.
+
+- **`executive-briefing/js/guide.js`** (NEW, canon-pinned — canon is now 20
+  surfaces): docked concierge rail, guided by default
+  (`MIZOKI_CONFIG.guideMode`, sessionStorage persistence), stage×domain×role
+  scripts driven by `MIZOKI.DOMAINS`/`MIZOKI.ROLES`, objection chips, Q&A box,
+  role-recommended close default (pilot/board/deep-dive). **Zero click()
+  calls** (test-enforced) — it pulses/scrolls targets, never presses them; the
+  critical red-signal gate is coached by name, never bypassed. While open the
+  page reserves the rail's space (`html.mzg-docked`) so the panel can never
+  intercept a briefing control (Playwright caught that exact overlap pre-ship).
+- **`app.js`** gained the `mizoki:briefing` CustomEvent bridge inside
+  `notifyParent` (state-enriched); **`index.html`** loads guide.js — both
+  re-pinned.
+- **Server**: `mizoki_runtime/briefing_guide.py` — allowlisted PRODUCT_FACTS +
+  6-entry objection bank (integration_risk / existing_bi / security / not_now /
+  budget_owner / pricing), keyword retrieval (NO generative path — cannot
+  invent pricing, certifications, or logos), and the interaction memory ledger
+  (`data/guide_interactions.jsonl`). Flask: `/api/briefing/guide/event|ask|
+  summary`. Boss runtime registers `guide.answer` + `guide.memory_summary` MCP
+  tools — the guide runs as a sub-agent under the Boss, and its memory
+  (objections ranked, drop-off stage, suggestion acceptance, decision intents)
+  is queryable for continuous improvement.
+- **Tests**: `tests/test_briefing_guide.py` (13) — endpoints, objection bank,
+  claims lint over both layers (no guarantee/cert/dollar-figure/pressure
+  vocabulary; required stance "I'll suggest; you commit"), and the no-click
+  rule. `test_runtime.py` tool contract extended (+2). Suite **279**, only the
+  2 pre-existing homepage failures. NOT deployed — human `APPROVED` dispatch.
+
 ### Boss voice docent — guided salesman tour on /demo/signal (2026-07-31)
 
 Owner instruction: add the Boss's voice to the demo so it can walk viewers

@@ -108,6 +108,24 @@ stable lift ≥ 2 purchase cycles to promote).
 
 ---
 
+## 9. Post-lock approved change — Decision Concierge (2026-07-31)
+
+Owner spec: guided-by-default Guide Agent for the executive track — narrator +
+option framer riding the fixed 5 stages, sales-trained, never bypassing the
+critical gate, always ending in pilot / board / deep-dive capture, with every
+interaction remembered for improvement.
+
+Shipped as Executive Briefing v1.1 (details: `docs/GUIDE_AGENT_SPEC.md`):
+`guide.js` docked rail (canon-pinned; manifest now **20 surfaces**;
+`index.html`/`app.js` re-pinned), allowlist-retrieval Q&A + 6-objection bank in
+`mizoki_runtime/briefing_guide.py` (no generative path), interaction memory
+ledger + `/api/briefing/guide/{event,ask,summary}`, and `guide.answer` /
+`guide.memory_summary` MCP tools under the Boss runtime. Verified: Playwright
+E2E (guided default, stage sync, BI-objection Q&A round-trip, highlight w/ zero
+auto-resolves, self-drive persistence) — one real overlap bug caught and fixed
+by docking; suite **279** w/ only the 2 pre-existing homepage failures;
+`CANON OK 20/20`. Ships via human `APPROVED` dispatch.
+
 ## 8. Post-lock approved change — Boss voice docent (2026-07-31)
 
 Owner instruction: give the Boss a voice on the demo — walk viewers through

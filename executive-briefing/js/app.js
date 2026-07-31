@@ -77,6 +77,26 @@
         "*"
       );
     }
+    // Same event stream, in-page: the Decision Concierge (js/guide.js)
+    // subscribes here. Detail is enriched with the live state snapshot so the
+    // guide never reaches into this closure.
+    try {
+      document.dispatchEvent(
+        new CustomEvent("mizoki:briefing", {
+          detail: {
+            event,
+            detail: detail || {},
+            stageIndex: state.stageIndex,
+            stageId: (MIZOKI.STAGES[state.stageIndex] || {}).id || "",
+            domain: state.domain,
+            role: state.role,
+            started: state.started,
+            resolved: state.resolved.length,
+            decisionIntent: state.decisionIntent,
+          },
+        })
+      );
+    } catch (err) { /* telemetry only — never brick the briefing */ }
   }
 
   function svg(name) {

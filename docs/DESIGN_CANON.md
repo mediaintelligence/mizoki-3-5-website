@@ -72,6 +72,12 @@ this site: the workflow no longer declares `push` paths, so the Router skips it.
 
 **Approved re-pins on v1.5** (canon version unchanged; homepage untouched):
 
+- 2026-07-31 — **Decision Concierge** (explicit owner instruction): the
+  Executive Briefing gained its guided-by-default Guide Agent
+  (`executive-briefing/js/guide.js`, NEW canon surface — the manifest is now
+  **20 files**; `index.html` + `js/app.js` re-pinned for the event bridge and
+  script wiring). Spec: `docs/GUIDE_AGENT_SPEC.md`. Awaiting a human
+  `APPROVED` dispatch.
 - 2026-07-31 — **Boss voice docent** (explicit owner instruction): guided
   salesman tour on `/demo/signal` via new `assets/js/boss-docent.js`
   (output-only voice — no microphone ever; scripted claims-linted narration;
