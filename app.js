@@ -65,7 +65,7 @@
         <h3>Learning That Actually Closes the Loop</h3>
         <p>The LEARN stage captures outcomes and feeds them back into the system. Credibility scores for individual agents are updated based on the accuracy of their contributions. The Knowledge Graph evolves with every decision cycle. This creates a system that genuinely improves from reality, not from theoretical retraining on static datasets.</p>
 
-        <p>The learning velocity metric — improvement rate over time — becomes a leading indicator of system maturation. Organizations typically see a 15-20% improvement in decision quality within the first 90 days of deployment.</p>
+        <p>The learning velocity metric — improvement rate over time — becomes a leading indicator of system maturation. A 15-20% improvement in decision quality within the first 90 days of deployment is a <em>design target</em>, not a measured outcome.</p>
 
         <h3>Implementing SRPVDAL</h3>
         <p>SRPVDAL is not a theoretical framework. It is an operational architecture that connects to existing enterprise systems through a plug-in layer. ERP, CRM, data warehouses, and cloud infrastructure connect at the SENSE stage. Actions execute through existing workflows at the ACT stage. No rip-and-replace required.</p>
@@ -188,10 +188,10 @@
 
         <p><strong>Override Frequency</strong> tracks how often humans intervene and, critically, why. A healthy system shows declining override rates over time as governance policies mature. Sudden spikes indicate changing conditions that require policy review.</p>
 
-        <p><strong>Outcome Delta</strong> measures the difference between autonomous decisions and the baseline — either historical performance or a control group running under the old process. This is the most direct measure of value creation and typically shows 18% to 35% improvement in revenue-impacting decisions.</p>
+        <p><strong>Outcome Delta</strong> measures the difference between autonomous decisions and the baseline — either historical performance or a control group running under the old process. This is the most direct measure of value creation; an 18% to 35% improvement in revenue-impacting decisions is our <em>design target</em> for it, pending benchmark evidence.</p>
 
         <h3>From Metrics to Business Case</h3>
-        <p><strong>Learning Velocity</strong> quantifies the system's improvement rate over time. Organizations typically see a 15-20% improvement curve in decision quality during the first 90 days. This metric is particularly important for board presentations because it demonstrates compounding returns.</p>
+        <p><strong>Learning Velocity</strong> quantifies the system's improvement rate over time; a 15-20% improvement curve in decision quality during the first 90 days is a <em>design target</em>. This metric is particularly important for board presentations because it demonstrates compounding returns.</p>
 
         <p><strong>Audit Completeness</strong> measures the percentage of actions with full decision traces. In regulated industries, this metric is non-negotiable — anything below 100% is a compliance risk. Even in non-regulated environments, complete audit trails provide the transparency that builds organizational trust in autonomous systems.</p>
 
@@ -523,11 +523,11 @@
     setInterval(() => {
       nodes.forEach((node, i) => {
         if (i === current) {
-          node.style.stroke = '#00D4FF';
+          node.style.stroke = '#3FDCF2';
           node.style.strokeWidth = '3';
-          node.style.filter = 'drop-shadow(0 0 12px rgba(0, 212, 255, 0.6))';
+          node.style.filter = 'drop-shadow(0 0 12px rgba(63, 220, 242, 0.6))';
         } else {
-          node.style.stroke = '#00D4FF';
+          node.style.stroke = '#3FDCF2';
           node.style.strokeWidth = '2';
           node.style.filter = 'none';
         }

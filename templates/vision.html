@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vision | MIZ OKI - Tremendous Proportions</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
+            --bg-color: #0A1418;
             --text-color: #e0e0e0;
-            --accent-color: #00d4ff;
+            --accent-color: #3FDCF2;
             --highlight-color: #ff9f1c;
         }
 
@@ -44,7 +47,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 40px;
-            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
+            background: linear-gradient(to bottom, rgba(10, 20, 24,0.9), transparent);
         }
 
         .logo {
@@ -137,7 +140,7 @@
 
         .manifesto-block.accent {
             border-left-color: var(--accent-color);
-            background: rgba(0, 212, 255, 0.05);
+            background: rgba(63, 220, 242, 0.05);
         }
 
         .quote-section {
@@ -354,7 +357,7 @@
                 if (this.y < 0 || this.y > height) this.vy *= -1;
             }
             draw() {
-                ctx.fillStyle = '#00d4ff';
+                ctx.fillStyle = '#3FDCF2';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -383,7 +386,7 @@
 
                     if (distance < 150) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - distance / 150})`;
+                        ctx.strokeStyle = `rgba(63, 220, 242, ${1 - distance / 150})`;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);

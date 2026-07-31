@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Unlocking Meta’s Ad Algorithm With the ReLU Lens | MIZ OKI 3.5 Blog</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
   <meta name="description" content="A practical, image-driven playbook for threshold-aware media buying: why campaigns feel dead until they activate, how to build signal density, and how MIZ OKI 3.5 operationalizes those dynamics." />
   <link rel="canonical" href="https://mizoki3.com/blog/relu-lens-meta-algorithm.html" />
   <meta property="og:type" content="article" />
@@ -17,18 +20,18 @@
   <meta name="twitter:image" content="https://mizoki3.com/assets/img/blog/meta-relu/og_meta_relu_1200x627.png" />
   <style>
     :root{
-      --bg:#07111f;
-      --panel:#0b1728;
-      --text:#e5eefb;
-      --muted:#94a3b8;
+      --bg:#0B1E26;
+      --panel:#0F2530;
+      --text:#E3EEF0;
+      --muted:#93A0A6;
       --border:rgba(148,163,184,.16);
-      --accent:#27e7ff;
-      --accent2:#7a5cff;
+      --accent:#3FDCF2;
+      --accent2:#3FDCF2;
       --max:1120px;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:radial-gradient(circle at top,#0c1d33 0,var(--bg) 54%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+    body{margin:0;background:radial-gradient(circle at top,#123039 0,var(--bg) 54%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
     a{color:inherit}
     .site-header{position:sticky;top:0;z-index:40;background:rgba(7,17,31,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
     .nav{max-width:var(--max);margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:24px}
@@ -44,19 +47,19 @@
     .kicker{margin-top:18px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;display:inline-flex;gap:8px;align-items:center}
     .dot{width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
     h1{font-size:clamp(34px,5vw,56px);line-height:1.02;letter-spacing:-.03em;margin:14px 0 14px;max-width:980px}
-    .dek{font-size:18px;line-height:1.65;color:#c7d2fe;max-width:900px;margin:0}
+    .dek{font-size:18px;line-height:1.65;color:#C6E4EC;max-width:900px;margin:0}
     .meta{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:18px}
     .grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:28px;margin-top:28px}
     .article{min-width:0}
     .aside{position:sticky;top:86px;align-self:start}
     .panel{background:rgba(11,23,40,.72);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 14px 36px rgba(2,8,23,.2)}
     .panel h3{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
-    .toc a,.cta a{display:block;padding:9px 0;text-decoration:none;color:#dbe7ff}
+    .toc a,.cta a{display:block;padding:9px 0;text-decoration:none;color:#D7EAF0}
     .toc a:hover,.cta a:hover{color:white}
-    .callout{margin:0 0 24px;padding:18px 18px 18px 20px;border-left:4px solid var(--accent2);background:rgba(122,92,255,.10);border-radius:16px;color:#dbe7ff}
+    .callout{margin:0 0 24px;padding:18px 18px 18px 20px;border-left:4px solid var(--accent2);background:rgba(122,92,255,.10);border-radius:16px;color:#D7EAF0}
     article h2{margin:32px 0 10px;font-size:28px;line-height:1.15;letter-spacing:-.02em}
     article h3{margin:22px 0 8px;font-size:20px}
-    article p, article li{font-size:17px;line-height:1.75;color:#dbe7ff}
+    article p, article li{font-size:17px;line-height:1.75;color:#D7EAF0}
     article ul{padding-left:24px}
     article strong{color:#fff}
     figure{margin:20px 0;padding:14px;background:rgba(11,23,40,.72);border:1px solid var(--border);border-radius:18px}
@@ -64,16 +67,19 @@
     figcaption{margin-top:10px;font-size:13px;line-height:1.55;color:var(--muted)}
     .micro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
     .micro .card{background:rgba(11,23,40,.72);border:1px solid var(--border);border-radius:16px;padding:16px}
-    .formula{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;background:rgba(2,8,23,.6);border:1px dashed var(--border);border-radius:14px;padding:12px 14px;font-size:13px;color:#dbe7ff}
+    .formula{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;background:rgba(2,8,23,.6);border:1px dashed var(--border);border-radius:14px;padding:12px 14px;font-size:13px;color:#D7EAF0}
     .next-steps{margin-top:34px;padding:20px;background:linear-gradient(180deg,rgba(39,231,255,.10),rgba(122,92,255,.12));border:1px solid var(--border);border-radius:18px}
     .button-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
     .btn{display:inline-block;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:700;border:1px solid var(--border)}
-    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04101d;border:0}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0A1418;border:0}
     .btn.secondary{background:rgba(11,23,40,.72)}
     footer{border-top:1px solid var(--border);margin-top:46px;padding:22px 0;color:var(--muted);font-size:13px}
     @media (max-width: 980px){.grid{grid-template-columns:1fr}.aside{position:static}.nav-links{display:none}}
     @media (max-width: 640px){.micro{grid-template-columns:1fr}}
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="site-header">
@@ -232,7 +238,7 @@
 
           <div class="next-steps">
             <h3 style="margin:0 0 6px;font-size:20px">Take the next step</h3>
-            <p style="margin:0;color:#dbe7ff">If your team is spending meaningful blended budget and performance still feels random, the problem is usually not randomness. It is structure, signal density, and learning protection.</p>
+            <p style="margin:0;color:#D7EAF0">If your team is spending meaningful blended budget and performance still feels random, the problem is usually not randomness. It is structure, signal density, and learning protection.</p>
             <div class="button-row">
               <a class="btn primary" href="/walkthrough.html">See the walkthrough</a>
               <a class="btn secondary" href="/roi.html">Estimate ROI</a>
@@ -266,5 +272,6 @@
       <div>© 2026 MIZ OKI. Threshold-aware media buying inside a verifiable decision system.</div>
     </footer>
   </div>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

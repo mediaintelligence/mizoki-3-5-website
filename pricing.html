@@ -1,113 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing | MIZ OKI 3.5</title>
-    <link rel="stylesheet" href="base.css">
-    <link rel="stylesheet" href="style.css">
-    <script>
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('nav');
-            if (window.scrollY > 20) { nav.classList.add('scrolled'); } 
-            else { nav.classList.remove('scrolled'); }
-        });
-    </script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pricing — MIZOKI3</title>
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+<meta name="description" content="Value-aligned pricing for MIZOKI3. Every tier runs the same governed decision engine — what changes is how much autonomy the Decision Control Plane lets it exercise. Custom pricing scoped to divisions, decision volume, and governance requirements." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* MIZOKI3 design tokens — mirrors index.html */
+:root{
+  --bg-0:#0A1418; --bg-1:#0B1E26; --bg-2:#0F2530;
+  --panel:rgba(13,20,44,0.72); --panel-2:rgba(18,27,56,0.55);
+  --ink:#F4F6F7; --ink-2:#93A0A6; --ink-3:#93A0A6; --ink-4:#5E6E75;
+  --counsel:#9D7BE8; --estate:#41D695; --capital:#5FA0DC;
+  --signal:#D9A83C; --risk:#FF6B7C; --nexus:#3FDCF2; --accent:#3FDCF2;
+  --hairline:rgba(120,150,230,0.13); --hairline-2:rgba(120,150,230,0.26);
+  --display:'Instrument Serif',system-ui,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --container:1180px; --r-sm: 2px; --r: 2px; --r-lg: 2px; --r-xl: 2px;
+}
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{
+  background:var(--bg-0); color:var(--ink); font-family:var(--body);
+  line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; position:relative;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(1100px 700px at 78% 6%, rgba(76,201,255,0.13), transparent 60%),
+    radial-gradient(1000px 800px at 12% 4%, rgba(124,92,255,0.12), transparent 60%);
+}
+main,header,footer{ position:relative; z-index:1; }
+h1,h2,h3,h4{ font-family:var(--display); font-weight:400; letter-spacing:-0.01em; line-height:1.12; }
+h1{ font-size:clamp(2.2rem,4.6vw,3.6rem); font-weight:400; }
+p{ color:var(--ink-2); }
+a{ color:inherit; text-decoration:none; }
+.container{ max-width:var(--container); margin:0 auto; padding:0 28px; }
+.eyebrow{
+  font-family:var(--mono); font-size:0.72rem; font-weight:500;
+  letter-spacing:0.22em; text-transform:uppercase; color:var(--ink-3);
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  padding:13px 22px; border-radius:var(--r-sm); font-family:var(--body);
+  font-size:0.9rem; font-weight:600; letter-spacing:0.01em; cursor:pointer;
+  border:none; transition:all .25s cubic-bezier(.2,.7,.2,1);
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),#6CE8FA); color:#06262C;
+  box-shadow:0 10px 34px -10px rgba(124,92,255,0.7);
+}
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 16px 42px -10px rgba(124,92,255,0.9); }
+.btn-ghost{ background:rgba(255,255,255,0.04); color:var(--ink); border:1px solid var(--hairline-2); }
+.btn-ghost:hover{ border-color:var(--nexus); color:#fff; }
+
+/* nav */
+header.nav{
+  position:fixed; inset:0 0 auto 0; z-index:100;
+  background:rgba(4,6,15,0.78); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--hairline);
+}
+.nav-in{
+  max-width:1480px; margin:0 auto; padding:0 28px; height:72px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.logo{ font-family:var(--display); font-weight:700; font-size:1.4rem; letter-spacing:-0.01em; display:flex; align-items:center; }
+.logo .three{ color:var(--nexus); }
+.nav-links{ display:flex; gap:26px; list-style:none; }
+.nav-links a{ font-size:0.86rem; color:var(--ink-2); transition:color .2s; }
+.nav-links a:hover,.nav-links a.active{ color:var(--ink); }
+.nav-right{ display:flex; align-items:center; gap:16px; }
+.nav-signin{ font-size:0.86rem; color:var(--ink-2); }
+.nav-signin:hover{ color:var(--ink); }
+@media (max-width:1000px){ .nav-links{ display:none; } }
+
+/* hero */
+.hero{ padding:170px 0 56px; text-align:center; }
+.hero .eyebrow{ margin-bottom:16px; }
+.hero h1{ margin-bottom:18px; }
+.hero .sub{ max-width:680px; margin:0 auto; font-size:1.02rem; color:var(--ink-2); }
+
+/* tiers */
+.tiers{ padding:34px 0 26px; }
+.tier-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-items:stretch; }
+.tier{
+  background:var(--panel-2); border:1px solid var(--hairline);
+  border-radius:var(--r-xl); padding:34px 30px; display:flex; flex-direction:column;
+  position:relative; transition:border-color .25s;
+}
+.tier:hover{ border-color:var(--hairline-2); }
+.tier.featured{
+  background:var(--panel); border:1px solid rgba(76,201,255,0.5);
+  box-shadow:0 30px 90px -30px rgba(76,201,255,0.25);
+}
+.tier-badge{
+  position:absolute; top:-12px; right:26px;
+  background:var(--nexus); color:#0B1E26;
+  font-family:var(--mono); font-size:0.6rem; font-weight:700;
+  letter-spacing:0.14em; padding:5px 12px; border-radius:999px;
+}
+.tier .kicker{
+  font-family:var(--mono); font-size:0.64rem; font-weight:700;
+  letter-spacing:0.2em; text-transform:uppercase; color:var(--nexus); margin-bottom:10px;
+}
+.tier h2{ font-size:1.55rem; margin-bottom:6px; }
+.tier .autonomy{
+  font-family:var(--mono); font-size:0.68rem; color:var(--ink-3);
+  letter-spacing:0.04em; margin-bottom:18px;
+}
+.tier .autonomy b{ color:var(--ink-2); font-weight:500; }
+.tier ul{ list-style:none; display:grid; gap:11px; margin-bottom:30px; }
+.tier li{ display:flex; gap:10px; font-size:0.88rem; color:var(--ink-2); line-height:1.5; }
+.tier li .ck{ color:var(--estate); flex:0 0 auto; }
+.tier .cta{ margin-top:auto; }
+.tier .cta .btn{ width:100%; }
+@media (max-width:960px){ .tier-grid{ grid-template-columns:1fr; max-width:520px; margin:0 auto; } }
+
+/* honesty band */
+.band{ padding:26px 0 60px; }
+.band-card{
+  background:var(--panel-2); border:1px solid var(--hairline); border-radius:var(--r-lg);
+  padding:26px 30px; display:flex; align-items:center; justify-content:space-between;
+  gap:22px; flex-wrap:wrap;
+}
+.band-card p{ font-size:0.9rem; max-width:640px; }
+.band-card p b{ color:var(--ink); font-weight:600; }
+
+/* ladder note */
+.ladder{ padding:8px 0 70px; }
+.ladder-card{
+  border:1px solid var(--hairline); border-radius:var(--r-lg);
+  padding:24px 30px; background:rgba(2,4,10,0.4);
+}
+.ladder-card .eyebrow{ margin-bottom:10px; }
+.ladder-card p{ font-size:0.88rem; }
+.ladder-card p code{
+  font-family:var(--mono); font-size:0.78rem; color:var(--nexus);
+}
+
+/* footer */
+footer{ border-top:1px solid var(--hairline); padding:34px 0 44px; }
+.foot-in{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.foot-in .copy{ font-size:0.78rem; color:var(--ink-4); }
+.foot-in .links{ display:flex; gap:20px; font-size:0.82rem; color:var(--ink-3); }
+.foot-in .links a:hover{ color:var(--ink); }
+</style>
 </head>
-<body class="theme-dark" style="background:var(--bg-950);">
+<body>
 
-    <!-- ====== NAVIGATION ====== -->
-    <nav class="nav" id="nav">
-        <div class="nav-inner">
-            <a href="index.html" class="nav-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.968-.516"/><path d="M10.996 14.828A4 4 0 0 0 12 14.5"/></svg>
-                <div class="nav-logo-name">MIZ<span>OKI</span></div>
-            </a>
-            
-            <ul class="nav-links">
-                <li><a href="platform.html">Platform</a></li>
-                <li><a href="security.html">Governance</a></li>
-                <li><a href="case-studies.html">Case Studies</a></li>
-                <li><a href="pricing.html" style="color:var(--text-white); font-weight:700;">Pricing</a></li>
-            </ul>
-            
-            <div class="nav-actions">
-                <a href="login.html" style="color:var(--text-300); font-weight:500; font-size:var(--text-sm); margin-right:16px;">Login</a>
-                <a href="index.html" class="btn btn-primary">Book Demo</a>
-            </div>
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="/">MIZOKI<span class="three">3</span></a>
+    <ul class="nav-links">
+      <li><a href="/#platform">Platform</a></li>
+      <li><a href="/#divisions">Divisions</a></li>
+      <li><a href="/#governance">Governance</a></li>
+      <li><a href="/demo">Live Demos</a></li>
+      <li><a href="/pricing.html" class="active">Pricing</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="nav-signin" href="/login">Sign In</a>
+      <a class="btn btn-primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Enterprise%20Pilot">Request Enterprise Pilot</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Pricing</div>
+    <h1>Value-Aligned Pricing</h1>
+    <p class="sub">
+      Every tier runs the same governed decision engine. What changes is how much
+      autonomy the Decision Control Plane lets it exercise — from approval-first
+      pilots to org-wide bounded autonomy. Priced by divisions, decision volume,
+      and governance requirements, not seats.
+    </p>
+  </div>
+</section>
+
+<section class="tiers">
+  <div class="container">
+    <div class="tier-grid">
+
+      <div class="tier">
+        <div class="kicker">Starter</div>
+        <h2>Core Intelligence</h2>
+        <div class="autonomy">Autonomy ladder: <b>L0–L1 · approval-first</b></div>
+        <ul>
+          <li><span class="ck">✓</span>One division — Counsel, Estate, Capital, Signal, or Risk</li>
+          <li><span class="ck">✓</span>Approval-first governance: every proposal routes to an operator gate before anything executes</li>
+          <li><span class="ck">✓</span>Connector Gateway with standard connectors</li>
+          <li><span class="ck">✓</span>Full SRPVDAL trace and provenance chain on every decision</li>
+          <li><span class="ck">✓</span>Scoped 90-day pilot with defined exit criteria</li>
+        </ul>
+        <div class="cta">
+          <a class="btn btn-ghost" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Starter%20Pilot">Start a pilot conversation</a>
         </div>
-    </nav>
+      </div>
 
-    <main style="padding-top: calc(var(--nav-height) + var(--space-20)); padding-bottom:var(--space-24);">
-        
-        <!-- ====== HEADER ====== -->
-        <section class="container text-center" style="max-width:800px; margin-bottom:var(--space-16);">
-            <h1 class="reveal" style="font-size:var(--text-5xl); margin-bottom:var(--space-6);">Value-Aligned Pricing</h1>
-            <p class="reveal delay-1" style="font-size:var(--text-xl); color:var(--text-400);">Priced by the complexity and volume of decisions automated. We only succeed when you generate measurable ROI.</p>
-        </section>
-
-        <!-- ====== PRICING ====== -->
-        <section class="container reveal delay-2">
-            <div class="pricing-tiers">
-                
-                <div class="pricing-tier">
-                    <h3>Pilot</h3>
-                    <p>For testing a single autonomous use-case in a sandbox environment.</p>
-                    <div class="price">Custom <span style="font-size:var(--text-lg); color:var(--text-500); font-weight:400;">/ 3mo</span></div>
-                    <ul>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> 1 Dedicated Pipeline</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Standard Connectors</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Human-in-the-loop ONLY</li>
-                    </ul>
-                    <a href="#" class="btn btn-secondary" style="width:100%;">Contact Sales</a>
-                </div>
-
-                <div class="pricing-tier featured">
-                    <div class="feature-badge">RECOMMENDED</div>
-                    <h3>Professional</h3>
-                    <p style="color:var(--accent-light);">For departmental deployment of fully autonomous decision loops.</p>
-                    <div class="price">Volume-Based</div>
-                    <ul>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Up to 5 Autonomous Pipelines</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Full SRPVDAL Reasoning</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Advanced Threshold Controls</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> 30-Day Immutable Audit Log</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary" style="width:100%;">Calculate Estimate</a>
-                </div>
-
-                <div class="pricing-tier">
-                    <h3>Enterprise</h3>
-                    <p>Cross-functional, organization-wide autonomous intelligence.</p>
-                    <div class="price">Platform</div>
-                    <ul>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Unlimited Pipelines</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Custom Knowledge Graph Tuning</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> VPC or On-Prem Deployment</li>
-                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Dedicated Success Engineer</li>
-                    </ul>
-                    <a href="#" class="btn btn-secondary" style="width:100%;">Contact Sales</a>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- ====== FOOTER ====== -->
-    <footer style="background:var(--bg-950); margin-top:var(--space-16); border-top:1px solid var(--border-card);">
-        <div class="container footer-grid">
-            <div class="footer-brand">
-                <a href="index.html" class="footer-logo">MIZ<span>OKI</span></a>
-                <p class="footer-desc">The autonomous decision intelligence system for high-stakes enterprise environments.</p>
-            </div>
+      <div class="tier featured">
+        <div class="tier-badge">MOST POPULAR</div>
+        <div class="kicker">Scale</div>
+        <h2>Operational Autonomy</h2>
+        <div class="autonomy">Autonomy ladder: <b>L2–L3 · bounded, thresholds you control</b></div>
+        <ul>
+          <li><span class="ck">✓</span>Multi-division execution over one shared causal memory</li>
+          <li><span class="ck">✓</span>Configurable autonomy thresholds — act inside declared bounds, escalate outside them</li>
+          <li><span class="ck">✓</span>Guardrails and ReLU gating tuned to your risk envelope</li>
+          <li><span class="ck">✓</span>Immutable audit log with decision replay</li>
+          <li><span class="ck">✓</span>Full API and MCP tool integrations</li>
+        </ul>
+        <div class="cta">
+          <a class="btn btn-primary" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Scale%20Quote">Get a custom quote</a>
         </div>
-    </footer>
-    <script>
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-    </script>
+      </div>
+
+      <div class="tier">
+        <div class="kicker">Enterprise</div>
+        <h2>Full Governance Suite</h2>
+        <div class="autonomy">Autonomy ladder: <b>L0–L5 · per-scope grants, org-wide</b></div>
+        <ul>
+          <li><span class="ck">✓</span>Org-wide autonomy ladder with per-scope grants and forbidden-scope enforcement</li>
+          <li><span class="ck">✓</span>Immutable audit, RBAC, and rollback tokens on every action</li>
+          <li><span class="ck">✓</span>VPC or dedicated environment deployment</li>
+          <li><span class="ck">✓</span>Custom knowledge-graph and guardrail tuning</li>
+          <li><span class="ck">✓</span>Dedicated success engineering</li>
+        </ul>
+        <div class="cta">
+          <a class="btn btn-ghost" href="mailto:hello@mizoki3.com?subject=MIZOKI3%20Enterprise%20Inquiry">Enterprise inquiry</a>
+          <a class="btn btn-ghost" href="/executive-briefing/" style="margin-top:8px">Run the executive briefing (~9 min)</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="container">
+    <div class="band-card">
+      <p>
+        <b>No sticker price, on purpose.</b> Pricing is scoped to the divisions you run,
+        the volume of decisions automated, and the governance posture you require.
+        The fastest way to scope it: run the live demos, then talk to us.
+      </p>
+      <a class="btn btn-primary" href="/demo">Run the live demos first →</a>
+    </div>
+  </div>
+</section>
+
+<section class="ladder">
+  <div class="container">
+    <div class="ladder-card">
+      <div class="eyebrow">Why tiers map to autonomy, not features</div>
+      <p>
+        MIZOKI3 separates <code>proposal</code> from <code>authorization</code>. Every tier senses,
+        reasons, plans, and validates the same way — the tier decides where the human gate sits.
+        Starter keeps a person in every loop. Scale grants bounded autonomy inside thresholds
+        you set. Enterprise runs the full ladder with per-scope grants, and some scopes stay
+        forbidden to autonomy at every tier — by construction, not by policy document.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container foot-in">
+    <div class="copy">© 2026 MIZOKI3, Inc. All rights reserved. · Miami, FL</div>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="/demo">Live Demos</a>
+      <a href="mailto:hello@mizoki3.com">hello@mizoki3.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

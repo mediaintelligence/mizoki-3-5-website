@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Platform | MIZ OKI 3.5</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="style.css">
     <script>
@@ -13,11 +16,14 @@
             else { nav.classList.remove('scrolled'); }
         });
     </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="theme-light">
 
     <!-- ====== NAVIGATION (LIGHT THEME) ====== -->
-    <nav class="nav" id="nav" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); border-bottom:1px solid #e2e8f0;">
+    <nav class="nav" id="nav" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); border-bottom:1px solid #D4DBDE;">
         <div class="nav-inner">
             <a href="index.html" class="nav-logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.968-.516"/><path d="M10.996 14.828A4 4 0 0 0 12 14.5"/></svg>
@@ -55,7 +61,7 @@
                     <div class="stage-icon-wrap"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg></div>
                     <div class="stage-content">
                         <h3>Stage 1: Sense</h3>
-                        <p>Ingests live signals from ERP, CRM, and cloud stacks in real-time.</p>
+                        <p>Ingests live signals from ERP, CRM, and cloud stacks in real-time — through one governed Connector Gateway that normalizes every source into a canonical event.</p>
                     </div>
                 </div>
 
@@ -110,11 +116,53 @@
             </div>
         </section>
 
+        <!-- ====== RELEASE 3.5 CAPABILITIES ====== -->
+        <section class="container section reveal" style="max-width:1040px;">
+            <div class="text-center" style="margin-bottom:var(--space-10);">
+                <div style="font-family:var(--font-mono,monospace); font-size:var(--text-xs); font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent,#0C7C8F); margin-bottom:8px;">Release 3.5 · What's New</div>
+                <h2 style="color:var(--text-dark);">The Engine Room</h2>
+                <p style="font-size:var(--text-lg); color:var(--text-600); max-width:640px; margin:8px auto 0;">Every signal governed on the way in. Every decision verifiable on the way out.</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
+                <div style="background:#fff; border:1px solid #D4DBDE; border-radius:16px; padding:24px;">
+                    <div style="font-family:var(--font-mono,monospace); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5E6E75; margin-bottom:8px;">Unified Ingress</div>
+                    <h3 style="color:var(--text-dark); margin-bottom:8px;">Connector Gateway</h3>
+                    <p style="color:var(--text-600); font-size:var(--text-sm);">One governed entry for every source. Nine native connectors — Gmail, Drive, GitHub, Calendar, BigQuery, Neo4j, Vertex AI and more — normalize into a single canonical event. Nothing goes from raw signal straight to action.</p>
+                </div>
+                <div style="background:#fff; border:1px solid #D4DBDE; border-radius:16px; padding:24px;">
+                    <div style="font-family:var(--font-mono,monospace); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5E6E75; margin-bottom:8px;">Legal · MoLE</div>
+                    <h3 style="color:var(--text-dark); margin-bottom:8px;">Mixture-of-Legal-Experts</h3>
+                    <p style="color:var(--text-600); font-size:var(--text-sm);">Legal-scholar-grade reasoning fanned across Connecticut, Trust, Estate and Tax law — reconciled into a single IRAC answer with cross-domain conflict detection.</p>
+                </div>
+                <div style="background:#fff; border:1px solid #D4DBDE; border-radius:16px; padding:24px;">
+                    <div style="font-family:var(--font-mono,monospace); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5E6E75; margin-bottom:8px;">Orchestration</div>
+                    <h3 style="color:var(--text-dark); margin-bottom:8px;">Graph-Native Decision Intelligence</h3>
+                    <p style="color:var(--text-600); font-size:var(--text-sm);">Unified decision-dependency graphs with topological execution ordering, cross-engine evidence synthesis, and temporal-consistency checks across every decision engine.</p>
+                </div>
+                <div style="background:#fff; border:1px solid #D4DBDE; border-radius:16px; padding:24px;">
+                    <div style="font-family:var(--font-mono,monospace); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5E6E75; margin-bottom:8px;">Verifiable</div>
+                    <h3 style="color:var(--text-dark); margin-bottom:8px;">Closed-Loop Decision System</h3>
+                    <p style="color:var(--text-600); font-size:var(--text-sm);">Causal DAG discovery, off-policy evaluation (IPS · DR · SNIPS), conformal-prediction gates, and attestable execution with rollback tokens — the autonomous loop, closed.</p>
+                </div>
+                <div style="background:#fff; border:1px solid #D4DBDE; border-radius:16px; padding:24px;">
+                    <div style="font-family:var(--font-mono,monospace); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5E6E75; margin-bottom:8px;">Enterprise</div>
+                    <h3 style="color:var(--text-dark); margin-bottom:8px;">Multi-Tenant SLO &amp; Cost Plane</h3>
+                    <p style="color:var(--text-600); font-size:var(--text-sm);">Per-tenant isolation, sliding-window quotas, OpenTelemetry tracing, and Cloud Billing cost attribution written straight into the knowledge graph.</p>
+                </div>
+                <div style="background:#fff; border:1px solid #D4DBDE; border-radius:16px; padding:24px;">
+                    <div style="font-family:var(--font-mono,monospace); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5E6E75; margin-bottom:8px;">Tooling</div>
+                    <h3 style="color:var(--text-dark); margin-bottom:8px;">650+ Governed MCP Tools</h3>
+                    <p style="color:var(--text-600); font-size:var(--text-sm);">A continuously expanding autonomous tool surface — connectors, causal engines, simulators and platform operations — every one discoverable, scoped, and policy-gated.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- ====== INTEGRATIONS ====== -->
         <section class="container section reveal">
             <div class="integrations-box">
                 <h2>Zero Rip-and-Replace</h2>
-                <p>MIZ OKI acts as a cognitive overlay. It reads from your existing data lakes and executes via your existing APIs.</p>
+                <p>MIZ OKI acts as a cognitive overlay. Through the unified Connector Gateway it reads from your existing data lakes and executes via your existing APIs — no raw connector ever reaches an action directly.</p>
                 
                 <div class="integrations-grid">
                     <div class="integration-item">SAP</div>
@@ -169,5 +217,6 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
     </script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

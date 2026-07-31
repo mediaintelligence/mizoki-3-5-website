@@ -1,3 +1,5 @@
+import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -145,211 +147,238 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn("at least 1", response.get_json()["error"])
 
-    def test_programmatic_pipeline_and_runs_endpoints(self) -> None:
-        events = [
-            {
-                "exchange": "openx",
-                "seat": "seat-1",
-                "buyer_id": "buyer-1",
-                "bid_price": 1.5,
-                "bid_floor": 0.5,
-                "outcome": "win" if index < 10 else "loss",
-                "clearing_price": 1.0,
-                "revenue": 0.0,
-                "currency": "USD",
-            }
-            for index in range(30)
-        ]
 
-        run_response = self.client.post(
-            "/api/boss/programmatic/run",
-            json={"events": events, "objective": "Reduce wasted spend."},
+class AdminAuthAndAPIGateTestCase(unittest.TestCase):
+    """Cover the new /admin login flow and the opt-in API auth gate."""
+
+    DEMO_USERS = {"admin@mizoki3.com": "test-pw"}
+
+    def _make_app(self, *, require_api_auth: bool = False, demo_users: dict | None = None):
+        temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(temp_dir.cleanup)
+        old_users = os.environ.get("MIZOKI_DEMO_USERS_JSON")
+        old_gate = os.environ.get("MIZOKI_REQUIRE_AUTH_FOR_APIS")
+        users = self.DEMO_USERS if demo_users is None else demo_users
+        os.environ["MIZOKI_DEMO_USERS_JSON"] = json.dumps(users) if users else ""
+        os.environ["MIZOKI_REQUIRE_AUTH_FOR_APIS"] = "true" if require_api_auth else "false"
+
+        def _restore():
+            if old_users is None:
+                os.environ.pop("MIZOKI_DEMO_USERS_JSON", None)
+            else:
+                os.environ["MIZOKI_DEMO_USERS_JSON"] = old_users
+            if old_gate is None:
+                os.environ.pop("MIZOKI_REQUIRE_AUTH_FOR_APIS", None)
+            else:
+                os.environ["MIZOKI_REQUIRE_AUTH_FOR_APIS"] = old_gate
+
+        self.addCleanup(_restore)
+        runtime = create_runtime(base_dir=REPO_ROOT, data_dir=Path(temp_dir.name))
+        app = create_app(runtime=runtime)
+        app.config.update(TESTING=True)
+        return app.test_client()
+
+    def test_admin_unauth_redirects_to_login(self) -> None:
+        client = self._make_app()
+        r = client.get("/admin")
+        self.assertEqual(302, r.status_code)
+        self.assertIn("/admin/login", r.headers["Location"])
+
+    def test_admin_login_form_renders(self) -> None:
+        client = self._make_app()
+        r = client.get("/admin/login")
+        self.assertEqual(200, r.status_code)
+        self.assertIn(b"Admin sign-in", r.data)
+
+    def test_admin_login_with_bad_password_redirects_back(self) -> None:
+        client = self._make_app()
+        r = client.post(
+            "/admin/login",
+            data={"email": "admin@mizoki3.com", "password": "wrong"},
         )
-        self.assertEqual(200, run_response.status_code)
-        run_payload = run_response.get_json()
-        self.assertIn("trace_id", run_payload)
-        self.assertEqual("validate", run_payload["validate"]["gate"])
-        self.assertEqual(30, run_payload["sense"]["ingested_event_count"])
+        self.assertEqual(302, r.status_code)
+        self.assertIn("/admin/login", r.headers["Location"])
 
-        runs_response = self.client.get("/api/boss/programmatic/runs")
-        self.assertEqual(200, runs_response.status_code)
-        runs_payload = runs_response.get_json()
-        self.assertTrue(any(run["trace_id"] == run_payload["trace_id"] for run in runs_payload["runs"]))
+    def test_admin_login_with_good_password_grants_session(self) -> None:
+        client = self._make_app()
+        r = client.post(
+            "/admin/login",
+            data={"email": "admin@mizoki3.com", "password": "test-pw"},
+        )
+        self.assertEqual(302, r.status_code)
+        self.assertIn("/admin/", r.headers["Location"])
+        # Follow redirect — dashboard should render
+        r2 = client.get("/admin")
+        self.assertEqual(200, r2.status_code)
+        self.assertIn(b"Backend dashboard", r2.data)
 
-    def test_programmatic_ingest_endpoint_validates_events(self) -> None:
-        response = self.client.post("/api/boss/programmatic/ingest", json={"events": "nope"})
-        self.assertEqual(400, response.status_code)
-        self.assertIn("must be an array", response.get_json()["error"])
+    def test_admin_logout_clears_session(self) -> None:
+        client = self._make_app()
+        client.post(
+            "/admin/login",
+            data={"email": "admin@mizoki3.com", "password": "test-pw"},
+        )
+        client.get("/admin/logout")
+        r = client.get("/admin")
+        self.assertEqual(302, r.status_code)
+        self.assertIn("/admin/login", r.headers["Location"])
 
-    def test_journey_schema_is_served(self) -> None:
-        response = self.client.get("/schemas/journey-event.json")
-        self.assertEqual(200, response.status_code)
-        payload = response.get_json()
-        self.assertEqual("JourneyEvent", payload["title"])
+    # ----- Opt-in API auth gate -------------------------------------------
+
+    def test_api_gate_off_by_default_apis_are_public(self) -> None:
+        client = self._make_app(require_api_auth=False)
+        r = client.get("/api/mcp/tools")
+        self.assertEqual(200, r.status_code)
+        r2 = client.get("/api/boss/discover")
+        self.assertEqual(200, r2.status_code)
+
+    def test_api_gate_on_blocks_unauthenticated_callers(self) -> None:
+        client = self._make_app(require_api_auth=True)
+        r = client.get("/api/mcp/tools")
+        self.assertEqual(401, r.status_code)
+        self.assertIn("Authentication required", r.get_json()["error"])
+
+    def test_api_gate_on_allows_signed_in_callers(self) -> None:
+        client = self._make_app(require_api_auth=True)
+        client.post(
+            "/admin/login",
+            data={"email": "admin@mizoki3.com", "password": "test-pw"},
+        )
+        r = client.get("/api/mcp/tools")
+        self.assertEqual(200, r.status_code)
+
+    def test_api_gate_always_lets_health_through(self) -> None:
+        client = self._make_app(require_api_auth=True)
+        r = client.get("/api/health")
+        self.assertEqual(200, r.status_code)
+
+    # ----- Admin-login state surfaced on /api/health ----------------------
+
+    def test_health_reports_admin_login_enabled(self) -> None:
+        client = self._make_app()
+        r = client.get("/api/health")
+        self.assertEqual(200, r.status_code)
+        self.assertTrue(r.get_json()["admin_login_enabled"])
+
+    def test_health_reports_admin_login_disabled_when_no_users(self) -> None:
+        client = self._make_app(demo_users={})
+        r = client.get("/api/health")
+        self.assertEqual(200, r.status_code)
+        self.assertFalse(r.get_json()["admin_login_enabled"])
+
+    def test_login_with_no_users_configured_flashes_disabled(self) -> None:
+        client = self._make_app(demo_users={})
+        r = client.post(
+            "/admin/login",
+            data={"email": "admin@mizoki3.com", "password": "anything"},
+            follow_redirects=True,
+        )
+        self.assertEqual(200, r.status_code)
+        self.assertIn(b"Local admin login is disabled", r.data)
+
+
+class BlogFeedTestCase(unittest.TestCase):
+    """Cover the new RSS / JSON Feed routes."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        runtime = create_runtime(base_dir=REPO_ROOT, data_dir=Path(self.temp_dir.name))
+        app = create_app(runtime=runtime)
+        app.config.update(TESTING=True)
+        self.client = app.test_client()
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_rss_feed_returns_xml_with_all_posts(self) -> None:
+        r = self.client.get("/blog/feed.xml")
+        self.assertEqual(200, r.status_code)
+        self.assertTrue(r.content_type.startswith("application/rss+xml"))
+        self.assertEqual(3, r.data.count(b"<item>"))
+
+    def test_json_feed_returns_jsonfeed_envelope(self) -> None:
+        r = self.client.get("/blog/feed.json")
+        self.assertEqual(200, r.status_code)
+        body = r.get_json()
         self.assertEqual(
-            ["meta", "google_ads", "sendgrid", "openrtb", "other"],
-            payload["properties"]["event_source"]["enum"],
+            "https://jsonfeed.org/version/1.1", body["version"]
         )
-        response.close()
+        self.assertEqual(3, len(body["items"]))
 
-    def test_journey_normalize_endpoint_returns_canonical_event(self) -> None:
+    def test_posts_manifest_passthrough(self) -> None:
+        r = self.client.get("/blog/posts.json")
+        self.assertEqual(200, r.status_code)
+        self.assertEqual(3, len(r.get_json()["posts"]))
+
+
+class GoogleAdsApiTestCase(unittest.TestCase):
+    """Cover the /api/boss/google-ads/* GAQL pre-flight endpoints."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        runtime = create_runtime(base_dir=REPO_ROOT, data_dir=Path(self.temp_dir.name))
+        app = create_app(runtime=runtime)
+        app.config.update(TESTING=True)
+        self.client = app.test_client()
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_google_ads_validate_endpoint_flags_sunset_version(self) -> None:
         response = self.client.post(
-            "/api/boss/journey/normalize",
+            "/api/boss/google-ads/validate",
             json={
-                "source": "openrtb",
-                "payload": {
-                    "id": "auc-1",
-                    "imp": [{"id": "1", "tagid": "slot-7", "bidfloor": 0.8}],
-                    "site": {"domain": "news.com"},
-                    "device": {"ifa": "ifa123"},
-                },
+                "query": "SELECT campaign.id FROM campaign",
+                "api_version": "v19",
+                "as_of": "2026-06-30",
             },
         )
         self.assertEqual(200, response.status_code)
         payload = response.get_json()
-        self.assertTrue(payload["valid"])
-        self.assertEqual("openrtb", payload["event"]["event_source"])
-        self.assertEqual("auc-1", payload["event"]["context"]["auction_id"])
+        self.assertFalse(payload["valid"])
+        self.assertTrue(any(e["code"] == "api_version_sunset" for e in payload["errors"]))
 
-    def test_journey_ingest_endpoint_is_idempotent(self) -> None:
-        event = {
-            "event": "open",
-            "timestamp": 1719945600,
-            "email": "lead@example.com",
-            "sg_message_id": "SG.abc.def",
-        }
-        first = self.client.post(
-            "/api/boss/journey/ingest",
-            json={"source": "sendgrid", "events": [event]},
-        )
-        self.assertEqual(200, first.status_code)
-        self.assertEqual(1, first.get_json()["idempotency"]["inserted"])
-
-        second = self.client.post(
-            "/api/boss/journey/ingest",
-            json={"source": "sendgrid", "events": [event], "replay": True},
-        )
-        self.assertEqual(200, second.status_code)
-        self.assertEqual(1, second.get_json()["idempotency"]["duplicate"])
-
-        events_response = self.client.get("/api/boss/journey/events")
-        self.assertEqual(200, events_response.status_code)
-        self.assertEqual(1, len(events_response.get_json()["events"]))
-
-    def test_journey_ingest_endpoint_validates_events(self) -> None:
-        response = self.client.post("/api/boss/journey/ingest", json={"source": "meta", "events": "nope"})
+    def test_google_ads_validate_endpoint_requires_query(self) -> None:
+        response = self.client.post("/api/boss/google-ads/validate", json={"query": ""})
         self.assertEqual(400, response.status_code)
-        self.assertIn("must be an array", response.get_json()["error"])
 
-    def test_canonical_envelope_schema_is_served(self) -> None:
-        response = self.client.get("/schemas/canonical-event-envelope.json")
-        self.assertEqual(200, response.status_code)
-        payload = response.get_json()
-        self.assertEqual("CanonicalEventEnvelope", payload["title"])
-        self.assertIn("canonical_payload", payload["properties"])
-        response.close()
-
-    def test_journey_envelope_endpoint_returns_layered_envelope(self) -> None:
+    def test_google_ads_validate_batch_endpoint(self) -> None:
         response = self.client.post(
-            "/api/boss/journey/envelope",
+            "/api/boss/google-ads/validate-batch",
             json={
-                "source": "meta",
-                "payload": {
-                    "event_name": "Purchase",
-                    "event_time": 1719945600,
-                    "user_data": {"em": "hash"},
-                    "custom_data": {"campaign_id": "111", "ad_id": "333", "order_id": "A123", "value": 59.99, "currency": "USD"},
-                },
-                "business_context": {"kpi": "ROAS", "target": 4.0},
+                "queries": [
+                    "SELECT campaign.id FROM campaign",
+                    "SELECT campaign.bogus FROM campaign",
+                ],
+                "api_version": "v21",
+                "as_of": "2026-06-30",
             },
         )
         self.assertEqual(200, response.status_code)
         payload = response.get_json()
-        self.assertTrue(payload["valid"])
-        env = payload["envelope"]
-        self.assertEqual("2.0.0", env["schema_version"])
-        self.assertEqual("Conversion", env["classification"]["category"])
-        self.assertEqual("Campaign:111", env["kg_refs"]["CampaignNodeID"])
-        self.assertEqual("SENSE", env["srpvdal_state"]["current_phase"])
-        self.assertEqual("ROAS", env["business_context"]["kpi"])
-        self.assertEqual("meta", env["canonical_payload"]["event_source"])
+        self.assertEqual(2, payload["received"])
+        self.assertEqual(1, payload["valid"])
 
-    def test_discover_exposes_envelope_block(self) -> None:
+    def test_google_ads_versions_endpoint_returns_schedule(self) -> None:
+        response = self.client.get("/api/boss/google-ads/versions?as_of=2026-06-30")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertIn("schedule", payload)
+        self.assertTrue(any(v["status"] == "sunset" for v in payload["schedule"]))
+
+    def test_google_ads_fields_endpoint_returns_metadata(self) -> None:
+        response = self.client.get("/api/boss/google-ads/fields?resource=campaign")
+        self.assertEqual(200, response.status_code)
+        payload = response.get_json()
+        self.assertTrue(payload["known_resource"])
+        self.assertIn("campaign", payload["resource"])
+
+    def test_discover_exposes_google_ads_block(self) -> None:
         response = self.client.get("/api/boss/discover")
         self.assertEqual(200, response.status_code)
-        journey = response.get_json()["journey"]
-        self.assertIn("envelope", journey)
-        self.assertEqual("2.0.0", journey["envelope"]["schema_version"])
-        self.assertIn("classification", journey["envelope"]["layers"])
-        self.assertIn("identity_resolution", journey)
-        self.assertIn("user_id", journey["identity_resolution"]["stitch_keys"])
-        self.assertIn("ip", journey["identity_resolution"]["excluded_keys"])
-
-    def test_identity_resolve_endpoint_returns_cluster(self) -> None:
-        response = self.client.post(
-            "/api/boss/identity/resolve",
-            json={"actor": {"email": "buyer@example.com", "user_id": "u-42"}},
-        )
-        self.assertEqual(200, response.status_code)
-        payload = response.get_json()
-        self.assertTrue(payload["identity_cluster"].startswith("Cluster:"))
-        self.assertFalse(payload["anonymous"])
-        # A second event sharing the email resolves to the same cluster.
-        again = self.client.post(
-            "/api/boss/identity/resolve",
-            json={"actor": {"email": "buyer@example.com", "device_ifa": "dev-1"}},
-        )
-        self.assertEqual(payload["identity_cluster"], again.get_json()["identity_cluster"])
-
-    def test_identity_resolve_endpoint_validates_actor(self) -> None:
-        response = self.client.post("/api/boss/identity/resolve", json={"actor": "nope"})
-        self.assertEqual(400, response.status_code)
-        self.assertIn("must be an object", response.get_json()["error"])
-
-    def test_virtuoso_registry_endpoint_reports_roles_and_fallback(self) -> None:
-        response = self.client.get("/api/boss/virtuoso/registry")
-        self.assertEqual(200, response.status_code)
-        payload = response.get_json()
-        self.assertEqual("claude-opus-4-8", payload["global_fallback"])
-        self.assertEqual(4, len(payload["roles"]))
-        self.assertEqual("gemini-3.5-flash", payload["roles"]["data_causal"]["model"])
-        self.assertEqual("grok-4.3", payload["roles"]["devops_ops"]["model"])
-
-    def test_virtuoso_resolve_endpoint_resolves_and_validates_role(self) -> None:
-        response = self.client.post("/api/boss/virtuoso/resolve", json={"role": "coding_arch"})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual("claude-opus-4-8", response.get_json()["model"])
-
-        unknown = self.client.post("/api/boss/virtuoso/resolve", json={"role": "brain"})
-        self.assertEqual(400, unknown.status_code)
-        self.assertIn("unknown virtuoso role", unknown.get_json()["error"])
-
-        missing = self.client.post("/api/boss/virtuoso/resolve", json={})
-        self.assertEqual(400, missing.status_code)
-
-    def test_virtuoso_scan_endpoint_flags_retired_strings(self) -> None:
-        response = self.client.post(
-            "/api/boss/virtuoso/scan",
-            json={"text": "model = 'grok-code-fast-1'", "source": "cells/ops.yaml"},
-        )
-        self.assertEqual(200, response.status_code)
-        payload = response.get_json()
-        self.assertFalse(payload["clean"])
-        self.assertEqual(["grok-code-fast-1"], payload["violations"])
-        self.assertEqual("cells/ops.yaml", payload["source"])
-
-        clean = self.client.post("/api/boss/virtuoso/scan", json={"text": "gemini-3.5-flash"})
-        self.assertTrue(clean.get_json()["clean"])
-
-    def test_virtuoso_traces_endpoint_and_discover_block(self) -> None:
-        traces = self.client.get("/api/boss/virtuoso/traces")
-        self.assertEqual(200, traces.status_code)
-        self.assertEqual([], traces.get_json()["traces"])
-
-        discover = self.client.get("/api/boss/discover")
-        block = discover.get_json()["virtuoso"]
-        self.assertEqual("claude-opus-4-8", block["global_fallback"])
-        self.assertIn("virtuoso.scan_legacy", block["tools"])
+        block = response.get_json()["google_ads"]
+        self.assertIn("google_ads.validate_gaql", block["tools"])
+        self.assertIn("default_version", block)
 
 
 if __name__ == "__main__":

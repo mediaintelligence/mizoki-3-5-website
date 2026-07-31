@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>How an Autonomous Decision Controller (ADC) Thinks — MIZ OKI</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <meta name="description" content="A plain-English guide to the 7 alerts that power real intelligence. Learn how an ADC thinks through decisions the same way a disciplined human expert would.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
+            --bg-primary: #0A1418;
+            --bg-secondary: #0B1E26;
+            --bg-tertiary: #123039;
+            --text-primary: #F4F6F7;
+            --text-secondary: #93A0A6;
+            --text-muted: #5E6E75;
+            --accent-blue: #5FA0DC;
+            --accent-cyan: #3FDCF2;
+            --accent-purple: #9D7BE8;
+            --accent-green: #41D695;
+            --accent-orange: #D9A83C;
             --border: rgba(255,255,255,0.08);
-            --glow-cyan: rgba(0, 212, 255, 0.15);
+            --glow-cyan: rgba(63, 220, 242, 0.15);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -36,7 +39,7 @@
             top: 0; left: 0; right: 0;
             z-index: 1000;
             padding: 1rem 2rem;
-            background: rgba(10, 10, 15, 0.85);
+            background: rgba(10, 20, 24, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
@@ -258,8 +261,8 @@
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.05));
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: linear-gradient(135deg, rgba(63, 220, 242, 0.1), rgba(95, 160, 220, 0.05));
+            border: 1px solid rgba(63, 220, 242, 0.3);
             border-radius: 12px;
             padding: 2rem;
             margin: 2rem 0;
@@ -311,7 +314,7 @@
         .alert-card.plan { border-left: 4px solid var(--accent-purple); }
         .alert-card.validate { border-left: 4px solid var(--accent-orange); }
         .alert-card.decide { border-left: 4px solid var(--accent-green); }
-        .alert-card.act { border-left: 4px solid #ef4444; }
+        .alert-card.act { border-left: 4px solid #FF6B7C; }
         .alert-card.learn { border-left: 4px solid #ec4899; }
 
         .alert-number {
@@ -350,8 +353,8 @@
         }
 
         .genius-note {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(79, 143, 255, 0.05));
-            border: 1px solid rgba(168, 85, 247, 0.3);
+            background: linear-gradient(135deg, rgba(63, 220, 242, 0.1), rgba(95, 160, 220, 0.05));
+            border: 1px solid rgba(63, 220, 242, 0.3);
             border-radius: 8px;
             padding: 1rem 1.5rem;
             margin-top: 1rem;
@@ -805,5 +808,6 @@
             </div>
         </div>
     </footer>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

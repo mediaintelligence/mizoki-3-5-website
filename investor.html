@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investor Overview — MIZ OKI 3.5</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
+            --bg-primary: #0A1418;
+            --bg-secondary: #0B1E26;
+            --bg-tertiary: #123039;
+            --text-primary: #F4F6F7;
+            --text-secondary: #93A0A6;
+            --text-muted: #5E6E75;
+            --accent-blue: #5FA0DC;
+            --accent-cyan: #3FDCF2;
+            --accent-purple: #9D7BE8;
+            --accent-green: #41D695;
+            --accent-orange: #D9A83C;
+            --accent-red: #FF6B7C;
             --border: rgba(255,255,255,0.08);
-            --glow-blue: rgba(79, 143, 255, 0.15);
-            --glow-cyan: rgba(0, 212, 255, 0.15);
+            --glow-blue: rgba(95, 160, 220, 0.15);
+            --glow-cyan: rgba(63, 220, 242, 0.15);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -37,7 +40,7 @@
             top: 0; left: 0; right: 0;
             z-index: 1000;
             padding: 1rem 2rem;
-            background: rgba(10, 10, 15, 0.85);
+            background: rgba(10, 20, 24, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
@@ -143,8 +146,8 @@
             margin: 0 auto;
         }
         .thesis-box {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.05));
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: linear-gradient(135deg, rgba(63, 220, 242, 0.1), rgba(95, 160, 220, 0.05));
+            border: 1px solid rgba(63, 220, 242, 0.3);
             border-radius: 16px;
             padding: 3rem;
             text-align: center;
@@ -241,7 +244,7 @@
         }
         .diff-card.highlight {
             border-color: var(--accent-cyan);
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), var(--bg-secondary));
+            background: linear-gradient(135deg, rgba(63, 220, 242, 0.05), var(--bg-secondary));
         }
         .diff-card h3 {
             font-family: 'JetBrains Mono', monospace;
@@ -481,7 +484,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             padding: 0.3rem 0.75rem;
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(65, 214, 149, 0.15);
             color: var(--accent-green);
             border-radius: 100px;
         }
@@ -607,7 +610,7 @@
                 <a href="/blog/">Blog</a>
             </div>
             <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/login" class="btn btn-ghost">Login</a>
                 <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
                 <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
             </div>
@@ -634,7 +637,7 @@
     <section style="padding: 4rem 2rem; background: var(--bg-secondary);">
         <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">Patent-Pending Architecture</div>
-            <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 2rem; margin-bottom: 0.5rem;">The SRDPV-DAL Pipeline</h2>
+            <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 2rem; margin-bottom: 0.5rem;">The SRPVDAL Pipeline</h2>
             <p style="color: var(--text-secondary); margin-bottom: 2rem;">Seven stages with validation and simulation before every autonomous action</p>
             <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
                 <div style="text-align: center; padding: 0.5rem 1rem;"><span style="display: block; font-size: 1.25rem; margin-bottom: 0.25rem;">📡</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;">SENSE</span></div>
@@ -710,6 +713,37 @@
                         <li>Built for regulated industries (SOC 2, HIPAA-ready)</li>
                     </ul>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="diff-section">
+        <div class="diff-container">
+            <div class="section-header">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">The Category We're Defining</div>
+                <h2>Governed Autonomous Enterprise Intelligence</h2>
+                <p>MIZ OKI isn't competing inside an existing category — it sits between three that each solve only a fragment.</p>
+            </div>
+            <div class="market-grid">
+                <div class="market-card" style="text-align: left;">
+                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 0.4rem;">Not a dashboard</div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Dashboards show what happened.</p>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary);">MIZ OKI explains what happened, recommends what's next, validates it, acts when allowed, and learns from the result.</p>
+                </div>
+                <div class="market-card" style="text-align: left;">
+                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 0.4rem;">Not an agent framework</div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Agent frameworks execute tasks.</p>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary);">MIZ OKI governs the full operating loop — graph memory, causal reasoning, policy validation, and continuous learning.</p>
+                </div>
+                <div class="market-card" style="text-align: left;">
+                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 0.4rem;">Not a data pipeline</div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Data pipelines move records.</p>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary);">MIZ OKI turns enterprise evidence into governed decisions — normalized, reasoned over, validated, and measured.</p>
+                </div>
+            </div>
+            <div class="thesis-box" style="margin-top: 2.5rem;">
+                <h2>The moat is a standard, not a feature.</h2>
+                <p>Every enterprise signal is normalized into a <strong>CanonicalEventEnvelope</strong> — evidence, not records — then mapped into a self-healing Knowledge Graph, reasoned over through the SRPVDAL loop, validated against policy, and executed only within the autonomy level each dynamic <strong>Operating Domain</strong> is granted. The MIZ OKI Enterprise Intelligence Specification codifies that contract into a partner-ecosystem standard, with connector certification levels 0–5 — the kind of category-defining surface that compounds defensibility as integrations grow.</p>
             </div>
         </div>
     </section>
@@ -846,7 +880,7 @@
                 <p class="ip-title">"Verifiable Autonomous Decision Intelligence Platform with Temporal-Causal Knowledge Graph, Decision Control Plane, Autonomous Decision Controllers, Validation Layer, and Counterfactual Simulation Engine"</p>
                 <div class="ip-claims">
                     <div class="ip-claim">Decision Control Plane architecture</div>
-                    <div class="ip-claim">SRDPV-DAL pipeline methodology</div>
+                    <div class="ip-claim">SRPVDAL pipeline methodology</div>
                     <div class="ip-claim">Validation & Arbitration Layer</div>
                     <div class="ip-claim">Counterfactual Simulation Engine</div>
                     <div class="ip-claim">Temporal-Causal Knowledge Graph</div>
@@ -905,5 +939,6 @@
             </div>
         </div>
     </footer>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

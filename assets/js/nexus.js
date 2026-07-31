@@ -36,11 +36,11 @@
   // Domain layers — colors from the user palette
   // Order around the ring: Counsel (top), Estate, Capital, Signal, Risk
   const domains = [
-    { id: 'counsel', name: 'COUNSEL', color: '#3b82f6', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 0 },
-    { id: 'estate',  name: 'ESTATE',  color: '#10b981', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 1 },
-    { id: 'capital', name: 'CAPITAL', color: '#f59e0b', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 2 },
-    { id: 'signal',  name: 'SIGNAL',  color: '#a855f7', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 3 },
-    { id: 'risk',    name: 'RISK',    color: '#f43f5e', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 4 },
+    { id: 'counsel', name: 'COUNSEL', color: '#5FA0DC', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 0 },
+    { id: 'estate',  name: 'ESTATE',  color: '#41D695', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 1 },
+    { id: 'capital', name: 'CAPITAL', color: '#D9A83C', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 2 },
+    { id: 'signal',  name: 'SIGNAL',  color: '#9D7BE8', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 3 },
+    { id: 'risk',    name: 'RISK',    color: '#FF6B7C', baseAngle: -Math.PI / 2 + (Math.PI * 2 / 5) * 4 },
   ];
 
   let time = 0;
@@ -100,7 +100,7 @@
       ctx.moveTo(cx, cy);
       ctx.lineTo(d.x, d.y);
       if (d.id === 'risk') {
-        ctx.strokeStyle = 'rgba(244, 63, 94, 0.28)';
+        ctx.strokeStyle = 'rgba(255, 107, 124, 0.28)';
         ctx.setLineDash([5, 5]);
         ctx.stroke();
         ctx.setLineDash([]);
@@ -144,7 +144,7 @@
     domains.forEach((d) => {
       ctx.beginPath();
       ctx.arc(d.x, d.y, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#050505';
+      ctx.fillStyle = '#0A1418';
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = d.color;
@@ -159,7 +159,7 @@
       ctx.shadowBlur = 0;
 
       ctx.fillStyle = '#e4e4e7';
-      ctx.font = "600 12px 'Inter', sans-serif";
+      ctx.font = "600 12px 'DM Sans', sans-serif";
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const labelDist = 32;
@@ -172,12 +172,12 @@
 
     ctx.beginPath();
     ctx.arc(cx, cy, NEXUS_RADIUS + 16 + pulse, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(168, 85, 247, 0.05)';
+    ctx.fillStyle = 'rgba(63, 220, 242, 0.05)';
     ctx.fill();
 
     ctx.beginPath();
     ctx.arc(cx, cy, NEXUS_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = '#050505';
+    ctx.fillStyle = '#0A1418';
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
@@ -185,9 +185,9 @@
 
     ctx.beginPath();
     ctx.arc(cx, cy, NEXUS_RADIUS - 10, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(168, 85, 247, 0.12)';
+    ctx.fillStyle = 'rgba(63, 220, 242, 0.12)';
     ctx.shadowBlur = 30 + pulse;
-    ctx.shadowColor = '#a855f7';
+    ctx.shadowColor = '#9D7BE8';
     ctx.fill();
     ctx.shadowBlur = 0;
 

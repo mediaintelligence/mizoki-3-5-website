@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resources — MIZ OKI 3.5</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
+            --bg-primary: #0A1418;
+            --bg-secondary: #0B1E26;
+            --bg-tertiary: #123039;
+            --text-primary: #F4F6F7;
+            --text-secondary: #93A0A6;
+            --text-muted: #5E6E75;
+            --accent-blue: #5FA0DC;
+            --accent-cyan: #3FDCF2;
+            --accent-purple: #9D7BE8;
+            --accent-green: #41D695;
+            --accent-orange: #D9A83C;
+            --accent-red: #FF6B7C;
             --border: rgba(255,255,255,0.08);
-            --glow-blue: rgba(79, 143, 255, 0.15);
-            --glow-cyan: rgba(0, 212, 255, 0.15);
+            --glow-blue: rgba(95, 160, 220, 0.15);
+            --glow-cyan: rgba(63, 220, 242, 0.15);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -37,7 +40,7 @@
             top: 0; left: 0; right: 0;
             z-index: 1000;
             padding: 1rem 2rem;
-            background: rgba(10, 10, 15, 0.85);
+            background: rgba(10, 20, 24, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
@@ -340,7 +343,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.25rem 0.75rem;
-            background: rgba(168, 85, 247, 0.15);
+            background: rgba(63, 220, 242, 0.15);
             border-radius: 100px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
@@ -479,9 +482,9 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
-        .endpoint-method.get { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
-        .endpoint-method.post { background: rgba(79, 143, 255, 0.2); color: var(--accent-blue); }
-        .endpoint-method.put { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .endpoint-method.get { background: rgba(65, 214, 149, 0.2); color: var(--accent-green); }
+        .endpoint-method.post { background: rgba(95, 160, 220, 0.2); color: var(--accent-blue); }
+        .endpoint-method.put { background: rgba(217, 168, 60, 0.2); color: var(--accent-orange); }
         .endpoint-method.delete { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
         .endpoint-path {
             font-family: 'JetBrains Mono', monospace;
@@ -537,7 +540,7 @@
             content: '▶';
             width: 50px;
             height: 50px;
-            background: rgba(0, 212, 255, 0.9);
+            background: rgba(63, 220, 242, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -689,7 +692,7 @@
                 <a href="/blog/">Blog</a>
             </div>
             <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/login" class="btn btn-ghost">Login</a>
                 <a href="roi.html" class="btn btn-ghost">ROI Calculator</a>
                 <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
             </div>
@@ -757,7 +760,7 @@
                 </a>
                 <a href="#" class="doc-card">
                     <div class="doc-type">Architecture</div>
-                    <h3>SRDPV-DAL Pipeline Deep Dive</h3>
+                    <h3>SRPVDAL Pipeline Deep Dive</h3>
                     <p>Complete technical reference for the 7-stage autonomous decision pipeline</p>
                     <div class="doc-meta">
                         <span>45 min read</span>
@@ -1096,5 +1099,6 @@ decision = client.decisions.create(
             </div>
         </div>
     </footer>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

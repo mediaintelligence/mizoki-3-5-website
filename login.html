@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | MIZ OKI 3.5</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="theme-light" style="background:var(--bg-50); height:100vh; display:flex; align-items:center; justify-content:center;">
 
@@ -20,18 +26,18 @@
             <p style="color:var(--text-600); margin-top:var(--space-2);">Enterprise authentication required</p>
         </div>
 
-        <div class="card" style="background:white; border:1px solid #e2e8f0; border-radius:16px; padding:32px; box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1);">
+        <div class="card" style="background:white; border:1px solid #D4DBDE; border-radius:16px; padding:32px; box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1);">
             <form onsubmit="event.preventDefault();">
                 <div style="margin-bottom:24px;">
-                    <input type="email" placeholder="Corporate Email Address" required style="width:100%; padding:12px 16px; border:1px solid #cbd5e1; border-radius:8px; font-size:16px; outline:none;" />
+                    <input type="email" placeholder="Corporate Email Address" required style="width:100%; padding:12px 16px; border:1px solid #D4DBDE; border-radius:8px; font-size:16px; outline:none;" />
                 </div>
                 <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; border-radius:8px; font-size:16px;">Continue with Email</button>
             </form>
 
             <div style="margin:24px 0; display:flex; align-items:center;">
-                <div style="flex:1; border-top:1px solid #e2e8f0;"></div>
+                <div style="flex:1; border-top:1px solid #D4DBDE;"></div>
                 <div style="padding:0 16px; color:var(--text-500); font-size:14px;">Or continue with</div>
-                <div style="flex:1; border-top:1px solid #e2e8f0;"></div>
+                <div style="flex:1; border-top:1px solid #D4DBDE;"></div>
             </div>
 
             <div style="display:flex; gap:12px;">
@@ -42,5 +48,6 @@
 
     </div>
 
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

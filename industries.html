@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Industries | MIZ OKI 3.5</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <meta name="description" content="Industry-specific autonomous decision intelligence for Media Buying, Financial Services, Retail, Healthcare, and Manufacturing.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,24 +19,24 @@
         }
         
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
+            --bg-primary: #0A1418;
+            --bg-secondary: #0B1E26;
+            --bg-tertiary: #123039;
             --bg-card: #0f0f16;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-cyan: #00d4ff;
-            --accent-blue: #4f8fff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-orange: #f59e0b;
+            --text-primary: #F4F6F7;
+            --text-secondary: #93A0A6;
+            --text-muted: #5E6E75;
+            --accent-cyan: #3FDCF2;
+            --accent-blue: #5FA0DC;
+            --accent-purple: #9D7BE8;
+            --accent-green: #41D695;
+            --accent-red: #FF6B7C;
+            --accent-orange: #D9A83C;
             --accent-pink: #f472b6;
             --border-subtle: rgba(255,255,255,0.06);
-            --border-accent: rgba(0,212,255,0.3);
-            --glow-cyan: 0 0 30px rgba(0,212,255,0.15);
-            --gradient-hero: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(79,143,255,0.05) 50%, rgba(168,85,247,0.03) 100%);
+            --border-accent: rgba(63, 220, 242,0.3);
+            --glow-cyan: 0 0 30px rgba(63, 220, 242,0.15);
+            --gradient-hero: linear-gradient(135deg, rgba(63, 220, 242,0.08) 0%, rgba(95, 160, 220,0.05) 50%, rgba(63, 220, 242,0.03) 100%);
         }
         
         body {
@@ -52,7 +55,7 @@
             right: 0;
             z-index: 1000;
             padding: 1rem 2rem;
-            background: rgba(10,10,15,0.85);
+            background: rgba(10, 20, 24,0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-subtle);
         }
@@ -201,7 +204,7 @@
         .industry-nav-btn.active {
             border-color: var(--accent-cyan);
             color: var(--accent-cyan);
-            background: rgba(0,212,255,0.1);
+            background: rgba(63, 220, 242,0.1);
         }
         
         /* Section Styles */
@@ -249,11 +252,11 @@
             flex-shrink: 0;
         }
         
-        .industry-icon.media { background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(79,143,255,0.15)); }
-        .industry-icon.finance { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.15)); }
-        .industry-icon.retail { background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(168,85,247,0.15)); }
+        .industry-icon.media { background: linear-gradient(135deg, rgba(63, 220, 242,0.2), rgba(95, 160, 220,0.15)); }
+        .industry-icon.finance { background: linear-gradient(135deg, rgba(65, 214, 149,0.2), rgba(65, 214, 149,0.15)); }
+        .industry-icon.retail { background: linear-gradient(135deg, rgba(63, 220, 242,0.2), rgba(63, 220, 242,0.15)); }
         .industry-icon.healthcare { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.15)); }
-        .industry-icon.manufacturing { background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.15)); }
+        .industry-icon.manufacturing { background: linear-gradient(135deg, rgba(217, 168, 60,0.2), rgba(217, 168, 60,0.15)); }
         
         .industry-header-content h2 {
             font-family: 'Instrument Serif', serif;
@@ -375,7 +378,7 @@
         
         /* Media Buying Special Section */
         .relu-callout {
-            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(79,143,255,0.05));
+            background: linear-gradient(135deg, rgba(63, 220, 242,0.1), rgba(95, 160, 220,0.05));
             border: 1px solid var(--border-accent);
             border-radius: 16px;
             padding: 2.5rem;
@@ -652,7 +655,7 @@
                 <li><a href="pricing.html">Pricing</a></li>
             </ul>
             <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/login" class="btn btn-ghost">Login</a>
                 <a href="walkthrough.html" class="btn btn-ghost">12-Min Walkthrough</a>
                 <a href="roi.html" class="btn btn-primary">Estimate ROI</a>
             </div>
@@ -671,7 +674,7 @@
     <!-- 7-Stage Pipeline Overview -->
     <section style="padding: 3rem 2rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-subtle);">
         <div style="max-width: 1100px; margin: 0 auto; text-align: center;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">The SRDPV-DAL Pipeline</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">The SRPVDAL Pipeline</div>
             <h2 style="font-family: 'Instrument Serif', serif; font-size: 1.75rem; font-weight: 400; margin-bottom: 0.5rem;">Seven Stages. Full Validation. Every Decision.</h2>
             <p style="color: var(--text-secondary); margin-bottom: 2rem;">Each industry template runs the same 7-stage autonomous decision pipeline</p>
             <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem;">
@@ -1321,5 +1324,6 @@
             });
         });
     </script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

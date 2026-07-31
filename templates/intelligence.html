@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Intelligence | MIZ OKI Platform</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
+            --bg-color: #0A1418;
             --text-color: #e0e0e0;
-            --accent-color: #00d4ff;
+            --accent-color: #3FDCF2;
             --highlight-color: #ff9f1c;
         }
 
@@ -44,7 +47,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 40px;
-            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
+            background: linear-gradient(to bottom, rgba(10, 20, 24,0.9), transparent);
         }
 
         .logo {
@@ -104,7 +107,7 @@
             text-transform: uppercase;
             letter-spacing: 4px;
             margin-bottom: 0.5em;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            text-shadow: 0 0 20px rgba(63, 220, 242, 0.3);
         }
 
         .page-header p {
@@ -124,17 +127,17 @@
         }
 
         .pipeline-stage {
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: rgba(63, 220, 242, 0.1);
+            border: 1px solid rgba(63, 220, 242, 0.3);
             padding: 20px 30px;
             text-align: center;
             transition: all 0.3s ease;
         }
 
         .pipeline-stage:hover {
-            background: rgba(0, 212, 255, 0.2);
+            background: rgba(63, 220, 242, 0.2);
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(63, 220, 242, 0.2);
         }
 
         .pipeline-stage .stage-name {
@@ -166,7 +169,7 @@
 
         .feature-card:hover {
             border-color: var(--accent-color);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 30px rgba(63, 220, 242, 0.1);
         }
 
         .feature-card h3 {
@@ -226,8 +229,8 @@
             text-align: center;
             margin-top: 80px;
             padding: 40px;
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(63, 220, 242, 0.05);
+            border: 1px solid rgba(63, 220, 242, 0.2);
         }
 
         .cta-section h2 {
@@ -378,7 +381,7 @@
                 if (this.y < 0 || this.y > height) this.vy *= -1;
             }
             draw() {
-                ctx.fillStyle = '#00d4ff';
+                ctx.fillStyle = '#3FDCF2';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -407,7 +410,7 @@
 
                     if (distance < 150) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - distance / 150})`;
+                        ctx.strokeStyle = `rgba(63, 220, 242, ${1 - distance / 150})`;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);

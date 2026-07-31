@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROI Calculator — MIZ OKI 3.5</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-blue: #4f8fff;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
+            --bg-primary: #0A1418;
+            --bg-secondary: #0B1E26;
+            --bg-tertiary: #123039;
+            --text-primary: #F4F6F7;
+            --text-secondary: #93A0A6;
+            --text-muted: #5E6E75;
+            --accent-blue: #5FA0DC;
+            --accent-cyan: #3FDCF2;
+            --accent-purple: #9D7BE8;
+            --accent-green: #41D695;
+            --accent-orange: #D9A83C;
+            --accent-red: #FF6B7C;
             --border: rgba(255,255,255,0.08);
-            --glow-blue: rgba(79, 143, 255, 0.15);
-            --glow-cyan: rgba(0, 212, 255, 0.15);
+            --glow-blue: rgba(95, 160, 220, 0.15);
+            --glow-cyan: rgba(63, 220, 242, 0.15);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -37,7 +40,7 @@
             top: 0; left: 0; right: 0;
             z-index: 1000;
             padding: 1rem 2rem;
-            background: rgba(10, 10, 15, 0.85);
+            background: rgba(10, 20, 24, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
@@ -277,7 +280,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
             padding: 0.3rem 0.6rem;
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(65, 214, 149, 0.15);
             color: var(--accent-green);
             border-radius: 4px;
             text-transform: uppercase;
@@ -287,7 +290,7 @@
         .roi-hero {
             text-align: center;
             padding: 2rem;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(79, 143, 255, 0.1));
+            background: linear-gradient(135deg, rgba(63, 220, 242, 0.1), rgba(95, 160, 220, 0.1));
             border-radius: 12px;
             margin-bottom: 2rem;
         }
@@ -327,8 +330,8 @@
         }
         .metric-card.highlight {
             grid-column: span 2;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            background: linear-gradient(135deg, rgba(65, 214, 149, 0.1), rgba(65, 214, 149, 0.05));
+            border: 1px solid rgba(65, 214, 149, 0.2);
         }
         .metric-label {
             font-size: 0.75rem;
@@ -596,7 +599,7 @@
                 <a href="/blog/">Blog</a>
             </div>
             <div class="nav-cta">
-                <a href="https://mizoki.mizoki3.com" class="btn btn-ghost">Login</a>
+                <a href="/login" class="btn btn-ghost">Login</a>
                 <a href="roi.html" class="btn btn-ghost active">ROI Calculator</a>
                 <a href="walkthrough.html" class="btn btn-primary">Get Demo</a>
             </div>
@@ -913,7 +916,8 @@
             displays.team.textContent = team + ' people';
 
             // Calculate value components
-            const leakageReduction = 0.35; // 35% reduction in leakage
+            // Calculator assumption — design target, not a measured result:
+            const leakageReduction = 0.35; // 35% reduction in leakage (design target)
             const leakageSavings = revenue * leakageRate * leakageReduction;
 
             const velocityImprovement = 63; // 63x faster
@@ -964,5 +968,6 @@
             alert('PDF report generation coming soon! Contact sales for a custom analysis.');
         }
     </script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
 </body>
 </html>

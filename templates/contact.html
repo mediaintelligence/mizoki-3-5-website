@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact | MIZ OKI</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
+            --bg-color: #0A1418;
             --text-color: #e0e0e0;
-            --accent-color: #00d4ff;
+            --accent-color: #3FDCF2;
             --highlight-color: #ff9f1c;
         }
 
@@ -44,7 +47,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 40px;
-            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
+            background: linear-gradient(to bottom, rgba(10, 20, 24,0.9), transparent);
         }
 
         .logo {
@@ -108,7 +111,7 @@
             text-transform: uppercase;
             letter-spacing: 4px;
             margin-bottom: 0.3em;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            text-shadow: 0 0 20px rgba(63, 220, 242, 0.3);
         }
 
         .subtitle {
@@ -156,7 +159,7 @@
         .form-group select:focus {
             outline: none;
             border-color: var(--accent-color);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 15px rgba(63, 220, 242, 0.2);
         }
 
         .form-group textarea {
@@ -246,6 +249,7 @@
             <p class="subtitle">Ready to transform your decision infrastructure?</p>
 
             <form class="contact-form" action="https://formspree.io/f/placeholder" method="POST">
+                <input type="hidden" id="source" name="source" value="{{ source | default('') }}">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" required placeholder="Your name">
@@ -288,6 +292,46 @@
     </div>
 
     <script>
+        // Executive Briefing handoff: when the briefing confirms a decision it
+        // navigates here with ?source=executive-briefing&intent=…&domain=… and
+        // stores the fuller payload under one module-specific sessionStorage
+        // key. Prefill uses .value assignments only — no HTML injection — and
+        // never surfaces raw JSON to the user.
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('source') !== 'executive-briefing') return;
+            var STORAGE_KEY = 'mizoki.executiveBriefing.decision';
+            var decision = null;
+            try {
+                decision = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+            } catch (error) {
+                try { sessionStorage.removeItem(STORAGE_KEY); } catch (_) { /* ignore */ }
+            }
+            if (typeof decision !== 'object') decision = null;
+            var intentLabels = {
+                pilot: 'Approve a 30-day pilot',
+                board: 'Request a board packet',
+                'deep-dive': 'Book a technical deep-dive'
+            };
+            var interestByIntent = { pilot: 'pilot', board: 'enterprise', 'deep-dive': 'demo' };
+            var intent = params.get('intent') || (decision && decision.intent) || '';
+            var domain = params.get('domain') || (decision && decision.domain) || '';
+            if (!Object.prototype.hasOwnProperty.call(intentLabels, intent)) intent = '';
+            var company = document.getElementById('company');
+            if (company && !company.value && decision && typeof decision.companyName === 'string') {
+                company.value = decision.companyName.slice(0, 120);
+            }
+            var interest = document.getElementById('interest');
+            if (interest && intent) interest.value = interestByIntent[intent];
+            var message = document.getElementById('message');
+            if (message && !message.value && intent) {
+                message.value = 'Executive briefing next step: ' + intentLabels[intent]
+                    + (domain ? ' (' + String(domain).slice(0, 40) + ' scenario).' : '.');
+            }
+        })();
+    </script>
+
+    <script>
         const canvas = document.getElementById('neuro-grid');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -313,7 +357,7 @@
                 if (this.y < 0 || this.y > height) this.vy *= -1;
             }
             draw() {
-                ctx.fillStyle = '#00d4ff';
+                ctx.fillStyle = '#3FDCF2';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -342,7 +386,7 @@
 
                     if (distance < 150) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - distance / 150})`;
+                        ctx.strokeStyle = `rgba(63, 220, 242, ${1 - distance / 150})`;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
