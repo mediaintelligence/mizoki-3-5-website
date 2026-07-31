@@ -1,0 +1,37 @@
+{
+  "posts": [
+    {
+      "slug": "adc-decision-framework",
+      "title": "How an Autonomous Decision Controller (ADC) Thinks",
+      "summary": "A plain-English guide to the 7 alerts that power real intelligence. Learn how an ADC thinks through decisions the same way a disciplined human expert would.",
+      "author": "MIZ OKI Research",
+      "published": "2026-04-22",
+      "updated": "2026-04-22",
+      "tags": ["decision-intelligence", "adc", "autonomy"],
+      "read_minutes": 9,
+      "image": "/assets/img/blog/adc-framework/og.png"
+    },
+    {
+      "slug": "decision-control-plane",
+      "title": "Why Agents Need a Decision Control Plane",
+      "summary": "The architectural innovation that separates action proposal from authorization—and why it's essential for enterprise AI.",
+      "author": "MIZ OKI Research",
+      "published": "2026-03-14",
+      "updated": "2026-03-14",
+      "tags": ["architecture", "governance", "agentic-systems"],
+      "read_minutes": 11,
+      "image": "/assets/img/blog/dcp/og.png"
+    },
+    {
+      "slug": "relu-lens-meta-algorithm",
+      "title": "Unlocking Meta's Ad Algorithm With the ReLU Lens",
+      "summary": "A practical, image-driven playbook for threshold-aware media buying: why campaigns feel dead until they activate, how to build signal density, and how MIZ OKI 3.5 operationalizes those dynamics.",
+      "author": "MIZ OKI Research",
+      "published": "2026-01-28",
+      "updated": "2026-01-28",
+      "tags": ["meta-ads", "media-buying", "relu", "playbook"],
+      "read_minutes": 14,
+      "image": "/assets/img/blog/meta-relu/og_meta_relu_1200x627.png"
+    }
+  ]
+}

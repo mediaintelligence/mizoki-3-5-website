@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — Counsel Room · Live Demo</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="description" content="A legal scenario fans out to four domain experts — Connecticut, Trust, Estate, Tax — each returns an IRAC analysis, and a synthesizer reconciles them and surfaces cross-domain conflicts." />
+  <link rel="canonical" href="https://mizoki3.com/demo/counsel" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZOKI3 — Counsel Room · Live Demo" />
+  <meta property="og:description" content="One question. Four experts. One reconciled answer — with the cross-domain conflict a single-lens review would miss." />
+  <meta property="og:url" content="https://mizoki3.com/demo/counsel" />
+  <meta property="og:image" content="https://mizoki3.com/assets/img/og/og-counsel.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/demo-extras.css" />
+  <style>
+    :root {
+      --demo-cyan: #3FDCF2; --demo-blue: #5FA0DC; --demo-purple: #9D7BE8;
+      --demo-green: #41D695; --demo-orange: #D9A83C; --demo-red: #FF6B7C;
+      --panel: #0B1E26; --panel-deep: #0A1418;
+    }
+    body { background: var(--panel-deep); font-family: "DM Sans", var(--sans); padding-bottom: 120px; }
+    .cr-hero {
+      padding: 130px 0 44px;
+      background:
+        radial-gradient(ellipse 55% 45% at 50% -5%, rgba(95, 160, 220, 0.13), transparent),
+        linear-gradient(180deg, #0A1418 0%, #0B1E26 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .cr-hero h1 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: clamp(2rem, 4.4vw, 3.1rem); color: var(--text-0); margin: 0 0 12px;
+    }
+    .cr-hero p { color: var(--text-2); max-width: 740px; }
+    .cr-label {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700;
+      color: var(--demo-blue); margin-bottom: 16px;
+    }
+    .cr-section { padding: 34px 0 8px; }
+    .cr-section h2 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: 1.45rem; color: var(--text-0); margin-bottom: 4px;
+    }
+    .cr-section .hint { font-size: 0.86rem; color: var(--text-3); margin-bottom: 18px; }
+    /* Scenario cards + free text */
+    .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+    .scn-card {
+      background: var(--panel); border: 1px solid var(--line-strong);
+      border-radius: 2px; padding: 20px; cursor: pointer; text-align: left;
+      color: var(--text-2); transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: "DM Sans", var(--sans); font-size: 0.9rem;
+    }
+    .scn-card:hover, .scn-card.sel { border-color: var(--demo-blue); box-shadow: none; }
+    .scn-card h3 { color: var(--text-0); font-size: 1.02rem; font-weight: 500; margin-bottom: 8px; }
+    .free-text { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .free-text input {
+      flex: 1 1 320px; background: var(--panel); border: 1px solid var(--line-strong);
+      color: var(--text-0); border-radius: 2px; padding: 13px 16px;
+      font-family: "DM Sans", var(--sans); font-size: 0.95rem;
+    }
+    .free-text input:focus { outline: none; border-color: var(--demo-blue); }
+    .cr-btn {
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px;
+      background: var(--demo-blue); color: #06101f; font-weight: 600;
+      border: none; border-radius: 2px; padding: 13px 28px; cursor: pointer;
+      transition: box-shadow 0.2s ease;
+    }
+    .cr-btn:hover { box-shadow: none; }
+    .cr-btn:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+    .cr-status { font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: var(--text-3); align-self: center; }
+    /* Router panel */
+    .router-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+    .expert-tile {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 18px; transition: opacity 0.4s ease, border-color 0.4s ease;
+      opacity: 0.35;
+    }
+    .expert-tile.consulted { opacity: 1; border-color: rgba(95, 160, 220,0.5); }
+    .expert-tile.dimmed { opacity: 0.35; }
+    .expert-tile h4 { color: var(--text-0); font-size: 0.95rem; font-weight: 500; margin-bottom: 3px; }
+    .expert-tile .score-num { font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: var(--demo-cyan); }
+    .expert-tile .track { height: 6px; background: rgba(220, 233, 237,0.07); border-radius: 2px; margin: 9px 0; overflow: hidden; }
+    .expert-tile .fill { height: 100%; width: 0; border-radius: 2px; background: linear-gradient(90deg, var(--demo-blue), var(--demo-cyan)); transition: width 0.9s ease; }
+    .expert-tile.dimmed .fill { background: #3f3f46; }
+    .expert-tile .why { font-size: 0.8rem; color: var(--text-3); }
+    .expert-tile .nc { font-family: "JetBrains Mono", var(--mono); font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em; }
+    /* Expert IRAC grid */
+    .irac-grid { display: grid; gap: 16px; }
+    .irac-card {
+      background: var(--panel); border: 1px solid var(--line-strong);
+      border-radius: 2px; overflow: hidden;
+      opacity: 0; transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .irac-card.on { opacity: 1; transform: translateY(0); }
+    .irac-head {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      width: 100%; padding: 18px 22px; background: none; border: none; cursor: pointer;
+      color: var(--text-0); font-family: "DM Sans", var(--sans); font-size: 1rem; text-align: left;
+    }
+    .irac-head .conf { font-family: "JetBrains Mono", var(--mono); font-size: 11px; color: var(--demo-cyan); white-space: nowrap; }
+    .irac-head .chev { color: var(--text-3); transition: transform 0.25s ease; }
+    .irac-card.openb .chev { transform: rotate(180deg); }
+    .irac-body { display: none; padding: 0 22px 20px; }
+    .irac-card.openb .irac-body { display: block; }
+    .irac-el { margin-bottom: 14px; }
+    .irac-el .k {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--demo-blue); display: block; margin-bottom: 4px;
+    }
+    .irac-el p { color: var(--text-1); font-size: 0.92rem; }
+    .auth-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .auth-chip {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      color: var(--demo-cyan); background: rgba(63, 220, 242,0.07);
+      border: 1px solid rgba(63, 220, 242,0.3); border-radius: 2px; padding: 4px 10px;
+    }
+    .auth-chip .note { color: var(--text-3); }
+    /* Conflict banner */
+    .conflict-banner {
+      display: none;
+      background: rgba(255, 107, 124,0.09);
+      border: 1px solid rgba(255, 107, 124,0.55);
+      border-left: 4px solid var(--demo-red);
+      border-radius: 2px; padding: 22px 26px; margin: 26px 0 8px;
+      transform: translateX(-18px); opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+    .conflict-banner.on { display: block; }
+    .conflict-banner.slid { transform: translateX(0); opacity: 1; }
+    .conflict-banner h3 {
+      font-family: "JetBrains Mono", var(--mono); font-size: 12px;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--demo-red); margin-bottom: 10px;
+    }
+    .conflict-banner .c-sum { color: #fecaca; font-size: 0.98rem; margin-bottom: 8px; }
+    .conflict-banner .c-rec { color: var(--text-2); font-size: 0.9rem; }
+    .conflict-banner .sev {
+      display: inline-block; font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      background: var(--demo-red); color: #fff; padding: 2px 9px; border-radius: 2px;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-right: 8px;
+    }
+    /* Synthesis + checklist */
+    .synth-panel {
+      display: none;
+      background: linear-gradient(180deg, #0B1E26, #0A1418);
+      border: 1px solid rgba(95, 160, 220,0.4); border-radius: 2px; padding: 28px 30px;
+    }
+    .synth-panel.on { display: block; }
+    .synth-panel h3 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: 1.4rem; color: var(--text-0); margin-bottom: 16px;
+    }
+    .synth-el { margin-bottom: 14px; }
+    .synth-el .k {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--demo-cyan); display: block; margin-bottom: 4px;
+    }
+    .synth-el p { color: var(--text-1); font-size: 0.94rem; }
+    .checklist { margin-top: 22px; counter-reset: step; display: grid; gap: 10px; }
+    .check-item {
+      display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: start;
+      background: var(--panel-deep); border: 1px solid var(--line-strong);
+      border-radius: 2px; padding: 13px 16px;
+    }
+    .check-item .n {
+      counter-increment: step;
+      font-family: "JetBrains Mono", var(--mono); color: var(--demo-blue); font-size: 13px;
+    }
+    .check-item .n::before { content: counter(step, decimal-leading-zero); }
+    .check-item .s { color: var(--text-1); font-size: 0.9rem; }
+    .deadline-badge {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      color: var(--demo-orange); border: 1px solid rgba(217, 168, 60,0.45);
+      background: rgba(217, 168, 60,0.08); border-radius: 2px; padding: 4px 11px; white-space: nowrap;
+    }
+    /* Persistent disclaimer footer */
+    .disclaimer-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      background: rgba(10, 20, 24, 0.96); backdrop-filter: blur(8px);
+      border-top: 2px solid var(--demo-orange);
+      padding: 12px 5%;
+      font-size: 0.82rem; color: var(--text-2);
+      display: flex; gap: 10px; align-items: center;
+    }
+    .disclaimer-bar .flag {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      color: var(--demo-orange); border: 1px solid rgba(217, 168, 60,0.5);
+      border-radius: 2px; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .cr-cta { padding: 54px 0 40px; text-align: center; }
+    @media (prefers-reduced-motion: reduce) {
+      .irac-card, .expert-tile .fill, .conflict-banner { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="/counsel">Counsel</a></li>
+        <li><a href="/estate">Estate</a></li>
+        <li><a href="/capital">Capital</a></li>
+        <li><a href="/signal">Signal</a></li>
+        <li><a href="/risk">Risk</a></li>
+        <li><a href="/demo" class="active">Live Demos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="cr-hero">
+    <div class="container">
+      <div class="cr-label">// COUNSEL ROOM · Mixture-of-Legal-Experts, live</div>
+      <h1>One question. Four experts. One reconciled answer.</h1>
+      <p>Pick a scripted Connecticut scenario — or describe your own situation — and watch the router score four domain experts, collect their IRAC analyses with real statutory authorities, surface cross-domain conflicts, and synthesize a deadline-stamped playbook.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <section class="cr-section">
+      <h2>1 · Choose a scenario</h2>
+      <p class="hint">Scripted scenarios run instantly. Free text routes to the closest scenario by keyword match — try “can I change my irrevocable trust in connecticut”.</p>
+      <div class="scenario-grid" id="scenarioGrid"></div>
+      <div class="free-text">
+        <input id="freeText" type="text" maxlength="500" placeholder="Describe your situation… (max 500 characters)" aria-label="Describe your situation" />
+        <button class="cr-btn" id="askBtn">Consult the experts</button>
+        <span class="cr-status" id="crStatus"></span>
+      </div>
+    </section>
+
+    <section class="cr-section">
+      <h2>2 · Expert router</h2>
+      <p class="hint">Relevance scores are computed per scenario. Experts under 0.50 are listed but not consulted — the dimmed tiles.</p>
+      <div class="router-grid" id="routerGrid"></div>
+    </section>
+
+    <section class="cr-section">
+      <h2>3 · Expert analyses (IRAC)</h2>
+      <p class="hint">Each consulted expert files Issue → Rule → Application → Conclusion, with authorities as citation chips. Cards reveal in consultation order; click a header to collapse.</p>
+      <div class="irac-grid" id="iracGrid"></div>
+      <div class="conflict-banner" id="conflictBanner" role="alert"></div>
+    </section>
+
+    <section class="cr-section">
+      <h2>4 · Synthesis &amp; compliance checklist</h2>
+      <p class="hint">The synthesizer merges the expert views and hands you ordered steps with statutory deadlines.</p>
+      <div class="synth-panel" id="synthPanel"></div>
+      <div class="dx-lead">
+        <a class="dx-lead-cta" href="/contact?source=demo-counsel" data-telemetry="lead_click">Request an enterprise pilot →</a>
+      </div>
+      <div id="demoExtras"></div>
+    </section>
+
+    <div class="cr-cta">
+      <a href="/demo/nexus" class="btn btn-ghost">Next: run the Nexus →</a>
+      <a href="/demo/signal" class="btn btn-ghost" style="margin-left:12px;">← Back to the Signal Factory</a>
+      <a href="/walkthrough.html" class="btn btn-ghost" style="margin-left:12px;">Platform walkthrough</a>
+    </div>
+  </div>
+
+  <div class="disclaimer-bar" id="disclaimerBar">
+    <span class="flag">Flagged for review</span>
+    <span id="upWarning">This is AI-augmented legal research, not legal advice. Engage a Connecticut-licensed attorney before acting on any output.</span>
+  </div>
+
+  <script src="/assets/js/demo-counsel.js" defer></script>
+  <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      window.MizokiDemoExtras.init({
+        demo: "counsel",
+        defaultScenario: "trust_modification_gst",
+        getScenario: function () {
+          var selected = document.querySelector(".scn-card.sel");
+          return (selected && selected.dataset.id) || "trust_modification_gst";
+        },
+        getSeed: function () { return 42; },
+        runEndpoint: "/api/demo/counsel/query",
+        mcpName: "demo.counsel.query",
+        mcpArgs: function (scenario) { return { scenario_id: scenario }; },
+        autorun: function (scenario) {
+          var card = document.querySelector('.scn-card[data-id="' + scenario + '"]');
+          if (!card) return false;
+          card.click();
+          return true;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

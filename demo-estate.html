@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — Estate Room · Live Demo</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="description" content="The five Connecticut statutory clocks as a dependency-aware timeline, a three-generation GST dynasty graph, and the IRC § 1014 basis step-up table — live, deterministic, flagged for attorney review." />
+  <link rel="canonical" href="https://mizoki3.com/demo/estate" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZOKI3 — Estate Room · Live Demo" />
+  <meta property="og:description" content="Five statutory clocks. One governance ledger. Multi-generational structures made legible — live on the production runtime." />
+  <meta property="og:url" content="https://mizoki3.com/demo/estate" />
+  <meta property="og:image" content="https://mizoki3.com/assets/img/og/og-estate.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/demo-extras.css" />
+  <style>
+    :root {
+      --demo-cyan: #3FDCF2; --demo-green: #41D695; --demo-orange: #D9A83C;
+      --demo-red: #FF6B7C; --panel: #0B1E26; --panel-deep: #0A1418;
+    }
+    body { background: var(--panel-deep); font-family: "DM Sans", var(--sans); padding-bottom: 120px; }
+    .er-hero {
+      padding: 130px 0 44px;
+      background:
+        radial-gradient(ellipse 55% 45% at 50% -5%, rgba(65, 214, 149, 0.13), transparent),
+        linear-gradient(180deg, #0A1418 0%, #0B1E26 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .er-hero h1 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: clamp(2rem, 4.4vw, 3.1rem); color: var(--text-0); margin: 0 0 12px;
+    }
+    .er-hero p { color: var(--text-2); max-width: 740px; }
+    .er-label {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700;
+      color: var(--demo-green); margin-bottom: 16px;
+    }
+    .er-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 26px 0; }
+    .er-controls select {
+      background: var(--panel); border: 1px solid var(--line-strong); color: var(--text-0);
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px;
+      border-radius: 2px; padding: 12px 16px; min-width: 300px;
+    }
+    .er-btn {
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px; letter-spacing: 0.06em;
+      border-radius: 2px; padding: 12px 26px; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .er-btn.start { background: var(--demo-green); color: #04140d; font-weight: 600; }
+    .er-btn.start:hover { box-shadow: none; }
+    .er-btn.start:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+    .er-btn.reset { background: transparent; color: var(--text-2); border-color: var(--line-strong); }
+    .er-btn.reset:hover { color: var(--text-0); border-color: var(--text-2); }
+    .er-status { font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: var(--text-3); margin-left: auto; }
+    .er-status .live { color: var(--demo-green); }
+    .er-section { padding: 34px 0 8px; }
+    .er-section h2 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: 1.45rem; color: var(--text-0); margin-bottom: 4px;
+    }
+    .er-section .hint { font-size: 0.86rem; color: var(--text-3); margin-bottom: 18px; }
+    .er-widget-frame {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 26px 28px; min-height: 200px;
+    }
+    #widgetTitle {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--demo-green);
+      margin-bottom: 20px;
+    }
+    /* statutory timeline */
+    .est-timeline { display: grid; }
+    .est-clock {
+      display: grid; grid-template-columns: 34px 1fr; gap: 14px;
+      opacity: 0; transform: translateY(8px); transition: all 0.4s ease;
+      padding-bottom: 22px;
+    }
+    .est-clock.on { opacity: 1; transform: translateY(0); }
+    .est-clock-rail { position: relative; display: flex; flex-direction: column; align-items: center; }
+    .est-clock-dot {
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--demo-green); box-shadow: 0 0 12px rgba(65, 214, 149,0.7);
+      flex: 0 0 auto; margin-top: 4px;
+    }
+    .est-clock-line { flex: 1 1 auto; width: 2px; background: rgba(65, 214, 149,0.3); margin-top: 4px; }
+    .est-clock-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 6px; }
+    .est-clock-label { color: var(--text-0); font-size: 1rem; }
+    .est-clock-detail { color: var(--text-2); font-size: 0.9rem; margin-bottom: 6px; max-width: 640px; }
+    .est-clock-dep {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      color: var(--demo-cyan); margin-bottom: 6px;
+    }
+    .deadline-badge {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      color: var(--demo-orange); border: 1px solid rgba(217, 168, 60,0.45);
+      background: rgba(217, 168, 60,0.08); border-radius: 2px; padding: 4px 11px; white-space: nowrap;
+    }
+    .auth-chip {
+      display: inline-block; font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      color: var(--demo-cyan); background: rgba(63, 220, 242,0.07);
+      border: 1px solid rgba(63, 220, 242,0.3); border-radius: 2px; padding: 4px 10px;
+      margin: 3px 6px 3px 0;
+    }
+    .auth-chip .note { color: var(--text-3); }
+    /* dynasty graph */
+    .est-graph { width: 100%; height: auto; }
+    .est-flag-banner {
+      margin-top: 18px; background: rgba(65, 214, 149,0.07);
+      border: 1px solid rgba(65, 214, 149,0.45); border-left: 4px solid var(--demo-green);
+      border-radius: 2px; padding: 16px 20px; color: var(--text-1); font-size: 0.92rem;
+    }
+    .est-flag-banner strong { color: var(--demo-green); }
+    /* basis table */
+    .est-basis-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .est-basis-table caption {
+      caption-side: top; text-align: left; color: var(--text-3);
+      font-size: 0.82rem; padding-bottom: 12px;
+    }
+    .est-basis-table th, .est-basis-table td {
+      text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line);
+      color: var(--text-1);
+    }
+    .est-basis-table th {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+    }
+    .est-basis-table td.mono { font-family: "JetBrains Mono", var(--mono); font-size: 12px; }
+    .est-basis-table td.up { color: var(--demo-green); }
+    .est-basis-row { opacity: 0; transition: opacity 0.4s ease; }
+    .est-basis-row.on { opacity: 1; }
+    .est-basis-total td { color: var(--text-0); font-weight: 600; border-top: 2px solid rgba(65, 214, 149,0.4); }
+    /* finale */
+    .finale-card {
+      display: none;
+      background: linear-gradient(180deg, #0B1E26, #0A1418);
+      border: 1px solid rgba(65, 214, 149,0.45);
+      box-shadow: none;
+      border-radius: 2px; padding: 30px 32px; margin-top: 26px;
+    }
+    .finale-card.on { display: block; }
+    .finale-card h3 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      color: var(--text-0); font-size: 1.5rem; margin-bottom: 10px;
+    }
+    .finale-card p { color: var(--text-2); font-size: 0.95rem; margin-bottom: 20px; }
+    .finale-numbers { display: flex; flex-wrap: wrap; gap: 12px; }
+    .finale-numbers .cell {
+      flex: 1 1 140px; background: var(--panel-deep);
+      border: 1px solid var(--line-strong); border-radius: 2px; padding: 13px; text-align: center;
+    }
+    .finale-numbers .num { font-family: "JetBrains Mono", var(--mono); font-size: 1.3rem; color: var(--demo-green); }
+    .finale-numbers .cap {
+      font-family: "JetBrains Mono", var(--mono); font-size: 9.5px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 3px;
+    }
+    .disclaimer-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      background: rgba(10, 20, 24, 0.96); backdrop-filter: blur(8px);
+      border-top: 2px solid var(--demo-orange);
+      padding: 12px 5%; font-size: 0.82rem; color: var(--text-2);
+      display: flex; gap: 10px; align-items: center;
+    }
+    .disclaimer-bar .flag {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      color: var(--demo-orange); border: 1px solid rgba(217, 168, 60,0.5);
+      border-radius: 2px; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .er-cta { padding: 54px 0 40px; text-align: center; }
+    @media (prefers-reduced-motion: reduce) {
+      .est-clock, .est-basis-row, .er-btn { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="/counsel">Counsel</a></li>
+        <li><a href="/estate">Estate</a></li>
+        <li><a href="/capital">Capital</a></li>
+        <li><a href="/signal">Signal</a></li>
+        <li><a href="/risk">Risk</a></li>
+        <li><a href="/demo" class="active">Live Demos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="er-hero">
+    <div class="container">
+      <div class="er-label">// ESTATE ROOM · Live on the production runtime</div>
+      <h1>Five statutory clocks, armed on day one.</h1>
+      <p>Pick a scenario and press Start. The Estate Room maps a Connecticut settlement's statutory timeline with dependency arrows, draws a three-generation GST dynasty graph, or steps up an asset table under IRC § 1014 — deterministic, seeded, and always flagged for attorney review.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="er-controls">
+      <select id="scenario" aria-label="Demo scenario"></select>
+      <label class="dx-seed-wrap" for="seedInput">remix this run
+        <input id="seedInput" type="number" value="42" min="0" step="1" aria-label="Deterministic seed — remix this run" />
+      </label>
+      <button class="er-btn start" id="startBtn">▶ Start run</button>
+      <button class="er-btn reset" id="resetBtn">Reset</button>
+      <span class="er-status" id="status" aria-live="polite">idle</span>
+    </div>
+
+    <section class="er-section">
+      <h2>1 · Signature widget</h2>
+      <p class="hint">Each scenario renders its own instrument: the statutory-clock timeline, the dynasty graph with per-node transfer-tax exposure, or the basis step-up table.</p>
+      <div class="er-widget-frame">
+        <div id="widgetTitle">—</div>
+        <div id="estateWidget" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="er-section">
+      <h2>2 · Authorities cited</h2>
+      <p class="hint">Every citation comes from the shared Counsel corpus — imported, never duplicated.</p>
+      <div id="authorityChips" aria-live="polite"></div>
+    </section>
+
+    <section class="er-section">
+      <h2>3 · Finale</h2>
+      <div class="finale-card" id="finaleCard">
+        <h3 id="finaleHead">—</h3>
+        <p id="finaleSummary"></p>
+        <div class="finale-numbers" id="finaleNumbers" aria-live="polite"></div>
+        <div class="dx-lead">
+          <a class="dx-lead-cta" href="/contact?source=demo-estate" data-telemetry="lead_click">Request an enterprise pilot →</a>
+        </div>
+      </div>
+      <div id="demoExtras"></div>
+    </section>
+
+    <div class="er-cta">
+      <a href="/demo/nexus" class="btn btn-ghost">Next: run the Nexus →</a>
+      <a href="/demo/counsel" class="btn btn-ghost" style="margin-left:12px;">Enter the Counsel Room</a>
+      <a href="/walkthrough.html" class="btn btn-ghost" style="margin-left:12px;">Platform walkthrough</a>
+    </div>
+  </div>
+
+  <div class="disclaimer-bar" id="disclaimerBar">
+    <span class="flag">Flagged for review</span>
+    <span id="upWarning">This is AI-augmented legal research, not legal advice. Engage a Connecticut-licensed attorney before acting on any output.</span>
+  </div>
+
+  <script src="/assets/js/demo-estate.js" defer></script>
+  <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      window.MizokiDemoExtras.init({
+        demo: "estate",
+        scenarioSelect: "scenario",
+        seedInput: "seedInput",
+        startButton: "startBtn",
+        defaultScenario: "ct_estate_settlement",
+        runEndpoint: "/api/demo/estate/run",
+        mcpName: "demo.estate.run"
+      });
+    });
+  </script>
+</body>
+</html>

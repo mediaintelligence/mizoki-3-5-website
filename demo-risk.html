@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — Risk Sentinel · Live Demo</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="description" content="Enterprise events land on a 5×5 severity×likelihood matrix, cell by cell — exactly two escalations, one auto-mitigated in green, one vetoed in red with a rule id, evidence chain, and rollback token." />
+  <link rel="canonical" href="https://mizoki3.com/demo/risk" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZOKI3 — Risk Sentinel · Live Demo" />
+  <meta property="og:description" content="Two escalations. One veto. Full evidence — live on the production runtime." />
+  <meta property="og:url" content="https://mizoki3.com/demo/risk" />
+  <meta property="og:image" content="https://mizoki3.com/assets/img/og/og-risk.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/demo-extras.css" />
+  <style>
+    :root {
+      --demo-cyan: #3FDCF2; --demo-green: #41D695; --demo-orange: #D9A83C;
+      --demo-red: #FF6B7C; --demo-rose: #FF6B7C;
+      --panel: #0B1E26; --panel-deep: #0A1418;
+    }
+    body { background: var(--panel-deep); font-family: "DM Sans", var(--sans); }
+    .rs-hero {
+      padding: 130px 0 44px;
+      background:
+        radial-gradient(ellipse 55% 45% at 50% -5%, rgba(255, 107, 124, 0.13), transparent),
+        linear-gradient(180deg, #0A1418 0%, #0B1E26 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .rs-hero h1 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: clamp(2rem, 4.4vw, 3.1rem); color: var(--text-0); margin: 0 0 12px;
+    }
+    .rs-hero p { color: var(--text-2); max-width: 740px; }
+    .rs-label {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700;
+      color: var(--demo-rose); margin-bottom: 16px;
+    }
+    .rs-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 26px 0; }
+    .rs-controls select {
+      background: var(--panel); border: 1px solid var(--line-strong); color: var(--text-0);
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px;
+      border-radius: 2px; padding: 12px 16px; min-width: 280px;
+    }
+    .rs-btn {
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px; letter-spacing: 0.06em;
+      border-radius: 2px; padding: 12px 26px; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .rs-btn.start { background: var(--demo-rose); color: #1c040a; font-weight: 600; }
+    .rs-btn.start:hover { box-shadow: none; }
+    .rs-btn.start:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+    .rs-btn.reset { background: transparent; color: var(--text-2); border-color: var(--line-strong); }
+    .rs-btn.reset:hover { color: var(--text-0); border-color: var(--text-2); }
+    .rs-status { font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: var(--text-3); margin-left: auto; }
+    .rs-status .live { color: var(--demo-green); }
+    .rs-section { padding: 34px 0 8px; }
+    .rs-section h2 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: 1.45rem; color: var(--text-0); margin-bottom: 4px;
+    }
+    .rs-section .hint { font-size: 0.86rem; color: var(--text-3); margin-bottom: 18px; }
+    .rs-grid { display: grid; grid-template-columns: minmax(280px, 480px) 1fr; gap: 22px; align-items: start; }
+    @media (max-width: 860px) { .rs-grid { grid-template-columns: 1fr; } }
+    /* 5×5 matrix */
+    .rm-frame {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 20px;
+    }
+    .rm-axis {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+      margin-bottom: 10px;
+    }
+    .rm-matrix { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+    .rm-cell {
+      aspect-ratio: 1; border-radius: 2px; position: relative;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+      transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rm-cell .rm-count {
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px; color: var(--text-0);
+    }
+    .rm-cell.lit.heat-2, .rm-cell.lit.heat-3, .rm-cell.lit.heat-4 { background: rgba(65, 214, 149,0.22); border-color: rgba(65, 214, 149,0.5); }
+    .rm-cell.lit.heat-5, .rm-cell.lit.heat-6 { background: rgba(217, 168, 60,0.22); border-color: rgba(217, 168, 60,0.5); }
+    .rm-cell.lit.heat-7, .rm-cell.lit.heat-8 { background: rgba(255, 107, 124,0.24); border-color: rgba(255, 107, 124,0.55); }
+    .rm-cell.lit.heat-9, .rm-cell.lit.heat-10 { background: rgba(255, 107, 124,0.3); border-color: rgba(255, 107, 124,0.65); }
+    .rm-cell.auto { box-shadow: 0 0 18px rgba(65, 214, 149,0.7); border-color: var(--demo-green); }
+    .rm-cell.veto { box-shadow: 0 0 18px rgba(255, 107, 124,0.8); border-color: var(--demo-red); }
+    .rm-legend {
+      display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap;
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px; color: var(--text-3);
+    }
+    .rm-legend span::before { content: "●"; margin-right: 6px; }
+    .rm-legend .lg-auto::before { color: var(--demo-green); }
+    .rm-legend .lg-veto::before { color: var(--demo-red); }
+    /* event feed */
+    .feed-frame {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 2px; padding: 16px; max-height: 420px; overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    .feed-row {
+      display: grid; grid-template-columns: 70px 1fr 1fr 56px; gap: 10px;
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px; color: var(--text-2);
+      padding: 7px 10px; border-left: 2px solid var(--line-strong); margin-bottom: 6px;
+      opacity: 0; transform: translateY(6px); transition: all 0.35s ease;
+    }
+    .feed-row.on { opacity: 1; transform: translateY(0); }
+    .feed-row.auto { border-left-color: var(--demo-green); }
+    .feed-row.veto { border-left-color: var(--demo-red); color: #fecaca; }
+    .feed-id { color: var(--text-3); }
+    .feed-cell { text-align: right; color: var(--text-3); }
+    /* escalation cards */
+    .esc-card {
+      border-radius: 2px; padding: 22px 26px; margin-bottom: 16px;
+      opacity: 0; transform: translateX(-14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .esc-card.on { opacity: 1; transform: translateX(0); }
+    .esc-card.auto {
+      background: rgba(65, 214, 149,0.07);
+      border: 1px solid rgba(65, 214, 149,0.5); border-left: 4px solid var(--demo-green);
+    }
+    .esc-card.veto {
+      background: rgba(255, 107, 124,0.08);
+      border: 1px solid rgba(255, 107, 124,0.55); border-left: 4px solid var(--demo-red);
+    }
+    .esc-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 8px; }
+    .esc-kind {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; padding: 3px 10px; border-radius: 2px;
+    }
+    .esc-card.auto .esc-kind { background: var(--demo-green); color: #04140d; }
+    .esc-card.veto .esc-kind { background: var(--demo-red); color: #fff; }
+    .esc-rule { font-family: "JetBrains Mono", var(--mono); font-size: 11px; color: var(--demo-cyan); }
+    .esc-entity { font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: var(--text-0); margin-bottom: 8px; }
+    .esc-detail { color: var(--text-1); font-size: 0.93rem; margin-bottom: 8px; }
+    .esc-mitigation { color: #41D695; font-size: 0.9rem; margin-bottom: 8px; }
+    .esc-chain { margin-top: 10px; }
+    .esc-chain-title {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px;
+    }
+    .esc-chain-step {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px; color: var(--text-2);
+      border-left: 2px solid var(--line-strong); padding: 3px 0 3px 12px; margin-bottom: 4px;
+    }
+    .esc-token {
+      margin-top: 12px; font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      color: var(--demo-orange);
+    }
+    /* finale */
+    .finale-card {
+      display: none;
+      background: linear-gradient(180deg, #0B1E26, #0A1418);
+      border: 1px solid rgba(255, 107, 124,0.45);
+      box-shadow: none;
+      border-radius: 2px; padding: 30px 32px; margin-top: 10px;
+    }
+    .finale-card.on { display: block; }
+    .finale-card h3 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      color: var(--text-0); font-size: 1.5rem; margin-bottom: 10px;
+    }
+    .finale-card p { color: var(--text-2); font-size: 0.95rem; margin-bottom: 20px; }
+    .finale-numbers { display: flex; flex-wrap: wrap; gap: 12px; }
+    .finale-numbers .cell {
+      flex: 1 1 140px; background: var(--panel-deep);
+      border: 1px solid var(--line-strong); border-radius: 2px; padding: 13px; text-align: center;
+    }
+    .finale-numbers .num { font-family: "JetBrains Mono", var(--mono); font-size: 1.3rem; color: var(--demo-rose); }
+    .finale-numbers .cap {
+      font-family: "JetBrains Mono", var(--mono); font-size: 9.5px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 3px;
+    }
+    .rs-cta { padding: 60px 0 110px; text-align: center; }
+    @media (prefers-reduced-motion: reduce) {
+      .rm-cell, .feed-row, .esc-card, .rs-btn { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="/counsel">Counsel</a></li>
+        <li><a href="/estate">Estate</a></li>
+        <li><a href="/capital">Capital</a></li>
+        <li><a href="/signal">Signal</a></li>
+        <li><a href="/risk">Risk</a></li>
+        <li><a href="/demo" class="active">Live Demos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="rs-hero">
+    <div class="container">
+      <div class="rs-label">// RISK SENTINEL · Live on the production runtime</div>
+      <h1>Two escalations. One veto. Full evidence.</h1>
+      <p>Pick a scenario and press Start. Enterprise events — contract clause changes, spend spikes, PII access anomalies, covenant drift — land on the 5×5 severity×likelihood matrix cell by cell. Exactly two earn an escalation: one auto-mitigates in green, one is vetoed in red with a rule id, evidence chain, and rollback token — the ACT-991 pattern from the operator console.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="rs-controls">
+      <select id="scenario" aria-label="Demo scenario"></select>
+      <label class="dx-seed-wrap" for="seedInput">remix this run
+        <input id="seedInput" type="number" value="42" min="0" step="1" aria-label="Deterministic seed — remix this run" />
+      </label>
+      <button class="rs-btn start" id="startBtn">▶ Start run</button>
+      <button class="rs-btn reset" id="resetBtn">Reset</button>
+      <span class="rs-status" id="status" aria-live="polite">idle</span>
+    </div>
+
+    <section class="rs-section">
+      <h2>1 · The matrix lights up</h2>
+      <p class="hint">Severity rises upward, likelihood rises rightward. Green glow = auto-mitigated. Red glow = vetoed.</p>
+      <div class="rs-grid">
+        <div class="rm-frame">
+          <div class="rm-axis">severity ↑ · likelihood →</div>
+          <div class="rm-matrix" id="riskMatrix" aria-live="polite"></div>
+          <div class="rm-legend">
+            <span class="lg-auto">auto-mitigated</span>
+            <span class="lg-veto">vetoed</span>
+          </div>
+        </div>
+        <div class="feed-frame" id="eventFeed" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="rs-section">
+      <h2>2 · The two escalations</h2>
+      <p class="hint">Every scenario produces exactly two: one quiet mitigation, one loud veto with the evidence to prove why.</p>
+      <div id="escalations"></div>
+    </section>
+
+    <section class="rs-section">
+      <h2>3 · Finale</h2>
+      <div class="finale-card" id="finaleCard">
+        <h3 id="finaleHead">—</h3>
+        <p id="finaleSummary"></p>
+        <div class="finale-numbers" id="finaleNumbers" aria-live="polite"></div>
+        <div class="dx-lead">
+          <a class="dx-lead-cta" href="/contact?source=demo-risk" data-telemetry="lead_click">Request an enterprise pilot →</a>
+          <a class="btn btn-ghost" href="/console">See ACT-991 on the console →</a>
+        </div>
+      </div>
+      <div id="demoExtras"></div>
+    </section>
+
+    <div class="rs-cta">
+      <a href="/demo/nexus" class="btn btn-ghost">Next: run the Nexus →</a>
+      <a href="/demo/capital" class="btn btn-ghost" style="margin-left:12px;">Back to the Capital Desk</a>
+      <a href="/walkthrough.html" class="btn btn-ghost" style="margin-left:12px;">Platform walkthrough</a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© MIZOKI3 · MediaIntelligence.ai</span>
+        <span>// Risk Sentinel demo — deterministic, seeded, on-runtime</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/demo-risk.js" defer></script>
+  <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      window.MizokiDemoExtras.init({
+        demo: "risk",
+        scenarioSelect: "scenario",
+        seedInput: "seedInput",
+        startButton: "startBtn",
+        defaultScenario: "quarterly_close",
+        runEndpoint: "/api/demo/risk/run",
+        mcpName: "demo.risk.run"
+      });
+    });
+  </script>
+</body>
+</html>

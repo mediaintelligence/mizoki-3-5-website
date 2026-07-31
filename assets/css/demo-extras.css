@@ -1,0 +1,128 @@
+/* Shared styles for the demo extras widgets (toolbar, narrator, MCP
+ * terminal, governance drawer). Theme-matched to the demo pages. */
+
+.dx-toolbar { margin: 26px 0 8px; }
+.dx-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.dx-btn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: #DCE9ED;
+  background: #0B1E26;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.dx-btn:hover, .dx-btn:focus-visible { color: #F4F6F7; border-color: #3FDCF2; }
+.dx-btn:focus-visible { outline: 2px solid #3FDCF2; outline-offset: 2px; }
+.dx-btn-accent { background: #3FDCF2; color: #04141a; font-weight: 600; border-color: #3FDCF2; }
+.dx-btn-accent:hover { color: #04141a; }
+.dx-status {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #41D695;
+  overflow-wrap: anywhere;
+}
+.dx-panel {
+  margin-top: 12px;
+  background: #0B1E26;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  padding: 18px 20px;
+}
+.dx-why .dx-narration { color: #DCE9ED; font-size: 0.95rem; line-height: 1.65; }
+.dx-trace-ref {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: #5E6E75;
+  margin-top: 10px;
+}
+.dx-term-caption {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #3FDCF2;
+  margin-bottom: 12px;
+}
+.dx-term-cmd, .dx-term-out {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #a1e4a1;
+  background: #0A1418;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0 0 12px;
+}
+.dx-term-out { color: #DCE9ED; max-height: 380px; overflow-y: auto; margin-top: 12px; }
+.dx-gov-toggle { margin-top: 20px; }
+.dx-gov-slider { display: grid; gap: 6px; margin-bottom: 14px; }
+.dx-gov-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #93A0A6;
+  letter-spacing: 0.06em;
+}
+.dx-gov input[type="range"] { width: 100%; accent-color: #3FDCF2; }
+.dx-gov-results { margin-top: 14px; display: grid; gap: 6px; }
+.dx-gov-line {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.dx-gov-line.ok { color: #41D695; border-color: rgba(65, 214, 149, 0.35); }
+.dx-gov-line.bad { color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); }
+.dx-gov-lesson {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 2px;
+  border: 1px solid rgba(217, 168, 60, 0.55);
+  background: rgba(217, 168, 60, 0.08);
+  color: #fcd34d;
+  font-size: 0.9rem;
+}
+.dx-lead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 22px;
+}
+.dx-lead a.dx-lead-cta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 12px 24px;
+  color: #04141a;
+  background: #3FDCF2;
+}
+.dx-seed-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #93A0A6;
+}
+.dx-seed-wrap input {
+  width: 84px;
+  background: #0B1E26;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #F4F6F7;
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dx-btn { transition: none; }
+}

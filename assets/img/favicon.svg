@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MIZOKI3">
+  <title>MIZOKI3</title>
+  <defs>
+    <!-- Nav logo colours: MIZOKI in ink, the 3 in nexus cyan. -->
+    <linearGradient id="mz-mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f3f5fc"/>
+      <stop offset="55%" stop-color="#f3f5fc"/>
+      <stop offset="100%" stop-color="#4cc9ff"/>
+    </linearGradient>
+    <radialGradient id="mz-glow" cx="50%" cy="34%" r="62%">
+      <stop offset="0%" stop-color="#4cc9ff" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#4cc9ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- bg-0 plate with a hairline edge, matching the site chrome -->
+  <rect width="64" height="64" rx="14" fill="#04060f"/>
+  <rect width="64" height="64" rx="14" fill="url(#mz-glow)"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25"
+        fill="none" stroke="#4cc9ff" stroke-opacity="0.22" stroke-width="1.5"/>
+
+  <!-- The M, drawn as geometry so it never depends on a webfont -->
+  <path d="M16 46 L16 18 L32 36 L48 18 L48 46"
+        fill="none" stroke="url(#mz-mark)" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

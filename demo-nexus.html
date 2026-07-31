@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — The Nexus Run · Flagship Live Demo</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="description" content="One trigger ripples through Signal, Capital, Risk, Counsel, and Estate under a single trace id — one covenant block, one risk veto, a flagged clause, and a governance ledger entry. One intelligence. Many domains. Shared causal memory." />
+  <link rel="canonical" href="https://mizoki3.com/demo/nexus" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZOKI3 — The Nexus Run · Flagship Live Demo" />
+  <meta property="og:description" content="One intelligence. Many domains. Shared causal memory. Five divisions, one trace id — live on the production runtime." />
+  <meta property="og:url" content="https://mizoki3.com/demo/nexus" />
+  <meta property="og:image" content="https://mizoki3.com/assets/img/og/og-nexus.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/demo-extras.css" />
+  <style>
+    :root {
+      --demo-cyan: #3FDCF2; --demo-purple: #9D7BE8; --demo-green: #41D695;
+      --demo-orange: #D9A83C; --demo-red: #FF6B7C; --demo-rose: #FF6B7C;
+      --demo-blue: #5FA0DC; --panel: #0B1E26; --panel-deep: #0A1418;
+    }
+    body { background: var(--panel-deep); font-family: "DM Sans", var(--sans); }
+    body.nx-board-open { overflow: hidden; }
+    .nx-hero {
+      padding: 130px 0 44px;
+      background:
+        radial-gradient(ellipse 55% 45% at 30% -5%, rgba(63, 220, 242, 0.14), transparent),
+        radial-gradient(ellipse 45% 40% at 80% 0%, rgba(63, 220, 242, 0.10), transparent),
+        linear-gradient(180deg, #0A1418 0%, #0B1E26 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .nx-hero h1 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: clamp(2.1rem, 4.6vw, 3.3rem); color: var(--text-0); margin: 0 0 12px;
+    }
+    .nx-hero h1 em { color: var(--demo-cyan); font-style: italic; }
+    .nx-hero p { color: var(--text-2); max-width: 760px; }
+    .nx-label {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700;
+      color: var(--demo-cyan); margin-bottom: 16px;
+    }
+    .nx-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 26px 0; }
+    .nx-controls select {
+      background: var(--panel); border: 1px solid var(--line-strong); color: var(--text-0);
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px;
+      border-radius: 2px; padding: 12px 16px; min-width: 300px;
+    }
+    .nx-btn {
+      font-family: "JetBrains Mono", var(--mono); font-size: 13px; letter-spacing: 0.06em;
+      border-radius: 2px; padding: 12px 26px; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .nx-btn.start { background: var(--demo-cyan); color: #06262C; font-weight: 600; }
+    .nx-btn.start:hover { box-shadow: none; }
+    .nx-btn.start:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+    .nx-btn.board { background: transparent; color: var(--demo-cyan); border-color: rgba(63, 220, 242,0.5); }
+    .nx-btn.board:hover { box-shadow: none; }
+    .nx-btn.reset { background: transparent; color: var(--text-2); border-color: var(--line-strong); }
+    .nx-btn.reset:hover { color: var(--text-0); border-color: var(--text-2); }
+    .nx-status { font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: var(--text-3); margin-left: auto; }
+    .nx-status .live { color: var(--demo-green); }
+    .nx-dots { display: flex; gap: 9px; align-items: center; padding: 4px 0 18px; }
+    .nx-dot {
+      width: 12px; height: 12px; border-radius: 50%; opacity: 0.25;
+      transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    }
+    .nx-dot.active { opacity: 1; box-shadow: 0 0 10px currentColor; }
+    .nx-dot.done { opacity: 1; }
+    .nx-dot-label {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-left: 8px;
+    }
+    /* trigger card */
+    .nx-trigger {
+      display: none;
+      background: var(--panel); border: 1px solid rgba(63, 220, 242,0.5);
+      border-radius: 2px; padding: 24px 28px; margin-bottom: 20px;
+    }
+    .nx-trigger.on { display: block; }
+    .nx-trigger-eyebrow {
+      font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--demo-cyan); margin-bottom: 8px;
+    }
+    .nx-trigger h3 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: 1.5rem; color: var(--text-0); margin-bottom: 8px;
+    }
+    .nx-trigger p { color: var(--text-2); font-size: 0.95rem; }
+    /* division panels */
+    .nx-panel {
+      background: var(--panel); border: 1px solid var(--line);
+      border-left: 4px solid var(--nx-accent, #3FDCF2);
+      border-radius: 2px; padding: 22px 26px; margin-bottom: 16px;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .nx-panel.on { opacity: 1; transform: translateY(0); }
+    .nx-panel-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; margin-bottom: 6px; }
+    .nx-division {
+      font-family: "JetBrains Mono", var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.16em; color: var(--nx-accent, #3FDCF2);
+    }
+    .nx-headline { color: var(--text-0); font-size: 1.05rem; }
+    .nx-trace { font-family: "JetBrains Mono", var(--mono); font-size: 10px; color: var(--text-3); margin-bottom: 12px; }
+    .nx-events { display: grid; gap: 7px; }
+    .nx-event {
+      font-size: 0.9rem; color: var(--text-2);
+      border-left: 2px solid var(--line-strong); padding: 4px 0 4px 12px;
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .nx-event.on { opacity: 1; }
+    .nx-verdict {
+      margin-top: 14px; border-radius: 2px; padding: 14px 16px; font-size: 0.9rem;
+    }
+    .nx-verdict.cool { background: rgba(65, 214, 149,0.07); border: 1px solid rgba(65, 214, 149,0.45); color: var(--text-1); }
+    .nx-verdict.hot { background: rgba(255, 107, 124,0.08); border: 1px solid rgba(255, 107, 124,0.5); color: #fecaca; }
+    .nx-verdict-status {
+      display: inline-block; font-family: "JetBrains Mono", var(--mono); font-size: 10.5px;
+      letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700;
+      margin-bottom: 6px; color: var(--nx-accent, #3FDCF2);
+    }
+    .nx-token { font-family: "JetBrains Mono", var(--mono); font-size: 10.5px; color: var(--demo-orange); margin-top: 8px; }
+    /* provenance */
+    .nx-prov {
+      display: none;
+      background: linear-gradient(180deg, #0B1E26, #0A1418);
+      border: 1px solid rgba(63, 220, 242,0.45);
+      box-shadow: none;
+      border-radius: 2px; padding: 28px 30px; margin-top: 10px;
+    }
+    .nx-prov.on { display: block; }
+    .nx-prov h3 {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      color: var(--text-0); font-size: 1.4rem; margin-bottom: 16px;
+    }
+    .nx-prov-svg { width: 100%; height: auto; }
+    /* boardroom overlay */
+    .nxb[hidden] { display: none; }
+    .nxb {
+      position: fixed; inset: 0; z-index: 200;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(63, 220, 242, 0.12), transparent),
+        #0A1418;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 5vh 7vw;
+    }
+    .nxb-rail { display: flex; gap: 14px; position: absolute; top: 5vh; }
+    .nxb-dot {
+      width: 16px; height: 16px; border-radius: 50%; opacity: 0.25;
+      transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    }
+    .nxb-dot.active { opacity: 1; box-shadow: 0 0 16px currentColor; }
+    .nxb-dot.done { opacity: 0.85; }
+    .nxb-stage { max-width: 1100px; width: 100%; }
+    .nxb-eyebrow {
+      font-family: "JetBrains Mono", var(--mono); font-size: clamp(12px, 1.4vw, 18px);
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700;
+      color: var(--nx-accent, #3FDCF2); margin-bottom: 3vh;
+    }
+    .nxb-title {
+      font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+      font-size: clamp(2.2rem, 5.4vw, 4.6rem); color: #F4F6F7; line-height: 1.1;
+      margin-bottom: 4vh;
+    }
+    .nxb-lines { display: grid; gap: 1.6vh; }
+    .nxb-line {
+      font-size: clamp(1.05rem, 2vw, 1.6rem); color: #DCE9ED;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .nxb-line.on { opacity: 1; transform: translateY(0); }
+    .nxb-line.verdict { color: var(--nx-accent, #3FDCF2); font-weight: 600; }
+    .nxb-help {
+      position: absolute; bottom: 4vh;
+      font-family: "JetBrains Mono", var(--mono); font-size: 12px; color: #5E6E75;
+    }
+    .nx-cta { padding: 60px 0 110px; text-align: center; }
+    @media (prefers-reduced-motion: reduce) {
+      .nx-panel, .nx-event, .nxb-line, .nx-btn { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="/counsel">Counsel</a></li>
+        <li><a href="/estate">Estate</a></li>
+        <li><a href="/capital">Capital</a></li>
+        <li><a href="/signal">Signal</a></li>
+        <li><a href="/risk">Risk</a></li>
+        <li><a href="/demo" class="active">Live Demos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="nx-hero">
+    <div class="container">
+      <div class="nx-label">// THE NEXUS RUN · Flagship demo · Live on the production runtime</div>
+      <h1>One intelligence. Many domains. <em>Shared causal memory.</em></h1>
+      <p>One trigger enters the Nexus and ripples through all five divisions under a single trace id — Signal reallocates, Capital re-checks the covenant envelope, Risk vetoes the aggressive variant, Counsel flags the indemnity clause, and Estate records that nothing needed to fire. Explore it panel by panel, or put Boardroom mode on the projector.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="nx-controls">
+      <select id="scenario" aria-label="Demo scenario"></select>
+      <label class="dx-seed-wrap" for="seedInput">remix this run
+        <input id="seedInput" type="number" value="42" min="0" step="1" aria-label="Deterministic seed — remix this run" />
+      </label>
+      <button class="nx-btn start" id="startBtn">▶ Explore mode</button>
+      <button class="nx-btn board" id="boardroomBtn">⛶ Boardroom mode</button>
+      <button class="nx-btn reset" id="resetBtn">Reset</button>
+      <span class="nx-status" id="status" aria-live="polite">idle</span>
+    </div>
+
+    <div class="nx-dots" aria-hidden="true">
+      <span class="nx-dot" data-division="signal" style="background:#9D7BE8;color:#9D7BE8"></span>
+      <span class="nx-dot" data-division="capital" style="background:#D9A83C;color:#D9A83C"></span>
+      <span class="nx-dot" data-division="risk" style="background:#FF6B7C;color:#FF6B7C"></span>
+      <span class="nx-dot" data-division="counsel" style="background:#5FA0DC;color:#5FA0DC"></span>
+      <span class="nx-dot" data-division="estate" style="background:#41D695;color:#41D695"></span>
+      <span class="nx-dot-label">five divisions · one trace</span>
+    </div>
+
+    <div class="nx-trigger" id="triggerCard" aria-live="polite"></div>
+    <div id="divisionPanels"></div>
+
+    <section class="nx-prov" id="provenancePanel" aria-live="polite"></section>
+
+    <div class="dx-lead" style="margin-top:26px;">
+      <a class="dx-lead-cta" href="/contact?source=demo-nexus" data-telemetry="lead_click">Request an enterprise pilot →</a>
+      <a class="btn btn-ghost" href="/console">See the operator console →</a>
+    </div>
+    <div id="demoExtras"></div>
+
+    <div class="nx-cta">
+      <a href="/demo" class="btn btn-ghost">← All demos</a>
+      <a href="/walkthrough.html" class="btn btn-ghost" style="margin-left:12px;">Platform walkthrough</a>
+    </div>
+  </div>
+
+  <div class="nxb" id="boardroom" hidden role="dialog" aria-label="Boardroom mode — auto-playing Nexus run"></div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© MIZOKI3 · MediaIntelligence.ai</span>
+        <span>// The Nexus Run — deterministic, seeded, on-runtime</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/demo-nexus.js" defer></script>
+  <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      window.MizokiDemoExtras.init({
+        demo: "nexus",
+        scenarioSelect: "scenario",
+        seedInput: "seedInput",
+        startButton: "startBtn",
+        defaultScenario: "cpm_shock",
+        runEndpoint: "/api/demo/nexus/run",
+        mcpName: "demo.nexus.run"
+      });
+    });
+  </script>
+</body>
+</html>
