@@ -87,6 +87,39 @@ class DocentClaimsDisciplineTestCase(unittest.TestCase):
         # And the spoken close carries the no-pressure framing.
         self.assertIn("No pressure", self.source)
 
+    def test_no_silent_unlock_utterance(self) -> None:
+        """2026-07-31 regression (voice dead on desktop AND mobile): a silent
+        'unlock' utterance was queued on the launch tap and cancelled one frame
+        later by beginTour. A cancel() landing on a just-queued utterance
+        wedges Chrome's synthesis engine and silences everything after it.
+        The first REAL sentence is already inside the gesture, so no separate
+        unlock may ever be reintroduced."""
+        self.assertNotIn("unlock:", self.source)
+        self.assertNotIn("u.volume = 0", self.source)
+        self.assertNotIn('SpeechSynthesisUtterance(" ")', self.source)
+
+    def test_utterances_are_audible_and_well_formed(self) -> None:
+        self.assertIn('u.lang = "en-US"', self.source)      # engines pick a voice by lang
+        self.assertIn("u.volume = 1.0", self.source)         # never silent
+        self.assertIn("pickVoice", self.source)              # resolved fresh, never stale
+        self.assertIn("onProblem", self.source)              # honest failure surfacing
+        self.assertIn("voice unavailable — captions", self.source)
+
+    def test_mobile_launcher_and_speech_robustness(self) -> None:
+        """2026-07-31 regressions: the phone launcher sat below the fold and
+        mobile speech engines cut narration off."""
+        # Fixed launcher on phones — otherwise the voice is never discovered.
+        self.assertIn("@media (max-width:900px)", self.source)
+        self.assertIn(".bd-launch{position:fixed", self.source)
+        # The fixed bar must reserve its own space, never cover the controls.
+        self.assertIn("html.bd-open body{padding-bottom", self.source)
+        # Chrome/Android needs a resume beat or long narration dies silently.
+        # (iOS is unlocked by the first REAL sentence running inside the tap —
+        # see test_no_silent_unlock_utterance for why a separate unlock is
+        # forbidden.)
+        self.assertIn("startHeartbeat", self.source)
+        self.assertIn("speechSynthesis.resume()", self.source)
+
     def test_no_audio_capture_apis(self) -> None:
         # Output-only, structurally: no speech recognition, no microphone APIs.
         for forbidden in ("SpeechRecognition", "webkitSpeechRecognition", "getUserMedia", "MediaRecorder"):

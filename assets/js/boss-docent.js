@@ -87,31 +87,79 @@
     voice: null,
     utter: null,
     timer: null,
+    beat: null,
+    errors: 0,
+    onProblem: null,
 
     init: function () {
       this.available = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
       if (!this.available) { this.enabled = false; return; }
+      // Warm the voice list — several browsers populate it asynchronously and
+      // return [] on the first synchronous call. The voice itself is resolved
+      // fresh at speak time (pickVoice), never cached across list refreshes.
       var self = this;
-      function pick() {
-        var voices = window.speechSynthesis.getVoices() || [];
-        var ranked = [
-          /Google US English/i, /Microsoft (Aria|Jenny|Guy)/i, /Samantha/i,
-          /en[-_]US/i, /^en/i
-        ];
-        for (var i = 0; i < ranked.length && !self.voice; i++) {
-          for (var v = 0; v < voices.length; v++) {
-            var name = (voices[v].name || "") + " " + (voices[v].lang || "");
-            if (ranked[i].test(name)) { self.voice = voices[v]; break; }
-          }
-        }
-      }
-      pick();
-      try { window.speechSynthesis.onvoiceschanged = pick; } catch (e) { /* ok */ }
+      function warm() { self.voices(); }
+      warm();
+      try { window.speechSynthesis.onvoiceschanged = warm; } catch (e) { /* ok */ }
     },
 
     cancel: function () {
       if (this.timer) { clearTimeout(this.timer); this.timer = null; }
+      this.stopHeartbeat();
       if (this.available) { try { window.speechSynthesis.cancel(); } catch (e) { /* ok */ } }
+    },
+
+    // iOS unlock note: the FIRST speak() must happen inside a real user
+    // gesture — which it does, because the launch tap calls beginTour ->
+    // speakSeq -> sentence synchronously. Do NOT add a separate "silent
+    // unlock" utterance here: a cancel() landing on a just-queued utterance
+    // wedges Chrome's synthesis engine and silences everything after it
+    // (2026-07-31 regression — voice died on desktop and mobile).
+
+    voices: function () {
+      try { return window.speechSynthesis.getVoices() || []; } catch (e) { return []; }
+    },
+
+    // Chrome silences an utterance whose .voice is a stale object from an
+    // earlier getVoices() list, so re-resolve against the live list.
+    pickVoice: function () {
+      var list = this.voices();
+      if (!list.length) return null;
+      var ranked = [/Google US English/i, /Microsoft (Aria|Jenny|Guy)/i, /Samantha/i, /en[-_]US/i, /^en/i];
+      for (var i = 0; i < ranked.length; i++) {
+        for (var v = 0; v < list.length; v++) {
+          var label = (list[v].name || "") + " " + (list[v].lang || "");
+          if (ranked[i].test(label)) return list[v];
+        }
+      }
+      return list[0] || null;
+    },
+
+    // Chrome (desktop and Android) silently stops synthesis after ~15s.
+    // A periodic pause/resume keeps long narration alive; harmless elsewhere.
+    startHeartbeat: function () {
+      if (!this.available || this.beat) return;
+      var self = this;
+      this.beat = setInterval(function () {
+        try {
+          if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          }
+        } catch (e) { self.stopHeartbeat(); }
+      }, 9000);
+    },
+
+    stopHeartbeat: function () {
+      if (this.beat) { clearInterval(this.beat); this.beat = null; }
+    },
+
+    // Never leave the visitor guessing why it is quiet: if the engine refuses
+    // an utterance (no installed voices, muted platform, policy block), say so
+    // in the control instead of silently running captions.
+    fail: function () {
+      this.errors += 1;
+      if (this.errors === 1 && this.onProblem) { try { this.onProblem(); } catch (e) { /* ok */ } }
     },
 
     // Speak one sentence; ALWAYS calls done exactly once (speech end, caption
@@ -137,12 +185,14 @@
         return;
       }
       var u = new SpeechSynthesisUtterance(text);
-      if (this.voice) u.voice = this.voice;
-      u.rate = 1.0; u.pitch = 1.0;
+      u.lang = "en-US";
+      var picked = this.pickVoice();
+      if (picked) u.voice = picked;
+      u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
       u.onend = finish;
-      u.onerror = finish;
+      u.onerror = function () { self.fail(); finish(); };
       this.utter = u;
-      try { window.speechSynthesis.speak(u); } catch (e) { finish(); return; }
+      try { window.speechSynthesis.speak(u); this.startHeartbeat(); } catch (e) { this.fail(); finish(); return; }
       this.timer = setTimeout(finish, readMs * 2 + 4000); // safety net
     }
   };
@@ -176,6 +226,10 @@
         ".bd-btn:hover{color:#F4F6F7;border-color:#93A0A6;}" +
         ".bd-cap{font-family:'DM Sans',sans-serif;font-size:.95rem;color:#DCE9ED;" +
         "line-height:1.5;min-height:1.5em;max-width:1100px;}" +
+        // While the tour runs, reserve the bar's space so it never sits on top
+        // of the demo controls (fixed bars cover content otherwise).
+        "html.bd-open body{padding-bottom:210px;}" +
+        "html.bd-open .bd-launch{display:none;}" +
         ".bd-disc{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.06em;" +
         "color:#5E7780;margin-top:5px;}" +
         ".bd-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}" +
@@ -183,6 +237,17 @@
         "background:#0A1418;color:#3FDCF2;border:1px solid rgba(63,220,242,.45);" +
         "border-radius:2px;padding:7px 14px;cursor:pointer;text-decoration:none;display:inline-block;}" +
         ".bd-chip:hover{border-color:#3FDCF2;}" +
+        // MOBILE: the inline launcher sits far below the fold on a phone, so
+        // on small screens it becomes a fixed pill that is always reachable —
+        // otherwise the visitor never discovers the Boss's voice at all.
+        "@media (max-width:900px){" +
+        ".bd-launch{position:fixed;right:12px;bottom:12px;z-index:71;margin:0;" +
+        "padding:12px 16px;box-shadow:0 8px 24px rgba(4,10,13,.5);}" +
+        ".bd-launch .bd-note{display:none;}" +
+        "html.bd-open body{padding-bottom:250px;}" +
+        ".bd-bar{padding:10px 4% 12px;}" +
+        ".bd-cap{max-height:26vh;overflow-y:auto;}" +
+        "}" +
         "@media (max-width:640px){.bd-cap{font-size:.87rem;}.bd-ctl{gap:5px;}}";
       document.head.appendChild(s);
     },
@@ -229,8 +294,15 @@
       this.bar = bar;
     },
 
-    show: function () { this.bar.classList.add("on"); },
-    hide: function () { this.bar.classList.remove("on"); this.chips([]); },
+    show: function () {
+      this.bar.classList.add("on");
+      document.documentElement.classList.add("bd-open");
+    },
+    hide: function () {
+      this.bar.classList.remove("on");
+      document.documentElement.classList.remove("bd-open");
+      this.chips([]);
+    },
     speaking: function (on) { this.bar.classList.toggle("speaking", !!on); },
     say: function (text) { this.caption.textContent = text; },
 
@@ -342,8 +414,14 @@
     tour.running = false;
     speech.cancel();
     ui.speaking(false);
-    if (finalLine) ui.say(finalLine);
-    else ui.hide();
+    if (finalLine) {
+      ui.say(finalLine);
+      // The bar stays up to show the closing line, but the launcher must come
+      // back so the visitor can restart the tour on a phone.
+      document.documentElement.classList.remove("bd-open");
+    } else {
+      ui.hide();
+    }
   }
 
   function beginTour() {
@@ -409,6 +487,9 @@
   function init() {
     if (!$("startBtn") || !$("stageStrip")) return; // not a demo page
     speech.init();
+    speech.onProblem = function () {
+      if (ui.voiceBtn) ui.voiceBtn.textContent = "voice unavailable — captions";
+    };
     ui.build(
       function () { beginTour(); },
       function () {

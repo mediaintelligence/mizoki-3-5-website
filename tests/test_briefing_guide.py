@@ -150,6 +150,23 @@ class GuideClaimsDisciplineTestCase(unittest.TestCase):
         self.assertIn("I'll suggest; you commit", self.speakable)
         self.assertIn("how fast you start", self.speakable)
 
+    def test_mobile_sheet_cannot_block_the_briefing(self) -> None:
+        """2026-07-31 regression: on phones the open rail covered #mb-start —
+        the executive could not commit anything."""
+        source = GUIDE_JS.read_text(encoding="utf-8")
+        # Compact peek sheet + reserved space + a shrunken app height box, so
+        # the briefing's own controls lay out above the guide.
+        self.assertIn("@media (max-width:1099px)", source)
+        self.assertIn("html.mzg-docked body{padding-bottom:170px;}", source)
+        self.assertIn(".mzg-panel{left:8px;right:8px;width:auto;max-height:152px;}", source)
+        self.assertIn("html.mzg-docked #mizoki-briefing{min-height:calc(100dvh - 160px);}", source)
+        # Expand/shrink affordance for the full sheet on small screens.
+        self.assertIn("mzg-expanded", source)
+        self.assertIn('el("button", "mzg-grow"', source)
+        # Occluded controls are SCROLLED into view — never pressed.
+        self.assertIn("function ensureVisible", source)
+        self.assertIn("scrollIntoView", source)
+
     def test_guide_never_clicks_briefing_controls(self) -> None:
         # Suggest + highlight only: the executive commits every action.
         source = GUIDE_JS.read_text(encoding="utf-8")

@@ -181,7 +181,7 @@
 
   // ---- UI -----------------------------------------------------------------
 
-  var ui = { panel: null, tab: null, body: null, chipRow: null, qa: null, input: null };
+  var ui = { panel: null, tab: null, body: null, chipRow: null, qa: null, input: null, grow: null };
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -204,6 +204,11 @@
       ".mzg-min{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;" +
       "background:transparent;color:var(--fg-muted,#93A0A6);border:1px solid var(--border,#2C4550);border-radius:2px;padding:4px 10px;cursor:pointer;}" +
       ".mzg-min:hover{color:var(--fg,#F4F6F7);}" +
+      ".mzg-grow{display:none;font-family:'JetBrains Mono',monospace;font-size:10px;" +
+      "background:transparent;color:var(--fg-muted,#93A0A6);border:1px solid var(--border,#2C4550);" +
+      "border-radius:2px;padding:4px 9px;cursor:pointer;margin-left:auto;}" +
+      ".mzg-grow:hover{color:var(--accent,#3FDCF2);}" +
+      ".mzg-grow + .mzg-min{margin-left:6px;}" +
       ".mzg-body{padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}" +
       ".mzg-line{font-family:'DM Sans',sans-serif;font-size:.85rem;line-height:1.55;color:var(--fg,#DCE9ED);}" +
       ".mzg-line.muted{color:var(--fg-muted,#93A0A6);}" +
@@ -234,8 +239,24 @@
       // rail's space, so the guide can never intercept a briefing control.
       "@media (min-width:1100px){html.mzg-docked body{padding-right:376px;}" +
       ".mzg-panel{top:84px;bottom:18px;max-height:none;}}" +
-      "@media (max-width:1099px){html.mzg-docked body{padding-bottom:min(48vh,420px);}" +
-      ".mzg-panel{left:12px;right:12px;width:auto;max-height:min(46vh,400px);}}" +
+      // MOBILE: an open rail that eats half a phone screen sits ON TOP of the
+      // briefing's own controls — the executive cannot commit anything. On
+      // small screens the guide opens as a compact peek sheet (one coach line
+      // + ask box) whose exact height is reserved in the page, and expands
+      // only when the visitor asks for it.
+      "@media (max-width:1099px){html.mzg-docked body{padding-bottom:170px;}" +
+      ".mzg-panel{left:8px;right:8px;width:auto;max-height:152px;}" +
+      ".mzg-panel .mzg-body{max-height:54px;}" +
+      ".mzg-disc{display:none;}" +
+      // The briefing app is min-height:100dvh, so page padding alone still
+      // leaves the sheet sitting on the first screenful. Shrinking the app's
+      // own height box lays its controls out ABOVE the sheet.
+      "html.mzg-docked #mizoki-briefing{min-height:calc(100dvh - 160px);}" +
+      "html.mzg-expanded body{padding-bottom:min(70vh,520px);}" +
+      "html.mzg-expanded .mzg-panel{max-height:min(68vh,500px);}" +
+      "html.mzg-expanded .mzg-panel .mzg-body{max-height:none;}" +
+      "html.mzg-expanded #mizoki-briefing{min-height:calc(100dvh - min(70vh,520px));}" +
+      ".mzg-grow{display:inline-block;}}" +
       ".mzg-pulse{outline:2px solid var(--accent,#3FDCF2);outline-offset:3px;transition:outline-color .3s ease;}" +
       "@media (prefers-reduced-motion: no-preference){.mzg-pulse{animation:mzgPulse 1.1s ease 2;}}" +
       "@keyframes mzgPulse{0%,100%{outline-color:rgba(63,220,242,.9);}50%{outline-color:rgba(63,220,242,.15);}}";
@@ -248,6 +269,15 @@
     var head = el("div", "mzg-head");
     head.appendChild(el("span", "mzg-dot"));
     head.appendChild(el("span", "mzg-tag", "DECISION CONCIERGE"));
+    var grow = el("button", "mzg-grow", "expand");
+    grow.type = "button";
+    grow.addEventListener("click", function () {
+      var on = document.documentElement.classList.toggle("mzg-expanded");
+      grow.textContent = on ? "shrink" : "expand";
+      if (on) ui.body.scrollTop = 0;
+    });
+    head.appendChild(grow);
+    ui.grow = grow;
     var min = el("button", "mzg-min", "self-drive");
     min.type = "button";
     min.addEventListener("click", collapse);
@@ -305,6 +335,31 @@
       chips.appendChild(chip);
     });
     ui.body.appendChild(chips);
+    if (script.suggest) {
+      setTimeout(function () { ensureVisible(script.suggest.target); }, 250);
+    }
+  }
+
+  function isMobile() {
+    try { return window.matchMedia("(max-width:1099px)").matches; } catch (e) { return false; }
+  }
+
+  // On a phone the docked sheet can sit over the stage's primary control, so
+  // the first thing a visitor sees is a button they cannot press. The guide
+  // scrolls it into view — a scroll only; it still never presses anything.
+  function ensureVisible(selector) {
+    if (!selector || !isMobile()) return;
+    var target = null;
+    selector.split(",").some(function (sel) {
+      target = document.querySelector(sel.trim());
+      return !!target;
+    });
+    if (!target || !ui.panel) return;
+    var t = target.getBoundingClientRect();
+    var p = ui.panel.getBoundingClientRect();
+    var occluded = t.bottom > p.top || t.bottom > (window.innerHeight || 0) || t.top < 0;
+    if (!occluded) return;
+    try { target.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) { /* ok */ }
   }
 
   function highlight(selector) {
@@ -369,6 +424,8 @@
   function collapse() {
     ui.panel.classList.remove("on");
     document.documentElement.classList.remove("mzg-docked");
+    document.documentElement.classList.remove("mzg-expanded");
+    if (ui.grow) ui.grow.textContent = "expand";
     ui.tab.classList.add("on");
     rememberMode("self");
     logEvent("guide_collapsed", {});
