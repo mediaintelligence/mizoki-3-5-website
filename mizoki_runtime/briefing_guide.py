@@ -90,6 +90,69 @@ PRODUCT_FACTS: list[dict[str, Any]] = [
             "it passed — you can open the trace behind anything the platform proposes."
         ),
     },
+    {
+        "id": "desks",
+        "keywords": ["desk", "hub", "which demo", "divisions", "capital", "nexus", "boardroom", "what can i see", "other demos", "signal factory"],
+        "answer": (
+            "Six live desks share one runtime: Signal (the marketing signal factory), "
+            "Capital (treasury moves under a covenant guardrail), Counsel (four legal "
+            "experts returning IRAC analyses), Estate (statutory timelines and dynasty "
+            "graphs), Risk (the five-by-five matrix with one deliberate veto), and the "
+            "Nexus boardroom, where one trigger ripples through every division under a "
+            "single trace id. Signal and Capital are the deepest walkthroughs — start there."
+        ),
+    },
+    {
+        "id": "oracle_intent",
+        "keywords": ["oracle", "intent", "anticipat", "latent", "in-market", "purchase", "predict", "before they"],
+        "answer": (
+            "ORACLE is the Signal division's anticipatory layer: consent-gated "
+            "micro-signals score latent intent across four stages — awareness, "
+            "consideration, in-market, purchase-imminent — as calibrated "
+            "probabilities, never certainty. It runs observe-only by default, and "
+            "promotion is gated on measured calibration and stable causal lift."
+        ),
+    },
+    {
+        "id": "replay_seed",
+        "keywords": ["seed", "replay", "deterministic", "same numbers", "rerun", "remix", "reproduc", "random"],
+        "answer": (
+            "Every demo run is deterministic and seeded — replay the same seed and "
+            "every number, gate decision, and veto lands identically. Change the seed "
+            "and the desk remixes the scenario. That is the point: decisions you can "
+            "re-run are decisions you can audit."
+        ),
+    },
+    {
+        "id": "pilot_path",
+        "keywords": ["pilot", "get started", "next step", "trial", "proof of concept", "poc", "engage", "onboard", "sign up"],
+        "answer": (
+            "The path in is a scoped pilot: one domain, one decision loop, read-first "
+            "connectors on a defined slice of data, and a defined exit. It runs "
+            "alongside your current stack and reports its own lift. The contact page "
+            "or the executive briefing's close step starts that conversation."
+        ),
+    },
+    {
+        "id": "boss_agent",
+        "keywords": ["boss", "who are you", "what are you", "agent", "orchestrat", "docent", "narrat"],
+        "answer": (
+            "I'm the Boss agent — the orchestration layer this platform runs on. On "
+            "these pages I work as a docent: I narrate live runs, answer from a "
+            "vetted briefing pack, and log what I can't answer for human follow-up. "
+            "In production the same layer coordinates the cells, tools, and "
+            "governance gates you see in the demos."
+        ),
+    },
+    {
+        "id": "voice_output_only",
+        "keywords": ["voice", "microphone", "listening", "audio", "speak", "hear me", "mute", "talk"],
+        "answer": (
+            "Voice here is output-only: I speak through your browser's speech "
+            "synthesis and I never listen — no microphone, no audio capture, ever. "
+            "You can mute me with the voice toggle, and the captions carry every word."
+        ),
+    },
 ]
 
 OBJECTIONS: list[dict[str, Any]] = [

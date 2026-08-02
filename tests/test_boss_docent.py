@@ -30,16 +30,45 @@ class _AppTestCase(unittest.TestCase):
         self.temp_dir.cleanup()
 
 
+DEMO_PAGES = {
+    "hub": "/demo",
+    "signal": "/demo/signal",
+    "capital": "/demo/capital",
+    "estate": "/demo/estate",
+    "risk": "/demo/risk",
+    "nexus": "/demo/nexus",
+    "counsel": "/demo/counsel",
+}
+
+
 class DocentWiringTestCase(_AppTestCase):
     def test_docent_asset_exists_and_is_served(self) -> None:
         self.assertTrue(DOCENT_JS.is_file())
         response = self.client.get("/assets/js/boss-docent.js")
         self.assertEqual(200, response.status_code)
 
-    def test_signal_demo_loads_the_docent(self) -> None:
-        body = self.client.get("/demo/signal").get_data(as_text=True)
-        self.assertIn('src="/assets/js/boss-docent.js"', body)
-        self.assertIn("MizokiBossDocent.init()", body)
+    def test_every_demo_page_loads_the_docent_with_its_profile(self) -> None:
+        """The Boss's voice exists on the hub and ALL six desks — not just
+        Signal (2026-08-02: 'the demo does not have any voice at all')."""
+        for page, route in DEMO_PAGES.items():
+            body = self.client.get(route).get_data(as_text=True)
+            self.assertIn('src="/assets/js/boss-docent.js', body, route)
+            self.assertIn(f'MizokiBossDocent.init({{ page: "{page}" }})', body, route)
+
+    def test_docent_profiles_cover_every_page(self) -> None:
+        source = DOCENT_JS.read_text(encoding="utf-8")
+        for key in DEMO_PAGES:
+            self.assertIn(f'key: "{key}"', source, key)
+
+    def test_ask_the_boss_uses_the_allowlisted_qa_endpoint(self) -> None:
+        """The demo chat is the same allowlist-retrieval Q&A the concierge
+        uses — never a generative path — and answers are spoken + captioned."""
+        source = DOCENT_JS.read_text(encoding="utf-8")
+        self.assertIn('"/api/briefing/guide/ask"', source)
+        self.assertIn("Type a question — I answer out loud. I never listen.", source)
+        # The demo surface tags its asks so the memory ledger can segment them.
+        self.assertIn('stage: "demo"', source)
+        self.assertIn("domain: prof.key", source)
 
 
 class DocentClaimsDisciplineTestCase(unittest.TestCase):
@@ -81,11 +110,12 @@ class DocentClaimsDisciplineTestCase(unittest.TestCase):
         ):
             self.assertIn(required, self.source, required)
 
-    def test_soft_sell_exactly_one_cta_destination(self) -> None:
-        # Not pushy: the pilot CTA appears exactly once (the closing chip).
-        self.assertEqual(1, self.source.count("/contact?source=demo-signal-docent"))
-        # And the spoken close carries the no-pressure framing.
-        self.assertIn("No pressure", self.source)
+    def test_soft_sell_exactly_one_cta_construction(self) -> None:
+        # Not pushy: the pilot CTA is BUILT exactly once (pilotChip), tagged
+        # per desk — never sprinkled through the narration.
+        self.assertEqual(1, self.source.count('"/contact?source=demo-"'))
+        # And the shared spoken close carries the no-pressure framing, once.
+        self.assertEqual(1, self.source.count("No pressure"))
 
     def test_no_silent_unlock_utterance(self) -> None:
         """2026-07-31 regression (voice dead on desktop AND mobile): a silent

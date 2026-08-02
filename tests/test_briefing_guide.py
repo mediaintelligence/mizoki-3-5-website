@@ -29,7 +29,7 @@ class _AppTestCase(unittest.TestCase):
 class GuideWiringTestCase(_AppTestCase):
     def test_briefing_page_loads_the_guide(self) -> None:
         body = self.client.get("/executive-briefing/").get_data(as_text=True)
-        self.assertIn('src="js/guide.js"', body)
+        self.assertIn('src="js/guide.js', body)
 
     def test_guide_asset_served(self) -> None:
         self.assertTrue(GUIDE_JS.is_file())
@@ -92,6 +92,21 @@ class GuideEndpointsTestCase(_AppTestCase):
         for banned in ("SOC", "ISO 27001", "certified", "guarantee"):
             self.assertNotIn(banned.lower(), answer["answer"].lower(), banned)
 
+    def test_demo_surface_ask_roundtrip(self) -> None:
+        """The demo docent asks through the same endpoint, tagged stage=demo
+        + domain=<desk>, so ledger analytics can segment demo traffic."""
+        response = self.client.post(
+            "/api/briefing/guide/ask",
+            json={"session": "ds_test", "question": "do you get the same numbers if I replay the seed?",
+                  "stage": "demo", "domain": "hub"},
+        )
+        self.assertEqual(200, response.status_code)
+        answer = response.get_json()
+        self.assertEqual(("fact", "replay_seed"), (answer["kind"], answer["topic"]))
+        summary = self.client.get("/api/briefing/guide/summary").get_json()
+        self.assertEqual({"replay_seed": 1}, summary["question_topics"])
+        self.assertEqual({"demo": 1}, summary["last_stage_by_session"])
+
     def test_unknown_question_gets_honest_fallback(self) -> None:
         answer = self.client.post(
             "/api/briefing/guide/ask",
@@ -114,6 +129,21 @@ class GuideBankTestCase(unittest.TestCase):
         for expected, question in probes.items():
             kind, topic, _entry = briefing_guide.classify_question(question)
             self.assertEqual(("objection", expected), (kind, topic), question)
+
+    def test_demo_facing_facts_resolve(self) -> None:
+        """2026-08-02: 'the chat is very limited' — the fact pack now covers
+        the demo surface (desks, ORACLE, seeds, pilot, the Boss, the voice)."""
+        probes = {
+            "desks": "which desk should I open next, capital or the nexus boardroom?",
+            "oracle_intent": "can oracle predict purchase intent before they act?",
+            "replay_seed": "if I rerun with the same seed do I get the same numbers?",
+            "pilot_path": "what is the next step to get started with a pilot?",
+            "boss_agent": "who are you exactly, some kind of agent narrating this?",
+            "voice_output_only": "is the microphone listening to me while you talk?",
+        }
+        for expected, question in probes.items():
+            kind, topic, _entry = briefing_guide.classify_question(question)
+            self.assertEqual(("fact", expected), (kind, topic), question)
 
     def test_record_event_rejects_unknown(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -171,6 +201,21 @@ class GuideClaimsDisciplineTestCase(unittest.TestCase):
         # Suggest + highlight only: the executive commits every action.
         source = GUIDE_JS.read_text(encoding="utf-8")
         self.assertNotIn(".click(", source)
+
+    def test_voice_replies_are_output_only(self) -> None:
+        """2026-08-02: the concierge gained spoken replies — synthesis only.
+        The bright line holds: it speaks; it never listens."""
+        source = GUIDE_JS.read_text(encoding="utf-8")
+        self.assertIn("speechSynthesis", source)
+        self.assertIn("🔊 voice replies", source)
+        self.assertIn('sessionStorage.getItem("mzg-voice")', source)
+        self.assertIn("I speak — I never listen", source)
+        for forbidden in ("SpeechRecognition", "webkitSpeechRecognition", "getUserMedia", "MediaRecorder"):
+            self.assertNotIn(forbidden, source, forbidden)
+        # cancel() clears the queue BEFORE the next utterance is queued — a
+        # cancel landing on a just-queued utterance wedges Chrome's engine.
+        self.assertLess(source.index("window.speechSynthesis.cancel(); // clear the queue BEFORE speaking"),
+                        source.index("window.speechSynthesis.speak(u)"))
 
 
 if __name__ == "__main__":

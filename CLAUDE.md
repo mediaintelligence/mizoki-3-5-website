@@ -181,6 +181,62 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ---
 
+## Recent Work (August 2026)
+
+### Boss voice + Ask-the-Boss across the ENTIRE demo platform (2026-08-02)
+
+Owner defect report, verbatim: "the demo does not have any voice at all and the
+chat is very limited and also does not have voice conversation options." Root
+cause: the docent only activated on `/demo/signal` (`startBtn`+`stageStrip`
+gate), and the only chat anywhere was the concierge's narrow briefing box.
+Closed platform-wide:
+
+- **`assets/js/boss-docent.js` rewritten as a multi-desk engine** with
+  per-page profiles (`MizokiBossDocent.init({page})`, wired on all 7 pages
+  with `?v=20260802` cache-busting):
+  - `hub` — welcome/orientation tour on `/demo` (no run to drive);
+  - `signal` + `capital` — the full **pipeline tour** (they share the SRPVDAL
+    pipeline DOM: eventRail → ReLU gate → red validate → decision card);
+    capital's beats narrate the covenant-headroom veto;
+  - `estate` + `risk` — **watch tours**: docent presses Start, narrates the
+    desk's mid-run beats, then reads `#finaleHead`/`#finaleSummary` off the
+    run's own DOM; `nexus` reads `#triggerCard` when `#provenancePanel` lands;
+  - `counsel` — **consult tour**: docent clicks a scripted scenario card,
+    waits for `#synthPanel.on`, reads `#conflictBanner` verbatim if raised.
+- **Launcher is a fixed bottom-right pill on EVERY viewport** — the voice must
+  be discoverable without scrolling (that was the real "no voice" experience).
+- **ASK THE BOSS on every demo page** — typed in, answered ALOUD (TTS) and
+  always captioned. Answers come from the same allowlisted fact pack as the
+  concierge (`POST /api/briefing/guide/ask`, tagged `stage="demo"`,
+  `domain=<desk>` so ledger analytics segment demo traffic). No generative
+  path, unknowns logged for human follow-up.
+- **Fact pack +6 demo-facing topics** (`mizoki_runtime/briefing_guide.py`):
+  `desks`, `oracle_intent`, `replay_seed`, `pilot_path`, `boss_agent`,
+  `voice_output_only` — the "chat is very limited" half of the report.
+- **Decision Concierge voice replies** (`executive-briefing/js/guide.js`):
+  🔊/🔇 toggle in the rail header (off by default — the toggle tap is the TTS
+  user gesture), speaks coach lines, resolved/handoff lines, and answers;
+  `cancel()` only ever BEFORE queueing (the 2026-07-31 wedge rule).
+- **Voice stays OUTPUT-ONLY everywhere** — no microphone, no speech
+  recognition, no audio capture, test-enforced in BOTH JS layers. "Voice
+  conversation" is deliberately typed-in → spoken-out; enabling audio capture
+  would reverse the ORACLE bright line and needs an explicit owner decision.
+- **Engine hardening**: a throwing `u.voice` assignment (stale voice object)
+  could escape `sentence()` before the safety timer armed and wedge the tour
+  forever — now contained; the tour survives with the engine-default voice
+  (proven in Playwright with the native utterance class rejecting a foreign
+  voice object).
+- **Soft-sell discipline generalized**: the pilot CTA is BUILT exactly once
+  (`"/contact?source=demo-" + desk + "-docent"`, count test == 1) and the
+  shared "No pressure" close appears exactly once in source.
+- **Tests**: suite **288** with only the 2 pre-existing homepage failures;
+  9-surface Playwright pass (hub desktop+mobile, capital/estate/counsel
+  end-to-end, risk/nexus/signal spoken intros, briefing voice toggle) with
+  zero speak→cancel adjacency in the instrumented speech log.
+- Canon re-pinned in the same commit: 7 demo pages + `executive-briefing/
+  index.html` + `guide.js` (boss-docent.js and briefing_guide.py are not
+  canon-pinned but ship in the same commit).
+
 ## Recent Work (July 2026)
 
 ### Decision Concierge — guided-by-default Guide Agent on /executive-briefing/ (2026-07-31)

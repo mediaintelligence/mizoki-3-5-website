@@ -263,9 +263,11 @@
 
   <script src="/assets/js/demo-nexus.js" defer></script>
   <script src="/assets/js/demo-extras.js" defer></script>
+  <script src="/assets/js/boss-docent.js?v=20260802" defer></script>
   <script src="/assets/js/nav-mobile.js" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      if (window.MizokiBossDocent) { window.MizokiBossDocent.init({ page: "nexus" }); }
       window.MizokiDemoExtras.init({
         demo: "nexus",
         scenarioSelect: "scenario",

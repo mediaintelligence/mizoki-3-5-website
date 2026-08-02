@@ -76,6 +76,38 @@
 
   var track = { stageId: "", domain: "", role: "", resolved: 0, decisionIntent: null, started: false };
 
+  // ---- voice replies (OUTPUT ONLY — the concierge speaks; it never listens)
+  // Web Speech synthesis on the concierge's own lines and answers. No
+  // microphone, no speech recognition, no audio capture, ever. Off by
+  // default; the toggle tap is the user gesture browsers require for TTS.
+  // cancel() is only ever issued BEFORE queueing the next utterance — a
+  // cancel landing on a just-queued utterance wedges Chrome's engine
+  // (2026-07-31 regression).
+
+  var voice = {
+    ok: false,
+    on: false,
+    init: function () {
+      this.ok = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+      if (!this.ok) return;
+      try { this.on = sessionStorage.getItem("mzg-voice") === "on"; } catch (e) { this.on = false; }
+      try { window.speechSynthesis.getVoices(); } catch (e) { /* warm the list */ }
+    },
+    say: function (text) {
+      if (!this.ok || !this.on || !text) return;
+      try {
+        window.speechSynthesis.cancel(); // clear the queue BEFORE speaking
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US"; u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
+        window.speechSynthesis.speak(u);
+      } catch (e) { /* the bubbles carry every word regardless */ }
+    },
+    stop: function () {
+      if (!this.ok) return;
+      try { window.speechSynthesis.cancel(); } catch (e) { /* ok */ }
+    }
+  };
+
   // ---- copy ---------------------------------------------------------------
   // Persona: calm senior operator — chief of staff for decisions. Plain
   // language first; at most one architecture name per stage. The concierge
@@ -209,6 +241,7 @@
       "border-radius:2px;padding:4px 9px;cursor:pointer;margin-left:auto;}" +
       ".mzg-grow:hover{color:var(--accent,#3FDCF2);}" +
       ".mzg-grow + .mzg-min{margin-left:6px;}" +
+      ".mzg-min + .mzg-min{margin-left:6px;}" +
       ".mzg-body{padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}" +
       ".mzg-line{font-family:'DM Sans',sans-serif;font-size:.85rem;line-height:1.55;color:var(--fg,#DCE9ED);}" +
       ".mzg-line.muted{color:var(--fg-muted,#93A0A6);}" +
@@ -278,6 +311,19 @@
     });
     head.appendChild(grow);
     ui.grow = grow;
+    var vbtn = el("button", "mzg-min", voice.on ? "🔊 voice replies" : "🔇 voice replies");
+    vbtn.type = "button";
+    vbtn.setAttribute("aria-label", "Toggle spoken replies — output-only, never a microphone");
+    vbtn.addEventListener("click", function () {
+      if (!voice.ok) { vbtn.textContent = "voice unavailable"; return; }
+      voice.on = !voice.on;
+      try { sessionStorage.setItem("mzg-voice", voice.on ? "on" : "off"); } catch (e) { /* ok */ }
+      vbtn.textContent = voice.on ? "🔊 voice replies" : "🔇 voice replies";
+      if (voice.on) voice.say("Voice replies on. I speak — I never listen; the bubbles carry every word.");
+      else voice.stop();
+    });
+    head.appendChild(vbtn);
+    ui.voiceBtn = vbtn;
     var min = el("button", "mzg-min", "self-drive");
     min.type = "button";
     min.addEventListener("click", collapse);
@@ -318,6 +364,7 @@
     script.lines.forEach(function (line, i) {
       ui.body.appendChild(el("div", "mzg-line" + (i === 0 ? "" : " muted"), line));
     });
+    voice.say(script.lines[0]);
     if (script.suggest) {
       var btn = el("button", "mzg-suggest", "→ " + script.suggest.label);
       btn.type = "button";
@@ -383,6 +430,7 @@
     wrap.appendChild(document.createTextNode(answer.answer));
     ui.body.appendChild(wrap);
     ui.body.scrollTop = ui.body.scrollHeight;
+    voice.say(answer.answer);
   }
 
   function askServer(question) {
@@ -422,6 +470,7 @@
   }
 
   function collapse() {
+    voice.stop();
     ui.panel.classList.remove("on");
     document.documentElement.classList.remove("mzg-docked");
     document.documentElement.classList.remove("mzg-expanded");
@@ -459,6 +508,7 @@
         if (ui.panel && ui.panel.classList.contains("on")) {
           ui.body.appendChild(el("div", "mzg-line", RESOLVED_LINE));
           ui.body.scrollTop = ui.body.scrollHeight;
+          voice.say(RESOLVED_LINE);
         }
         break;
       case "decision_intent":
@@ -470,6 +520,7 @@
         if (ui.panel && ui.panel.classList.contains("on")) {
           ui.body.appendChild(el("div", "mzg-line", HANDOFF_LINE));
           ui.body.scrollTop = ui.body.scrollHeight;
+          voice.say(HANDOFF_LINE);
         }
         break;
     }
@@ -478,6 +529,7 @@
   // ---- boot ---------------------------------------------------------------
 
   function boot() {
+    voice.init();
     build();
     document.addEventListener("mizoki:briefing", onBriefingEvent);
     if (configuredMode() === "guided") expand();
