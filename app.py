@@ -495,6 +495,12 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def pricing():
         return serve_page("pricing.html")
 
+    # Media-buyer landing: hero + scenario simulator + 90-sec storyboard.
+    @app.route("/media-buying")
+    @app.route("/media-buying.html")
+    def media_buying():
+        return serve_page("media-buying.html")
+
     # ===== Live product demos (public) ==============================
 
     def serve_demo_page(demo_key: str):
@@ -601,7 +607,7 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         # The demos are the marketing asset — index them (closed decision #2).
         pages = [
             "/", "/counsel", "/estate", "/capital", "/signal", "/risk",
-            "/pricing", "/executive-briefing/",
+            "/pricing", "/media-buying", "/executive-briefing/",
             "/demo", "/demo/signal", "/demo/counsel", "/demo/estate",
             "/demo/capital", "/demo/risk", "/demo/nexus",
             "/walkthrough.html", "/blog",
