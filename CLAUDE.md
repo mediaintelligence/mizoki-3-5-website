@@ -183,7 +183,45 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
-### Boss voice + Ask-the-Boss across the ENTIRE demo platform (2026-08-02)
+### Marketing parallel site under /marketing (2026-08-02)
+
+Owner instruction: "launch this entire site under a /marketing so i can compare
+them online before taking anything offline." The proposed media-buyer
+experience (the mizoki3.com master implementation prompt, translated from its
+React/TSX plan into this repo's static-HTML + Flask architecture) runs as a
+complete parallel site — the classic canon site at root is UNTOUCHED and the
+canon check still passes on all 20 surfaces. Purely additive; nothing redirects
+away from the classic site, and the homepage does not link into /marketing
+(comparison is one-way by design, test-enforced).
+
+- **Pages** (`marketing/`): `/marketing` — full landing (mandated hero verbatim,
+  problem-vs-solution matrix, vocabulary translation ledger, 7-stage Decision
+  Control System accordion, Interactive Scenario Simulator, 90-sec storyboard);
+  `/marketing/simulator` and `/marketing/walkthrough` — dedicated deep-link
+  pages sliced from the same markup (shared element IDs). All three carry a
+  fixed-height amber "Parallel preview — nothing on the classic site is
+  replaced" strip linking back to `/`.
+- **Vocabulary key is binding on this surface** (test-enforced): Canonical
+  Event Envelope → Structured Signal Evidence · Temporal-Causal Knowledge Base
+  → Cross-Stack Root Cause Engine · Domain Intelligence Cell → Channel
+  Intelligence Modules · SRPVDAL Loop → 7-Stage Decision Control System ·
+  Immutable Learning Ledger → Compounding ROI Memory. Engineering terms appear
+  exactly once each, in the on-page translation ledger; sub-pages carry zero
+  raw jargon.
+- **Shared assets**: `assets/css/marketing.css` (one stylesheet, three pages —
+  no drift) + `assets/js/media-sim.js` (accordion + simulator + storyboard
+  player; init is element-presence-gated so subset pages just work). The
+  simulator is DETERMINISTIC — no `Math.random`, no `Date.now`; the replay id
+  is a hash of the inputs; the red veto is slider-reachable (latency > ~5.2s
+  under the 2.2× ROAS floor) and vetoes still record to memory. Claims-linted
+  against the house banned list on every surface.
+- **Routing**: `/marketing[/…]` with `strict_slashes=False`;
+  `/media-buying(.html)` 301s to `/marketing` (interim path from the first
+  build, never deployed); sitemap lists the three pages, not the redirect.
+- **Tests**: `tests/test_marketing_site.py` (38) — suite **326**, only the 2
+  pre-existing homepage failures. Playwright pass across all three pages.
+- **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
+  root and `/marketing` run side by side for the online comparison.
 
 Owner defect report, verbatim: "the demo does not have any voice at all and the
 chat is very limited and also does not have voice conversation options." Root

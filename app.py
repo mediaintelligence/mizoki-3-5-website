@@ -495,11 +495,29 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def pricing():
         return serve_page("pricing.html")
 
-    # Media-buyer landing: hero + scenario simulator + 90-sec storyboard.
+    # ===== Marketing parallel site (/marketing/*) ====================
+    # The proposed media-buyer experience runs as a complete parallel site so
+    # the classic canon site (root) and the new direction can be compared
+    # live, side by side, before anything is retired. Purely additive — no
+    # root surface is replaced.
+
+    @app.route("/marketing", strict_slashes=False)
+    def marketing_home():
+        return send_from_directory(BASE_DIR / "marketing", "index.html")
+
+    @app.route("/marketing/simulator", strict_slashes=False)
+    def marketing_simulator():
+        return send_from_directory(BASE_DIR / "marketing", "simulator.html")
+
+    @app.route("/marketing/walkthrough", strict_slashes=False)
+    def marketing_walkthrough():
+        return send_from_directory(BASE_DIR / "marketing", "walkthrough.html")
+
+    # The experience shipped briefly at /media-buying; /marketing is its home.
     @app.route("/media-buying")
     @app.route("/media-buying.html")
     def media_buying():
-        return serve_page("media-buying.html")
+        return redirect(url_for("marketing_home"), code=301)
 
     # ===== Live product demos (public) ==============================
 
@@ -607,7 +625,8 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         # The demos are the marketing asset — index them (closed decision #2).
         pages = [
             "/", "/counsel", "/estate", "/capital", "/signal", "/risk",
-            "/pricing", "/media-buying", "/executive-briefing/",
+            "/pricing", "/executive-briefing/",
+            "/marketing", "/marketing/simulator", "/marketing/walkthrough",
             "/demo", "/demo/signal", "/demo/counsel", "/demo/estate",
             "/demo/capital", "/demo/risk", "/demo/nexus",
             "/walkthrough.html", "/blog",

@@ -1,12 +1,17 @@
-"""Media-buyer landing page (/media-buying) — the master-prompt contracts.
+"""Marketing parallel site (/marketing/*) — the master-prompt contracts.
+
+The proposed media-buyer experience runs as a complete parallel site (landing
++ /marketing/simulator + /marketing/walkthrough) so the classic canon site and
+the new direction can be compared live before anything is retired.
 
 Locks in: the mandated hero copy, the vocabulary translation key (plain-English
 terms everywhere; engineering terms appear exactly once, in the on-page
 translation ledger), the 7-stage Decision Control System accordion, the
 Interactive Scenario Simulator control surface (exact slider ranges and policy
 values), the 90-second storyboard's five scenes, deterministic-engine rules
-(no randomness), and the site-wide hygiene contracts (root-absolute assets,
-favicon trio, canonical/OG, claim discipline).
+(no randomness), the /media-buying → /marketing redirect, and the site-wide
+hygiene contracts (root-absolute assets, favicon trio, canonical/OG, claim
+discipline, the parallel-preview compare strip).
 """
 
 import re
@@ -19,8 +24,11 @@ from mizoki_runtime import create_runtime
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PAGE_FILE = REPO_ROOT / "media-buying.html"
+PAGE_FILE = REPO_ROOT / "marketing" / "index.html"
 ENGINE_FILE = REPO_ROOT / "assets" / "js" / "media-sim.js"
+CSS_FILE = REPO_ROOT / "assets" / "css" / "marketing.css"
+
+MARKETING_PAGES = ("/marketing", "/marketing/simulator", "/marketing/walkthrough")
 
 
 class _AppTestCase(unittest.TestCase):
@@ -34,23 +42,57 @@ class _AppTestCase(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
 
-    def page(self) -> str:
-        return self.client.get("/media-buying").get_data(as_text=True)
+    def page(self, path: str = "/marketing") -> str:
+        return self.client.get(path).get_data(as_text=True)
 
 
 class RoutingTestCase(_AppTestCase):
-    def test_page_serves_on_pretty_and_html_paths(self) -> None:
-        for path in ("/media-buying", "/media-buying.html"):
-            response = self.client.get(path)
+    def test_all_marketing_pages_serve(self) -> None:
+        for path in MARKETING_PAGES + ("/marketing/", "/marketing/simulator/",
+                                       "/marketing/walkthrough/"):
+            response = self.client.get(path, follow_redirects=True)
             self.assertEqual(200, response.status_code, path)
 
-    def test_sitemap_lists_the_page(self) -> None:
-        body = self.client.get("/sitemap.xml").get_data(as_text=True)
-        self.assertIn("https://mizoki3.com/media-buying</loc>", body)
+    def test_media_buying_redirects_permanently_into_the_site(self) -> None:
+        for path in ("/media-buying", "/media-buying.html"):
+            response = self.client.get(path)
+            self.assertEqual(301, response.status_code, path)
+            self.assertEqual("/marketing", response.headers["Location"], path)
 
-    def test_engine_js_is_served(self) -> None:
-        response = self.client.get("/assets/js/media-sim.js")
-        self.assertEqual(200, response.status_code)
+    def test_sitemap_lists_the_site_not_the_redirect(self) -> None:
+        body = self.client.get("/sitemap.xml").get_data(as_text=True)
+        for path in MARKETING_PAGES:
+            self.assertIn(f"https://mizoki3.com{path}</loc>", body, path)
+        self.assertNotIn("/media-buying", body)
+
+    def test_shared_assets_are_served(self) -> None:
+        for asset in ("/assets/js/media-sim.js", "/assets/css/marketing.css"):
+            self.assertEqual(200, self.client.get(asset).status_code, asset)
+
+
+class ParallelPreviewTestCase(_AppTestCase):
+    """The whole point: side-by-side comparison, nothing replaced."""
+
+    def test_compare_strip_on_every_marketing_page(self) -> None:
+        for path in MARKETING_PAGES:
+            body = self.page(path)
+            self.assertIn('class="compare-strip"', body, path)
+            self.assertIn("nothing on the classic site is replaced", body, path)
+            self.assertIn('<a href="/">View classic site →</a>', body, path)
+
+    def test_marketing_nav_cross_links_all_pages(self) -> None:
+        for path in MARKETING_PAGES:
+            body = self.page(path)
+            self.assertIn('href="/marketing/simulator"', body, path)
+            self.assertIn('href="/marketing/walkthrough"', body, path)
+            self.assertIn('href="/demo"', body, path)
+            self.assertIn('class="brand">MIZOKI3</a>', body, path)
+
+    def test_no_root_surface_is_modified(self) -> None:
+        # The parallel site is additive: the canon-pinned homepage still
+        # serves and never links into /marketing (comparison stays one-way).
+        home = self.client.get("/").get_data(as_text=True)
+        self.assertNotIn("/marketing", home)
 
 
 class HeroMandateTestCase(_AppTestCase):
@@ -120,6 +162,12 @@ class VocabularyKeyTestCase(_AppTestCase):
                 "in the on-page translation ledger",
             )
 
+    def test_sub_pages_carry_no_raw_jargon_at_all(self) -> None:
+        for path in ("/marketing/simulator", "/marketing/walkthrough"):
+            body = self.page(path)
+            for raw in self.TRANSLATIONS:
+                self.assertNotIn(raw, body, f"{raw} on {path}")
+
     def test_meta_tags_use_translated_vocabulary(self) -> None:
         body = self.page()
         head = body.split("</head>")[0]
@@ -130,7 +178,7 @@ class VocabularyKeyTestCase(_AppTestCase):
 
 
 class ControlLoopTestCase(_AppTestCase):
-    """Section 1's SRPVDAL interactive section — translated, all 7 stages."""
+    """The SRPVDAL interactive section — translated, all 7 stages."""
 
     STAGE_GISTS = (
         "24/7 Full-Stack Radar",
@@ -160,45 +208,55 @@ class ControlLoopTestCase(_AppTestCase):
 
 
 class SimulatorContractTestCase(_AppTestCase):
-    """Section 2 — the DemoWidget spec, translated to this stack."""
+    """The DemoWidget spec — on the landing AND the dedicated page."""
+
+    SIM_PAGES = ("/marketing", "/marketing/simulator")
 
     def test_layout_columns_and_height_spec(self) -> None:
-        body = self.page()
-        self.assertIn("height: 650px", body)
-        self.assertIn("Interactive Controls", body)
-        self.assertIn("Execution Monitor", body)
+        css = CSS_FILE.read_text(encoding="utf-8")
+        self.assertIn("height: 650px", css)
+        for path in self.SIM_PAGES:
+            body = self.page(path)
+            self.assertIn("Interactive Controls", body, path)
+            self.assertIn("Execution Monitor", body, path)
+            self.assertIn('href="/assets/css/marketing.css', body, path)
 
     def test_three_scenarios(self) -> None:
-        body = self.page()
-        for scenario in ("Landing Page Latency Spike", "SKU Out-of-Stock",
-                         "Pixel Attribution Drift"):
-            self.assertIn(scenario, body, scenario)
-        for value in ('value="latency"', 'value="stock"', 'value="pixel"'):
-            self.assertIn(value, body, value)
+        for path in self.SIM_PAGES:
+            body = self.page(path)
+            for scenario in ("Landing Page Latency Spike", "SKU Out-of-Stock",
+                             "Pixel Attribution Drift"):
+                self.assertIn(scenario, body, f"{scenario} on {path}")
+            for value in ('value="latency"', 'value="stock"', 'value="pixel"'):
+                self.assertIn(value, body, f"{value} on {path}")
 
     def test_slider_ranges_match_the_spec(self) -> None:
-        body = self.page()
-        self.assertIn('id="simLatency" min="0.5" max="6.0" step="0.1"', body)
-        self.assertIn('id="simInventory" min="0" max="1000"', body)
-        self.assertIn('id="simBudget" min="1000" max="20000"', body)
+        for path in self.SIM_PAGES:
+            body = self.page(path)
+            self.assertIn('id="simLatency" min="0.5" max="6.0" step="0.1"', body, path)
+            self.assertIn('id="simInventory" min="0" max="1000"', body, path)
+            self.assertIn('id="simBudget" min="1000" max="20000"', body, path)
 
     def test_safety_policy_values(self) -> None:
-        body = self.page()
-        self.assertIn("2.2×", body)
-        self.assertIn("$5,000", body)
-        self.assertIn('id="simFloor"', body)
-        self.assertIn('id="simCap"', body)
+        for path in self.SIM_PAGES:
+            body = self.page(path)
+            self.assertIn("2.2×", body, path)
+            self.assertIn("$5,000", body, path)
+            self.assertIn('id="simFloor"', body, path)
+            self.assertIn('id="simCap"', body, path)
 
     def test_all_seven_phase_blocks_render(self) -> None:
-        body = self.page()
-        for phase in ("Sense", "Reason", "Plan", "Validate", "Decide", "Act", "Learn"):
-            self.assertIn(f'id="ph{phase}"', body, phase)
+        for path in self.SIM_PAGES:
+            body = self.page(path)
+            for phase in ("Sense", "Reason", "Plan", "Validate", "Decide", "Act", "Learn"):
+                self.assertIn(f'id="ph{phase}"', body, f"{phase} on {path}")
 
     def test_simulator_is_honestly_labeled_with_noscript_fallback(self) -> None:
-        body = self.page()
-        self.assertIn("Illustrative scenario", body)
-        self.assertIn("<noscript>", body)
-        self.assertIn('href="/demo"', body)
+        for path in self.SIM_PAGES:
+            body = self.page(path)
+            self.assertIn("Illustrative scenario", body, path)
+            self.assertIn("<noscript>", body, path)
+            self.assertIn('href="/demo"', body, path)
 
 
 class EngineDisciplineTestCase(unittest.TestCase):
@@ -210,10 +268,11 @@ class EngineDisciplineTestCase(unittest.TestCase):
         literals += re.findall(r"'((?:[^'\\\n]|\\.)*)'", self.source)
         self.strings = "\n".join(literals)
 
-    def test_engine_exists_and_page_loads_it(self) -> None:
+    def test_engine_exists_and_pages_load_it(self) -> None:
         self.assertTrue(ENGINE_FILE.is_file())
-        page = PAGE_FILE.read_text(encoding="utf-8")
-        self.assertIn('src="/assets/js/media-sim.js', page)
+        for name in ("index.html", "simulator.html", "walkthrough.html"):
+            page = (REPO_ROOT / "marketing" / name).read_text(encoding="utf-8")
+            self.assertIn('src="/assets/js/media-sim.js', page, name)
 
     def test_deterministic_no_randomness_no_clock_ids(self) -> None:
         self.assertNotIn("Math.random", self.source)
@@ -250,20 +309,21 @@ class EngineDisciplineTestCase(unittest.TestCase):
             r"limited[\s-]time",
             r"don'?t miss",
         ]
-        page = PAGE_FILE.read_text(encoding="utf-8")
-        for pattern in banned:
-            self.assertIsNone(
-                re.search(pattern, self.strings, re.IGNORECASE),
-                f"banned claims phrase in engine strings: {pattern}",
-            )
-            self.assertIsNone(
-                re.search(pattern, page, re.IGNORECASE),
-                f"banned claims phrase on the page: {pattern}",
-            )
+        surfaces = {"engine strings": self.strings}
+        for name in ("index.html", "simulator.html", "walkthrough.html"):
+            surfaces[name] = (REPO_ROOT / "marketing" / name).read_text(encoding="utf-8")
+        for label, text in surfaces.items():
+            for pattern in banned:
+                self.assertIsNone(
+                    re.search(pattern, text, re.IGNORECASE),
+                    f"banned claims phrase in {label}: {pattern}",
+                )
 
 
 class StoryboardTestCase(_AppTestCase):
-    """Section 3 — the 90-second walkthrough with transcript + scene nav."""
+    """The 90-second walkthrough — on the landing AND the dedicated page."""
+
+    VID_PAGES = ("/marketing", "/marketing/walkthrough")
 
     SCENES = (
         ("0:00", "The Media Buyer", "0"),
@@ -274,53 +334,65 @@ class StoryboardTestCase(_AppTestCase):
     )
 
     def test_five_scenes_with_timestamps_and_seek_targets(self) -> None:
-        body = self.page()
-        for stamp, title, seek in self.SCENES:
-            self.assertIn(stamp, body, stamp)
-            self.assertIn(title, body, title)
-            self.assertIn(f'data-t="{seek}"', body, seek)
+        for path in self.VID_PAGES:
+            body = self.page(path)
+            for stamp, title, seek in self.SCENES:
+                self.assertIn(stamp, body, f"{stamp} on {path}")
+                self.assertIn(title, body, f"{title} on {path}")
+                self.assertIn(f'data-t="{seek}"', body, f"{seek} on {path}")
 
     def test_transcript_drawer_present(self) -> None:
-        body = self.page()
-        self.assertIn('id="vidTranscript"', body)
-        self.assertIn('id="vidTransToggle"', body)
-        self.assertEqual(5, body.count('class="vt-row"'))
+        for path in self.VID_PAGES:
+            body = self.page(path)
+            self.assertIn('id="vidTranscript"', body, path)
+            self.assertIn('id="vidTransToggle"', body, path)
+            self.assertEqual(5, body.count('class="vt-row"'), path)
 
     def test_player_chrome(self) -> None:
-        body = self.page()
-        for el in ('id="vidPlay"', 'id="vidBar"', 'id="vidTime"', 'id="vidPlate"'):
-            self.assertIn(el, body, el)
+        for path in self.VID_PAGES:
+            body = self.page(path)
+            for el in ('id="vidPlay"', 'id="vidBar"', 'id="vidTime"', 'id="vidPlate"'):
+                self.assertIn(el, body, f"{el} on {path}")
 
 
 class HygieneTestCase(_AppTestCase):
-    """Site-wide contracts every served surface must honor."""
+    """Site-wide contracts every served surface must honor — all 3 pages."""
 
     def test_root_absolute_assets_only(self) -> None:
-        body = self.page()
-        self.assertIn('href="/assets/css/styles.css"', body)
-        self.assertNotIn('href="assets/', body)
-        self.assertNotIn('src="assets/', body)
-        self.assertIsNone(re.search(r'href="[a-z][a-z0-9-]*\.html', body))
+        for path in MARKETING_PAGES:
+            body = self.page(path)
+            self.assertIn('href="/assets/css/styles.css"', body, path)
+            self.assertNotIn('href="assets/', body, path)
+            self.assertNotIn('src="assets/', body, path)
+            self.assertIsNone(re.search(r'href="[a-z][a-z0-9-]*\.html', body), path)
 
     def test_icon_set_canonical_and_og(self) -> None:
-        body = self.page()
-        self.assertIn('href="/assets/img/favicon.svg"', body)
-        self.assertIn('href="/assets/img/favicon.ico"', body)
-        self.assertIn('href="/assets/img/apple-touch-icon.png"', body)
-        self.assertIn('<link rel="canonical" href="https://mizoki3.com/media-buying" />', body)
-        self.assertIn('property="og:title"', body)
+        canonical = {
+            "/marketing": "https://mizoki3.com/marketing",
+            "/marketing/simulator": "https://mizoki3.com/marketing/simulator",
+            "/marketing/walkthrough": "https://mizoki3.com/marketing/walkthrough",
+        }
+        for path, url in canonical.items():
+            body = self.page(path)
+            self.assertIn('href="/assets/img/favicon.svg"', body, path)
+            self.assertIn('href="/assets/img/favicon.ico"', body, path)
+            self.assertIn('href="/assets/img/apple-touch-icon.png"', body, path)
+            self.assertIn(f'<link rel="canonical" href="{url}" />', body, path)
+            self.assertIn('property="og:title"', body, path)
 
     def test_nav_and_shared_scripts(self) -> None:
-        body = self.page()
-        self.assertIn('src="/assets/js/nav-mobile.js"', body)
-        self.assertIn('class="nav-links"', body)
+        for path in MARKETING_PAGES:
+            body = self.page(path)
+            self.assertIn('src="/assets/js/nav-mobile.js"', body, path)
+            self.assertIn('class="nav-links"', body, path)
 
     def test_no_placeholder_links(self) -> None:
-        self.assertNotIn('href="#"', self.page())
+        for path in MARKETING_PAGES:
+            self.assertNotIn('href="#"', self.page(path), path)
 
     def test_soft_sell_discipline_single_contact_cta(self) -> None:
         body = self.page()
-        self.assertEqual(1, body.count("/contact?source=media-buying"))
+        self.assertEqual(1, body.count("/contact?source=marketing"))
         self.assertIn("no pressure", body)
         self.assertIn('href="/demo"', body)
         self.assertIn('href="/executive-briefing/"', body)
