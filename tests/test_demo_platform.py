@@ -98,15 +98,20 @@ class UrlRepairTestCase(_AppTestCase):
         self.assertEqual("/admin/login", response.headers["Location"])
 
     def test_division_pages_wired_to_demos(self) -> None:
-        for page, demo_href in (("/estate", "/demo/estate"),
-                                ("/capital", "/demo/capital"),
-                                ("/risk", "/demo/risk"),
-                                ("/signal", "/demo/signal"),
-                                ("/counsel", "/demo/counsel")):
+        # /signal is a SELF-CONTAINED page (owner-supplied 2026-08-02: all
+        # styles inline, no shared stylesheet) — the contract's intent is
+        # root-absolute URL hygiene + demo wiring, which still applies.
+        for page, demo_href, wants_shared_css in (
+                ("/estate", "/demo/estate", True),
+                ("/capital", "/demo/capital", True),
+                ("/risk", "/demo/risk", True),
+                ("/signal", "/demo/signal", False),
+                ("/counsel", "/demo/counsel", True)):
             body = self.client.get(page).get_data(as_text=True)
             self.assertIn(f'href="{demo_href}"', body, page)
             self.assertIn('href="/demo"', body, page)
-            self.assertIn('href="/assets/css/styles.css"', body, page)
+            if wants_shared_css:
+                self.assertIn('href="/assets/css/styles.css"', body, page)
             self.assertNotIn('href="assets/', body, page)
 
 
