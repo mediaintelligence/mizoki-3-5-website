@@ -31,6 +31,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      # Owner directive 2026-08-03: never lose the proper site online.
+      # Both deploy pipelines (this workflow and MIZOKICloudRun's
+      # deploy-homepage.yml) now refuse any tree that is missing either the
+      # locked canon surfaces or the /marketing parallel site.
+      - name: Verify design canon + marketing parallel site (drift guards)
+        run: |
+          python3 scripts/check_design_canon.py
+          python3 scripts/check_marketing_surfaces.py
+          echo "Canon and /marketing verified — this deploy carries the full site."
+
       # 2. Authenticate to Google Cloud via Workload Identity Federation
       - name: Authenticate to Google Cloud
         id: auth

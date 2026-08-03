@@ -668,6 +668,19 @@ class AcquisitionShowcaseTestCase(_AppTestCase):
         self.assertIn("AUC ≥ 0.72", body)
         self.assertIn("never outcome promises", body)
 
+class DriftGuardTestCase(unittest.TestCase):
+    """The deploy-gate script must pass on this tree — the same check both
+    deploy pipelines run, so losing the marketing site can never ship."""
+
+    def test_marketing_surfaces_check_passes(self) -> None:
+        import subprocess
+        import sys as _sys
+        result = subprocess.run(
+            [_sys.executable, str(REPO_ROOT / "scripts" / "check_marketing_surfaces.py"),
+             "--root", str(REPO_ROOT)],
+            capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
