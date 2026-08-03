@@ -287,8 +287,33 @@ away from the classic site, and the homepage does not link into /marketing
   demo runs (`/marketing/demo/signal?scenario=…&seed=42` — embedding
   verified). Suite **350**; Playwright acquisition pass 5/5 (deep link
   autoruns the real engine).
-- **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
-  root and `/marketing` run side by side for the online comparison.
+- **DUAL-PIPELINE PARITY + DRIFT GUARDS (owner, 2026-08-03: "ensure that we
+  never have issues with losing proper site online")**: the complete
+  /marketing site was PORTED into MIZOKICloudRun's `# MIZ OKI 3.5/`
+  (PR `#588` there — base files verified byte-identical to the last parity
+  point before copying; their newer 2026-08-02 self-contained `signal.html` +
+  updated `test_demo_platform.py` were preserved and mirrored BACK here in
+  PR `#23`). New `scripts/check_marketing_surfaces.py` (stdlib-only: 12 pages
+  non-stub, engine/stylesheet/tests present with content markers, `app.py`
+  route markers) is wired into BOTH deploy workflows — MIZOKICloudRun
+  `deploy-homepage.yml` beside the canon check, and this repo's
+  `deploy-cloudrun.yml` (which previously ran no canon check at all; PR
+  `#22`) — plus `DriftGuardTestCase` runs the same gate inside the suite.
+  Neither pipeline can ship a tree missing the canon surfaces or the
+  marketing site; every meaningful surface is byte-identical across the two
+  repos (diff-verified).
+- **LAUNCHED 2026-08-03** — owner quoted the canonical launch step verbatim
+  and approved; per the workflow's own governance ("unless a human has
+  explicitly instructed the deploy") the canonical `deploy-homepage.yml` was
+  dispatched with `approve=APPROVED` (run `#47`, sha `cd6e3c2`, green in
+  ~2 min: token + canon check + marketing drift guard + Cloud Build).
+  Production verified from the live domain: root 200 with ZERO `/marketing`
+  references (classic untouched), `/marketing` 200 with hero + compare strip,
+  `/marketing/signal#acquisition` live, seeded deep link embeds
+  `data-scenario="ecommerce_roas" data-seed="42"`, `/media-buying` 301 →
+  `/marketing`, `/marketing/governance` 200. Root and `/marketing` now run
+  side by side in production for the owner's online comparison; nothing went
+  offline.
 
 Owner defect report, verbatim: "the demo does not have any voice at all and the
 chat is very limited and also does not have voice conversation options." Root
