@@ -571,17 +571,21 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
             text, count=1)
         return text
 
-    _MIRROR_STATIC = {
-        "counsel": "counsel.html", "estate": "estate.html",
-        "capital": "capital.html", "signal": "signal.html",
-        "risk": "risk.html", "pricing": "pricing.html", "demo": "demo.html",
-    }
-
+    # Redesigned division + pricing pages — real files in marketing/, the
+    # whole site rewritten in the transparent treatment (owner: "complete web
+    # site redesigned in a more transparent way"). The classic pages at root
+    # stay untouched for the comparison.
     @app.route(
-        "/marketing/<any(counsel, estate, capital, signal, risk, pricing, demo):page>",
+        "/marketing/<any(counsel, estate, capital, signal, risk, pricing):page>",
         strict_slashes=False)
-    def marketing_mirror(page: str):
-        text = (BASE_DIR / _MIRROR_STATIC[page]).read_text(encoding="utf-8")
+    def marketing_division(page: str):
+        return send_from_directory(BASE_DIR / "marketing", f"{page}.html")
+
+    # The live-demo hub stays a mirror of the canon page — the desks ARE the
+    # product, identical in both sites.
+    @app.route("/marketing/demo", strict_slashes=False)
+    def marketing_demo_hub():
+        text = (BASE_DIR / "demo.html").read_text(encoding="utf-8")
         return app.response_class(_marketize(text), mimetype="text/html")
 
     @app.route(
@@ -710,7 +714,9 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
             "/pricing", "/executive-briefing/",
             "/marketing", "/marketing/engine", "/marketing/modules",
             "/marketing/simulator", "/marketing/walkthrough",
-            "/marketing/governance",
+            "/marketing/governance", "/marketing/counsel", "/marketing/estate",
+            "/marketing/capital", "/marketing/signal", "/marketing/risk",
+            "/marketing/pricing",
             "/demo", "/demo/signal", "/demo/counsel", "/demo/estate",
             "/demo/capital", "/demo/risk", "/demo/nexus",
             "/walkthrough.html", "/blog",

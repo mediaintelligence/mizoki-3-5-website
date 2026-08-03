@@ -251,9 +251,24 @@ away from the classic site, and the homepage does not link into /marketing
   card → `/marketing/modules`. The prompt's `#090D16`/indigo/emerald theme was
   deliberately NOT adopted — the locked night-dossier tokens remain the design
   system unless the owner asks to re-skin.
-- **Tests**: `tests/test_marketing_site.py` (53) — suite **341**, only the 2
-  pre-existing homepage failures. Playwright: 27/27 core + 9/9 mirror + 8/8
-  new-page checks (zero page errors, 360px clean).
+- **COMPLETE-SITE TRANSPARENT REDESIGN (owner, 2026-08-03: "This page still
+  only reflects the signals page and not complete web site redesigned in a
+  more transparent way")**: the five division pages + pricing are no longer
+  mirrors — they are REAL redesigned pages in `marketing/` written in the
+  translated vocabulary: each division carries a plain-English hero, the
+  house "What we say / What we never say" claim strip, a Watches / Decides /
+  Never-does contract grid, and a worked decision from its real live desk
+  (capital = the covenant veto; signal = the pixel-drift refusal; counsel =
+  the conflict banner; risk = the veto that held; estate = operational
+  triage), wired to `/marketing/demo/<desk>`. `marketing/pricing.html` maps
+  the three tiers onto the three autonomy modes, jargon-free. The homepage is
+  platform-first: a hero addendum names Capital/Risk/Counsel/Estate
+  explicitly and `#divisions` moved above the media-buying matrix
+  (order test-enforced). Only the demo hub + six desks remain mirrored — the
+  desks ARE the product, identical in both sites.
+- **Tests**: `tests/test_marketing_site.py` (57) — suite **345**, only the 2
+  pre-existing homepage failures. Playwright: 27/27 core + 9/9 mirror,
+  zero page errors on the redesigned pages.
 - **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
   root and `/marketing` run side by side for the online comparison.
 

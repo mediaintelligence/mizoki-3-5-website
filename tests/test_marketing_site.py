@@ -30,7 +30,12 @@ CSS_FILE = REPO_ROOT / "assets" / "css" / "marketing.css"
 
 MARKETING_PAGES = ("/marketing", "/marketing/engine", "/marketing/modules",
                    "/marketing/simulator", "/marketing/walkthrough",
-                   "/marketing/governance")
+                   "/marketing/governance", "/marketing/counsel",
+                   "/marketing/estate", "/marketing/capital",
+                   "/marketing/signal", "/marketing/risk", "/marketing/pricing")
+
+DIVISION_PAGES = ("/marketing/counsel", "/marketing/estate",
+                  "/marketing/capital", "/marketing/signal", "/marketing/risk")
 
 
 class _AppTestCase(unittest.TestCase):
@@ -171,9 +176,7 @@ class VocabularyKeyTestCase(_AppTestCase):
             )
 
     def test_sub_pages_carry_no_raw_jargon_at_all(self) -> None:
-        for path in ("/marketing/engine", "/marketing/modules",
-                     "/marketing/simulator", "/marketing/walkthrough",
-                     "/marketing/governance"):
+        for path in [p for p in MARKETING_PAGES if p != "/marketing"]:
             body = self.page(path)
             for raw in self.TRANSLATIONS:
                 self.assertNotIn(raw, body, f"{raw} on {path}")
@@ -413,8 +416,6 @@ class FullSiteMirrorTestCase(_AppTestCase):
     the prefix, previews marked noindex."""
 
     MIRROR_PAGES = (
-        "/marketing/counsel", "/marketing/estate", "/marketing/capital",
-        "/marketing/signal", "/marketing/risk", "/marketing/pricing",
         "/marketing/demo", "/marketing/demo/signal", "/marketing/demo/counsel",
         "/marketing/demo/estate", "/marketing/demo/capital",
         "/marketing/demo/risk", "/marketing/demo/nexus",
@@ -460,32 +461,16 @@ class FullSiteMirrorTestCase(_AppTestCase):
             self.assertIn("/assets/css/marketing.css", body, path)
 
     def test_mirror_links_stay_inside_the_prefix(self) -> None:
-        # Division mirrors must lead to mirrored demos/divisions, never back
-        # to the root paths (that was the "it only shows one page" defect).
-        body = self.page("/marketing/signal")
-        self.assertIn('href="/marketing/demo/signal"', body)
-        self.assertIn('href="/marketing/demo"', body)
-        self.assertNotIn('href="/demo', body.replace('href="/marketing/demo', ""))
         hub = self.page("/marketing/demo")
         for desk in ("signal", "counsel", "estate", "capital", "risk", "nexus"):
             self.assertIn(f'href="/marketing/demo/{desk}"', hub, desk)
+        self.assertNotIn('href="/demo', hub.replace('href="/marketing/demo', ""))
 
     def test_mirror_brand_links_to_marketing_home(self) -> None:
-        # Attribute order differs across pages (class="brand" vs class="logo").
-        for path in ("/marketing/signal", "/marketing/pricing", "/marketing/demo"):
+        for path in ("/marketing/demo", "/marketing/demo/capital"):
             body = self.page(path)
-            self.assertTrue(
-                'href="/marketing" class="brand"' in body
-                or 'class="logo" href="/marketing"' in body, path)
+            self.assertIn('href="/marketing" class="brand"', body, path)
             self.assertNotIn('href="/" class="brand"', body, path)
-            self.assertNotIn('class="logo" href="/"', body, path)
-
-    def test_mirror_self_links_including_html_variants_stay_prefixed(self) -> None:
-        # pricing.html links itself as /pricing.html — the rewriter must catch
-        # extension variants too, or the nav silently exits the preview.
-        body = self.page("/marketing/pricing")
-        self.assertNotIn('href="/pricing', body.replace('href="/pricing"', ""))
-        self.assertIn('href="/marketing/pricing"', body)
 
     def test_demo_mirrors_keep_seeded_replay_embedding(self) -> None:
         body = self.page("/marketing/demo/signal?scenario=leadgen_cpa&seed=7")
@@ -499,8 +484,8 @@ class FullSiteMirrorTestCase(_AppTestCase):
             self.assertEqual(200, self.client.get(path).status_code, path)
 
     def test_root_pages_stay_pristine(self) -> None:
-        # Reading files for the mirror must never mutate what root serves.
-        for path in ("/signal", "/demo", "/pricing"):
+        # Building the redesigned site must never mutate what root serves.
+        for path in ("/signal", "/demo", "/pricing", "/counsel", "/risk"):
             body = self.client.get(path).get_data(as_text=True)
             self.assertNotIn("compare-strip", body, path)
             self.assertNotIn('content="noindex"', body, path)
@@ -551,6 +536,66 @@ class FullSitePagesTestCase(_AppTestCase):
         sitemap = self.client.get("/sitemap.xml").get_data(as_text=True)
         for path in MARKETING_PAGES:
             self.assertIn(f"https://mizoki3.com{path}</loc>", sitemap, path)
+
+
+class DivisionRedesignTestCase(_AppTestCase):
+    """The complete-site redesign: every division rewritten in the
+    transparent treatment — not mirrored classic pages."""
+
+    SIGNATURES = {
+        "/marketing/counsel": ("conflict", "not a law firm"),
+        "/marketing/estate": ("trustee", "before ink"),
+        "/marketing/capital": ("covenant", "VETOED"),
+        "/marketing/signal": ("causal lift", "Mind-reading"),
+        "/marketing/risk": ("veto", "say no to every other division"),
+    }
+
+    def test_division_pages_are_redesigned_not_mirrored(self) -> None:
+        for path in DIVISION_PAGES:
+            body = self.page(path)
+            # The transparency devices, on every division page.
+            self.assertIn("What we say", body, path)
+            self.assertIn("What we never say", body, path)
+            self.assertIn("transparent", body, path)
+            self.assertIn('class="wdn-grid"', body, path)
+            self.assertIn('class="worked-plate"', body, path)
+            # Translated vocabulary carries the page.
+            self.assertIn("7-Stage Governed Decision System", body, path)
+            # No mirror injection markers — these are real pages.
+            self.assertNotIn('content="noindex"', body, path)
+
+    def test_division_signatures_stay_truthful(self) -> None:
+        for path, (sig_a, sig_b) in self.SIGNATURES.items():
+            body = self.page(path)
+            self.assertIn(sig_a, body, f"{sig_a} on {path}")
+            self.assertIn(sig_b, body, f"{sig_b} on {path}")
+
+    def test_every_division_wires_to_its_live_desk(self) -> None:
+        for path in DIVISION_PAGES:
+            desk = path.rsplit("/", 1)[-1]
+            body = self.page(path)
+            self.assertIn(f'href="/marketing/demo/{desk}"', body, path)
+            self.assertIn('href="/marketing/demo"', body, path)
+
+    def test_pricing_redesigned_in_translated_vocabulary(self) -> None:
+        body = self.page("/marketing/pricing")
+        for marker in ("Priced by autonomy, not by seats.", "Core Intelligence",
+                       "Operational Autonomy", "Full Governance Suite",
+                       "Observe Mode", "Bounded Autonomy", "Full Autonomy",
+                       "mailto:hello@mizoki3.com"):
+            self.assertIn(marker, body, marker)
+        # The classic pricing page's engineering terms must not leak in.
+        for raw in ("SRPVDAL", "Decision Control Plane", "ReLU"):
+            self.assertNotIn(raw, body, raw)
+
+    def test_homepage_leads_with_the_platform_not_the_signals_story(self) -> None:
+        # Owner: "still only reflects the signals page." The divisions section
+        # must come before the media-buying matrix, and the hero must name the
+        # other divisions explicitly.
+        body = self.page()
+        self.assertLess(body.index('id="divisions"'), body.index('id="matrix"'))
+        self.assertIn("Capital, Risk, Counsel, Estate", body)
+        self.assertIn("whole platform, translated into plain language", body)
 
 
 if __name__ == "__main__":

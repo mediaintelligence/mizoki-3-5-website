@@ -521,3 +521,60 @@ body { padding-top: 34px; }
   text-transform: uppercase; color: var(--accent-cyan); display: block; margin-bottom: 8px;
 }
 .shield-cell p { font-size: 0.88rem; color: var(--text-2); margin: 0; line-height: 1.6; }
+
+/* ===== Redesigned division pages (transparent treatment) ===== */
+.hero-addendum {
+  color: var(--text-2); max-width: 720px; margin-top: 14px; font-size: 0.98rem;
+}
+.hero-addendum b { color: var(--text-1); font-weight: 600; }
+/* Claim strip — the house transparency device (What we say / What we never say) */
+.claim-strip {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--line-strong); border-radius: 2px;
+  background: var(--bg-1); margin-top: 34px; max-width: 880px;
+}
+.claim-cell { padding: 18px 22px; }
+.claim-cell + .claim-cell { border-left: 1px solid var(--line); }
+.claim-cell .tag {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px;
+}
+.claim-cell.say .tag { color: var(--accent-emerald); }
+.claim-cell.never .tag { color: var(--accent-rose); }
+.claim-cell p { font-size: 0.92rem; color: var(--text-1); margin: 0; line-height: 1.6; }
+.claim-cell.never p { color: var(--text-2); }
+@media (max-width: 720px) {
+  .claim-strip { grid-template-columns: 1fr; }
+  .claim-cell + .claim-cell { border-left: none; border-top: 1px solid var(--line); }
+}
+/* Watches / Decides / Never-does plates */
+.wdn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .wdn-grid { grid-template-columns: 1fr; } }
+.wdn-cell {
+  background: var(--bg-1); border: 1px solid var(--line);
+  border-top: 2px solid var(--dc, var(--accent-cyan)); border-radius: 2px; padding: 22px 22px 18px;
+}
+.wdn-cell.never-does { border-top-color: var(--accent-rose); }
+.wdn-cell .wdn-k {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--dc, var(--accent-cyan)); display: block; margin-bottom: 12px;
+}
+.wdn-cell.never-does .wdn-k { color: var(--accent-rose); }
+.wdn-cell ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.wdn-cell li { font-size: 0.88rem; color: var(--text-2); line-height: 1.55; padding-left: 14px; position: relative; }
+.wdn-cell li::before { content: "·"; position: absolute; left: 0; color: var(--dc, var(--accent-cyan)); }
+.wdn-cell.never-does li::before { content: "✕"; font-size: 0.7rem; top: 3px; color: var(--accent-rose); }
+/* Worked decision plate */
+.worked-plate {
+  background: var(--bg); border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--dc, var(--accent-cyan)); border-radius: 2px;
+  padding: 24px 28px; max-width: 880px;
+}
+.worked-plate .wp-k {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; font-weight: 700;
+  text-transform: uppercase; color: var(--dc, var(--accent-cyan)); display: block; margin-bottom: 12px;
+}
+.worked-plate p { font-family: var(--mono); font-size: 12.5px; color: var(--text-1); line-height: 1.9; margin: 0 0 10px; }
+.worked-plate p .bad { color: var(--accent-rose); font-weight: 700; }
+.worked-plate p .ok { color: var(--accent-emerald); font-weight: 700; }
+.worked-plate .wp-note { font-family: var(--mono); font-size: 10px; color: var(--text-3); margin: 0; }
