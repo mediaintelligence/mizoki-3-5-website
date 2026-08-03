@@ -2,6 +2,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import secrets
 import threading
 import time
@@ -495,6 +496,115 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def pricing():
         return serve_page("pricing.html")
 
+    # ===== Marketing parallel site (/marketing/*) ====================
+    # The proposed media-buyer experience runs as a complete parallel site so
+    # the classic canon site (root) and the new direction can be compared
+    # live, side by side, before anything is retired. Purely additive — no
+    # root surface is replaced.
+
+    @app.route("/marketing", strict_slashes=False)
+    def marketing_home():
+        return send_from_directory(BASE_DIR / "marketing", "index.html")
+
+    @app.route("/marketing/simulator", strict_slashes=False)
+    def marketing_simulator():
+        return send_from_directory(BASE_DIR / "marketing", "simulator.html")
+
+    @app.route("/marketing/walkthrough", strict_slashes=False)
+    def marketing_walkthrough():
+        return send_from_directory(BASE_DIR / "marketing", "walkthrough.html")
+
+    @app.route("/marketing/engine", strict_slashes=False)
+    def marketing_engine():
+        return send_from_directory(BASE_DIR / "marketing", "engine.html")
+
+    @app.route("/marketing/modules", strict_slashes=False)
+    def marketing_modules():
+        return send_from_directory(BASE_DIR / "marketing", "modules.html")
+
+    @app.route("/marketing/governance", strict_slashes=False)
+    def marketing_governance():
+        return send_from_directory(BASE_DIR / "marketing", "governance.html")
+
+    # The experience shipped briefly at /media-buying; /marketing is its home.
+    @app.route("/media-buying")
+    @app.route("/media-buying.html")
+    def media_buying():
+        return redirect(url_for("marketing_home"), code=301)
+
+    # --- Full-site mirror under /marketing ---------------------------------
+    # Owner requirement: browse the ENTIRE site inside the /marketing prefix,
+    # so the classic site (root) and the new direction can be compared as two
+    # complete sites. Canon files are read from disk and never modified; the
+    # mirror rewrites whitelisted internal links to stay under the prefix and
+    # injects the parallel-preview strip plus a noindex tag (previews must
+    # not compete with the canonical pages in search).
+
+    _MIRROR_STRIP = (
+        '<div class="compare-strip"><span class="cs-note">// Parallel preview '
+        "— nothing on the classic site is replaced</span>"
+        '<a href="/">View classic site →</a></div>'
+    )
+    _MIRROR_HEAD = (
+        '<link rel="stylesheet" href="/assets/css/marketing.css?v=20260802" />'
+        '<meta name="robots" content="noindex" />'
+    )
+
+    def _marketize(html_text: str) -> str:
+        text = html_text
+        text = text.replace('href="/demo/', 'href="/marketing/demo/')
+        text = text.replace('href="/demo"', 'href="/marketing/demo"')
+        text = text.replace('href="/demo.html"', 'href="/marketing/demo"')
+        text = re.sub(
+            r'href="/(counsel|estate|capital|signal|risk|pricing)(?:\.html)?(["#?])',
+            r'href="/marketing/\1\2', text)
+        text = text.replace('href="/executive-briefing/"',
+                            'href="/marketing/executive-briefing/"')
+        text = text.replace('href="/#', 'href="/marketing#')
+        text = text.replace('href="/"', 'href="/marketing"')
+        # Injection happens AFTER rewriting so the strip's own escape hatch
+        # keeps pointing at the classic site.
+        text = text.replace("</head>", _MIRROR_HEAD + "\n</head>", 1)
+        text = re.sub(
+            r"<body([^>]*)>",
+            lambda m: "<body" + m.group(1) + ">\n  " + _MIRROR_STRIP,
+            text, count=1)
+        return text
+
+    # Redesigned division + pricing pages — real files in marketing/, the
+    # whole site rewritten in the transparent treatment (owner: "complete web
+    # site redesigned in a more transparent way"). The classic pages at root
+    # stay untouched for the comparison.
+    @app.route(
+        "/marketing/<any(counsel, estate, capital, signal, risk, pricing):page>",
+        strict_slashes=False)
+    def marketing_division(page: str):
+        return send_from_directory(BASE_DIR / "marketing", f"{page}.html")
+
+    # The live-demo hub stays a mirror of the canon page — the desks ARE the
+    # product, identical in both sites.
+    @app.route("/marketing/demo", strict_slashes=False)
+    def marketing_demo_hub():
+        text = (BASE_DIR / "demo.html").read_text(encoding="utf-8")
+        return app.response_class(_marketize(text), mimetype="text/html")
+
+    @app.route(
+        "/marketing/demo/<any(signal, counsel, estate, capital, risk, nexus):desk>",
+        strict_slashes=False)
+    def marketing_mirror_demo(desk: str):
+        text = serve_demo_page(desk).get_data(as_text=True)
+        return app.response_class(_marketize(text), mimetype="text/html")
+
+    # The Executive Briefing is a chrome-less full-screen module with relative
+    # asset links, so a plain passthrough keeps it working under the prefix.
+    @app.route("/marketing/executive-briefing/")
+    def marketing_briefing():
+        return send_from_directory(BASE_DIR / "executive-briefing", "index.html")
+
+    @app.route("/marketing/executive-briefing/<path:filename>")
+    def marketing_briefing_assets(filename: str):
+        return executive_briefing_assets(filename)
+
     # ===== Live product demos (public) ==============================
 
     def serve_demo_page(demo_key: str):
@@ -602,6 +712,11 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         pages = [
             "/", "/counsel", "/estate", "/capital", "/signal", "/risk",
             "/pricing", "/executive-briefing/",
+            "/marketing", "/marketing/engine", "/marketing/modules",
+            "/marketing/simulator", "/marketing/walkthrough",
+            "/marketing/governance", "/marketing/counsel", "/marketing/estate",
+            "/marketing/capital", "/marketing/signal", "/marketing/risk",
+            "/marketing/pricing",
             "/demo", "/demo/signal", "/demo/counsel", "/demo/estate",
             "/demo/capital", "/demo/risk", "/demo/nexus",
             "/walkthrough.html", "/blog",

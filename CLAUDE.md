@@ -183,7 +183,94 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
-### Boss voice + Ask-the-Boss across the ENTIRE demo platform (2026-08-02)
+### Marketing parallel site under /marketing (2026-08-02)
+
+Owner instruction: "launch this entire site under a /marketing so i can compare
+them online before taking anything offline." The proposed media-buyer
+experience (the mizoki3.com master implementation prompt, translated from its
+React/TSX plan into this repo's static-HTML + Flask architecture) runs as a
+complete parallel site — the classic canon site at root is UNTOUCHED and the
+canon check still passes on all 20 surfaces. Purely additive; nothing redirects
+away from the classic site, and the homepage does not link into /marketing
+(comparison is one-way by design, test-enforced).
+
+- **Pages** (`marketing/`): `/marketing` — full landing (mandated hero verbatim,
+  problem-vs-solution matrix, vocabulary translation ledger, 7-stage Decision
+  Control System accordion, Interactive Scenario Simulator, 90-sec storyboard);
+  `/marketing/simulator` and `/marketing/walkthrough` — dedicated deep-link
+  pages sliced from the same markup (shared element IDs). All three carry a
+  fixed-height amber "Parallel preview — nothing on the classic site is
+  replaced" strip linking back to `/`.
+- **Vocabulary key is binding on this surface** (test-enforced): Canonical
+  Event Envelope → Structured Signal Evidence · Temporal-Causal Knowledge Base
+  → Cross-Stack Root Cause Engine · Domain Intelligence Cell → Channel
+  Intelligence Modules · SRPVDAL Loop → 7-Stage Decision Control System ·
+  Immutable Learning Ledger → Compounding ROI Memory. Engineering terms appear
+  exactly once each, in the on-page translation ledger; sub-pages carry zero
+  raw jargon.
+- **Shared assets**: `assets/css/marketing.css` (one stylesheet, three pages —
+  no drift) + `assets/js/media-sim.js` (accordion + simulator + storyboard
+  player; init is element-presence-gated so subset pages just work). The
+  simulator is DETERMINISTIC — no `Math.random`, no `Date.now`; the replay id
+  is a hash of the inputs; the red veto is slider-reachable (latency > ~5.2s
+  under the 2.2× ROAS floor) and vetoes still record to memory. Claims-linted
+  against the house banned list on every surface.
+- **Routing**: `/marketing[/…]` with `strict_slashes=False`;
+  `/media-buying(.html)` 301s to `/marketing` (interim path from the first
+  build, never deployed); sitemap lists the three pages, not the redirect.
+- **FULL-SITE MIRROR (owner follow-up: "it only shows me signals page and does
+  not currently replace the whole site")**: the ENTIRE site is browsable inside
+  the prefix. `/marketing` home gained a five-division grid + live-demos band;
+  `_marketize()` in `app.py` serves `/marketing/{counsel,estate,capital,signal,
+  risk,pricing,demo}` + `/marketing/demo/<desk>` (all six) by reading the SAME
+  canon files off disk (never modified — canon check stays green), rewriting
+  whitelisted internal links (incl. `.html` variants — pricing self-links as
+  `/pricing.html`) to stay under the prefix, and injecting the compare strip +
+  `noindex` (mirrors must not compete with canonical pages in search). The
+  Executive Briefing passes through chrome-less at
+  `/marketing/executive-briefing/` (relative assets just work). Strip escape
+  hatch (`href="/"`) is injected AFTER rewriting so it keeps pointing at the
+  classic site. Mirrored demo desks run the real engines/APIs.
+- **Full-site prompt v2 integrated (owner, 2026-08-03)**: vocabulary key now
+  8 entries — adds Decision Control Plane/Eligibility Layer → **Safety
+  Guardrail Engine**, Tenant Isolation & Boundary → **Enterprise Privacy &
+  Security Shield**, No-Action Counterfactual Baseline → **"Do Nothing"
+  Opportunity Cost Check**, and renames the loop **7-Stage Governed Decision
+  System** (was "Decision Control System"). Three new real pages:
+  `/marketing/engine` (7-stage walkthrough), `/marketing/modules` (Google Ads /
+  Meta & Paid Social / E-Commerce & Inventory / ESP & Retention Channel
+  Intelligence Modules), `/marketing/governance` (Observe / Bounded / Full
+  autonomy modes + the security shield). Homepage adds the **Full-Stack Signal
+  Grid** (ad networks / infrastructure / inventory / finance guardrails →
+  Structured Signal Evidence bus); CTA is "Launch Live Decision Simulator";
+  proof strip reads Monitored / <100ms / Policy Protection; storyboard scenes
+  retitled (Nightmare / Redefining Cross-Stack Signals / Finding the True Root
+  Cause / 1-Click Governed Approvals / Compounding Organizational Memory).
+  **Divisions reframed as initial MVPs** per owner ("not just 5"): heading
+  "One decision loop. Any division.", MVP lede, sixth dashed "+ Your division"
+  card → `/marketing/modules`. The prompt's `#090D16`/indigo/emerald theme was
+  deliberately NOT adopted — the locked night-dossier tokens remain the design
+  system unless the owner asks to re-skin.
+- **COMPLETE-SITE TRANSPARENT REDESIGN (owner, 2026-08-03: "This page still
+  only reflects the signals page and not complete web site redesigned in a
+  more transparent way")**: the five division pages + pricing are no longer
+  mirrors — they are REAL redesigned pages in `marketing/` written in the
+  translated vocabulary: each division carries a plain-English hero, the
+  house "What we say / What we never say" claim strip, a Watches / Decides /
+  Never-does contract grid, and a worked decision from its real live desk
+  (capital = the covenant veto; signal = the pixel-drift refusal; counsel =
+  the conflict banner; risk = the veto that held; estate = operational
+  triage), wired to `/marketing/demo/<desk>`. `marketing/pricing.html` maps
+  the three tiers onto the three autonomy modes, jargon-free. The homepage is
+  platform-first: a hero addendum names Capital/Risk/Counsel/Estate
+  explicitly and `#divisions` moved above the media-buying matrix
+  (order test-enforced). Only the demo hub + six desks remain mirrored — the
+  desks ARE the product, identical in both sites.
+- **Tests**: `tests/test_marketing_site.py` (57) — suite **345**, only the 2
+  pre-existing homepage failures. Playwright: 27/27 core + 9/9 mirror,
+  zero page errors on the redesigned pages.
+- **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
+  root and `/marketing` run side by side for the online comparison.
 
 Owner defect report, verbatim: "the demo does not have any voice at all and the
 chat is very limited and also does not have voice conversation options." Root

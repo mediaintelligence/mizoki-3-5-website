@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIZOKI3 — Command Center · Live Decision Simulator</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="description" content="The dual-panel command center: pick a media-buying failure mode, drag the live dials, and watch the 7-Stage Governed Decision System diagnose, validate, and execute or veto — with Wasted Spend Prevented and ROAS Preserved read out live." />
+  <link rel="canonical" href="https://mizoki3.com/marketing/simulator" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIZOKI3 — Command Center · Live Decision Simulator" />
+  <meta property="og:description" content="The dual-panel command center: pick a media-buying failure mode, drag the live dials, and watch the 7-Stage Governed Decision System diagnose, validate, and execute or veto — with Wasted Spend Prevented and ROAS Preserved read out live." />
+  <meta property="og:url" content="https://mizoki3.com/marketing/simulator" />
+  <meta property="og:image" content="https://mizoki3.com/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/marketing.css?v=20260802" />
+</head>
+<body>
+
+  <div class="compare-strip"><span class="cs-note">// Parallel preview — nothing on the classic site is replaced</span><a href="/">View classic site →</a></div>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/marketing" class="brand">MIZOKI3</a>
+      <ul class="nav-links">
+        <li><a href="/marketing/engine">Engine</a></li>
+        <li><a href="/marketing/modules">Modules</a></li>
+        <li><a href="/marketing/simulator" class="active">Simulator</a></li>
+        <li><a href="/marketing/walkthrough">Walkthrough</a></li>
+        <li><a href="/marketing/governance">Governance</a></li>
+        <li><a href="/marketing/demo">Live Demos</a></li>
+        <li><a href="/marketing/pricing">Pricing</a></li>
+        <li><a href="/">Classic Site</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="domain-accent accent-signal"></div>
+
+  <section class="mb-section" id="simulator">
+    <div class="container">
+      <div class="mb-label">// Interactive Scenario Simulator</div>
+      <h2>Break something. Watch the control plane catch it.</h2>
+      <p class="lede">Pick a failure every media buyer has lived through, drag the dials, and watch the 7-Stage Governed Decision System diagnose, validate, and execute — or veto — in front of you. The model recalculates live as you move each slider.</p>
+
+      <div class="sim-frame">
+        <div class="sim-col-controls">
+          <div class="sim-col-head">Interactive Controls</div>
+
+          <div class="sim-group" id="simScenarios">
+            <span class="sim-group-label">Scenario</span>
+            <div class="sim-scen">
+              <label class="on"><input type="radio" name="simScenario" value="latency" checked />
+                <span class="t">01 · Landing Page Latency Spike</span>
+                <span class="d">A deploy slows your landing page. Paid traffic keeps arriving.</span>
+              </label>
+              <label><input type="radio" name="simScenario" value="stock" />
+                <span class="t">02 · SKU Out-of-Stock Crisis</span>
+                <span class="d">Your hero SKU is running dry while its campaigns keep spending.</span>
+              </label>
+              <label><input type="radio" name="simScenario" value="pixel" />
+                <span class="t">03 · Pixel Attribution Drift</span>
+                <span class="d">Conversion fires drop. Demand didn't. Your reported ROAS is lying.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="sim-group">
+            <span class="sim-group-label">Parameters</span>
+            <div class="sim-slider" id="slLatency">
+              <div class="row"><span class="name">Page latency (p75 LCP)</span><span class="val" id="simLatencyVal">3.2s</span></div>
+              <input type="range" id="simLatency" min="0.5" max="6.0" step="0.1" value="3.2" aria-label="Page latency in seconds" />
+              <div class="scale"><span>0.5s</span><span>6.0s</span></div>
+            </div>
+            <div class="sim-slider" id="slInventory">
+              <div class="row"><span class="name">Stock level (hero SKU)</span><span class="val" id="simInventoryVal">140 units</span></div>
+              <input type="range" id="simInventory" min="0" max="1000" step="10" value="140" aria-label="Inventory units" />
+              <div class="scale"><span>0</span><span>1,000</span></div>
+            </div>
+            <div class="sim-slider" id="slBudget">
+              <div class="row"><span class="name">Daily spend</span><span class="val" id="simBudgetVal">$8,000</span></div>
+              <input type="range" id="simBudget" min="1000" max="20000" step="500" value="8000" aria-label="Daily budget in dollars" />
+              <div class="scale"><span>$1k</span><span>$20k</span></div>
+            </div>
+          </div>
+
+          <div class="sim-group">
+            <span class="sim-group-label">Safety Policy</span>
+            <label class="sim-toggle on" id="tgFloor">
+              <span class="tt">Target ROAS floor<span>2.2× — evaluated on verified evidence</span></span>
+              <input type="checkbox" id="simFloor" checked /><span class="sw"></span>
+            </label>
+            <label class="sim-toggle on" id="tgCap">
+              <span class="tt">Max auto-spend limit<span>$5,000 per action without human sign-off</span></span>
+              <input type="checkbox" id="simCap" checked /><span class="sw"></span>
+            </label>
+          </div>
+
+          <p class="sim-honesty">Illustrative scenario — a deterministic model of the decision loop, replayable from the same inputs. No live account data, no randomness. The <a href="/marketing/demo">live desks</a> run the production runtime end-to-end.</p>
+        </div>
+
+        <div class="sim-col-monitor">
+          <div class="term-topbar">
+            <span class="dot" id="simDot"></span>
+            <span id="simStatus">Execution Monitor · armed</span>
+            <span class="spacer"></span>
+            <span class="rid" id="simReplayId">replay MB-000000</span>
+          </div>
+          <div class="term-scroll" id="simTerminal">
+            <div class="ph" id="phSense">
+              <div class="ph-head"><span class="pnum">PHASE 1</span><span class="pname">SENSE</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodySense"></div>
+            </div>
+            <div class="ph" id="phReason">
+              <div class="ph-head"><span class="pnum">PHASE 2</span><span class="pname">REASON</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodyReason"></div>
+            </div>
+            <div class="ph" id="phPlan">
+              <div class="ph-head"><span class="pnum">PHASE 3</span><span class="pname">PLAN</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodyPlan"></div>
+            </div>
+            <div class="ph" id="phValidate">
+              <div class="ph-head"><span class="pnum">PHASE 4</span><span class="pname">VALIDATE</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodyValidate"></div>
+            </div>
+            <div class="ph" id="phDecide">
+              <div class="ph-head"><span class="pnum">PHASE 5</span><span class="pname">DECIDE</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodyDecide"></div>
+            </div>
+            <div class="ph" id="phAct">
+              <div class="ph-head"><span class="pnum">PHASE 6</span><span class="pname">ACT</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodyAct"></div>
+            </div>
+            <div class="ph" id="phLearn">
+              <div class="ph-head"><span class="pnum">PHASE 7</span><span class="pname">LEARN</span><span class="pstat">—</span></div>
+              <div class="ph-body" id="bodyLearn"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <noscript><p class="sim-honesty" style="margin-top: 14px;">The simulator needs JavaScript. The <a href="/marketing/demo">live demo desks</a> show the same decision loop running on the production runtime.</p></noscript>
+    </div>
+  </section>
+
+  <section class="mb-close">
+    <div class="container">
+      <h2>Now watch it run for real.</h2>
+      <p>This command center is an illustrative model — deterministic and replayable. The live desks run the production runtime, seeded, veto and all.</p>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="/marketing/demo" class="btn btn-primary">▶ Run the live desks</a>
+        <a href="/marketing/walkthrough" class="btn btn-ghost">Watch the 90-sec walkthrough</a>
+        <a href="/marketing" class="btn btn-ghost">← Marketing home</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">MIZOKI3</div>
+          <div class="footer-tag">// One intelligence. Many domains. Shared causal memory.</div>
+        </div>
+        <div class="footer-col">
+          <h5>Domains</h5>
+          <ul>
+            <li><a href="/marketing/counsel">Counsel</a></li>
+            <li><a href="/marketing/estate">Estate</a></li>
+            <li><a href="/marketing/capital">Capital</a></li>
+            <li><a href="/marketing/signal">Signal</a></li>
+            <li><a href="/marketing/risk">Risk</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Marketing site</h5>
+          <ul>
+            <li><a href="/marketing/engine">The Engine</a></li>
+            <li><a href="/marketing/modules">Channel Modules</a></li>
+            <li><a href="/marketing/simulator">Scenario Simulator</a></li>
+            <li><a href="/marketing/walkthrough">90-sec walkthrough</a></li>
+            <li><a href="/marketing/governance">Governance &amp; Security</a></li>
+            <li><a href="/marketing/demo">Live demos</a></li>
+            <li><a href="/">Classic site</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© MIZOKI3 · MediaIntelligence.ai</span>
+        <span>// Autonomous Decision Infrastructure</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/media-sim.js?v=20260802" defer></script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+</body>
+</html>
