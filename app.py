@@ -2,6 +2,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import secrets
 import threading
 import time
@@ -518,6 +519,75 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     @app.route("/media-buying.html")
     def media_buying():
         return redirect(url_for("marketing_home"), code=301)
+
+    # --- Full-site mirror under /marketing ---------------------------------
+    # Owner requirement: browse the ENTIRE site inside the /marketing prefix,
+    # so the classic site (root) and the new direction can be compared as two
+    # complete sites. Canon files are read from disk and never modified; the
+    # mirror rewrites whitelisted internal links to stay under the prefix and
+    # injects the parallel-preview strip plus a noindex tag (previews must
+    # not compete with the canonical pages in search).
+
+    _MIRROR_STRIP = (
+        '<div class="compare-strip"><span class="cs-note">// Parallel preview '
+        "— nothing on the classic site is replaced</span>"
+        '<a href="/">View classic site →</a></div>'
+    )
+    _MIRROR_HEAD = (
+        '<link rel="stylesheet" href="/assets/css/marketing.css?v=20260802" />'
+        '<meta name="robots" content="noindex" />'
+    )
+
+    def _marketize(html_text: str) -> str:
+        text = html_text
+        text = text.replace('href="/demo/', 'href="/marketing/demo/')
+        text = text.replace('href="/demo"', 'href="/marketing/demo"')
+        text = text.replace('href="/demo.html"', 'href="/marketing/demo"')
+        text = re.sub(
+            r'href="/(counsel|estate|capital|signal|risk|pricing)(?:\.html)?(["#?])',
+            r'href="/marketing/\1\2', text)
+        text = text.replace('href="/executive-briefing/"',
+                            'href="/marketing/executive-briefing/"')
+        text = text.replace('href="/#', 'href="/marketing#')
+        text = text.replace('href="/"', 'href="/marketing"')
+        # Injection happens AFTER rewriting so the strip's own escape hatch
+        # keeps pointing at the classic site.
+        text = text.replace("</head>", _MIRROR_HEAD + "\n</head>", 1)
+        text = re.sub(
+            r"<body([^>]*)>",
+            lambda m: "<body" + m.group(1) + ">\n  " + _MIRROR_STRIP,
+            text, count=1)
+        return text
+
+    _MIRROR_STATIC = {
+        "counsel": "counsel.html", "estate": "estate.html",
+        "capital": "capital.html", "signal": "signal.html",
+        "risk": "risk.html", "pricing": "pricing.html", "demo": "demo.html",
+    }
+
+    @app.route(
+        "/marketing/<any(counsel, estate, capital, signal, risk, pricing, demo):page>",
+        strict_slashes=False)
+    def marketing_mirror(page: str):
+        text = (BASE_DIR / _MIRROR_STATIC[page]).read_text(encoding="utf-8")
+        return app.response_class(_marketize(text), mimetype="text/html")
+
+    @app.route(
+        "/marketing/demo/<any(signal, counsel, estate, capital, risk, nexus):desk>",
+        strict_slashes=False)
+    def marketing_mirror_demo(desk: str):
+        text = serve_demo_page(desk).get_data(as_text=True)
+        return app.response_class(_marketize(text), mimetype="text/html")
+
+    # The Executive Briefing is a chrome-less full-screen module with relative
+    # asset links, so a plain passthrough keeps it working under the prefix.
+    @app.route("/marketing/executive-briefing/")
+    def marketing_briefing():
+        return send_from_directory(BASE_DIR / "executive-briefing", "index.html")
+
+    @app.route("/marketing/executive-briefing/<path:filename>")
+    def marketing_briefing_assets(filename: str):
+        return executive_briefing_assets(filename)
 
     # ===== Live product demos (public) ==============================
 

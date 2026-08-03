@@ -85,7 +85,8 @@ class ParallelPreviewTestCase(_AppTestCase):
             body = self.page(path)
             self.assertIn('href="/marketing/simulator"', body, path)
             self.assertIn('href="/marketing/walkthrough"', body, path)
-            self.assertIn('href="/demo"', body, path)
+            self.assertIn('href="/marketing/demo"', body, path)
+            self.assertIn('href="/marketing/pricing"', body, path)
             self.assertIn('class="brand">MIZOKI3</a>', body, path)
 
     def test_no_root_surface_is_modified(self) -> None:
@@ -256,7 +257,7 @@ class SimulatorContractTestCase(_AppTestCase):
             body = self.page(path)
             self.assertIn("Illustrative scenario", body, path)
             self.assertIn("<noscript>", body, path)
-            self.assertIn('href="/demo"', body, path)
+            self.assertIn('href="/marketing/demo"', body, path)
 
 
 class EngineDisciplineTestCase(unittest.TestCase):
@@ -394,8 +395,90 @@ class HygieneTestCase(_AppTestCase):
         body = self.page()
         self.assertEqual(1, body.count("/contact?source=marketing"))
         self.assertIn("no pressure", body)
-        self.assertIn('href="/demo"', body)
-        self.assertIn('href="/executive-briefing/"', body)
+        self.assertIn('href="/marketing/demo"', body)
+        self.assertIn('href="/marketing/executive-briefing/"', body)
+
+
+class FullSiteMirrorTestCase(_AppTestCase):
+    """The ENTIRE site is browsable inside /marketing — mirrored from the
+    same canon files on disk (never modified), links rewritten to stay in
+    the prefix, previews marked noindex."""
+
+    MIRROR_PAGES = (
+        "/marketing/counsel", "/marketing/estate", "/marketing/capital",
+        "/marketing/signal", "/marketing/risk", "/marketing/pricing",
+        "/marketing/demo", "/marketing/demo/signal", "/marketing/demo/counsel",
+        "/marketing/demo/estate", "/marketing/demo/capital",
+        "/marketing/demo/risk", "/marketing/demo/nexus",
+    )
+
+    def test_homepage_fronts_the_whole_platform(self) -> None:
+        body = self.page()
+        for division in ("counsel", "estate", "capital", "signal", "risk"):
+            self.assertIn(f'href="/marketing/{division}"', body, division)
+        self.assertIn('id="divisions"', body)
+        self.assertIn("Five divisions. One decision loop.", body)
+        self.assertIn('href="/marketing/demo"', body)
+
+    def test_every_mirror_serves(self) -> None:
+        for path in self.MIRROR_PAGES + ("/marketing/executive-briefing/",):
+            response = self.client.get(path, follow_redirects=True)
+            self.assertEqual(200, response.status_code, path)
+
+    def test_mirrors_carry_strip_and_noindex(self) -> None:
+        for path in self.MIRROR_PAGES:
+            body = self.page(path)
+            self.assertIn('class="compare-strip"', body, path)
+            self.assertIn('<a href="/">View classic site →</a>', body, path)
+            self.assertIn('<meta name="robots" content="noindex" />', body, path)
+            self.assertIn("/assets/css/marketing.css", body, path)
+
+    def test_mirror_links_stay_inside_the_prefix(self) -> None:
+        # Division mirrors must lead to mirrored demos/divisions, never back
+        # to the root paths (that was the "it only shows one page" defect).
+        body = self.page("/marketing/signal")
+        self.assertIn('href="/marketing/demo/signal"', body)
+        self.assertIn('href="/marketing/demo"', body)
+        self.assertNotIn('href="/demo', body.replace('href="/marketing/demo', ""))
+        hub = self.page("/marketing/demo")
+        for desk in ("signal", "counsel", "estate", "capital", "risk", "nexus"):
+            self.assertIn(f'href="/marketing/demo/{desk}"', hub, desk)
+
+    def test_mirror_brand_links_to_marketing_home(self) -> None:
+        # Attribute order differs across pages (class="brand" vs class="logo").
+        for path in ("/marketing/signal", "/marketing/pricing", "/marketing/demo"):
+            body = self.page(path)
+            self.assertTrue(
+                'href="/marketing" class="brand"' in body
+                or 'class="logo" href="/marketing"' in body, path)
+            self.assertNotIn('href="/" class="brand"', body, path)
+            self.assertNotIn('class="logo" href="/"', body, path)
+
+    def test_mirror_self_links_including_html_variants_stay_prefixed(self) -> None:
+        # pricing.html links itself as /pricing.html — the rewriter must catch
+        # extension variants too, or the nav silently exits the preview.
+        body = self.page("/marketing/pricing")
+        self.assertNotIn('href="/pricing', body.replace('href="/pricing"', ""))
+        self.assertIn('href="/marketing/pricing"', body)
+
+    def test_demo_mirrors_keep_seeded_replay_embedding(self) -> None:
+        body = self.page("/marketing/demo/signal?scenario=leadgen_cpa&seed=7")
+        self.assertIn('data-scenario="leadgen_cpa"', body)
+        self.assertIn('data-seed="7"', body)
+
+    def test_briefing_mirror_serves_its_relative_assets(self) -> None:
+        for path in ("/marketing/executive-briefing/css/briefing.css",
+                     "/marketing/executive-briefing/js/app.js",
+                     "/marketing/executive-briefing/js/guide.js"):
+            self.assertEqual(200, self.client.get(path).status_code, path)
+
+    def test_root_pages_stay_pristine(self) -> None:
+        # Reading files for the mirror must never mutate what root serves.
+        for path in ("/signal", "/demo", "/pricing"):
+            body = self.client.get(path).get_data(as_text=True)
+            self.assertNotIn("compare-strip", body, path)
+            self.assertNotIn('content="noindex"', body, path)
+            self.assertNotIn('href="/marketing', body, path)
 
 
 if __name__ == "__main__":

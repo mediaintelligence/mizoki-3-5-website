@@ -218,8 +218,23 @@ away from the classic site, and the homepage does not link into /marketing
 - **Routing**: `/marketing[/…]` with `strict_slashes=False`;
   `/media-buying(.html)` 301s to `/marketing` (interim path from the first
   build, never deployed); sitemap lists the three pages, not the redirect.
-- **Tests**: `tests/test_marketing_site.py` (38) — suite **326**, only the 2
-  pre-existing homepage failures. Playwright pass across all three pages.
+- **FULL-SITE MIRROR (owner follow-up: "it only shows me signals page and does
+  not currently replace the whole site")**: the ENTIRE site is browsable inside
+  the prefix. `/marketing` home gained a five-division grid + live-demos band;
+  `_marketize()` in `app.py` serves `/marketing/{counsel,estate,capital,signal,
+  risk,pricing,demo}` + `/marketing/demo/<desk>` (all six) by reading the SAME
+  canon files off disk (never modified — canon check stays green), rewriting
+  whitelisted internal links (incl. `.html` variants — pricing self-links as
+  `/pricing.html`) to stay under the prefix, and injecting the compare strip +
+  `noindex` (mirrors must not compete with canonical pages in search). The
+  Executive Briefing passes through chrome-less at
+  `/marketing/executive-briefing/` (relative assets just work). Strip escape
+  hatch (`href="/"`) is injected AFTER rewriting so it keeps pointing at the
+  classic site. Mirrored demo desks run the real engines/APIs.
+- **Tests**: `tests/test_marketing_site.py` (47) — suite **335**, only the 2
+  pre-existing homepage failures. Playwright: 27/27 on the three real pages +
+  9/9 mirror pass (division click-through, mirrored capital desk end-to-end
+  run, hub links, briefing, zero page errors).
 - **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
   root and `/marketing` run side by side for the online comparison.
 
