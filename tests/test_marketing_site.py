@@ -597,6 +597,77 @@ class DivisionRedesignTestCase(_AppTestCase):
         self.assertIn("Capital, Risk, Counsel, Estate", body)
         self.assertIn("whole platform, translated into plain language", body)
 
+class AcquisitionShowcaseTestCase(_AppTestCase):
+    """Owner mandate: every number on the acquisition pages is a software
+    fact, not marketing memory. The page is generated from the runtime; this
+    suite re-imports the runtime and fails if the page drifts from the code."""
+
+    CAPABILITIES = (
+        "ReLU threshold intelligence", "ReLU-gated budget reallocation",
+        "Value-based bidding", "Creative fatigue", "Uplift pacing",
+        "Uplift audiences", "Attribution &amp; measurement",
+        "Promotion gates &amp; consent",
+    )
+
+    def test_all_named_capabilities_showcased(self) -> None:
+        body = self.page("/marketing/signal")
+        self.assertIn('id="acquisition"', body)
+        self.assertIn('id="parameters"', body)
+        for cap in self.CAPABILITIES:
+            self.assertIn(cap, body, cap)
+
+    def test_operating_parameters_match_the_runtime(self) -> None:
+        from mizoki_runtime import demo_signal as ds
+        body = self.page("/marketing/signal")
+        self.assertIn("%.0f%%" % (ds.GATE_UPLIFT_FLOOR * 100), body)
+        self.assertIn("%.2f" % ds.GATE_CONFIDENCE_FLOOR, body)
+        self.assertIn("n = %d" % ds.GATE_SAMPLE_FLOOR, body)
+        self.assertIn("±%.0f%%" % ds.GuardrailSet.BUDGET_SWING_CAP_PCT, body)
+        self.assertIn("±%.0f%%" % ds.GuardrailSet.BID_SWING_CAP_PCT, body)
+        self.assertIn("seed=%d" % ds.DEFAULT_SEED, body)
+        winner = ds.SCENARIOS["ecommerce_roas"]["planned_actions"][0]
+        self.assertIn(winner[1], body)                      # entity
+        self.assertIn("${:,.0f}".format(winner[3]), body)   # expected value
+        self.assertIn("n = %d" % winner[5], body)           # support
+        self.assertIn("%.2f" % winner[4], body)             # confidence
+        blocked = [a for a in ds.SCENARIOS["ecommerce_roas"]["planned_actions"]
+                   if a[0].startswith("budget")
+                   and a[2] > ds.GuardrailSet.BUDGET_SWING_CAP_PCT][0]
+        self.assertIn("+%.0f%%" % blocked[2], body)         # the deliberate block
+
+    def test_simulator_constants_match_engine_file(self) -> None:
+        js = ENGINE_FILE.read_text(encoding="utf-8")
+        body = self.page("/marketing/signal")
+        roas = re.search(r"ROAS_FLOOR = ([0-9.]+)", js).group(1)
+        self.assertIn(roas + "×", body)
+        shift = int(re.search(r"MAX_SHIFT = ([0-9]+)", js).group(1))
+        self.assertIn("${:,}".format(shift), body)
+        drop = float(re.search(r"PIXEL_DROP = ([0-9.]+)", js).group(1))
+        self.assertIn("%.0f%%" % (drop * 100), body)
+        verified = re.search(r"VERIFIED_ROAS = ([0-9.]+)", js).group(1)
+        self.assertIn(verified + "×", body)
+
+    def test_demo_deep_links_embed_seeded_scenarios(self) -> None:
+        body = self.page("/marketing/signal")
+        self.assertIn(
+            'href="/marketing/demo/signal?scenario=ecommerce_roas&amp;seed=42"', body)
+        self.assertIn(
+            'href="/marketing/demo/signal?scenario=email_reengagement&amp;seed=42"', body)
+        # ...and the mirrored desk honors them for shared, seeded autoruns.
+        for scenario in ("ecommerce_roas", "email_reengagement", "leadgen_cpa"):
+            desk = self.page(f"/marketing/demo/signal?scenario={scenario}&seed=42")
+            self.assertIn(f'data-scenario="{scenario}"', desk, scenario)
+            self.assertIn('data-seed="42"', desk, scenario)
+
+    def test_spec_and_live_labels_stay_honest(self) -> None:
+        body = self.page("/marketing/signal")
+        self.assertGreaterEqual(body.count('class="chip live"'), 4)
+        self.assertGreaterEqual(body.count('class="chip spec"'), 3)
+        self.assertIn("observe-only default", body)
+        self.assertIn("Brier ≤ 0.20", body)
+        self.assertIn("AUC ≥ 0.72", body)
+        self.assertIn("never outcome promises", body)
+
 
 if __name__ == "__main__":
     unittest.main()

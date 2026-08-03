@@ -269,6 +269,24 @@ away from the classic site, and the homepage does not link into /marketing
 - **Tests**: `tests/test_marketing_site.py` (57) — suite **345**, only the 2
   pre-existing homepage failures. Playwright: 27/27 core + 9/9 mirror,
   zero page errors on the redesigned pages.
+- **Media-acquisition showcase — software facts only (owner, 2026-08-03)**:
+  `marketing/signal.html` gained `#acquisition` (8 capability cards: ReLU
+  threshold intelligence, ReLU-gated budget reallocation, value-based bidding,
+  creative fatigue, uplift pacing, uplift audiences, attribution &
+  measurement, promotion gates & consent) + `#parameters` (source-of-truth
+  table). Owner mandate: "every number on these pages is a software fact, not
+  marketing memory" — the sections are GENERATED from the runtime
+  (`demo_signal.GATE_UPLIFT_FLOOR` 5% · `GATE_CONFIDENCE_FLOOR` 0.70 ·
+  `GATE_SAMPLE_FLOOR` n=15 · `GuardrailSet` ±20%/±30% swing caps · seed 42 ·
+  the +12% campaign_7 $8,400/0.86/n=48 winner and the deliberate +25% block ·
+  media-sim.js 2.2×/$5,000/35%/3.1×), each row cites its module constant, and
+  `AcquisitionShowcaseTestCase` re-imports the runtime so the page FAILS THE
+  BUILD if it drifts from the code. Live-vs-spec chips keep honesty (spec
+  items: uplift pacing/audiences, promotion gates Brier ≤ 0.20 · AUC ≥ 0.72 ·
+  lift ≥ 2 cycles, observe-only default). Capability cards deep-link seeded
+  demo runs (`/marketing/demo/signal?scenario=…&seed=42` — embedding
+  verified). Suite **350**; Playwright acquisition pass 5/5 (deep link
+  autoruns the real engine).
 - **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
   root and `/marketing` run side by side for the online comparison.
 
