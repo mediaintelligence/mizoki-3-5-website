@@ -578,3 +578,47 @@ body { padding-top: 34px; }
 .worked-plate p .bad { color: var(--accent-rose); font-weight: 700; }
 .worked-plate p .ok { color: var(--accent-emerald); font-weight: 700; }
 .worked-plate .wp-note { font-family: var(--mono); font-size: 10px; color: var(--text-3); margin: 0; }
+
+/* ===== Media-acquisition showcase (marketing/signal.html) ===== */
+.acq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 880px) { .acq-grid { grid-template-columns: 1fr; } }
+.acq-card {
+  background: var(--bg-1); border: 1px solid var(--line);
+  border-left: 2px solid var(--accent-purple); border-radius: 2px; padding: 22px 24px;
+}
+.acq-card h3 { font-size: 1.02rem; color: var(--text-0); font-weight: 600; margin-bottom: 8px; }
+.acq-card .chip {
+  font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; border-radius: 2px; padding: 3px 8px; margin-left: 8px;
+  vertical-align: 2px; display: inline-block;
+}
+.acq-card .chip.live { color: var(--accent-emerald); border: 1px solid rgba(65, 214, 149, 0.4); }
+.acq-card .chip.spec { color: var(--accent-amber); border: 1px solid rgba(217, 168, 60, 0.4); }
+.acq-card p { font-size: 0.88rem; color: var(--text-2); margin: 0 0 10px; line-height: 1.6; }
+.acq-card .params {
+  font-family: var(--mono); font-size: 11px; color: var(--text-1); line-height: 1.8;
+  border-top: 1px dashed var(--line); padding-top: 10px; display: block;
+}
+.acq-card .params b { color: var(--accent-cyan); font-weight: 600; }
+.acq-card .params .src { color: var(--text-3); }
+.acq-card a.runlink { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; }
+/* Operating-parameters table */
+.param-table { border: 1px solid var(--line-strong); border-radius: 2px; overflow: hidden; }
+.param-row {
+  display: grid; grid-template-columns: minmax(180px, 1.4fr) minmax(120px, 1fr) minmax(200px, 1.6fr) minmax(120px, 0.8fr);
+  gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--line);
+  background: var(--bg-1); align-items: baseline;
+}
+.param-row:last-child { border-bottom: none; }
+.param-row.head {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; font-weight: 700;
+  text-transform: uppercase; color: var(--text-3); background: var(--bg);
+}
+.param-row .pname { font-size: 0.88rem; color: var(--text-1); }
+.param-row .pval { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--accent-cyan); font-variant-numeric: tabular-nums; }
+.param-row .psrc { font-family: var(--mono); font-size: 10.5px; color: var(--text-3); word-break: break-all; }
+.param-row .psee a { font-family: var(--mono); font-size: 10.5px; }
+@media (max-width: 760px) {
+  .param-row { grid-template-columns: 1fr 1fr; }
+  .param-row .psrc, .param-row.head .h-src, .param-row .psee, .param-row.head .h-see { display: none; }
+}

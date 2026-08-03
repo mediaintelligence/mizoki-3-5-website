@@ -59,6 +59,7 @@
       </div>
       <div class="hero-cta" style="margin-top: 36px;">
         <a href="/marketing/demo/signal" class="btn btn-primary">▶ Run the Signal desk live</a>
+        <a href="#acquisition" class="btn btn-ghost">Acquisition stack — the real numbers</a>
         <a href="/marketing/demo" class="btn btn-ghost">All live demos</a>
         <a href="/marketing" class="btn btn-ghost">← Marketing home</a>
       </div>
@@ -111,6 +112,78 @@
         <p>Pixel fires drop 35% overnight; orders are flat. A naive automation slashes budgets against the broken number. Signal quarantines the metric, evaluates the ROAS floor on <span class="ok">verified server-side evidence</span>, and holds spend steady — the correct move is refusing the panic cut.</p>
         <p class="wp-note">Illustrative scenario data · deterministic and seeded — replay it yourself on the live desk.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="mb-section" id="acquisition" style="--dc: var(--accent-purple);">
+    <div class="container">
+      <div class="mb-label">// Media acquisition intelligence — software facts, not marketing memory</div>
+      <h2>The acquisition stack, with its real numbers.</h2>
+      <p class="lede">Every figure below is read from the Boss modules that actually run — the Signal Factory engine, its guardrail set, and the simulator — or labeled as platform spec where the capability ships observe-first. The test suite asserts this page against the code: if an engineer changes a floor, this page fails the build until it tells the truth again.</p>
+      <div class="acq-grid">
+        <div class="acq-card">
+          <h3>ReLU threshold intelligence<span class="chip live">Live in the demo</span></h3>
+          <p>The gate is max(0, uplift): weak evidence is zeroed, never averaged in. A segment must clear all three floors — measured uplift, decision confidence, and sample size — before it may carry budget.</p>
+          <span class="params">uplift floor <b>5%</b> · confidence floor <b>0.70</b> · sample floor <b>n = 15</b><br /><span class="src">source: demo_signal.GATE_UPLIFT_FLOOR · GATE_CONFIDENCE_FLOOR · GATE_SAMPLE_FLOOR</span></span>
+        </div>
+        <div class="acq-card">
+          <h3>ReLU-gated budget reallocation<span class="chip live">Live in the demo</span></h3>
+          <p>Budget moves only through cleared gates, and swings are capped in the Validate stage. The demo deliberately requests a +25% swing so you can watch the guardrail block it — the part most demos hide.</p>
+          <span class="params">budget swing cap <b>±20%</b> · bid swing cap <b>±30%</b><br /><span class="src">source: demo_signal.GuardrailSet.BUDGET_SWING_CAP_PCT · BID_SWING_CAP_PCT</span><br /><a class="runlink" href="/marketing/demo/signal?scenario=ecommerce_roas&amp;seed=42">▶ watch the +25% request get blocked (seed 42)</a></span>
+        </div>
+        <div class="acq-card">
+          <h3>Value-based bidding<span class="chip live">Live in the demo</span></h3>
+          <p>Every proposed action is a value object, not a hunch: it carries expected value, decision confidence, and the conversions supporting it. In the seeded run, the winning move is +12% on campaign_7 — because the numbers say so.</p>
+          <span class="params">winning action <b>+12% campaign_7</b> · expected value <b>$8,400</b> · confidence <b>0.86</b> · support <b>n = 48</b><br /><span class="src">source: demo_signal.SCENARIOS["ecommerce_roas"].planned_actions (seed 42)</span></span>
+        </div>
+        <div class="acq-card">
+          <h3>Creative fatigue — diagnosed, not assumed<span class="chip live">Live in the simulator</span></h3>
+          <p>Fatigue is a verdict, not a reflex. When creative CTR is flat while post-click conversion falls, the cause is the site, not the creative — the simulator's Reason stage makes that call in front of you. Real-time fatigue tracking ships in the Meta &amp; Paid Social module.</p>
+          <span class="params">diagnostic rule <b>flat CTR + falling post-click CVR → not creative fatigue</b><br /><span class="src">source: media-sim.js modelLatency reason chain · Meta module (spec)</span><br /><a class="runlink" href="/marketing/simulator">▶ trigger the diagnosis yourself</a></span>
+        </div>
+        <div class="acq-card">
+          <h3>Uplift pacing<span class="chip spec">Platform spec</span></h3>
+          <p>Spend paces to modeled incremental lift per segment — X-Learner and DR-Learner estimate who is actually persuadable — so budget concentrates where dollars change outcomes, not where platforms claim credit.</p>
+          <span class="params">estimators <b>X-Learner · DR-Learner</b> · optimization target <b>iROAS, not platform ROAS</b><br /><span class="src">source: Signal Intelligence spec §7.1 / §4.1 · observe-first until promotion gates clear</span></span>
+        </div>
+        <div class="acq-card">
+          <h3>Uplift audiences<span class="chip spec">Platform spec</span></h3>
+          <p>Lookalike expansion with the upgrade classic lookalikes lack: every candidate carries a calibrated intent probability and stage — awareness, consideration, in-market, purchase-imminent — so you expand toward people approaching in-market, not people who merely resemble your seed.</p>
+          <span class="params">method <b>two-tower embeddings + nearest-neighbor retrieval</b> · stages <b>4, calibrated</b><br /><span class="src">source: Signal Intelligence spec §4.4 / §6 · consent-gated ingestion, always</span></span>
+        </div>
+        <div class="acq-card">
+          <h3>Attribution &amp; measurement<span class="chip live">Quarantine live · designs spec</span></h3>
+          <p>Multi-touch attribution calibrated by experiments — holdout, ghost-bid, geo — with every causal estimate stress-tested by DoWhy refuters before it is trusted. And when a feed lies, it is quarantined: the demo's e-mail scenario refuses proxy-open inflation at the gate; the simulator defends the ROAS floor on verified 3.1× evidence when pixel fires drop 35%.</p>
+          <span class="params">refuters <b>placebo-treatment · random-common-cause · data-subset</b> · ledger <b>caused vs anticipated</b><br /><span class="src">source: spec §7.2–7.3 · demo_signal email_reengagement · media-sim.js PIXEL_DROP / VERIFIED_ROAS</span><br /><a class="runlink" href="/marketing/demo/signal?scenario=email_reengagement&amp;seed=42">▶ watch the proxy-open quarantine (seed 42)</a></span>
+        </div>
+        <div class="acq-card">
+          <h3>Promotion gates &amp; consent<span class="chip spec">Governance, always on</span></h3>
+          <p>Anticipatory models ship observe-only and are promoted to autonomy only past explicit calibration gates. Micro-signal ingestion sits behind a hard consent gate — no consent, no ingestion, no exceptions. Outcome figures on this site are design targets, labeled as targets, never outcome promises.</p>
+          <span class="params">promotion gates <b>Brier ≤ 0.20 · AUC ≥ 0.72 · stable lift ≥ 2 cycles</b> · serving <b>sub-100ms</b><br /><span class="src">source: Signal Intelligence spec §6.4 / §5 · observe-only default</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-section" id="parameters">
+    <div class="container">
+      <div class="mb-label">// Operating parameters — read from the software</div>
+      <h2>The numbers, with their source of truth.</h2>
+      <p class="lede">Pulled from the modules that run the demos and the simulator. The suite's sync test imports the runtime and fails if this table drifts from the code.</p>
+      <div class="param-table">
+        <div class="param-row head"><span>Parameter</span><span>Value</span><span class="h-src">Source of truth</span><span class="h-see">See it run</span></div>
+        <div class="param-row"><span class="pname">ReLU uplift floor</span><span class="pval">5%</span><span class="psrc">demo_signal.GATE_UPLIFT_FLOOR</span><span class="psee"><a href="/marketing/demo/signal">signal desk →</a></span></div>
+        <div class="param-row"><span class="pname">ReLU confidence floor</span><span class="pval">0.70</span><span class="psrc">demo_signal.GATE_CONFIDENCE_FLOOR</span><span class="psee"><a href="/marketing/demo/signal">signal desk →</a></span></div>
+        <div class="param-row"><span class="pname">ReLU sample floor</span><span class="pval">n = 15</span><span class="psrc">demo_signal.GATE_SAMPLE_FLOOR</span><span class="psee"><a href="/marketing/demo/signal">signal desk →</a></span></div>
+        <div class="param-row"><span class="pname">Budget swing cap</span><span class="pval">±20%</span><span class="psrc">demo_signal.GuardrailSet.BUDGET_SWING_CAP_PCT</span><span class="psee"><a href="/marketing/demo/signal?scenario=ecommerce_roas&amp;seed=42">the block →</a></span></div>
+        <div class="param-row"><span class="pname">Bid swing cap</span><span class="pval">±30%</span><span class="psrc">demo_signal.GuardrailSet.BID_SWING_CAP_PCT</span><span class="psee"><a href="/marketing/demo/signal?scenario=leadgen_cpa&amp;seed=42">the block →</a></span></div>
+        <div class="param-row"><span class="pname">Replay seed (shared runs)</span><span class="pval">42</span><span class="psrc">demo_signal.DEFAULT_SEED</span><span class="psee"><a href="/marketing/demo/signal">signal desk →</a></span></div>
+        <div class="param-row"><span class="pname">Target ROAS floor</span><span class="pval">2.2×</span><span class="psrc">media-sim.js ROAS_FLOOR</span><span class="psee"><a href="/marketing/simulator">simulator →</a></span></div>
+        <div class="param-row"><span class="pname">Max auto-spend limit</span><span class="pval">$5,000</span><span class="psrc">media-sim.js MAX_SHIFT</span><span class="psee"><a href="/marketing/simulator">simulator →</a></span></div>
+        <div class="param-row"><span class="pname">Pixel-drift stress case</span><span class="pval">−35% fires · verified 3.1×</span><span class="psrc">media-sim.js PIXEL_DROP · VERIFIED_ROAS</span><span class="psee"><a href="/marketing/simulator">simulator →</a></span></div>
+        <div class="param-row"><span class="pname">Model promotion gates</span><span class="pval">Brier ≤ 0.20 · AUC ≥ 0.72 · lift ≥ 2 cycles</span><span class="psrc">Signal Intelligence spec §6.4 (observe-only default)</span><span class="psee"><a href="/marketing/governance">governance →</a></span></div>
+      </div>
+      <p class="proof-note">Live-in-demo figures are executable — same seed, same numbers, every run. Platform-spec figures come from the owner's Signal Intelligence specification and ship observe-first behind the promotion gates above. Design targets stay labeled as targets.</p>
     </div>
   </section>
 
