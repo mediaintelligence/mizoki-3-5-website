@@ -28,7 +28,9 @@ PAGE_FILE = REPO_ROOT / "marketing" / "index.html"
 ENGINE_FILE = REPO_ROOT / "assets" / "js" / "media-sim.js"
 CSS_FILE = REPO_ROOT / "assets" / "css" / "marketing.css"
 
-MARKETING_PAGES = ("/marketing", "/marketing/simulator", "/marketing/walkthrough")
+MARKETING_PAGES = ("/marketing", "/marketing/engine", "/marketing/modules",
+                   "/marketing/simulator", "/marketing/walkthrough",
+                   "/marketing/governance")
 
 
 class _AppTestCase(unittest.TestCase):
@@ -49,7 +51,7 @@ class _AppTestCase(unittest.TestCase):
 class RoutingTestCase(_AppTestCase):
     def test_all_marketing_pages_serve(self) -> None:
         for path in MARKETING_PAGES + ("/marketing/", "/marketing/simulator/",
-                                       "/marketing/walkthrough/"):
+                                       "/marketing/engine/", "/marketing/governance/"):
             response = self.client.get(path, follow_redirects=True)
             self.assertEqual(200, response.status_code, path)
 
@@ -113,15 +115,15 @@ class HeroMandateTestCase(_AppTestCase):
 
     def test_both_ctas_present_and_wired(self) -> None:
         body = self.page()
-        self.assertIn("Launch Interactive Scenario Simulator", body)
+        self.assertIn("Launch Live Decision Simulator", body)
         self.assertIn('href="#simulator"', body)
         self.assertIn("Watch 90-Sec Platform Walkthrough", body)
         self.assertIn('href="#video"', body)
 
     def test_social_proof_metrics_with_honesty_note(self) -> None:
         body = self.page()
-        for marker in ("$100M+", "Ad Spend Analyzed", "Sub-100ms",
-                       "Signal Latency", "100%", "Policy Compliance"):
+        for marker in ("$100M+", "Ad Spend Monitored", "&lt;100ms",
+                       "Signal Latency", "100%", "Policy Protection"):
             self.assertIn(marker, body, marker)
         # The strip is labeled for what it is — architecture facts and design
         # targets, never outcome promises (claims governance).
@@ -140,15 +142,20 @@ class VocabularyKeyTestCase(_AppTestCase):
         "Canonical Event Envelope": "Structured Signal Evidence",
         "Temporal-Causal Knowledge Base": "Cross-Stack Root Cause Engine",
         "Domain Intelligence Cell": "Channel Intelligence Modules",
-        "SRPVDAL": "7-Stage Decision Control System",
+        "SRPVDAL": "7-Stage Governed Decision System",
+        "Decision Control Plane": "Safety Guardrail Engine",
         "Immutable Learning Ledger": "Compounding ROI Memory",
+        "Tenant Isolation": "Enterprise Privacy &amp; Security Shield",
+        "No-Action Counterfactual": "&quot;Do Nothing&quot; Opportunity Cost Check",
     }
 
     def test_translated_terms_are_the_working_vocabulary(self) -> None:
         body = self.page()
         for translated in self.TRANSLATIONS.values():
-            self.assertGreaterEqual(
-                body.count(translated), 1, f"missing translated term: {translated}"
+            needle = translated.replace("&amp;", "&").replace("&quot;", '"')
+            self.assertTrue(
+                translated in body or needle in body,
+                f"missing translated term: {needle}",
             )
         # The flagship terms carry the page, not one-off mentions.
         self.assertGreaterEqual(body.count("Structured Signal Evidence"), 3)
@@ -164,7 +171,9 @@ class VocabularyKeyTestCase(_AppTestCase):
             )
 
     def test_sub_pages_carry_no_raw_jargon_at_all(self) -> None:
-        for path in ("/marketing/simulator", "/marketing/walkthrough"):
+        for path in ("/marketing/engine", "/marketing/modules",
+                     "/marketing/simulator", "/marketing/walkthrough",
+                     "/marketing/governance"):
             body = self.page(path)
             for raw in self.TRANSLATIONS:
                 self.assertNotIn(raw, body, f"{raw} on {path}")
@@ -174,7 +183,9 @@ class VocabularyKeyTestCase(_AppTestCase):
         head = body.split("</head>")[0]
         self.assertIn("Structured Signal Evidence", head)
         self.assertIn("Cross-Stack Root Cause Engine", head)
-        for raw in ("Canonical Event Envelope", "SRPVDAL", "Immutable Learning Ledger"):
+        for raw in ("Canonical Event Envelope", "SRPVDAL",
+                    "Immutable Learning Ledger", "Tenant Isolation",
+                    "No-Action Counterfactual"):
             self.assertNotIn(raw, head, f"raw jargon in meta tags: {raw}")
 
 
@@ -225,7 +236,8 @@ class SimulatorContractTestCase(_AppTestCase):
     def test_three_scenarios(self) -> None:
         for path in self.SIM_PAGES:
             body = self.page(path)
-            for scenario in ("Landing Page Latency Spike", "SKU Out-of-Stock",
+            for scenario in ("Landing Page Latency Spike",
+                             "SKU Out-of-Stock Crisis",
                              "Pixel Attribution Drift"):
                 self.assertIn(scenario, body, f"{scenario} on {path}")
             for value in ('value="latency"', 'value="stock"', 'value="pixel"'):
@@ -327,11 +339,11 @@ class StoryboardTestCase(_AppTestCase):
     VID_PAGES = ("/marketing", "/marketing/walkthrough")
 
     SCENES = (
-        ("0:00", "The Media Buyer", "0"),
-        ("0:15", "What Are Real Signals?", "15"),
-        ("0:35", "Causal Reasoning in Action", "35"),
-        ("0:55", "Governed Action", "55"),
-        ("1:15", "Compounding Memory Ledger", "75"),
+        ("0:00", "The Media Buyer's Nightmare", "0"),
+        ("0:15", "Redefining Cross-Stack Signals", "15"),
+        ("0:35", "Finding the True Root Cause", "35"),
+        ("0:55", "1-Click Governed Approvals", "55"),
+        ("1:15", "Compounding Organizational Memory", "75"),
     )
 
     def test_five_scenes_with_timestamps_and_seek_targets(self) -> None:
@@ -368,11 +380,7 @@ class HygieneTestCase(_AppTestCase):
             self.assertIsNone(re.search(r'href="[a-z][a-z0-9-]*\.html', body), path)
 
     def test_icon_set_canonical_and_og(self) -> None:
-        canonical = {
-            "/marketing": "https://mizoki3.com/marketing",
-            "/marketing/simulator": "https://mizoki3.com/marketing/simulator",
-            "/marketing/walkthrough": "https://mizoki3.com/marketing/walkthrough",
-        }
+        canonical = {path: f"https://mizoki3.com{path}" for path in MARKETING_PAGES}
         for path, url in canonical.items():
             body = self.page(path)
             self.assertIn('href="/assets/img/favicon.svg"', body, path)
@@ -417,8 +425,26 @@ class FullSiteMirrorTestCase(_AppTestCase):
         for division in ("counsel", "estate", "capital", "signal", "risk"):
             self.assertIn(f'href="/marketing/{division}"', body, division)
         self.assertIn('id="divisions"', body)
-        self.assertIn("Five divisions. One decision loop.", body)
+        self.assertIn("One decision loop. Any division.", body)
         self.assertIn('href="/marketing/demo"', body)
+
+    def test_divisions_framed_as_initial_mvps_not_limits(self) -> None:
+        # Owner: "5 divisions are only showcased here as initial mvps.
+        # Miz oki is not limited to others so it's not just 5."
+        body = self.page()
+        self.assertIn("initial MVPs", body)
+        self.assertIn("MIZ OKI is not limited to them", body)
+        self.assertIn("+ Your division", body)
+        self.assertIn("Any operating domain", body)
+        self.assertEqual(6, body.count('class="div-card'), "5 MVPs + your-division card")
+
+    def test_full_stack_signal_grid_on_homepage(self) -> None:
+        body = self.page()
+        self.assertIn('id="signal-grid"', body)
+        for layer in ("Ad networks", "Infrastructure", "Inventory",
+                      "Finance guardrails"):
+            self.assertIn(layer, body, layer)
+        self.assertIn("Target ROAS floors · CPA caps", body)
 
     def test_every_mirror_serves(self) -> None:
         for path in self.MIRROR_PAGES + ("/marketing/executive-briefing/",):
@@ -479,6 +505,52 @@ class FullSiteMirrorTestCase(_AppTestCase):
             self.assertNotIn("compare-strip", body, path)
             self.assertNotIn('content="noindex"', body, path)
             self.assertNotIn('href="/marketing', body, path)
+
+
+
+
+class FullSitePagesTestCase(_AppTestCase):
+    """Pages 2/3/5 of the Master Full-Site prompt, translated to this stack."""
+
+    def test_engine_page_walks_all_seven_stages(self) -> None:
+        body = self.page("/marketing/engine")
+        self.assertIn("7-Stage Governed Decision System", body)
+        for gist in ("Full-Stack Radar", "Root Cause AI", "Actionable Strategy",
+                     "Safety Brakes", "1-Click Approvals", "Hands-Free Execution",
+                     "Compounding ROI Memory"):
+            self.assertIn(gist, body, gist)
+        self.assertIn("negative keyword lists", body)
+        self.assertIn("Opportunity Cost Check", body)
+        self.assertEqual(7, body.count('class="eng-stage"'))
+
+    def test_modules_page_shows_all_four_channel_modules(self) -> None:
+        body = self.page("/marketing/modules")
+        for module in ("Google Ads Module", "Meta &amp; Paid Social Module",
+                       "E-Commerce &amp; Inventory Module",
+                       "ESP &amp; Retention Module"):
+            self.assertIn(module, body, module)
+        for feature in ("SearchStream coverage", "MCC multi-account",
+                        "conversion lag", "CAPI pixel lag",
+                        "Automated ad pauses for zero-stock products",
+                        "Automated suppression updates"):
+            self.assertIn(feature.lower(), body.lower(), feature)
+        # Modules are the growth mechanism — the not-just-five story.
+        self.assertIn("onboards as a new module", body)
+
+    def test_governance_page_modes_and_shield(self) -> None:
+        body = self.page("/marketing/governance")
+        for mode in ("Observe Mode", "Bounded Autonomy", "Full Autonomy"):
+            self.assertIn(mode, body, mode)
+        self.assertIn("instant rollback", body)
+        for cell in ("Tenant memory isolation", "Customer-managed keys",
+                     "No cross-account bleed", "Tamper-evident audit trails"):
+            self.assertIn(cell, body, cell)
+        self.assertIn("Safety Guardrail Engine", body)
+
+    def test_sitemap_lists_all_six_marketing_pages(self) -> None:
+        sitemap = self.client.get("/sitemap.xml").get_data(as_text=True)
+        for path in MARKETING_PAGES:
+            self.assertIn(f"https://mizoki3.com{path}</loc>", sitemap, path)
 
 
 if __name__ == "__main__":

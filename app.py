@@ -514,6 +514,18 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def marketing_walkthrough():
         return send_from_directory(BASE_DIR / "marketing", "walkthrough.html")
 
+    @app.route("/marketing/engine", strict_slashes=False)
+    def marketing_engine():
+        return send_from_directory(BASE_DIR / "marketing", "engine.html")
+
+    @app.route("/marketing/modules", strict_slashes=False)
+    def marketing_modules():
+        return send_from_directory(BASE_DIR / "marketing", "modules.html")
+
+    @app.route("/marketing/governance", strict_slashes=False)
+    def marketing_governance():
+        return send_from_directory(BASE_DIR / "marketing", "governance.html")
+
     # The experience shipped briefly at /media-buying; /marketing is its home.
     @app.route("/media-buying")
     @app.route("/media-buying.html")
@@ -696,7 +708,9 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         pages = [
             "/", "/counsel", "/estate", "/capital", "/signal", "/risk",
             "/pricing", "/executive-briefing/",
-            "/marketing", "/marketing/simulator", "/marketing/walkthrough",
+            "/marketing", "/marketing/engine", "/marketing/modules",
+            "/marketing/simulator", "/marketing/walkthrough",
+            "/marketing/governance",
             "/demo", "/demo/signal", "/demo/counsel", "/demo/estate",
             "/demo/capital", "/demo/risk", "/demo/nexus",
             "/walkthrough.html", "/blog",

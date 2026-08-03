@@ -128,13 +128,13 @@
       ],
       actions: [
         { t: "Reroute paid traffic to the fast LP variant", d: "recovers ~" + Math.round(recovery * 100) + "% of the modeled CVR loss" },
-        { t: "Shift " + money(shift) + "/day to unaffected campaigns", d: clamped ? "requested " + money(rawShift) + " — clamped at the " + money(MAX_SHIFT) + " auto-shift cap" : "inside the " + money(MAX_SHIFT) + " auto-shift cap" },
+        { t: "Shift " + money(shift) + "/day to unaffected campaigns", d: clamped ? "requested " + money(rawShift) + " — clamped at the " + money(MAX_SHIFT) + " auto-spend limit" : "inside the " + money(MAX_SHIFT) + " auto-spend limit" },
         { t: "Open infra ticket with the evidence chain attached", d: "deploy hash, latency series, CVR series" }
       ],
       checks: [
         { name: "budget caps", pass: true, detail: "shift " + money(shift) + " ≤ campaign caps" },
         { name: "brand rules", pass: true, detail: "no creative or placement changes proposed" },
-        { name: "max auto-shift " + money(MAX_SHIFT), pass: !clamped ? true : "warn", detail: clamped ? "clamped " + money(rawShift) + " → " + money(MAX_SHIFT) : "within cap", enabled: s.capOn },
+        { name: "max auto-spend limit " + money(MAX_SHIFT), pass: !clamped ? true : "warn", detail: clamped ? "clamped " + money(rawShift) + " → " + money(MAX_SHIFT) : "within cap", enabled: s.capOn },
         { name: "ROAS floor " + ROAS_FLOOR.toFixed(1) + "×", pass: !floorBreached, detail: "projected " + projRoas.toFixed(2) + "× after reroute" + (s.floorOn ? "" : " (floor disabled)"), enabled: s.floorOn }
       ],
       veto: floorBreached,
@@ -192,7 +192,7 @@
       checks: [
         { name: "budget caps", pass: true, detail: healthy ? "no movement proposed" : "reallocation stays inside account budget" },
         { name: "brand rules", pass: true, detail: "no creative changes proposed" },
-        { name: "max auto-shift " + money(MAX_SHIFT), pass: !clamped ? true : "warn", detail: clamped ? "clamped " + money(rawShift) + " → " + money(MAX_SHIFT) : "shift " + money(shift) + " within cap", enabled: s.capOn },
+        { name: "max auto-spend limit " + money(MAX_SHIFT), pass: !clamped ? true : "warn", detail: clamped ? "clamped " + money(rawShift) + " → " + money(MAX_SHIFT) : "shift " + money(shift) + " within cap", enabled: s.capOn },
         { name: "ROAS floor " + ROAS_FLOOR.toFixed(1) + "×", pass: true, detail: "projected blended " + BASE_ROAS.toFixed(1) + "× (spend follows stock)" + (s.floorOn ? "" : " (floor disabled)"), enabled: s.floorOn }
       ],
       veto: false,
@@ -233,7 +233,7 @@
       checks: [
         { name: "budget caps", pass: true, detail: "no spend movement proposed" },
         { name: "brand rules", pass: true, detail: "no creative changes proposed" },
-        { name: "max auto-shift " + money(MAX_SHIFT), pass: true, detail: "shift $0 — trivially within cap", enabled: s.capOn },
+        { name: "max auto-spend limit " + money(MAX_SHIFT), pass: true, detail: "shift $0 — trivially within cap", enabled: s.capOn },
         { name: "ROAS floor " + ROAS_FLOOR.toFixed(1) + "×", pass: true, detail: s.floorOn ? "evaluated on VERIFIED " + VERIFIED_ROAS.toFixed(2) + "× — the quarantined " + reported.toFixed(2) + "× is not evidence" : "floor disabled — same plan on the evidence", enabled: s.floorOn }
       ],
       veto: false,
@@ -311,7 +311,7 @@
     } else if (run.holdRun) {
       decideHtml =
         '<span class="ln"><span class="ok">✓</span> Decision: <b>hold — no action required</b></span>' +
-        '<span class="ln"><span class="dim">Doing nothing is a governed decision too; it is recorded like any other.</span></span>' +
+        '<span class="ln"><span class="dim">The "Do Nothing" Opportunity Cost Check passed — inaction beat every candidate move on the evidence, and it is recorded like any other decision.</span></span>' +
         '<button class="sim-approve" id="simApprove">Log the hold</button>';
     } else {
       decideHtml =
@@ -476,23 +476,23 @@
 
   var SCENES = [
     {
-      t: 0, end: 15, title: "The Media Buyer's Dilemma",
+      t: 0, end: 15, title: "The Media Buyer's Nightmare",
       copy: "It's 7 a.m. and CPA is up forty percent. Was it creative fatigue? A slow landing page? A tracking break? Your dashboards show you twelve symptoms — and no cause. So you guess, and the spend keeps burning while you do."
     },
     {
-      t: 15, end: 35, title: "What Are Real Signals?",
+      t: 15, end: 35, title: "Redefining Cross-Stack Signals",
       copy: "MIZ OKI reads your stack differently. Every ad click, page load, inventory count, and margin figure arrives as Structured Signal Evidence — one format, full provenance, cross-checked against its source system. Not more data. Better evidence."
     },
     {
-      t: 35, end: 55, title: "Causal Reasoning in Action",
+      t: 35, end: 55, title: "Finding the True Root Cause",
       copy: "The Cross-Stack Root Cause Engine correlates across the systems your tools treat as silos: the 2 p.m. deploy slowed your landing page, conversion fell, CPA rose. A named cause with a confidence figure attached — in minutes, not at Monday's retro."
     },
     {
-      t: 55, end: 75, title: "Governed Action & 1-Click Approvals",
-      copy: "Then it acts — inside your rules. Budget caps, brand rules, and margin floors are checked before anything moves. Low-risk fixes execute hands-free; bigger calls route to Slack for one-click approval. And when a move fails the safety check, it is vetoed. Nothing executes."
+      t: 55, end: 75, title: "1-Click Governed Approvals",
+      copy: "Then it acts — inside your rules. The Safety Guardrail Engine checks budget caps, brand rules, and margin floors before anything moves. Low-risk fixes execute hands-free; bigger calls route to Slack for one-click approval. And when a move fails the safety check, it is vetoed. Nothing executes."
     },
     {
-      t: 75, end: 90, title: "Compounding Memory Ledger",
+      t: 75, end: 90, title: "Compounding Organizational Memory",
       copy: "Every outcome is recorded to Compounding ROI Memory — permanently. The next decision starts smarter than the last one finished. That's not another dashboard. That's a control plane for ad growth."
     }
   ];

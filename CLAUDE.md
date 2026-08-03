@@ -231,10 +231,29 @@ away from the classic site, and the homepage does not link into /marketing
   `/marketing/executive-briefing/` (relative assets just work). Strip escape
   hatch (`href="/"`) is injected AFTER rewriting so it keeps pointing at the
   classic site. Mirrored demo desks run the real engines/APIs.
-- **Tests**: `tests/test_marketing_site.py` (47) — suite **335**, only the 2
-  pre-existing homepage failures. Playwright: 27/27 on the three real pages +
-  9/9 mirror pass (division click-through, mirrored capital desk end-to-end
-  run, hub links, briefing, zero page errors).
+- **Full-site prompt v2 integrated (owner, 2026-08-03)**: vocabulary key now
+  8 entries — adds Decision Control Plane/Eligibility Layer → **Safety
+  Guardrail Engine**, Tenant Isolation & Boundary → **Enterprise Privacy &
+  Security Shield**, No-Action Counterfactual Baseline → **"Do Nothing"
+  Opportunity Cost Check**, and renames the loop **7-Stage Governed Decision
+  System** (was "Decision Control System"). Three new real pages:
+  `/marketing/engine` (7-stage walkthrough), `/marketing/modules` (Google Ads /
+  Meta & Paid Social / E-Commerce & Inventory / ESP & Retention Channel
+  Intelligence Modules), `/marketing/governance` (Observe / Bounded / Full
+  autonomy modes + the security shield). Homepage adds the **Full-Stack Signal
+  Grid** (ad networks / infrastructure / inventory / finance guardrails →
+  Structured Signal Evidence bus); CTA is "Launch Live Decision Simulator";
+  proof strip reads Monitored / <100ms / Policy Protection; storyboard scenes
+  retitled (Nightmare / Redefining Cross-Stack Signals / Finding the True Root
+  Cause / 1-Click Governed Approvals / Compounding Organizational Memory).
+  **Divisions reframed as initial MVPs** per owner ("not just 5"): heading
+  "One decision loop. Any division.", MVP lede, sixth dashed "+ Your division"
+  card → `/marketing/modules`. The prompt's `#090D16`/indigo/emerald theme was
+  deliberately NOT adopted — the locked night-dossier tokens remain the design
+  system unless the owner asks to re-skin.
+- **Tests**: `tests/test_marketing_site.py` (53) — suite **341**, only the 2
+  pre-existing homepage failures. Playwright: 27/27 core + 9/9 mirror + 8/8
+  new-page checks (zero page errors, 360px clean).
 - **NOT deployed** — ships only via human `APPROVED` dispatch; when deployed,
   root and `/marketing` run side by side for the online comparison.
 

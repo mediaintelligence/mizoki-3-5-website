@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MIZOKI3 — Interactive Scenario Simulator</title>
+  <title>MIZOKI3 — Command Center · Live Decision Simulator</title>
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
   <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
-  <meta name="description" content="Drag the dials on three media-buying failure modes — landing-page latency, SKU out-of-stock, pixel attribution drift — and watch the 7-Stage Decision Control System diagnose, validate, and execute or veto, live." />
+  <meta name="description" content="The dual-panel command center: pick a media-buying failure mode, drag the live dials, and watch the 7-Stage Governed Decision System diagnose, validate, and execute or veto — with Wasted Spend Prevented and ROAS Preserved read out live." />
   <link rel="canonical" href="https://mizoki3.com/marketing/simulator" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="MIZOKI3 — Interactive Scenario Simulator" />
-  <meta property="og:description" content="Drag the dials on three media-buying failure modes — landing-page latency, SKU out-of-stock, pixel attribution drift — and watch the 7-Stage Decision Control System diagnose, validate, and execute or veto, live." />
+  <meta property="og:title" content="MIZOKI3 — Command Center · Live Decision Simulator" />
+  <meta property="og:description" content="The dual-panel command center: pick a media-buying failure mode, drag the live dials, and watch the 7-Stage Governed Decision System diagnose, validate, and execute or veto — with Wasted Spend Prevented and ROAS Preserved read out live." />
   <meta property="og:url" content="https://mizoki3.com/marketing/simulator" />
   <meta property="og:image" content="https://mizoki3.com/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,9 +28,11 @@
     <nav class="nav">
       <a href="/marketing" class="brand">MIZOKI3</a>
       <ul class="nav-links">
+        <li><a href="/marketing/engine">Engine</a></li>
+        <li><a href="/marketing/modules">Modules</a></li>
         <li><a href="/marketing/simulator" class="active">Simulator</a></li>
-        <li><a href="/marketing/walkthrough">90-Sec Walkthrough</a></li>
-        <li><a href="/marketing#divisions">Divisions</a></li>
+        <li><a href="/marketing/walkthrough">Walkthrough</a></li>
+        <li><a href="/marketing/governance">Governance</a></li>
         <li><a href="/marketing/demo">Live Demos</a></li>
         <li><a href="/marketing/pricing">Pricing</a></li>
         <li><a href="/">Classic Site</a></li>
@@ -44,7 +46,7 @@
     <div class="container">
       <div class="mb-label">// Interactive Scenario Simulator</div>
       <h2>Break something. Watch the control plane catch it.</h2>
-      <p class="lede">Pick a failure every media buyer has lived through, drag the dials, and watch the 7-Stage Decision Control System diagnose, validate, and execute — or veto — in front of you. The model recalculates live as you move each slider.</p>
+      <p class="lede">Pick a failure every media buyer has lived through, drag the dials, and watch the 7-Stage Governed Decision System diagnose, validate, and execute — or veto — in front of you. The model recalculates live as you move each slider.</p>
 
       <div class="sim-frame">
         <div class="sim-col-controls">
@@ -58,7 +60,7 @@
                 <span class="d">A deploy slows your landing page. Paid traffic keeps arriving.</span>
               </label>
               <label><input type="radio" name="simScenario" value="stock" />
-                <span class="t">02 · SKU Out-of-Stock</span>
+                <span class="t">02 · SKU Out-of-Stock Crisis</span>
                 <span class="d">Your hero SKU is running dry while its campaigns keep spending.</span>
               </label>
               <label><input type="radio" name="simScenario" value="pixel" />
@@ -76,12 +78,12 @@
               <div class="scale"><span>0.5s</span><span>6.0s</span></div>
             </div>
             <div class="sim-slider" id="slInventory">
-              <div class="row"><span class="name">Hero-SKU inventory</span><span class="val" id="simInventoryVal">140 units</span></div>
+              <div class="row"><span class="name">Stock level (hero SKU)</span><span class="val" id="simInventoryVal">140 units</span></div>
               <input type="range" id="simInventory" min="0" max="1000" step="10" value="140" aria-label="Inventory units" />
               <div class="scale"><span>0</span><span>1,000</span></div>
             </div>
             <div class="sim-slider" id="slBudget">
-              <div class="row"><span class="name">Daily budget</span><span class="val" id="simBudgetVal">$8,000</span></div>
+              <div class="row"><span class="name">Daily spend</span><span class="val" id="simBudgetVal">$8,000</span></div>
               <input type="range" id="simBudget" min="1000" max="20000" step="500" value="8000" aria-label="Daily budget in dollars" />
               <div class="scale"><span>$1k</span><span>$20k</span></div>
             </div>
@@ -94,7 +96,7 @@
               <input type="checkbox" id="simFloor" checked /><span class="sw"></span>
             </label>
             <label class="sim-toggle on" id="tgCap">
-              <span class="tt">Max auto-shift<span>$5,000 per action without human sign-off</span></span>
+              <span class="tt">Max auto-spend limit<span>$5,000 per action without human sign-off</span></span>
               <input type="checkbox" id="simCap" checked /><span class="sw"></span>
             </label>
           </div>
@@ -148,7 +150,7 @@
   <section class="mb-close">
     <div class="container">
       <h2>Now watch it run for real.</h2>
-      <p>This simulator is an illustrative model — deterministic and replayable. The live desks run the production runtime, seeded, veto and all.</p>
+      <p>This command center is an illustrative model — deterministic and replayable. The live desks run the production runtime, seeded, veto and all.</p>
       <div class="hero-cta" style="justify-content: center;">
         <a href="/marketing/demo" class="btn btn-primary">▶ Run the live desks</a>
         <a href="/marketing/walkthrough" class="btn btn-ghost">Watch the 90-sec walkthrough</a>
@@ -177,8 +179,11 @@
         <div class="footer-col">
           <h5>Marketing site</h5>
           <ul>
+            <li><a href="/marketing/engine">The Engine</a></li>
+            <li><a href="/marketing/modules">Channel Modules</a></li>
             <li><a href="/marketing/simulator">Scenario Simulator</a></li>
             <li><a href="/marketing/walkthrough">90-sec walkthrough</a></li>
+            <li><a href="/marketing/governance">Governance &amp; Security</a></li>
             <li><a href="/marketing/demo">Live demos</a></li>
             <li><a href="/">Classic site</a></li>
           </ul>

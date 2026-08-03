@@ -435,3 +435,89 @@ body { padding-top: 34px; }
   text-transform: uppercase; color: var(--accent-cyan); display: block; margin-bottom: 6px;
 }
 .div-demoband p { color: var(--text-2); font-size: 0.92rem; margin: 0; }
+
+/* ===== Full-stack signal grid (homepage) ===== */
+.sg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 980px) { .sg-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .sg-grid { grid-template-columns: 1fr; } }
+.sg-plate {
+  background: var(--bg-1); border: 1px solid var(--line); border-radius: 2px;
+  padding: 20px 18px;
+}
+.sg-plate .sg-k {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan);
+  display: block; margin-bottom: 10px;
+}
+.sg-plate p { font-size: 0.86rem; color: var(--text-2); margin: 0; line-height: 1.6; }
+.sg-bus {
+  margin-top: 18px; border: 1px solid var(--line-strong); border-radius: 2px;
+  background: var(--bg); padding: 13px 18px; text-align: center;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+  color: var(--accent-purple); overflow-x: auto; white-space: nowrap;
+}
+
+/* Divisions grid now holds 6 cards (5 MVPs + "your division") */
+.div-grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .div-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .div-grid { grid-template-columns: 1fr; } }
+.div-card.more { border: 1px dashed var(--line-strong); border-top: 2px solid var(--dc); }
+
+/* ===== Engine page stage stack ===== */
+.eng-stack { display: grid; gap: 12px; }
+.eng-stage {
+  background: var(--bg-1); border: 1px solid var(--line);
+  border-left: 2px solid var(--accent-purple); border-radius: 2px;
+  padding: 20px 24px;
+}
+.eng-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+.eng-head .idx { font-family: var(--mono); font-size: 10.5px; color: var(--text-3); letter-spacing: 0.14em; }
+.eng-head .stage {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-purple);
+}
+.eng-head .gist { font-size: 0.95rem; color: var(--text-1); }
+.eng-stage > p { font-size: 0.92rem; color: var(--text-2); margin: 0 0 10px; line-height: 1.65; max-width: 860px; }
+.eng-stage .meta { font-family: var(--mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; margin: 0; }
+.eng-stage .meta b { color: var(--accent-cyan); font-weight: 600; }
+
+/* ===== Modules page ===== */
+.mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 880px) { .mod-grid { grid-template-columns: 1fr; } }
+.mod-plate {
+  background: var(--bg-1); border: 1px solid var(--line);
+  border-top: 2px solid var(--mc, var(--accent-cyan)); border-radius: 2px;
+  padding: 26px 28px;
+}
+.mod-plate h3 {
+  font-family: "Instrument Serif", Georgia, serif; font-weight: 400;
+  font-size: 1.3rem; color: var(--text-0); margin-bottom: 14px;
+}
+.mod-plate ul { list-style: none; display: grid; gap: 9px; margin: 0; padding: 0; }
+.mod-plate li { display: flex; gap: 10px; font-size: 0.9rem; color: var(--text-2); line-height: 1.55; }
+.mod-plate li .ck { color: var(--mc, var(--accent-cyan)); flex: 0 0 auto; }
+
+/* ===== Governance page ===== */
+.gov-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 18px; }
+@media (max-width: 900px) { .gov-modes { grid-template-columns: 1fr; } }
+.gov-mode {
+  background: var(--bg-1); border: 1px solid var(--line); border-radius: 2px; padding: 24px 24px 22px;
+}
+.gov-mode.featured { border-color: rgba(157, 123, 232, 0.55); }
+.gov-mode .gm-k {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; font-weight: 700;
+  text-transform: uppercase; color: var(--accent-purple); display: block; margin-bottom: 10px;
+}
+.gov-mode h3 { font-size: 1.05rem; color: var(--text-0); font-weight: 600; margin-bottom: 8px; }
+.gov-mode p { font-size: 0.88rem; color: var(--text-2); margin: 0; line-height: 1.6; }
+.shield-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .shield-grid { grid-template-columns: 1fr; } }
+.shield-cell {
+  background: var(--bg-1); border: 1px solid var(--line);
+  border-left: 2px solid var(--accent-cyan); border-radius: 2px; padding: 20px 22px;
+}
+.shield-cell .sh-k {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent-cyan); display: block; margin-bottom: 8px;
+}
+.shield-cell p { font-size: 0.88rem; color: var(--text-2); margin: 0; line-height: 1.6; }
