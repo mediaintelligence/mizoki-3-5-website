@@ -3,7 +3,10 @@
 Marketing site for **MIZOKI3 — a Verifiable Autonomous Decision Intelligence Platform**.
 Canonical hero line: **"A nervous system for your business."**
 
-Live at **[mizoki3.com](https://mizoki3.com)** on Google Cloud Run.
+Live at **[mizoki3.com](https://mizoki3.com)** on Google Cloud Run — with the
+**marketing parallel site** live beside it at
+**[mizoki3.com/marketing](https://mizoki3.com/marketing)** (launched 2026-08-03,
+see below).
 
 ## 🔒 SOURCE OF TRUTH & DEPLOY GOVERNANCE (LOCKED 2026-07-30)
 
@@ -25,6 +28,90 @@ operation.
 - Agents: never deploy from this repo, and never edit canon-pinned files
   without an explicit human instruction. Parity commits use `[skip ci]`.
 
+
+## /marketing — the parallel marketing site (LAUNCHED 2026-08-03)
+
+Owner directive: *"launch this entire site under a /marketing so i can compare
+them online before taking anything offline."* The proposed media-buyer /
+enterprise-operational experience runs as a **complete parallel site** under
+the `/marketing` prefix. The classic canon site at root is untouched; the two
+run side by side in production until the owner retires one. Launched via
+canonical deploy run **#47** (`deploy-homepage.yml`, typed `APPROVED`,
+owner-instructed) on 2026-08-03; production verified: root clean of any
+`/marketing` reference, all 12 marketing pages serving, seeded demo deep-links
+embedding, `/media-buying` 301 → `/marketing`.
+
+### Pages (12, all under `marketing/`)
+
+| Page | What it is |
+|------|------------|
+| `/marketing` | Platform-first homepage: mandated hero ("Stop Managing Dashboards. Start Governing Ad Growth."), full-stack signal grid, vocabulary translation ledger, 7-stage accordion, divisions-as-initial-MVPs grid, live decision simulator, 90-sec storyboard |
+| `/marketing/engine` | The 7-Stage Governed Decision System, stage by stage, in media-buyer terms |
+| `/marketing/modules` | Channel Intelligence Modules: Google Ads · Meta & Paid Social · E-Commerce & Inventory · ESP & Retention |
+| `/marketing/simulator` | Command Center: dual-panel simulator — 3 failure scenarios, live sliders, safety toggles, 7-phase execution terminal, Approve Strategy gate, veto path |
+| `/marketing/walkthrough` | 90-second, 5-scene storyboard player with transcript drawer and timestamp seeking |
+| `/marketing/governance` | Observe / Bounded / Full autonomy modes + Enterprise Privacy & Security Shield |
+| `/marketing/{counsel,estate,capital,signal,risk}` | Redesigned division pages: plain-English hero, "What we say / What we never say" strip, Watches/Decides/Never-does grid, a worked decision from the real live desk |
+| `/marketing/pricing` | Three tiers mapped to the three autonomy modes, jargon-free |
+| `/marketing/demo` + `/marketing/demo/<desk>` | The six live demo desks, mirrored from canon files via `_marketize()` — the desks ARE the product, identical in both sites |
+
+### Key elements
+
+- **Vocabulary translation key (8 entries, test-enforced):** Canonical Event
+  Envelope → *Structured Signal Evidence* · Temporal-Causal Knowledge Base →
+  *Cross-Stack Root Cause Engine* · Domain Intelligence Cell → *Channel
+  Intelligence Modules* · SRPVDAL Loop → *7-Stage Governed Decision System* ·
+  Decision Control Plane / Eligibility Layer → *Safety Guardrail Engine* ·
+  Immutable Learning Ledger → *Compounding ROI Memory* · Tenant Isolation &
+  Boundary → *Enterprise Privacy & Security Shield* · No-Action Counterfactual
+  Baseline → *"Do Nothing" Opportunity Cost Check*. Engineering terms appear
+  exactly once each, in the on-page ledger; sub-pages carry zero raw jargon.
+- **Deterministic simulator** (`assets/js/media-sim.js`): no `Math.random`, no
+  `Date.now`; the replay id is a hash of the inputs; the red veto is
+  slider-reachable (latency > ~5.2s under the 2.2× ROAS floor) and vetoes
+  still record to memory. Policy values: 2.2× ROAS floor, $5,000 max
+  auto-spend limit.
+- **Software-fact discipline** (`/marketing/signal#acquisition` +
+  `#parameters`): every acquisition number is generated FROM the runtime —
+  ReLU gate floors 5% / 0.70 / n = 15 (`demo_signal.GATE_*`), swing caps
+  ±20% / ±30% (`GuardrailSet`), seed 42, the +12% campaign_7 / $8,400 / 0.86 /
+  n = 48 winner and the deliberate +25% block — and
+  `AcquisitionShowcaseTestCase` re-imports the runtime so the page **fails the
+  build if it drifts from the code**. Spec-only capabilities carry amber
+  "Platform spec" chips (promotion gates: Brier ≤ 0.20 · AUC ≥ 0.72 · stable
+  lift ≥ 2 cycles; observe-only default).
+- **Divisions are initial MVPs, not limits:** "One decision loop. Any
+  division." — five MVP divisions plus the dashed "+ Your division" card; new
+  domains onboard as modules on the same governed loop.
+- **Transparency devices everywhere:** the amber "Parallel preview — nothing
+  on the classic site is replaced" strip on every marketing page (escape
+  hatch → `/`), claim strips on every division page, targets labeled as
+  targets, never outcome promises.
+
+### Never-lose-the-site guarantee (drift guards, 2026-08-03)
+
+Two pipelines can deploy the `mizoki-website` Cloud Run service. Both now
+refuse any tree missing either the locked canon surfaces or the marketing
+site:
+
+- `scripts/check_marketing_surfaces.py` — stdlib-only gate: 12 pages present
+  and non-stub, engine + stylesheet + tests present with content markers,
+  `app.py` still carries the `/marketing` route layer.
+- Wired into **both** workflows: MIZOKICloudRun `deploy-homepage.yml` (beside
+  the canon check) and this repo's `deploy-cloudrun.yml` (which now also runs
+  the canon check). `DriftGuardTestCase` runs the same gate inside the test
+  suite.
+- Both repos are **byte-identical** on every meaningful surface (verified by
+  diff): `app.py`, `CLAUDE.md`, `signal.html`, `canon.lock.json`,
+  `marketing/`, `tests/`, marketing assets, `mizoki_runtime/`, the guard.
+
+### Change ledger
+
+Website repo PRs **#20** (parallel site + transparent redesign), **#21**
+(media-acquisition showcase), **#22** (drift guard on this pipeline), **#23**
+(reverse-parity mirror) — MIZOKICloudRun PR **#588** (port + drift guard on
+the canonical pipeline) — deploy run **#47** (launch). Full engineering log:
+[`CLAUDE.md`](CLAUDE.md) → *Recent Work (August 2026)*.
 
 ## Positioning (read before touching copy)
 
@@ -92,7 +179,7 @@ python3.13 app.py            # serves http://localhost:8080  (honors $PORT)
 Run the test suite before shipping:
 
 ```bash
-python3.13 -m unittest tests.test_app tests.test_runtime   # 73 passing
+python3 -m unittest discover tests   # 351 tests; only the 2 pre-existing homepage failures
 ```
 
 > **Gotcha:** the machine's default `python3` is Homebrew 3.14 **without Flask**, so `tests.test_app`
@@ -101,9 +188,17 @@ python3.13 -m unittest tests.test_app tests.test_runtime   # 73 passing
 
 ## Deployment
 
-Push to `main` → the **`deploy-cloudrun.yml`** GitHub Actions workflow (Workload Identity Federation —
-no long-lived keys) builds the Docker image and rolls a new Cloud Run revision in ~60s. Manual
-fallback: `./deploy.sh`.
+**No push-triggered deploys** (removed 2026-07-30). Two manual-dispatch
+pipelines exist, and both are gated by the canon check **and** the marketing
+drift guard, so neither can ship a tree missing the proper site:
+
+1. **Canonical:** MIZOKICloudRun → Actions → *"Deploy MIZ OKI 3.5 Homepage"* →
+   type `APPROVED` (builds from `# MIZ OKI 3.5/`).
+2. **Exception path:** this repo → Actions → *"Build & Deploy to Cloud Run"*
+   (Workload Identity Federation — no long-lived keys).
+
+Verify any tree before deploying: `python3 scripts/check_design_canon.py &&
+python3 scripts/check_marketing_surfaces.py`.
 
 ## Recent updates (2026-07-03)
 
