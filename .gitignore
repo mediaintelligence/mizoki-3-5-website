@@ -15,14 +15,10 @@ vendor/
 dist/
 build/
 
-# Python bytecode
-__pycache__/
-*.py[cod]
-*.pyo
-
 # Environment
 .env
 .env.*
+!.env.example
 
 # Logs
 *.log
@@ -37,10 +33,13 @@ __pycache__/
 tmp/
 output/
 
-# Boss runtime data artifacts (decision logs, loop/run traces, learned skills,
-# tool aliases) — generated at runtime under data/, keep only data/.gitkeep
+# Runtime ledgers — data/ ships EMPTY (.gitkeep only). These files are written
+# by the running app (guide memory, demo telemetry, decision traces); a
+# committed copy would bake local/test rows into the production image and
+# pre-pollute the interaction analytics.
 data/*.jsonl
-data/*.json
+!data/.gitkeep
 
-# Untracked React scratch tree — design reference only; never built/deployed (clears npm Dependabot noise)
-Noah_gemini/
+# Visual QA captures — only the reviewed 1440px set is tracked
+scripts/screenshots/*
+!scripts/screenshots/*-1440.png

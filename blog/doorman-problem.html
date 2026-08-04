@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Doorman Problem: what your retargeting dashboard can't tell you — MIZ OKI</title>
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+    <meta name="description" content="A composite field note on the question platform ROAS never answers: which conversions did the ads actually cause — and which customers were already walking through the door?">
+    <link rel="canonical" href="https://mizoki3.com/blog/doorman-problem">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0A1418;
+            --bg-secondary: #0B1E26;
+            --bg-tertiary: #123039;
+            --text-primary: #F4F6F7;
+            --text-secondary: #93A0A6;
+            --text-muted: #5E6E75;
+            --accent-cyan: #3FDCF2;
+            --accent-orange: #D9A83C;
+            --border: rgba(255,255,255,0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+               background: var(--bg-primary); color: var(--text-primary); line-height: 1.8; }
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+              background: rgba(10, 20, 24, 0.85); backdrop-filter: blur(20px);
+              border-bottom: 1px solid var(--border); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem;
+              display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+        .logo { font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: .16em;
+              color: var(--text-primary); text-decoration: none; }
+        .logo-version { color: var(--accent-cyan); }
+        .nav-links { display: flex; gap: 1.4rem; flex-wrap: wrap; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: .92rem; }
+        .nav-links a:hover, .nav-links a:focus-visible { color: var(--accent-cyan); }
+        .btn { display: inline-block; padding: .6rem 1.2rem; border-radius: 4px; font-size: .9rem;
+              text-decoration: none; border: 1px solid var(--border); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-cyan), #5FA0DC);
+              color: #06232B; border: none; font-weight: 600; }
+        .btn-ghost { color: var(--text-secondary); background: transparent; }
+        .btn-ghost:hover, .btn-ghost:focus-visible { background: var(--bg-tertiary); color: var(--text-primary); }
+        article { max-width: 760px; margin: 0 auto; padding: 8.5rem 2rem 4rem; }
+        .breadcrumb { font-size: .85rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+        .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+        .post-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .68rem;
+              letter-spacing: .18em; text-transform: uppercase; color: var(--accent-orange);
+              border: 1px solid var(--accent-orange); padding: .25rem .6rem; margin-bottom: 1.4rem; }
+        h1 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: clamp(2rem, 5vw, 3rem);
+              line-height: 1.15; margin-bottom: .9rem; }
+        .article-subtitle { color: var(--text-secondary); font-size: 1.12rem; margin-bottom: 1.8rem; }
+        .article-meta { display: flex; align-items: center; gap: .9rem; padding-bottom: 2rem;
+              border-bottom: 1px solid var(--border); margin-bottom: 2.6rem; }
+        .author-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center;
+              justify-content: center; font-weight: 600; font-size: .85rem; color: #06232B;
+              background: linear-gradient(135deg, var(--accent-cyan), #9D7BE8); }
+        .author-name { font-weight: 600; font-size: .95rem; }
+        .article-date { color: var(--text-muted); font-size: .85rem; }
+        .article-content p { margin-bottom: 1.4rem; color: var(--text-secondary); }
+        .article-content strong { color: var(--text-primary); }
+        .article-content h2 { font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+              letter-spacing: .2em; text-transform: uppercase; color: var(--accent-cyan);
+              margin: 2.6rem 0 1rem; }
+        .article-content em { font-style: italic; color: var(--accent-cyan); }
+        .composite-note { border-left: 2px solid var(--accent-orange); background: rgba(217,168,60,.06);
+              padding: 1rem 1.2rem; font-size: .95rem; color: var(--text-secondary); margin-bottom: 2rem; }
+        .verdict { border-top: 1px solid var(--border); padding-top: 1.4rem; color: var(--text-primary);
+              font-size: 1.05rem; }
+        .cta-section { text-align: center; background: var(--bg-secondary); border: 1px solid var(--border);
+              border-radius: 8px; padding: 2.6rem 2rem; margin-top: 3rem; }
+        .cta-section h2 { font-family: 'Instrument Serif', serif; font-size: 1.7rem; font-weight: 400;
+              margin-bottom: .8rem; }
+        .cta-section p { color: var(--text-secondary); margin-bottom: 1.6rem; }
+        .cta-buttons { display: flex; gap: .9rem; justify-content: center; flex-wrap: wrap; }
+        footer { padding: 3rem 2rem; text-align: center; color: var(--text-muted); font-size: .85rem;
+              border-top: 1px solid var(--border); margin-top: 4rem; }
+        footer a { color: var(--text-secondary); }
+        a:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">MIZ OKI <span class="logo-version">3.5</span></a>
+            <div class="nav-links">
+                <a href="/#pipeline">Platform</a>
+                <a href="/signal">Signal</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/blog">Blog</a>
+            </div>
+            <div class="nav-cta">
+                <a href="/demo/signal" class="btn btn-primary">Run the Signal Factory</a>
+            </div>
+        </div>
+    </nav>
+
+    <article>
+        <header class="article-header">
+            <div class="breadcrumb">
+                <a href="/blog">Blog</a> / Field Notes
+            </div>
+            <span class="post-tag">Field Notes</span>
+            <h1>The Doorman Problem: what your retargeting dashboard can't tell you</h1>
+            <p class="article-subtitle">The question platform ROAS never answers: which conversions did the ads actually cause — and which customers were already walking through the door?</p>
+            <div class="article-meta">
+                <div class="author-avatar">MR</div>
+                <div class="author-info">
+                    <div class="author-name">MIZ OKI Research</div>
+                    <div class="article-date">August 2026 &bull; 3 min read</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="article-content">
+            <div class="composite-note"><strong>Before we start:</strong> what follows is a composite scenario assembled from common deployments, and the numbers in it are illustrative. Yours will come from your own experiments — that is, in fact, the whole point of the story.</div>
+
+            <h2>Their question</h2>
+            <p>A growth lead at a direct-to-consumer brand brings the report every operator has seen: <strong>retargeting is the best channel on the dashboard.</strong> Eight times return. It gets fed first when budgets move, defended first when budgets shrink.</p>
+            <p>And yet growth feels stuck. Total revenue isn't moving the way an 8× channel says it should. The uncomfortable question — the one the dashboard is structurally unable to answer — is simple: <em>how many of those people were coming back anyway?</em></p>
+
+            <h2>The quiet test</h2>
+            <p>The dashboard can't answer it because the platform selected the audience, served the ads, and then graded its own work. Retargeting reaches, by definition, the people most likely to return — so it books credit for every return that follows an impression.</p>
+            <p>So Signal ran the only test that settles it: it quietly kept the ads away from a small slice of statistically identical shoppers, and watched what they did anyway. No opinions, no models arguing with models — a held-out group and a register.</p>
+
+            <h2>What the ledger showed</h2>
+            <p>Most of the held-out shoppers bought regardless. When each conversion was classified — <strong>caused</strong> by the spend, or merely <strong>anticipated</strong> by it — the channel's real, incremental return landed near 1.4×, not 8×. The gap between the two numbers wasn't fraud and it wasn't a tracking bug. The dashboard had been counting customers who were already on their way back through the door.</p>
+
+            <h2>What changed</h2>
+            <p>The budget conversation stopped being theological. Retargeting spend came down by a third — held, not zeroed, because 1.4× is still a return — and the freed money moved to finding customers the brand had never met. Revenue held. Growth stopped feeling stuck, because the money was finally buying <em>new</em> demand instead of escorting existing demand to the register.</p>
+            <p class="verdict">You were paying a doorman to open a door people were already walking through. The fix wasn't firing the doorman — it was sending him to the doors that were actually closed.</p>
+
+            <div class="cta-section">
+                <h2>Watch the ledger get written</h2>
+                <p>The Signal Factory runs this exact discipline live — raw events to governed decision, including the guardrail veto most demos hide. Deterministic, seeded, no signup.</p>
+                <div class="cta-buttons">
+                    <a href="/demo/signal" class="btn btn-primary">Run the Signal Factory</a>
+                    <a href="/signal" class="btn btn-ghost">Explore Signal</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer>
+        <p>© 2026 MIZOKI3 · MediaIntelligence.ai · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+    </footer>
+</body>
+</html>

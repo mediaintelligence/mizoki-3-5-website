@@ -1,309 +1,160 @@
 # ==============================================================================
 # MIZOKI3: AUTONOMOUS STRATEGIC INTELLIGENCE INFRASTRUCTURE
-# Cloud:        Google Cloud Platform
-# Architecture: Zero-Trust VPC · SRPVDAL cells on Cloud Run · BigQuery + Neo4j
-#               TCKG · Pub/Sub Nexus bus · Vertex AI reasoning isolation
+# Architecture: Zero-Trust VPC, Neptune TCKG, EKS Orchestration, MSK Event Bus
 # ------------------------------------------------------------------------------
 # Repo:  mizoki3-core-infrastructure
-# Note:  Reasoning is pinned to CURRENT-generation Claude models on Vertex AI.
-#        Older / deprecated model generations are intentionally excluded — see
-#        var.approved_claude_models below.
+# Note:  Foundation-model ID is pinned below. Review/bump to the current
+#        approved Claude model on Bedrock before applying to Production.
 # ==============================================================================
 
 terraform {
   required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 6.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+  default_tags {
+    tags = {
+      Environment = "Production-Fiduciary"
+      System      = "MIZOKI3-Nexus"
     }
   }
 }
 
 # ------------------------------------------------------------------------------
-# VARIABLES
-# ------------------------------------------------------------------------------
-variable "project_id" {
-  description = "GCP project hosting the MIZOKI3 Nexus."
-  type        = string
-  default     = "mizoki3-prod"
-}
-
-variable "region" {
-  description = "Primary GCP region for all regional resources."
-  type        = string
-  default     = "us-central1"
-}
-
-variable "approved_claude_models" {
-  description = <<-EOT
-    Current-generation Claude models approved for MIZOKI3 reasoning on Vertex AI.
-    Update this list as Anthropic ships newer models. Deprecated / older
-    generations (e.g. claude-3.x) must NEVER be added — reasoning isolation
-    depends on this list staying current.
-  EOT
-  type        = list(string)
-  default = [
-    "claude-opus-4-7",   # Primary  — most capable
-    "claude-opus-4-6",   # Fallback
-    "claude-sonnet-4-6", # High-throughput tier
-  ]
-}
-
-provider "google" {
-  project = var.project_id
-  region  = var.region
-}
-
-data "google_project" "current" {}
-
-# ------------------------------------------------------------------------------
 # 1. THE FORTRESS (Zero-Trust VPC Network)
-# All reasoning and memory run in a private subnet. No public ingress; egress
-# is NAT-only so cells can reach Google APIs without an external address.
+# All reasoning and memory occurs in strictly private subnets.
 # ------------------------------------------------------------------------------
-resource "google_compute_network" "nexus_vpc" {
-  name                    = "mizoki3-nexus-vpc"
-  auto_create_subnetworks = false
-}
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.1.2"
 
-resource "google_compute_subnetwork" "private_subnet" {
-  name                     = "mizoki3-private-subnet"
-  ip_cidr_range            = "10.0.1.0/24"
-  region                   = var.region
-  network                  = google_compute_network.nexus_vpc.id
-  private_ip_google_access = true # Reach Google APIs without a public IP
-}
+  name = "mizoki3-nexus-vpc"
+  cidr = "10.0.0.0/16"
 
-resource "google_compute_router" "nexus_router" {
-  name    = "mizoki3-nexus-router"
-  region  = var.region
-  network = google_compute_network.nexus_vpc.id
-}
+  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
-resource "google_compute_router_nat" "nexus_nat" {
-  name                               = "mizoki3-nexus-nat"
-  router                             = google_compute_router.nexus_router.name
-  region                             = var.region
-  nat_ip_allocate_option             = "AUTO_ONLY"
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-}
-
-# Perimeter firewall — internal VPC traffic only; explicit public-ingress deny.
-resource "google_compute_firewall" "allow_internal" {
-  name      = "mizoki3-allow-internal"
-  network   = google_compute_network.nexus_vpc.id
-  direction = "INGRESS"
-  priority  = 1000
-  allow { protocol = "all" }
-  source_ranges = ["10.0.0.0/16"] # Only internal VPC traffic
-}
-
-resource "google_compute_firewall" "deny_public_ingress" {
-  name      = "mizoki3-deny-public-ingress"
-  network   = google_compute_network.nexus_vpc.id
-  direction = "INGRESS"
-  priority  = 2000
-  deny { protocol = "all" }
-  source_ranges = ["0.0.0.0/0"]
+  enable_nat_gateway   = true
+  single_nat_gateway   = false # High availability for enterprise SLAs
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
 # ------------------------------------------------------------------------------
 # 2. THE SUBSTRATE: Temporal-Causal Knowledge Graph (TCKG)
-# Neo4j (causal graph physics) + BigQuery (unified analytical store) + GCS.
-# All three encrypted with the customer-managed fiduciary key.
+# AWS Neptune: Bi-Temporal Graph Database hosting entity and causal physics.
 # ------------------------------------------------------------------------------
-resource "google_compute_instance" "tckg_neo4j" {
-  name         = "mizoki3-tckg-neo4j"
-  machine_type = "n2-highmem-8" # Memory-optimized for heavy graph traversal
-  zone         = "${var.region}-a"
-
-  boot_disk {
-    initialize_params {
-      image = "projects/cos-cloud/global/images/family/cos-stable"
-      size  = 200
-    }
-    kms_key_self_link = google_kms_crypto_key.mizoki_key.id
-  }
-
-  network_interface {
-    subnetwork = google_compute_subnetwork.private_subnet.id
-    # No access_config block => no external/public IP
-  }
-
-  shielded_instance_config {
-    enable_secure_boot          = true
-    enable_vtpm                 = true
-    enable_integrity_monitoring = true
-  }
-
-  depends_on = [google_kms_crypto_key_iam_member.service_agents]
+resource "aws_neptune_cluster" "tckg_substrate" {
+  cluster_identifier                  = "mizoki3-tckg-cluster"
+  engine                              = "neptune"
+  engine_version                      = "1.3.0.0" # Graph + Vector capabilities
+  backup_retention_period             = 35
+  iam_database_authentication_enabled = true
+  apply_immediately                   = true
+  vpc_security_group_ids              = [aws_security_group.tckg_sg.id]
+  neptune_subnet_group_name           = aws_neptune_subnet_group.tckg_subnets.name
+  storage_encrypted                   = true
+  kms_key_arn                         = aws_kms_key.mizoki_kms.arn
 }
 
-resource "google_bigquery_dataset" "tckg_unified" {
-  dataset_id    = "mizoki3_unified"
-  friendly_name = "MIZOKI3 Unified TCKG Dataset"
-  location      = "US"
-
-  default_encryption_configuration {
-    kms_key_name = google_kms_crypto_key.mizoki_key.id
-  }
-
-  depends_on = [google_kms_crypto_key_iam_member.service_agents]
+resource "aws_neptune_cluster_instance" "tckg_nodes" {
+  count              = 2 # High Availability (1 Writer, 1 Reader)
+  identifier         = "mizoki3-tckg-node-${count.index}"
+  cluster_identifier = aws_neptune_cluster.tckg_substrate.id
+  engine             = "neptune"
+  instance_class     = "db.r6g.2xlarge" # Memory-optimized for heavy graph traversal
 }
 
-resource "google_storage_bucket" "nexus_artifacts" {
-  name                        = "${var.project_id}-nexus-artifacts"
-  location                    = "US"
-  uniform_bucket_level_access = true
-  public_access_prevention    = "enforced"
-
-  encryption {
-    default_kms_key_name = google_kms_crypto_key.mizoki_key.id
-  }
-
-  versioning { enabled = true }
-
-  depends_on = [google_kms_crypto_key_iam_member.service_agents]
+resource "aws_neptune_subnet_group" "tckg_subnets" {
+  name       = "mizoki3-tckg-subnet-group"
+  subnet_ids = module.vpc.private_subnets
 }
 
 # ------------------------------------------------------------------------------
-# 3. THE NERVOUS SYSTEM: Pub/Sub Event Bus
-# Cross-domain updates (e.g. Counsel updates Capital instantly).
+# 3. THE NERVOUS SYSTEM: Kafka Event Bus (Amazon MSK)
+# Cross-domain updates (e.g., Counsel updates Capital instantly).
 # ------------------------------------------------------------------------------
-resource "google_pubsub_topic" "nexus_event_bus" {
-  name         = "mizoki3-nexus-bus"
-  kms_key_name = google_kms_crypto_key.mizoki_key.id
+resource "aws_msk_serverless_cluster" "nexus_event_bus" {
+  cluster_name = "mizoki3-nexus-bus"
 
-  depends_on = [google_kms_crypto_key_iam_member.service_agents]
-}
+  vpc_config {
+    subnet_ids         = module.vpc.private_subnets
+    security_group_ids = [aws_security_group.tckg_sg.id]
+  }
 
-resource "google_pubsub_subscription" "nexus_subscription" {
-  name                       = "mizoki3-nexus-sub"
-  topic                      = google_pubsub_topic.nexus_event_bus.id
-  ack_deadline_seconds       = 30
-  message_retention_duration = "604800s" # 7-day replay window
-}
-
-# ------------------------------------------------------------------------------
-# 4. THE EXECUTION ENGINE: SRPVDAL Orchestration on Cloud Run
-# 32 FastAPI cells run as Cloud Run services; the orchestrator cell is shown
-# here. Ingress is internal-only — no public route to the reasoning loop.
-# ------------------------------------------------------------------------------
-resource "google_service_account" "cell_runtime" {
-  account_id   = "mizoki3-cell-runtime"
-  display_name = "MIZOKI3 Cloud Run cell runtime"
-}
-
-resource "google_cloud_run_v2_service" "srpvdal_orchestrator" {
-  name     = "mizoki3-srpvdal-orchestrator"
-  location = var.region
-  ingress  = "INGRESS_TRAFFIC_INTERNAL_ONLY" # No public internet to the brain
-
-  template {
-    service_account = google_service_account.cell_runtime.email
-
-    scaling {
-      min_instance_count = 1
-      max_instance_count = 100
-    }
-
-    vpc_access {
-      network_interfaces {
-        network    = google_compute_network.nexus_vpc.id
-        subnetwork = google_compute_subnetwork.private_subnet.id
-      }
-      egress = "ALL_TRAFFIC"
-    }
-
-    containers {
-      image = "gcr.io/${var.project_id}/cell-orchestrator:latest"
-      resources {
-        limits = {
-          cpu    = "2"
-          memory = "2Gi"
-        }
+  client_authentication {
+    sasl {
+      iam {
+        enabled = true # Strict IAM authentication inside the VPC
       }
     }
   }
 }
 
 # ------------------------------------------------------------------------------
-# 5. REASONING ISOLATION (Vertex AI)
-# Cells reason via CURRENT-generation Claude models on Vertex AI. Prompts and
-# enterprise data never leave the project; older model generations are not
-# permitted. Reasoning calls target Vertex publisher endpoints, e.g.:
-#   publishers/anthropic/models/claude-opus-4-7
+# 4. THE EXECUTION ENGINE: SRPVDAL Orchestration & Temporal.io
+# AWS EKS hosting the LangGraph Multi-Agent framework.
 # ------------------------------------------------------------------------------
-resource "google_project_iam_custom_role" "vertex_reasoning" {
-  role_id     = "mizoki3VertexReasoning"
-  title       = "MIZOKI3 Vertex Reasoning"
-  description = "Allows Cloud Run cells to invoke approved Claude models on Vertex AI."
-  permissions = [
-    "aiplatform.endpoints.predict",
-    "aiplatform.endpoints.get",
-  ]
-}
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "19.16.0"
 
-resource "google_project_iam_member" "cell_vertex_binding" {
-  project = var.project_id
-  role    = google_project_iam_custom_role.vertex_reasoning.id
-  member  = "serviceAccount:${google_service_account.cell_runtime.email}"
-}
+  cluster_name    = "mizoki3-srpvdal-orchestrator"
+  cluster_version = "1.28"
+  vpc_id          = module.vpc.vpc_id
+  subnet_ids      = module.vpc.private_subnets
 
-# Approved-model allowlist — cells read this at boot and refuse any model
-# (older generation or otherwise) that is not on the list.
-resource "google_secret_manager_secret" "approved_models" {
-  secret_id = "mizoki3-approved-claude-models"
-  replication { auto {} }
-}
+  cluster_endpoint_public_access = false # No public internet access to the control plane
 
-resource "google_secret_manager_secret_version" "approved_models_v" {
-  secret      = google_secret_manager_secret.approved_models.id
-  secret_data = jsonencode(var.approved_claude_models)
-}
-
-# ------------------------------------------------------------------------------
-# 6. FIDUCIARY ENCRYPTION (Cloud KMS)
-# One customer-managed key with 90-day rotation encrypts the graph disk,
-# BigQuery, GCS, and the Pub/Sub bus. Service agents are granted decrypt rights.
-# ------------------------------------------------------------------------------
-resource "google_kms_key_ring" "mizoki_ring" {
-  name     = "mizoki3-fiduciary-ring"
-  location = var.region
-}
-
-resource "google_kms_crypto_key" "mizoki_key" {
-  name            = "mizoki3-master-key"
-  key_ring        = google_kms_key_ring.mizoki_ring.id
-  rotation_period = "7776000s" # 90-day rotation
-
-  lifecycle {
-    prevent_destroy = true
+  eks_managed_node_groups = {
+    agents = {
+      min_size       = 3
+      max_size       = 10
+      desired_size   = 3
+      instance_types = ["c6i.2xlarge"] # Compute-optimized for simulation physics
+    }
   }
 }
 
-# Grant each Google service agent encrypt/decrypt on the fiduciary key.
-resource "google_kms_crypto_key_iam_member" "service_agents" {
-  for_each = {
-    compute  = "serviceAccount:service-${data.google_project.current.number}@compute-system.iam.gserviceaccount.com"
-    storage  = "serviceAccount:service-${data.google_project.current.number}@gs-project-accounts.iam.gserviceaccount.com"
-    pubsub   = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
-    bigquery = "serviceAccount:bq-${data.google_project.current.number}@bigquery-encryption.iam.gserviceaccount.com"
+# ------------------------------------------------------------------------------
+# 5. REASONING ISOLATION (Bedrock IAM)
+# Limits agents strictly to an approved Claude model without data leaving the VPC.
+# ------------------------------------------------------------------------------
+resource "aws_iam_policy" "fiduciary_ai_policy" {
+  name        = "MIZOKI3-Fiduciary-Bedrock-Policy"
+  description = "Allows EKS LangGraph agents to reason via an approved Claude model securely"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
+        Effect   = "Allow"
+        Resource = "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0"
+      }
+    ]
+  })
+}
+
+resource "aws_kms_key" "mizoki_kms" {
+  description             = "MIZOKI3 Master Fiduciary Encryption Key"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+}
+
+resource "aws_security_group" "tckg_sg" {
+  name   = "mizoki3-internal-sg"
+  vpc_id = module.vpc.vpc_id
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [module.vpc.vpc_cidr_block] # Only internal VPC traffic allowed
   }
-  crypto_key_id = google_kms_crypto_key.mizoki_key.id
-  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member        = each.value
-}
-
-# ------------------------------------------------------------------------------
-# OUTPUTS
-# ------------------------------------------------------------------------------
-output "orchestrator_url" {
-  description = "Internal URL of the SRPVDAL orchestrator cell."
-  value       = google_cloud_run_v2_service.srpvdal_orchestrator.uri
-}
-
-output "approved_claude_models" {
-  description = "Claude models currently approved for reasoning. No older generations."
-  value       = var.approved_claude_models
 }

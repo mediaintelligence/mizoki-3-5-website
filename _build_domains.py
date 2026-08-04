@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generate the 5 MIZOKI3 domain pages from a shared template."""
+"""Generate the MIZOKI3 domain pages from a shared template.
+
+WARNING (2026-08-02): the four generated pages (counsel/estate/capital/risk)
+carry post-generation hygiene the template does not know about (site favicons,
+root-absolute URLs, Instrument Serif/DM Sans font pass). Regenerating will
+DISCARD those passes — port them into the template first. signal.html is
+owner-supplied and is never written by this script."""
 from pathlib import Path
 
 OUT = Path(__file__).parent
@@ -153,8 +159,8 @@ TEMPLATE = """<!DOCTYPE html>
       <h1>{mission}</h1>
       <p class="mission">{intro}</p>
       <div class="hero-cta" style="margin-top: 36px;">
-        <a href="index.html#layers" class="btn btn-ghost">← All domains</a>
-        <a href="index.html#brain" class="btn btn-ghost">Inside the Brain</a>
+        <a href="index.html#divisions" class="btn btn-ghost">← All domains</a>
+        <a href="index.html#pipeline" class="btn btn-ghost">Inside the Brain</a>
       </div>
     </div>
   </section>
@@ -205,10 +211,10 @@ TEMPLATE = """<!DOCTYPE html>
         <div class="footer-col">
           <h5>Architecture</h5>
           <ul>
-            <li><a href="index.html#brain">Nexus</a></li>
-            <li><a href="index.html#brain">SRPVDAL</a></li>
-            <li><a href="index.html#brain">Decision Control Plane</a></li>
-            <li><a href="index.html#flywheel">Flywheel</a></li>
+            <li><a href="index.html#graph">Nexus</a></li>
+            <li><a href="index.html#pipeline">SRPVDAL</a></li>
+            <li><a href="index.html#control">Decision Control Plane</a></li>
+            <li><a href="index.html#pipeline">Flywheel</a></li>
           </ul>
         </div>
       </div>
@@ -252,6 +258,13 @@ def render(slug, d):
     )
 
 for slug, d in DOMAINS.items():
+    if slug == "signal":
+        # signal.html is the owner-supplied Causal Acquisition Intelligence
+        # page (2026-08-02): self-contained, NOT template-generated. The
+        # "signal" DOMAINS entry stays only so ac_signal nav state renders
+        # on the other four pages. Never write signal.html from here.
+        print("skip signal.html (owner-supplied page; not generated)")
+        continue
     path = OUT / f"{slug}.html"
     path.write_text(render(slug, d))
     print(f"wrote {path.name}")

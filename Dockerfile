@@ -16,4 +16,4 @@ RUN useradd --create-home --shell /usr/sbin/nologin appuser && chown -R appuser:
 USER appuser
 EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--timeout", "60", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "8", "--timeout", "120", "app:app"]

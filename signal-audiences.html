@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZOKI3 — Signal · Audience Intelligence</title>
+<meta name="description" content="Uplift-quadrant audiences: spend on persuadables, stop paying for sure things, go quiet on sleeping dogs. Cohorts activate only through statistical guardrails — and suppression is a first-class capability.">
+<meta name="theme-color" content="#0A1418">
+<meta property="og:title" content="MIZOKI3 — Signal · Audience Intelligence">
+<meta property="og:description" content="Uplift-quadrant audiences: spend on persuadables, stop paying for sure things, go quiet on sleeping dogs. Cohorts activate only through statistical guardrails — and suppression is a first-class capability.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/signal/audiences">
+<meta property="og:image" content="https://mizoki3.com/assets/img/og/og-signal.svg">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="canonical" href="https://mizoki3.com/signal/audiences">
+<style>
+:root{
+  --ink:#0A1418;        /* dossier ground */
+  --ink-2:#0E1B20;      /* raised panel */
+  --rule:#1B2E34;       /* hairline */
+  --seam:#3FD8D0;       /* Signal Factory cyan seam */
+  --caution:#E4A34A;    /* vetoed / anticipated */
+  --paper:#DCE6E6;      /* body text */
+  --paper-dim:#7E9599;  /* captions */
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Helvetica Neue",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body.sig{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);
+  font-size:17px;line-height:1.6;letter-spacing:-.005em;
+  background-image:linear-gradient(180deg,#0C171C 0%,var(--ink) 60%)}
+.sig .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+.sig a{color:inherit}
+.sig h1,.sig h2,.sig h3{letter-spacing:-.03em;line-height:1.08;margin:0;font-weight:600}
+.sig h1{font-size:clamp(2.4rem,5.6vw,4.05rem)}
+.sig h2{font-size:clamp(1.65rem,3.3vw,2.5rem)}
+.sig h3{font-size:1.06rem;letter-spacing:-.01em}
+.sig em{font-style:italic;color:var(--seam)}
+
+/* ---- filing marks: the site's dossier grammar ---- */
+.sig .mark{font-family:var(--mono);font-size:.66rem;letter-spacing:.20em;
+  text-transform:uppercase;color:var(--paper-dim)}
+.sig .sec-mark{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.sig .sec-mark::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+/* ---- masthead ---- */
+.sig .strip{border-bottom:1px solid var(--rule);background:rgba(10,20,24,.92);
+  position:sticky;top:0;z-index:20;backdrop-filter:blur(9px)}
+.sig .strip .wrap{display:flex;align-items:center;justify-content:space-between;
+  gap:18px;height:56px;flex-wrap:wrap}
+.sig .brand{font-family:var(--mono);font-size:.82rem;letter-spacing:.24em;
+  text-decoration:none;font-weight:600}
+.sig nav{display:flex;gap:20px;flex-wrap:wrap}
+.sig nav a{font-family:var(--mono);font-size:.66rem;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--paper-dim);text-decoration:none}
+.sig nav a:hover,.sig nav a:focus-visible{color:var(--seam)}
+
+/* ---- sections ---- */
+.sig section{padding:86px 0;border-bottom:1px solid var(--rule)}
+.sig .lede{font-size:1.16rem;color:var(--paper-dim);max-width:60ch;margin-top:22px}
+
+/* ---- hero ---- */
+.sig .hero{padding:96px 0 78px}
+.sig .hero h1{margin-bottom:6px}
+.sig .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
+.sig .btn{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;text-decoration:none;padding:14px 22px;border:1px solid var(--seam);
+  color:var(--seam);transition:background .18s,color .18s}
+.sig .btn:hover,.sig .btn:focus-visible{background:var(--seam);color:var(--ink)}
+.sig .btn.ghost{border-color:var(--rule);color:var(--paper-dim)}
+.sig .btn.ghost:hover,.sig .btn.ghost:focus-visible{border-color:var(--paper-dim);
+  background:transparent;color:var(--paper)}
+
+/* ---- SIGNATURE: the evidence ledger ---- */
+.sig .ledger{margin-top:56px;border:1px solid var(--rule);background:var(--ink-2)}
+.sig .ledger-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 18px;border-bottom:1px solid var(--rule)}
+.sig .bar{display:flex;height:74px}
+.sig .bar div{display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:0 10px}
+.sig .bar .caused{flex:0 0 31%;background:rgba(63,216,208,.16);color:var(--seam);
+  border-right:1px solid var(--rule)}
+.sig .bar .anticipated{flex:1;background:rgba(228,163,74,.09);color:var(--caution)}
+.sig .ledger-foot{padding:13px 18px;border-top:1px solid var(--rule)}
+
+/* ---- grids ---- */
+.sig .grid{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:34px}
+.sig .g2{grid-template-columns:repeat(2,1fr)}
+.sig .g3{grid-template-columns:repeat(3,1fr)}
+.sig .cell{background:var(--ink);padding:26px 24px}
+.sig .cell h3{margin-bottom:9px}
+.sig .cell p{margin:0;font-size:.94rem;color:var(--paper-dim)}
+.sig ul.spec{list-style:none;margin:14px 0 0;padding:0}
+.sig ul.spec li{font-size:.93rem;color:var(--paper-dim);padding:7px 0 7px 17px;position:relative}
+.sig ul.spec li::before{content:"";position:absolute;left:0;top:16px;width:6px;height:1px;
+  background:var(--seam)}
+
+/* ---- stage sequence (real order: it's a pipeline) ---- */
+.sig ol.stages{list-style:none;counter-reset:s;margin:34px 0 0;padding:0;
+  display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.sig ol.stages li{counter-increment:s;background:var(--ink);padding:24px;
+  display:grid;grid-template-columns:56px 1fr;gap:18px;align-items:start}
+.sig ol.stages li::before{content:"0" counter(s);font-family:var(--mono);font-size:.74rem;
+  letter-spacing:.1em;color:var(--seam);padding-top:3px}
+.sig ol.stages p{margin:7px 0 0;font-size:.94rem;color:var(--paper-dim)}
+
+/* ---- status tag: truth discipline ---- */
+.sig .tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;
+  text-transform:uppercase;padding:4px 9px;border:1px solid var(--caution);
+  color:var(--caution);vertical-align:middle;margin-left:10px}
+.sig .note{margin-top:26px;padding:16px 18px;border-left:2px solid var(--caution);
+  background:rgba(228,163,74,.05);font-size:.9rem;color:var(--paper-dim)}
+
+/* ---- autonomy ladder ---- */
+.sig .ladder{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:34px}
+.sig .rung{background:var(--ink);padding:19px 15px}
+.sig .rung.on{background:rgba(63,216,208,.09)}
+.sig .rung .lv{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;color:var(--paper-dim)}
+.sig .rung.on .lv{color:var(--seam)}
+.sig .rung .nm{font-size:.87rem;margin-top:5px}
+
+/* ---- close ---- */
+.sig footer{padding:56px 0 72px}
+.sig footer .wrap{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap}
+.sig footer a{color:var(--paper-dim);text-decoration:none;font-size:.9rem;display:block;padding:4px 0}
+.sig footer a:hover,.sig footer a:focus-visible{color:var(--seam)}
+
+/* ---- field notes: story cards ---- */
+.sig .story{background:var(--ink);padding:30px 26px;display:flex;flex-direction:column;gap:14px}
+.sig .story .q{font-size:1.14rem;line-height:1.45;letter-spacing:-.015em;color:var(--paper)}
+.sig .story .q::before{content:"“ ";color:var(--seam)}
+.sig .story .q::after{content:" ”";color:var(--seam)}
+.sig .story dl{margin:0;display:grid;grid-template-columns:96px 1fr;row-gap:9px;column-gap:14px}
+.sig .story dt{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--seam);padding-top:3px}
+.sig .story dd{margin:0;font-size:.93rem;color:var(--paper-dim)}
+.sig .story .verdict{border-top:1px solid var(--rule);padding-top:12px;font-size:.95rem;color:var(--paper)}
+@media (max-width:560px){.sig .story dl{grid-template-columns:1fr}.sig .story dt{padding-top:6px}}
+
+.sig a:focus-visible,.sig .btn:focus-visible{outline:2px solid var(--seam);outline-offset:3px}
+@media (max-width:820px){
+  .sig .g2,.sig .g3{grid-template-columns:1fr}
+  .sig .ladder{grid-template-columns:repeat(2,1fr)}
+  .sig section{padding:62px 0}
+  .sig .bar{height:auto;flex-direction:column}
+  .sig .bar .caused{flex:none;height:64px;border-right:none;border-bottom:1px solid var(--rule)}
+  .sig .bar .anticipated{flex:none;height:64px}
+}
+@media (prefers-reduced-motion:reduce){.sig *{transition:none!important;animation:none!important}}
+
+/* ---- capability-page exhibits ---- */
+.sig .exhibit{margin-top:34px;border:1px solid var(--rule);background:var(--ink-2);padding:22px 24px}
+.sig .exhibit .formula{font-family:var(--mono);font-size:.92rem;color:var(--paper);letter-spacing:.02em;
+  overflow-x:auto;white-space:nowrap;padding:6px 0}
+.sig .exhibit .formula b{color:var(--seam);font-weight:600}
+.sig .steps{list-style:none;counter-reset:st;margin:14px 0 0;padding:0}
+.sig .steps li{counter-increment:st;font-size:.93rem;color:var(--paper-dim);padding:8px 0 8px 30px;position:relative}
+.sig .steps li::before{content:counter(st);position:absolute;left:0;top:7px;font-family:var(--mono);
+  font-size:.7rem;color:var(--seam);border:1px solid var(--rule);width:19px;height:19px;display:flex;
+  align-items:center;justify-content:center}
+.sig table.params{width:100%;border-collapse:collapse;margin-top:14px;font-size:.9rem}
+.sig table.params th{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--paper-dim);text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);font-weight:500}
+.sig table.params td{padding:9px 12px;border-bottom:1px solid var(--rule);color:var(--paper-dim)}
+.sig table.params td:first-child{color:var(--paper)}
+.sig table.params td.v{font-family:var(--mono);color:var(--seam);white-space:nowrap}
+.sig .tablewrap{overflow-x:auto;margin-top:20px}
+.sig .quad{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:34px}
+.sig .quad .q-cell{background:var(--ink);padding:22px}
+.sig .quad .q-cell.hot{background:rgba(63,216,208,.07)}
+.sig .quad .q-cell.cold{background:rgba(228,163,74,.05)}
+.sig .quad h3{margin-bottom:7px}
+.sig .quad p{margin:0;font-size:.9rem;color:var(--paper-dim)}
+.sig .phases{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.sig .phase{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:7px 11px;border:1px solid var(--rule);color:var(--paper-dim)}
+.sig .phase.on{border-color:var(--seam);color:var(--seam)}
+.sig .phase.warn{border-color:var(--caution);color:var(--caution)}
+.sig .crumbs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+@media (max-width:560px){.sig .quad{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="sig">
+
+<div class="strip">
+  <div class="wrap">
+    <a class="brand" href="/">MIZOKI3</a>
+    <nav aria-label="Signal capabilities">
+      <a href="/signal">Signal</a>
+      <a href="/signal/thresholds">Thresholds</a>
+      <a href="/signal/budget">Budget</a>
+      <a href="/signal/creative">Creative</a>
+      <a href="/signal/audiences" style="color:var(--seam)" aria-current="page">Audiences</a>
+      <a href="/signal/measurement">Measurement</a>
+      <a href="/demo/signal">Factory</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" style="padding:76px 0 64px">
+  <div class="wrap">
+    <p class="mark">§ SIGNAL / AUDIENCE INTELLIGENCE · UPLIFT / FILED 2026</p>
+    <h1>Target who <em>changes their mind</em> — not who was coming anyway.</h1>
+    <p class="lede">Response models find people likely to convert. That is the wrong question: many of them convert without you. Signal ranks audiences by uplift — the change your spend causes — and treats “do not touch” as a targeting decision of equal rank to “reach.”</p>
+    <div class="cta-row">
+      <a class="btn" href="/demo/signal">Run the Signal Factory ▸</a>
+      <a class="btn ghost" href="/signal#capabilities">All capabilities</a>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§01 · The four quadrants</p>
+    <h2>Every audience contains <em>four kinds of customers.</em></h2>
+    <div class="quad">
+      <div class="q-cell hot">
+        <h3>Persuadables</h3>
+        <p>Convert if reached, don't if not. The only quadrant where ad spend creates revenue — bids scale up here.</p>
+      </div>
+      <div class="q-cell">
+        <h3>Sure things</h3>
+        <p>Convert either way. Every impression and every coupon sent here is margin given away. Maintain presence, stop paying premiums.</p>
+      </div>
+      <div class="q-cell">
+        <h3>Lost causes</h3>
+        <p>Don't convert either way. Budget spent here is simply burned — suppressed.</p>
+      </div>
+      <div class="q-cell cold">
+        <h3>Sleeping dogs</h3>
+        <p>Convert only if left alone — outreach actively pushes them away. The most expensive audience to reach, in both directions. Excluded.</p>
+      </div>
+    </div>
+    <p class="lede" style="font-size:.95rem">The quadrants are estimated per segment with uplift models over registered experiments — the same holdout machinery as the <a href="/signal/measurement">credit ledger</a>, pointed forward.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§02 · The cohort gate</p>
+    <h2>A cohort activates when it <em>passes, not when it excites.</em></h2>
+    <div class="exhibit">
+      <p class="mark">Activation guardrails — operating defaults, every one enforced before a dollar moves</p>
+      <div class="tablewrap"><table class="params">
+        <tr><th>Guardrail</th><th>Default</th><th>Why</th></tr>
+        <tr><td>Cohort size</td><td class="v">100 – 500,000 users</td><td>below: statistical noise · above: platform limits</td></tr>
+        <tr><td>Qini coefficient</td><td class="v">≥ 0.02</td><td>the model must beat random targeting</td></tr>
+        <tr><td>Area under uplift curve</td><td class="v">≥ 0.55</td><td>ranking quality proven, not presumed</td></tr>
+        <tr><td>Average treatment effect</td><td class="v">≥ 0.5pp</td><td>lift worth acting on at all</td></tr>
+        <tr><td>Frequency</td><td class="v">capped per user · per channel · per day</td><td>audience protection</td></tr>
+      </table></div>
+    </div>
+    <p class="lede">Cohorts that pass export to Google Customer Match, Meta Custom Audiences, or lifecycle email — with predicted incremental return computed <em>before</em> activation, and the measured version written back after.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§03 · Suppression</p>
+    <h2>The cheapest optimization is the send <em>you don't make.</em></h2>
+    <div class="grid g3">
+      <div class="cell">
+        <h3>Stop couponing certainty</h3>
+        <p>Discounts routed away from sure-buyers — the composite in the field notes where roughly a fifth of sends were pure margin giveaway is this quadrant, priced.</p>
+      </div>
+      <div class="cell">
+        <h3>Go quiet on sleeping dogs</h3>
+        <p>Negative-uplift segments are excluded from campaigns entirely. Fewer unsubscribes, fewer hides, better delivery reputation on everything that still sends.</p>
+      </div>
+      <div class="cell">
+        <h3>Fatigue-aware reach</h3>
+        <p>Suppression coordinates with <a href="/signal/creative">Creative Intelligence</a>: an audience marked fatigued for an asset stops seeing it before annoyance becomes attrition.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§04 · Ahead of the funnel</p>
+    <h2>Anticipatory intent <span class="tag">Preview · in development</span></h2>
+    <p class="lede">Signal is being extended to read emerging intent from consented behavioral signals and classify where a customer sits on the path from awareness to purchase-imminent — so audiences can be built from where demand is <em>going</em>, not only where it has been. Predictions will ship with calibrated probabilities and the explanation path that produced them.</p>
+    <p class="lede" style="font-size:.95rem">One rule keeps it honest when it ships: acting on a predicted audience always runs against a registered holdout, so anticipation is never mistaken for causation. The prediction never grades itself.</p>
+    <p class="note"><strong>Stated plainly:</strong> this capability is in development, not deployed. Consent decides ingestion; sensitive categories are refused at the schema level; Signal uses no microphone or audio signals of any kind — not now, not on the roadmap.</p>
+  </div>
+</section>
+
+
+<!-- ═══ CLOSE ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§05 · See it run</p>
+    <h2>Mechanism on this page. <em>Proof in the factory.</em></h2>
+    <p class="lede">The Signal Factory desk runs the full seven-stage SRPVDAL loop on live runtime — including a deliberate guardrail block you'll watch get caught in red. No signup, no sales call.</p>
+    <div class="cta-row">
+      <a class="btn" href="/demo/signal">Open the Signal Factory ▸</a>
+      <a class="btn ghost" href="/signal">Signal overview</a>
+      <a class="btn ghost" href="/executive-briefing/">Executive briefing · ~9 min</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p class="mark">MIZOKI3 · Signal</p>
+      <p style="max-width:34ch;color:var(--paper-dim);font-size:.9rem;margin:10px 0 0">
+        Causal acquisition intelligence on one governed loop. Proof, not attribution theatre.</p>
+    </div>
+    <div>
+      <p class="mark">Capabilities</p>
+      <a href="/signal/thresholds">Thresholds</a><a href="/signal/budget">Budget</a>
+      <a href="/signal/creative">Creative</a><a href="/signal/audiences">Audiences</a>
+      <a href="/signal/measurement">Measurement</a>
+    </div>
+    <div>
+      <p class="mark">Platform</p>
+      <a href="/#pipeline">Decision engine</a><a href="/#control">Control plane</a>
+      <a href="/demo">Live demo</a><a href="/pricing">Pricing</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:34px;padding-top:20px;border-top:1px solid var(--rule)">
+    <p class="mark">© 2026 MIZOKI3 · MediaIntelligence.ai · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

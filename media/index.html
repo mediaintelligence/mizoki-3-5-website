@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZ OKI Media | Causal Growth Control</title>
+<meta name="description" content="MIZ OKI Media connects commercial signals, causal reasoning, policy, human authority, action, and outcome learning through the MIZ OKI Decision Graph.">
+<link rel="canonical" href="https://mizoki3.com/media">
+<meta property="og:title" content="MIZ OKI Media — Causal Growth Control">
+<meta property="og:description" content="Know why performance moved. Put the next dollar where it creates profit.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/media">
+<meta property="og:image" content="https://mizoki3.com/media/assets/mizoki-signal-preview.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MIZ OKI Media — Causal Growth Control">
+<meta name="twitter:description" content="Know why performance moved. Put the next dollar where it creates profit.">
+<meta name="twitter:image" content="https://mizoki3.com/media/assets/mizoki-signal-preview.png">
+<meta name="theme-color" content="#0A1418">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<style>
+/* ============================================================ */
+/* MIZ OKI Media — route-local stylesheet.                       */
+/* This document is fully self-contained: nothing here is        */
+/* imported by, or imports from, any shared site stylesheet.     */
+/* System font stacks only — no external font requests.          */
+/* ============================================================ */
+:root {
+  --mzm-bg: #0A1418;
+  --mzm-bg-1: #0B1E26;
+  --mzm-bg-2: #0F2530;
+  --mzm-line: #223A44;
+  --mzm-fg: #DBE7EB;
+  --mzm-muted: #93A7AE;
+  --mzm-cyan: #3FDCF2;
+  --mzm-amber: #D9A83C;
+  --mzm-rose: #FF6B7C;
+  --mzm-emerald: #41D695;
+  --mzm-purple: #9D7BE8;
+  --mzm-blue: #5FA0DC;
+  --mzm-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --mzm-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mzm-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+body {
+  background: var(--mzm-bg);
+  color: var(--mzm-fg);
+  font-family: var(--mzm-sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, video { max-width: 100%; height: auto; display: block; }
+a { color: var(--mzm-cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible, video:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--mzm-cyan);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+::selection { background: var(--mzm-cyan); color: #06262C; }
+
+.mzm-skip {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--mzm-cyan); color: #06262C;
+  padding: 10px 18px; font-family: var(--mzm-mono); font-size: 14px; z-index: 200;
+}
+.mzm-skip:focus { left: 12px; top: 12px; }
+
+.mzm-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- route-local sticky nav ---------- */
+.mzm-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 20, 24, 0.94);
+  border-bottom: 2px solid var(--mzm-line);
+  backdrop-filter: blur(6px);
+}
+.mzm-nav-inner {
+  max-width: 1120px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.mzm-brand { display: flex; flex-direction: column; line-height: 1.2; }
+.mzm-brand strong {
+  font-family: var(--mzm-serif); font-size: 20px; font-weight: 700;
+  color: var(--mzm-fg); letter-spacing: 0.01em;
+}
+.mzm-brand span {
+  font-family: var(--mzm-mono); font-size: 10.5px; letter-spacing: 0.08em;
+  color: var(--mzm-cyan); text-transform: uppercase;
+}
+.mzm-nav-links { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.mzm-nav-links a {
+  font-family: var(--mzm-mono); font-size: 13px; color: var(--mzm-muted);
+  padding: 8px 10px; border: 2px solid transparent;
+}
+.mzm-nav-links a:hover { color: var(--mzm-cyan); text-decoration: none; }
+.mzm-nav-links a.mzm-nav-cta { color: var(--mzm-cyan); border-color: var(--mzm-line); }
+
+/* ---------- shared section chrome ---------- */
+section { padding: 84px 0; border-bottom: 1px solid #12242C; }
+.mzm-kicker {
+  font-family: var(--mzm-mono); font-size: 13px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--mzm-cyan); margin-bottom: 14px;
+}
+h1, h2, h3 { font-family: var(--mzm-serif); font-weight: 700; color: var(--mzm-fg); }
+h2 { font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin-bottom: 18px; }
+h3 { font-size: 20px; margin-bottom: 8px; }
+.mzm-lede { color: var(--mzm-muted); max-width: 760px; }
+.mzm-card {
+  background: var(--mzm-bg-1); border: 2px solid var(--mzm-line); padding: 24px;
+}
+.mzm-label {
+  display: inline-block; font-family: var(--mzm-mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px;
+  border: 1px solid var(--mzm-line); color: var(--mzm-muted); border-radius: 2px;
+}
+.mzm-label.live      { color: var(--mzm-emerald); border-color: var(--mzm-emerald); }
+.mzm-label.pilot     { color: var(--mzm-cyan);    border-color: var(--mzm-cyan); }
+.mzm-label.illus     { color: var(--mzm-amber);   border-color: var(--mzm-amber); }
+.mzm-label.roadmap   { color: var(--mzm-purple);  border-color: var(--mzm-purple); }
+
+.mzm-btn {
+  display: inline-block; font-family: var(--mzm-mono); font-size: 15px;
+  padding: 14px 26px; border: 2px solid var(--mzm-cyan); color: var(--mzm-cyan);
+  background: transparent; cursor: pointer;
+}
+.mzm-btn:hover { background: var(--mzm-cyan); color: #06262C; text-decoration: none; }
+.mzm-btn.primary { background: var(--mzm-cyan); color: #06262C; }
+.mzm-btn.primary:hover { background: #6ee7f7; border-color: #6ee7f7; }
+
+/* ---------- hero ---------- */
+.mzm-hero { padding: 96px 0 84px; }
+.mzm-hero h1 {
+  font-size: clamp(40px, 6.5vw, 68px); line-height: 1.05; margin: 10px 0 18px;
+}
+.mzm-hero .mzm-descriptor {
+  font-family: var(--mzm-mono); font-size: 14px; color: var(--mzm-muted);
+  letter-spacing: 0.04em;
+}
+.mzm-hero .mzm-statement {
+  font-family: var(--mzm-serif); font-size: clamp(22px, 3vw, 30px);
+  color: var(--mzm-fg); line-height: 1.35; max-width: 820px; margin-bottom: 22px;
+}
+.mzm-hero p.mzm-support { color: var(--mzm-muted); max-width: 780px; margin-bottom: 14px; }
+.mzm-hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin: 30px 0 26px; }
+.mzm-platform-note {
+  font-size: 14.5px; color: var(--mzm-muted); border-left: 2px solid var(--mzm-line);
+  padding-left: 14px; max-width: 720px;
+}
+.mzm-chain-strip {
+  margin-top: 40px; padding: 16px 18px; border: 2px solid var(--mzm-line);
+  background: var(--mzm-bg-1); overflow-x: auto;
+}
+.mzm-chain-strip ol {
+  display: flex; align-items: center; gap: 10px; list-style: none;
+  font-family: var(--mzm-mono); font-size: 14px; white-space: nowrap;
+}
+.mzm-chain-strip li::after {
+  content: "→"; margin-left: 10px; color: #46606A;
+}
+.mzm-chain-strip li:last-child::after { content: ""; margin-left: 0; }
+.mzm-chain-strip .c1 { color: var(--mzm-cyan); }
+.mzm-chain-strip .c2 { color: var(--mzm-fg); }
+.mzm-chain-strip .c3 { color: var(--mzm-rose); }
+.mzm-chain-strip .c4 { color: var(--mzm-amber); }
+.mzm-chain-strip .c5 { color: var(--mzm-purple); }
+.mzm-chain-strip .c6 { color: var(--mzm-emerald); }
+.mzm-chain-strip .c7 { color: var(--mzm-cyan); }
+
+/* ---------- scenario ---------- */
+.mzm-scenario-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 26px; margin-top: 30px; }
+.mzm-obs-list { list-style: none; display: grid; gap: 10px; }
+.mzm-obs-list li {
+  display: flex; justify-content: space-between; gap: 14px; align-items: baseline;
+  border-bottom: 1px solid #16303A; padding-bottom: 9px; font-size: 15.5px;
+}
+.mzm-obs-list .k { color: var(--mzm-muted); }
+.mzm-obs-list .v { font-family: var(--mzm-mono); font-size: 14px; color: var(--mzm-fg); text-align: right; }
+.mzm-obs-list .v.up   { color: var(--mzm-rose); }
+.mzm-obs-list .v.down { color: var(--mzm-rose); }
+.mzm-obs-list .v.flat { color: var(--mzm-emerald); }
+.mzm-verdict { display: grid; gap: 14px; }
+.mzm-verdict .row { border-bottom: 1px solid #16303A; padding-bottom: 12px; }
+.mzm-verdict .row:last-child { border-bottom: 0; }
+.mzm-verdict .t {
+  font-family: var(--mzm-mono); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--mzm-muted); margin-bottom: 4px;
+}
+.mzm-verdict .d { font-size: 15.5px; }
+.mzm-footnote { margin-top: 18px; font-size: 13.5px; color: #7E939B; max-width: 760px; }
+
+/* ---------- film ---------- */
+.mzm-film-frame {
+  margin-top: 30px; border: 2px solid var(--mzm-line); background: #000;
+}
+.mzm-film-frame video { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; }
+.mzm-film-caption {
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 14px 16px; background: var(--mzm-bg-1); border-top: 2px solid var(--mzm-line);
+  font-size: 14px; color: var(--mzm-muted);
+}
+.mzm-film-caption .mono { font-family: var(--mzm-mono); font-size: 12.5px; }
+
+/* ---------- tools stop early ---------- */
+.mzm-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 30px; }
+.mzm-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
+.mzm-tool-card h3 { font-size: 18px; }
+.mzm-tool-card p { color: var(--mzm-muted); font-size: 15px; }
+.mzm-tool-card .stops {
+  font-family: var(--mzm-mono); font-size: 12px; color: var(--mzm-rose);
+  margin-top: 10px; letter-spacing: 0.04em;
+}
+
+/* ---------- decision graph ---------- */
+.mzm-graph-svg-wrap { margin: 34px 0 10px; border: 2px solid var(--mzm-line); background: var(--mzm-bg-1); padding: 20px 14px; overflow-x: auto; }
+.mzm-graph-svg-wrap svg { min-width: 720px; width: 100%; height: auto; }
+.mzm-stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 22px; }
+.mzm-stage {
+  border: 2px solid var(--mzm-line); background: var(--mzm-bg-1); padding: 16px;
+  border-top-width: 3px;
+}
+.mzm-stage .n { font-family: var(--mzm-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+.mzm-stage p { font-size: 14.5px; color: var(--mzm-muted); }
+.mzm-stage.s1 { border-top-color: var(--mzm-cyan); }    .mzm-stage.s1 .n { color: var(--mzm-cyan); }
+.mzm-stage.s2 { border-top-color: var(--mzm-blue); }    .mzm-stage.s2 .n { color: var(--mzm-blue); }
+.mzm-stage.s3 { border-top-color: var(--mzm-rose); }    .mzm-stage.s3 .n { color: var(--mzm-rose); }
+.mzm-stage.s4 { border-top-color: var(--mzm-amber); }   .mzm-stage.s4 .n { color: var(--mzm-amber); }
+.mzm-stage.s5 { border-top-color: var(--mzm-purple); }  .mzm-stage.s5 .n { color: var(--mzm-purple); }
+.mzm-stage.s6 { border-top-color: var(--mzm-emerald); } .mzm-stage.s6 .n { color: var(--mzm-emerald); }
+.mzm-stage.s7 { border-top-color: var(--mzm-cyan); }    .mzm-stage.s7 .n { color: var(--mzm-cyan); }
+.mzm-distinction {
+  margin-top: 34px; border: 2px solid var(--mzm-line); border-left: 4px solid var(--mzm-cyan);
+  background: var(--mzm-bg-1); padding: 24px;
+  font-family: var(--mzm-serif); font-size: 19px; line-height: 1.55; max-width: 900px;
+}
+.mzm-memory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 30px; }
+.mzm-memory h3 { font-size: 17px; }
+.mzm-memory .idx { font-family: var(--mzm-mono); font-size: 12px; color: var(--mzm-cyan); margin-bottom: 6px; }
+.mzm-memory p { font-size: 14.5px; color: var(--mzm-muted); }
+
+/* ---------- SRPVDAL trace ---------- */
+.mzm-loop-order {
+  font-family: var(--mzm-mono); font-size: clamp(13px, 1.8vw, 16px);
+  color: var(--mzm-fg); letter-spacing: 0.03em; margin: 26px 0 8px;
+  padding: 14px 16px; border: 2px solid var(--mzm-line); background: var(--mzm-bg-1);
+  overflow-x: auto; white-space: nowrap;
+}
+.mzm-loop-list { list-style: none; margin-top: 24px; display: grid; gap: 0; }
+.mzm-loop-list li {
+  display: grid; grid-template-columns: 150px 1fr; gap: 18px; padding: 16px 4px;
+  border-bottom: 1px solid #16303A; align-items: baseline;
+}
+.mzm-loop-list .stage {
+  font-family: var(--mzm-mono); font-size: 14px; letter-spacing: 0.1em;
+}
+.mzm-loop-list li:nth-child(1) .stage { color: var(--mzm-cyan); }
+.mzm-loop-list li:nth-child(2) .stage { color: var(--mzm-blue); }
+.mzm-loop-list li:nth-child(3) .stage { color: var(--mzm-fg); }
+.mzm-loop-list li:nth-child(4) .stage { color: var(--mzm-amber); }
+.mzm-loop-list li:nth-child(5) .stage { color: var(--mzm-purple); }
+.mzm-loop-list li:nth-child(6) .stage { color: var(--mzm-emerald); }
+.mzm-loop-list li:nth-child(7) .stage { color: var(--mzm-cyan); }
+.mzm-loop-list .desc { color: var(--mzm-muted); font-size: 15.5px; }
+
+/* ---------- decision jobs ---------- */
+.mzm-job { display: flex; flex-direction: column; gap: 8px; }
+.mzm-job h3 { font-size: 17px; }
+.mzm-job p { font-size: 14.5px; color: var(--mzm-muted); flex: 1; }
+
+/* ---------- maturity ---------- */
+.mzm-maturity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 30px; }
+.mzm-maturity-card p { font-size: 14.5px; color: var(--mzm-muted); margin-top: 8px; }
+
+/* ---------- storyboard ---------- */
+.mzm-storyboard-frame { margin-top: 30px; border: 2px solid var(--mzm-line); }
+.mzm-storyboard-frame img { width: 100%; height: auto; }
+figcaption { padding: 12px 16px; background: var(--mzm-bg-1); border-top: 2px solid var(--mzm-line); font-size: 14px; color: var(--mzm-muted); }
+
+/* ---------- pilot ---------- */
+.mzm-pilot-scope { columns: 2; column-gap: 34px; margin-top: 26px; list-style: none; }
+.mzm-pilot-scope li {
+  break-inside: avoid; padding: 8px 0 8px 22px; position: relative;
+  color: var(--mzm-muted); font-size: 15.5px; border-bottom: 1px solid #16303A;
+}
+.mzm-pilot-scope li::before { content: "▸"; position: absolute; left: 2px; color: var(--mzm-cyan); }
+.mzm-phase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 34px; }
+.mzm-phase .days { font-family: var(--mzm-mono); font-size: 12px; letter-spacing: 0.1em; color: var(--mzm-cyan); margin-bottom: 6px; text-transform: uppercase; }
+.mzm-phase h3 { font-size: 18px; margin-bottom: 10px; }
+.mzm-phase ul { list-style: none; }
+.mzm-phase li { font-size: 14.5px; color: var(--mzm-muted); padding: 5px 0 5px 18px; position: relative; }
+.mzm-phase li::before { content: "—"; position: absolute; left: 0; color: #46606A; }
+.mzm-pilot-mode {
+  margin-top: 30px; font-family: var(--mzm-serif); font-size: 19px; line-height: 1.5;
+  border-left: 4px solid var(--mzm-emerald); padding-left: 18px; max-width: 860px;
+}
+
+/* ---------- final CTA + footer ---------- */
+.mzm-final { text-align: center; padding: 96px 0; border-bottom: 0; }
+.mzm-final h2 { margin-bottom: 14px; }
+.mzm-final p { color: var(--mzm-muted); max-width: 640px; margin: 0 auto 30px; }
+footer {
+  border-top: 2px solid var(--mzm-line); padding: 26px 0 40px;
+  font-size: 13.5px; color: #7E939B;
+}
+.mzm-foot-inner { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+
+/* ---------- scroll reveal (progressive enhancement) ---------- */
+/* Content is fully visible by default; only when JS is running AND the      */
+/* visitor allows motion do sections start translated/faded for the reveal.  */
+html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  html.mzm-js .mzm-reveal {
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  html.mzm-js .mzm-reveal.mzm-in { opacity: 1; transform: none; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .mzm-scenario-grid, .mzm-grid-3 { grid-template-columns: 1fr 1fr; }
+  .mzm-phase-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  section { padding: 64px 0; }
+  .mzm-hero { padding: 64px 0; }
+  .mzm-scenario-grid, .mzm-grid-2, .mzm-grid-3 { grid-template-columns: 1fr; }
+  .mzm-pilot-scope { columns: 1; }
+  .mzm-loop-list li { grid-template-columns: 1fr; gap: 4px; }
+  .mzm-nav-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .mzm-nav-links { justify-content: flex-start; }
+  .mzm-nav-links a { padding: 8px 8px; min-height: 28px; }
+}
+</style>
+</head>
+<body>
+<a class="mzm-skip" href="#mzm-main">Skip to content</a>
+
+<!-- Route-local navigation: anchors on this page only. The global site nav is deliberately untouched. -->
+<nav class="mzm-nav" aria-label="MIZ OKI Media page navigation">
+  <div class="mzm-nav-inner">
+    <div class="mzm-brand">
+      <strong>MIZ OKI Media</strong>
+      <span>Causal Growth Control</span>
+    </div>
+    <div class="mzm-nav-links">
+      <a href="#decision-graph">Decision Graph</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#decision-jobs">Decision Jobs</a>
+      <a href="#pilot">Pilot</a>
+      <a class="mzm-nav-cta" href="#film">Watch Film</a>
+    </div>
+  </div>
+</nav>
+
+<main id="mzm-main">
+
+  <!-- ================= HERO ================= -->
+  <section class="mzm-hero" aria-labelledby="mzm-h1">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">A focused commercial application of MIZ OKI</p>
+      <h1 id="mzm-h1">MIZ OKI Media</h1>
+      <p class="mzm-descriptor">Causal Growth Control · powered by the MIZ OKI Decision Graph</p>
+      <p class="mzm-statement" style="margin-top:26px;">Know why performance moved. Put the next dollar where it creates profit.</p>
+      <p class="mzm-support">MIZ OKI Media connects media, commerce, customer experience, inventory, product economics, and policy into one governed decision pathway.</p>
+      <p class="mzm-support">When performance moves, it connects the fragmented commercial signals, diagnoses the likely causes, tests the possible actions against each other, applies your financial and policy constraints, routes the decision through the correct human authority, and records the realized outcome — so the next decision starts smarter than the last.</p>
+      <div class="mzm-hero-ctas">
+        <a class="mzm-btn primary" href="#pilot">Explore the 90-Day Pilot</a>
+        <a class="mzm-btn" href="#film">Watch the Explainer</a>
+      </div>
+      <p class="mzm-platform-note">MIZ OKI Media is a focused commercial application powered by the broader MIZ OKI Operating Knowledge Intelligence platform — one product surface on the same governed decision infrastructure, not a separate company.</p>
+      <div class="mzm-chain-strip" role="img" aria-label="The Decision Graph pathway: Signal, then Entity, then Cause, then Objective, then Policy, then Action, then Outcome.">
+        <ol>
+          <li class="c1">Signal</li><li class="c2">Entity</li><li class="c3">Cause</li><li class="c4">Objective</li><li class="c5">Policy</li><li class="c6">Action</li><li class="c7">Outcome</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DECISION SCENARIO ================= -->
+  <section id="scenario" class="mzm-reveal" aria-labelledby="scenario-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">A decision, end to end</p>
+      <h2 id="scenario-h">One performance movement. One governed answer.</h2>
+      <p class="mzm-lede">This is the shape of a MIZ OKI Media decision — what the system observes, what it concludes, and what it asks a human to authorize. <span class="mzm-label illus">Illustrative scenario</span></p>
+      <div class="mzm-scenario-grid">
+        <div class="mzm-card">
+          <h3>What moved <span class="mzm-label illus">Illustrative scenario</span></h3>
+          <ul class="mzm-obs-list" style="margin-top:14px;">
+            <li><span class="k">Blended CPA, 7-day</span> <span class="v up">rising sharply ▲</span></li>
+            <li><span class="k">Site conversion rate</span> <span class="v down">deteriorating ▼</span></li>
+            <li><span class="k">Creative engagement</span> <span class="v flat">stable —</span></li>
+            <li><span class="k">Mobile page latency</span> <span class="v up">increasing ▲</span></li>
+            <li><span class="k">Checkout abandonment, mobile</span> <span class="v up">increasing ▲</span></li>
+            <li><span class="k">Hero-SKU inventory &amp; margin</span> <span class="v">constrained</span></li>
+          </ul>
+        </div>
+        <div class="mzm-card">
+          <h3>What the graph concluded</h3>
+          <div class="mzm-verdict" style="margin-top:14px;">
+            <div class="row">
+              <div class="t">Root cause</div>
+              <div class="d">Mobile checkout latency regression — not creative fatigue. Estimated confidence 91% (illustrative).</div>
+            </div>
+            <div class="row">
+              <div class="t">Recommended action</div>
+              <div class="d">Hold the planned creative rotation. Shift eligible budget toward the unaffected desktop path while the latency fix ships, within margin and inventory constraints.</div>
+            </div>
+            <div class="row">
+              <div class="t">Expected impact</div>
+              <div class="d">Roughly $4,800/day of media waste avoided while holding the 2.2× return floor (illustrative estimate, stated with its assumptions in the decision record).</div>
+            </div>
+            <div class="row">
+              <div class="t">Required approval</div>
+              <div class="d">Routed to the media lead — the budget shift crosses the configured autonomous ceiling, so a named human authorizes it before anything dispatches.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mzm-footnote">All values in this scenario — including the 91% confidence, the 2.2× return floor, and the $4,800/day estimate — are illustrative. They demonstrate the decision pathway and are not verified production results.</p>
+    </div>
+  </section>
+
+  <!-- ================= EXPLAINER FILM ================= -->
+  <section id="film" class="mzm-reveal" aria-labelledby="film-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The explainer film</p>
+      <h2 id="film-h">Watch the decision pathway unfold</h2>
+      <p class="mzm-lede">The film demonstrates the MIZ OKI Media decision pathway — from the first moved signal to the recorded outcome — in about ninety seconds.</p>
+      <div class="mzm-film-frame">
+        <video
+          controls
+          playsinline
+          preload="metadata"
+          poster="/media/assets/mizoki-signal-preview.png"
+          aria-label="MIZ OKI Media explainer film: the causal growth control decision pathway"
+        >
+          <source src="/media/video/mizoki-signal-explainer.mp4?v=20260803" type="video/mp4">
+          Your browser does not support embedded video.
+          <a href="/media/video/mizoki-signal-explainer.mp4">Download the explainer film (MP4)</a>.
+        </video>
+        <div class="mzm-film-caption">
+          <span>MIZ OKI Media — Causal Growth Control, explained.</span>
+          <span class="mono">MP4 · plays inline · no third-party player</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHY CURRENT TOOLS STOP TOO EARLY ================= -->
+  <section id="stop-early" class="mzm-reveal" aria-labelledby="stop-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The gap in the stack</p>
+      <h2 id="stop-h">Why current tools stop too early</h2>
+      <p class="mzm-lede">Each layer of the modern stack does its own job well — and stops before the decision is actually governed, authorized, executed, and learned from. None of this is a criticism of any particular vendor; it is a description of where each category ends.</p>
+      <div class="mzm-grid-2">
+        <div class="mzm-card mzm-tool-card">
+          <h3>Dashboards</h3>
+          <p>Report that performance moved, in near-real time and in detail. They describe the movement — they do not diagnose its cause or govern the response.</p>
+          <p class="stops">STOPS AT: REPORTING</p>
+        </div>
+        <div class="mzm-card mzm-tool-card">
+          <h3>Attribution models</h3>
+          <p>Estimate how credit should be divided across touchpoints. Credit division is not a complete causal operating model — it does not test counterfactual actions or carry constraints.</p>
+          <p class="stops">STOPS AT: CREDIT ESTIMATION</p>
+        </div>
+        <div class="mzm-card mzm-tool-card">
+          <h3>Customer data platforms</h3>
+          <p>Organize customer data into profiles and audiences. Organizing data is not the same as governing cross-functional commercial decisions about media, margin, and inventory.</p>
+          <p class="stops">STOPS AT: DATA ORGANIZATION</p>
+        </div>
+        <div class="mzm-card mzm-tool-card">
+          <h3>In-platform bid automation</h3>
+          <p>Optimizes efficiently inside one platform's auction — but may not see your margin, inventory position, site experience, finance constraints, or policy boundaries.</p>
+          <p class="stops">STOPS AT: THE PLATFORM WALL</p>
+        </div>
+        <div class="mzm-card mzm-tool-card" style="grid-column: 1 / -1;">
+          <h3>Data warehouses</h3>
+          <p>Retain the data, durably and completely. What they do not retain is the complete chain of reasoning, authorization, action, and outcome — the record of <em>why</em> a decision was made, <em>who</em> approved it, <em>what</em> was done, and <em>what happened next</em>. That chain is what MIZ OKI Media preserves.</p>
+          <p class="stops">STOPS AT: STORAGE</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GROWTH DECISION GRAPH ================= -->
+  <section id="decision-graph" class="mzm-reveal" aria-labelledby="graph-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The substrate</p>
+      <h2 id="graph-h">The Growth Decision Graph</h2>
+      <p class="mzm-lede">Every decision travels one governed pathway through the graph. Each stage is a first-class object — inspectable, explainable, and preserved.</p>
+
+      <div class="mzm-graph-svg-wrap">
+        <svg viewBox="0 0 1040 150" role="img" aria-labelledby="graph-svg-title graph-svg-desc">
+          <title id="graph-svg-title">The MIZ OKI Decision Graph pathway</title>
+          <desc id="graph-svg-desc">Seven connected stages flowing left to right: Signal, Entity, Cause, Objective, Policy, Action, Outcome. A learning arc returns from Outcome to Signal.</desc>
+          <defs>
+            <marker id="mzm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#46606A"/>
+            </marker>
+          </defs>
+          <!-- learning arc: outcome feeds the next signal -->
+          <path d="M 975 52 C 975 -8, 65 -8, 65 50" fill="none" stroke="#22505C" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#mzm-arrow)"/>
+          <text x="520" y="16" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#6E8890">outcomes feed the next decision</text>
+          <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" text-anchor="middle">
+            <g><circle cx="65"  cy="78" r="26" fill="#0F2530" stroke="#3FDCF2" stroke-width="2.5"/><text x="65"  y="132" fill="#3FDCF2">Signal</text></g>
+            <line x1="94" y1="78" x2="130" y2="78" stroke="#46606A" stroke-width="2" marker-end="url(#mzm-arrow)"/>
+            <g><circle cx="216" cy="78" r="26" fill="#0F2530" stroke="#5FA0DC" stroke-width="2.5"/><text x="216" y="132" fill="#5FA0DC">Entity</text></g>
+            <line x1="245" y1="78" x2="281" y2="78" stroke="#46606A" stroke-width="2" marker-end="url(#mzm-arrow)"/>
+            <g><circle cx="367" cy="78" r="26" fill="#0F2530" stroke="#FF6B7C" stroke-width="2.5"/><text x="367" y="132" fill="#FF6B7C">Cause</text></g>
+            <line x1="396" y1="78" x2="432" y2="78" stroke="#46606A" stroke-width="2" marker-end="url(#mzm-arrow)"/>
+            <g><circle cx="518" cy="78" r="26" fill="#0F2530" stroke="#D9A83C" stroke-width="2.5"/><text x="518" y="132" fill="#D9A83C">Objective</text></g>
+            <line x1="547" y1="78" x2="583" y2="78" stroke="#46606A" stroke-width="2" marker-end="url(#mzm-arrow)"/>
+            <g><circle cx="669" cy="78" r="26" fill="#0F2530" stroke="#9D7BE8" stroke-width="2.5"/><text x="669" y="132" fill="#9D7BE8">Policy</text></g>
+            <line x1="698" y1="78" x2="734" y2="78" stroke="#46606A" stroke-width="2" marker-end="url(#mzm-arrow)"/>
+            <g><circle cx="820" cy="78" r="26" fill="#0F2530" stroke="#41D695" stroke-width="2.5"/><text x="820" y="132" fill="#41D695">Action</text></g>
+            <line x1="849" y1="78" x2="885" y2="78" stroke="#46606A" stroke-width="2" marker-end="url(#mzm-arrow)"/>
+            <g><circle cx="975" cy="78" r="26" fill="#0F2530" stroke="#3FDCF2" stroke-width="2.5"/><text x="975" y="132" fill="#3FDCF2">Outcome</text></g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="mzm-stage-grid">
+        <div class="mzm-stage s1"><div class="n">Signal</div><p>A change worth attention — media metrics, commerce events, experience telemetry, inventory movement, or an economic threshold.</p></div>
+        <div class="mzm-stage s2"><div class="n">Entity</div><p>The signal resolves to the real things it concerns: campaigns, products, audiences, pages, warehouses, ledgers.</p></div>
+        <div class="mzm-stage s3"><div class="n">Cause</div><p>Candidate explanations are tested against the evidence — with the supporting and disconfirming evidence preserved.</p></div>
+        <div class="mzm-stage s4"><div class="n">Objective</div><p>What the business is actually optimizing here — incremental profit, margin protection, growth within constraints.</p></div>
+        <div class="mzm-stage s5"><div class="n">Policy</div><p>Financial floors, brand rules, risk boundaries, and authority thresholds that any proposed action must satisfy.</p></div>
+        <div class="mzm-stage s6"><div class="n">Action</div><p>The authorized intervention — scoped, bounded, dispatched to the executing system, and recorded.</p></div>
+        <div class="mzm-stage s7"><div class="n">Outcome</div><p>The realized result, compared against the prediction, written back into memory.</p></div>
+      </div>
+
+      <blockquote class="mzm-distinction">
+        A conventional knowledge graph explains what is connected. The MIZ OKI Decision Graph preserves the evidence, causal reasoning, objective, policy, decision, action, and realized outcome — so the organization can govern and learn from decisions.
+      </blockquote>
+
+      <h3 style="margin-top:44px; font-size:22px;">Four layers of memory</h3>
+      <div class="mzm-memory-grid">
+        <div class="mzm-card mzm-memory"><div class="idx">01</div><h3>Evidence memory</h3><p>The observed signals and their provenance — what was known, when it was known, and where it came from.</p></div>
+        <div class="mzm-card mzm-memory"><div class="idx">02</div><h3>Operating context</h3><p>The living map of entities, relationships, constraints, and economics the business runs on.</p></div>
+        <div class="mzm-card mzm-memory"><div class="idx">03</div><h3>Decision memory</h3><p>Each decision with its reasoning, the alternatives considered, the policy checks applied, and who authorized it.</p></div>
+        <div class="mzm-card mzm-memory"><div class="idx">04</div><h3>Outcome memory</h3><p>Predicted versus realized results — the feedback that makes the next decision measurably better informed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMPLETE CAUSAL DECISION TRACE ================= -->
+  <section id="how-it-works" class="mzm-reveal" aria-labelledby="trace-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">How it works</p>
+      <h2 id="trace-h">The complete causal decision trace</h2>
+      <p class="mzm-lede">Every MIZ OKI Media decision moves through the platform's seven-stage operating loop, in this exact order — and every stage leaves a record.</p>
+      <p class="mzm-loop-order" aria-label="Operating loop order">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</p>
+      <ol class="mzm-loop-list">
+        <li><span class="stage">1 · SENSE</span><span class="desc">Identifies what changed — ingesting signals across media, commerce, experience, inventory, and economics into structured evidence.</span></li>
+        <li><span class="stage">2 · REASON</span><span class="desc">Evaluates likely causes — testing candidate explanations against the evidence in the Decision Graph rather than assuming the loudest metric is the culprit.</span></li>
+        <li><span class="stage">3 · PLAN</span><span class="desc">Produces counterfactual choices — the plausible actions, compared against each other and against doing nothing.</span></li>
+        <li><span class="stage">4 · VALIDATE</span><span class="desc">Applies financial, operational, ethical, policy, and risk constraints. Every proposed action can be evaluated against configured policy and authority boundaries before dispatch.</span></li>
+        <li><span class="stage">5 · DECIDE</span><span class="desc">Routes the recommendation to the correct authority — autonomous only where explicitly granted, and to a named human everywhere else.</span></li>
+        <li><span class="stage">6 · ACT</span><span class="desc">Dispatches only an authorized action — scoped, bounded, and with its rollback path preserved.</span></li>
+        <li><span class="stage">7 · LEARN</span><span class="desc">Compares predicted and realized outcomes, writing the result into outcome memory so calibration compounds.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= HIGH-VALUE DECISION JOBS ================= -->
+  <section id="decision-jobs" class="mzm-reveal" aria-labelledby="jobs-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">What it's for</p>
+      <h2 id="jobs-h">High-value decision jobs</h2>
+      <p class="mzm-lede">MIZ OKI Media is built for the recurring, expensive decisions where the cause is cross-functional and the response needs governance.</p>
+      <div class="mzm-grid-3">
+        <div class="mzm-card mzm-job"><h3>Detect and prevent media waste</h3><p>Catch spend that is buying outcomes which would have happened anyway — or buying nothing at all — before the month closes.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Diagnose conversion deterioration</h3><p>Separate creative, audience, pricing, experience, and infrastructure causes when conversion slips — before the wrong lever gets pulled.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Allocate budget by incremental profit</h3><p>Move the next dollar toward where evidence says it creates profit — not toward whichever channel claims the most credit.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Coordinate media with inventory and margin</h3><p>Stop accelerating demand into products that cannot be fulfilled profitably — and lean in where stock and margin allow.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Identify tracking and infrastructure failures</h3><p>Distinguish a real performance change from a broken pixel, a consent change, or a slow page — before optimization chases a phantom.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Compare causes across the funnel</h3><p>Weigh channel, creative, audience, and experience explanations against each other on shared evidence, not in separate tools.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Protect brand and policy boundaries</h3><p>Keep every proposed action inside configured brand, financial, and risk boundaries — with the check recorded, not assumed.</p><span class="mzm-label pilot">Pilot-ready</span></div>
+        <div class="mzm-card mzm-job"><h3>Learn which interventions work, where</h3><p>Build an institutional record of which actions produced which outcomes under which conditions — memory that compounds.</p><span class="mzm-label roadmap">Roadmap</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EVIDENCE & MATURITY LABELS ================= -->
+  <section id="maturity" class="mzm-reveal" aria-labelledby="maturity-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Honesty, structurally</p>
+      <h2 id="maturity-h">Evidence and maturity labels</h2>
+      <p class="mzm-lede">Everything on this page — and everything in a MIZ OKI Media engagement — carries one of four labels. We do not blur the line between demonstrated functionality and future capability.</p>
+      <div class="mzm-maturity-grid">
+        <div class="mzm-card mzm-maturity-card"><span class="mzm-label live">Live</span><p>Running in production on the MIZ OKI platform today, with verifiable behavior.</p></div>
+        <div class="mzm-card mzm-maturity-card"><span class="mzm-label pilot">Pilot-ready</span><p>Built and exercised on the platform; validated against your data and constraints during a pilot before it carries weight.</p></div>
+        <div class="mzm-card mzm-maturity-card"><span class="mzm-label illus">Illustrative</span><p>A worked example that demonstrates the pathway. Its numbers are constructed for clarity, not measured results.</p></div>
+        <div class="mzm-card mzm-maturity-card"><span class="mzm-label roadmap">Roadmap</span><p>Planned capability. Discussed as direction, never sold as present functionality.</p></div>
+      </div>
+      <p class="mzm-footnote">On this page: the decision scenario and the explainer film are <strong>Illustrative</strong>; the decision jobs are labeled individually; the 90-day pilot below is the <strong>Pilot-ready</strong> path into everything else.</p>
+    </div>
+  </section>
+
+  <!-- ================= STORYBOARD ================= -->
+  <section id="storyboard" class="mzm-reveal" aria-labelledby="storyboard-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Behind the film</p>
+      <h2 id="storyboard-h">The storyboard</h2>
+      <p class="mzm-lede">Six scenes, one pathway — how the explainer film walks a performance movement from first signal to recorded outcome.</p>
+      <figure class="mzm-storyboard-frame">
+        <img
+          src="/media/assets/mizoki-signal-storyboard.png"
+          alt="Storyboard of the MIZ OKI Media explainer film in six scenes: 1. The signal — blended CPA moves and conversion rate slips while dashboards only report it; 2. The graph connects — media, commerce, experience, inventory and economics resolve into one entity graph; 3. Cause, not symptom — candidate causes are tested and mobile checkout latency carries the evidence; 4. Policy and authority — financial and policy constraints are applied and the decision routes to the right approver; 5. Bounded action — only the authorized action dispatches, scoped, reversible and recorded; 6. Outcome learned — predicted versus realized outcome lands in decision memory and the loop closes."
+          width="1600" height="1060" loading="lazy">
+        <figcaption>Explainer film storyboard — the MIZ OKI Media decision pathway in six scenes. <span class="mzm-label illus">Illustrative</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= 90-DAY PILOT ================= -->
+  <section id="pilot" class="mzm-reveal" aria-labelledby="pilot-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The way in</p>
+      <h2 id="pilot-h">A 90-Day Causal Growth Control Pilot</h2>
+      <p class="mzm-lede">Begin observe-only. Advance to human-approved actions only after evidence quality, economics, and policy boundaries are validated. <span class="mzm-label pilot">Pilot-ready</span></p>
+
+      <h3 style="margin-top:34px;">Pilot scope</h3>
+      <ul class="mzm-pilot-scope">
+        <li>One brand or business unit</li>
+        <li>Limited media and commerce sources</li>
+        <li>One performance-incident decision class</li>
+        <li>One budget-allocation or profit decision class</li>
+        <li>Explicit evidence boundaries</li>
+        <li>Explicit human authority</li>
+        <li>Observe-only starting mode</li>
+        <li>Human-approved actions only after validation</li>
+        <li>Measured predicted-versus-realized outcomes</li>
+        <li>Clear expansion criteria</li>
+      </ul>
+
+      <div class="mzm-phase-grid">
+        <div class="mzm-card mzm-phase">
+          <div class="days">Days 1–30</div>
+          <h3>Connect and observe</h3>
+          <ul>
+            <li>Confirm source access</li>
+            <li>Map critical entities</li>
+            <li>Establish canonical event definitions</li>
+            <li>Validate identity, timestamps, and economics</li>
+            <li>Run in observe-only mode</li>
+          </ul>
+        </div>
+        <div class="mzm-card mzm-phase">
+          <div class="days">Days 31–60</div>
+          <h3>Diagnose and recommend</h3>
+          <ul>
+            <li>Generate causal hypotheses</li>
+            <li>Compare counterfactual actions</li>
+            <li>Apply policy and economic constraints</li>
+            <li>Present human-review recommendations</li>
+            <li>Measure recommendation quality</li>
+          </ul>
+        </div>
+        <div class="mzm-card mzm-phase">
+          <div class="days">Days 61–90</div>
+          <h3>Approve, act, and learn</h3>
+          <ul>
+            <li>Enable narrowly scoped approved actions</li>
+            <li>Preserve rollback paths</li>
+            <li>Track realized outcomes</li>
+            <li>Compare prediction against reality</li>
+            <li>Produce pilot evidence and expansion recommendation</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="mzm-pilot-mode">Autonomy is earned, never assumed: the pilot starts observe-only, and every advance in authority is a deliberate, human-made decision backed by the pilot's own evidence.</p>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="mzm-final mzm-reveal" aria-labelledby="cta-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Next step</p>
+      <h2 id="cta-h">Ready to know why — and act on it?</h2>
+      <p>Tell us about your stack and the decision that costs you the most when it goes ungoverned. We'll scope a 90-day pilot around it.</p>
+      <a class="mzm-btn primary" href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot">Discuss a MIZ OKI Media Pilot</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mzm-wrap mzm-foot-inner">
+      <span>MIZ OKI Media — a focused commercial application powered by the broader MIZ OKI Operating Knowledge Intelligence platform.</span>
+      <span><a href="https://mizoki3.com/">mizoki3.com</a> · <a href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot">contact@mizoki3.com</a></span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* Route-local progressive enhancement: scroll reveal.
+   Content is fully visible without JavaScript; with JavaScript and motion
+   allowed, sections fade in as they enter the viewport. No dependencies. */
+(function () {
+  document.documentElement.classList.add("mzm-js");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduced.matches || !("IntersectionObserver" in window)) {
+    document.querySelectorAll(".mzm-reveal").forEach(function (el) {
+      el.classList.add("mzm-in");
+    });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("mzm-in");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  document.querySelectorAll(".mzm-reveal").forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>

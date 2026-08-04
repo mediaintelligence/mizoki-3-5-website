@@ -1,6 +1,16 @@
 {
   "posts": [
     {
+      "slug": "doorman-problem",
+      "title": "The Doorman Problem: What Your Retargeting Dashboard Can't Tell You",
+      "summary": "A composite field note on the question platform ROAS never answers: which conversions did the ads actually cause — and which customers were already walking through the door?",
+      "author": "MIZ OKI Research",
+      "published": "2026-08-03",
+      "updated": "2026-08-03",
+      "tags": ["field-notes", "incrementality", "retargeting", "measurement"],
+      "read_minutes": 3
+    },
+    {
       "slug": "adc-decision-framework",
       "title": "How an Autonomous Decision Controller (ADC) Thinks",
       "summary": "A plain-English guide to the 7 alerts that power real intelligence. Learn how an ADC thinks through decisions the same way a disciplined human expert would.",
