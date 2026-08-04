@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZ OKI Media — Explainer Film Transcript</title>
+<meta name="robots" content="noindex">
+<style>
+/* Self-contained transcript page for the MIZ OKI Media explainer film. */
+:root {
+  --bg: #0A1418; --bg1: #0B1E26; --line: #223A44; --fg: #DBE7EB;
+  --muted: #93A7AE; --cyan: #3FDCF2; --amber: #D9A83C;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--sans);
+  font-size: 16.5px; line-height: 1.65; padding: 48px 24px 72px;
+}
+main { max-width: 760px; margin: 0 auto; }
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.kicker {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;
+}
+h1 { font-family: var(--serif); font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin-bottom: 16px; }
+.note {
+  color: var(--muted); font-size: 14.5px; border-left: 2px solid var(--line);
+  padding-left: 14px; margin: 18px 0 34px; max-width: 680px;
+}
+.label {
+  display: inline-block; font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px;
+  border: 1px solid var(--amber); color: var(--amber); border-radius: 2px; margin-bottom: 14px;
+}
+ol.scenes { list-style: none; counter-reset: scene; }
+ol.scenes li {
+  counter-increment: scene; border: 2px solid var(--line); background: var(--bg1);
+  padding: 20px 22px; margin-bottom: 14px;
+}
+ol.scenes li::before {
+  content: "Scene " counter(scene); display: block;
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+}
+.scene-kicker { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
+.scene-head { font-family: var(--serif); font-size: 22px; margin-bottom: 4px; }
+.scene-sub { color: var(--muted); font-size: 15px; }
+.persistent { margin-top: 30px; color: var(--muted); font-size: 14.5px; }
+.persistent code { font-family: var(--mono); font-size: 13px; color: var(--fg); }
+footer { margin-top: 40px; padding-top: 18px; border-top: 2px solid var(--line); font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">MIZ OKI Media · Causal Growth Control</p>
+  <h1>Explainer film — transcript</h1>
+  <p class="label">Preview render</p>
+  <p class="note">The current cut is a silent preview render (32 seconds, seven scenes): all language appears as on-screen text, transcribed verbatim below, and there is no spoken narration to caption. The film's own footer reads "Placeholder render — final narrated film pending"; this transcript will be replaced alongside the final narrated film.</p>
+
+  <ol class="scenes">
+    <li>
+      <p class="scene-kicker">MIZ OKI Media</p>
+      <p class="scene-head">Causal Growth Control</p>
+      <p class="scene-sub">powered by the MIZ OKI Decision Graph</p>
+    </li>
+    <li>
+      <p class="scene-kicker">The Problem</p>
+      <p class="scene-head">Performance moved.</p>
+      <p class="scene-sub">Dashboards report it. Nobody governs the response.</p>
+    </li>
+    <li>
+      <p class="scene-kicker">Signal → Entity → Cause</p>
+      <p class="scene-head">One graph connects the stack.</p>
+      <p class="scene-sub">Media, commerce, experience, inventory, economics.</p>
+    </li>
+    <li>
+      <p class="scene-kicker">Objective → Policy</p>
+      <p class="scene-head">Constraints before actions.</p>
+      <p class="scene-sub">Financial floors, brand rules, risk boundaries.</p>
+    </li>
+    <li>
+      <p class="scene-kicker">Decide → Act</p>
+      <p class="scene-head">The right human authorizes.</p>
+      <p class="scene-sub">Only the approved, bounded action dispatches.</p>
+    </li>
+    <li>
+      <p class="scene-kicker">Learn</p>
+      <p class="scene-head">Predicted vs. realized.</p>
+      <p class="scene-sub">Every outcome sharpens the next decision.</p>
+    </li>
+    <li>
+      <p class="scene-kicker">MIZ OKI Media</p>
+      <p class="scene-head">Know why performance moved.</p>
+      <p class="scene-sub">mizoki3.com/media</p>
+    </li>
+  </ol>
+
+  <p class="persistent">Persistent on-screen elements throughout the film: the Decision Graph chain <code>Signal → Entity → Cause → Objective → Policy → Action → Outcome</code> along the bottom of the frame, and the footer line <code>Placeholder render — final narrated film pending</code>.</p>
+
+  <footer>
+    <a href="/media">← Back to MIZ OKI Media</a>
+  </footer>
+</main>
+</body>
+</html>
