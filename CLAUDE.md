@@ -183,6 +183,54 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
+### MIZ OKI Media standalone site LAUNCHED — /media Parts 2–4 (2026-08-04)
+
+Owner four-part deployment prompt executed in full and deployed on explicit
+owner approval ("Approved deployment" in-session; dispatch per the workflow's
+own governance clause — explicit human instruction). Deploy: this repo PR
+`#28` (main `00cd7ea`) → parity PR `#591` in MIZOKICloudRun (`bc154c0`, base
+surfaces byte-verified before copy) → canonical `deploy-homepage.yml` run
+**#53** (`approve=APPROVED`, all gates green, success in ~110s). Production
+verified from the live domain: all 9 pages 200, film `video/mp4` with Range
+206, classic root 200 with ZERO `/media` references, `/media-buying` 301
+intact.
+
+- **/media is a complete standalone product site**: 12-section homepage in
+  the owner's required order (customer-problem wall → 5×11 capability table →
+  interactive Decision Graph + four memory layers → expandable SENSE→LEARN
+  flow → reworked scenario (landing-page + inventory diagnosis, approval
+  routed to Operations) → film + verbatim transcript → decision jobs →
+  architecture → pilot → governance → CTA) plus 8 sub-pages:
+  `/media/{platform, decision-graph, how-it-works, use-cases, pilot, trust,
+  resources, contact}` — served by ONE additive `any()`-converter route in
+  `app.py` (the `/marketing` convention).
+- **Route-local design system** `media/assets/media.css` (sub-pages only;
+  the homepage stays fully inline/self-contained, test-pinned). Downloadables:
+  product overview, Decision Graph overview, pilot guide, executive summary
+  (print-friendly single-file HTML), architecture SVG, film transcript.
+- **Interactive walkthrough** on `/media/how-it-works`: CPA slider →
+  hypothesis weights rebalance → policy checks → routing/escalation. STRICTLY
+  deterministic (no randomness, no clock reads — test-enforced across every
+  /media page), aria-live verdicts, noscript fallback, all values labeled
+  illustrative.
+- **Truth discipline held against the prompt**: the mandated "two-minute
+  film" caption was NOT adopted — the real asset is a 32s silent placeholder
+  (its own footer: "final narrated film pending"), so the page says "silent
+  preview render" and the transcript quotes the actual on-screen text
+  (frames extracted and read). Zero buzzwords (swept), no compliance-cert
+  claims, every number labeled.
+- **Tests**: `tests/test_media_page.py` 20 → **49** (required section order,
+  question wall, comparison grid, node/flow contracts, scenario story,
+  per-page SEO/a11y/isolation, internal-link crawl, deterministic-JS guard,
+  content_qa over every /media page, classic-site-untouched). Suite **415**
+  with only the 2 pre-existing homepage failures; canon 20/20.
+- **Deferred deliberately**: `/media` not yet in the sitemap (one line in
+  `app.py` when ready to index); drift guard not yet extended to the 8
+  sub-pages (extend in BOTH repos together); final narrated film + `.vtt`
+  captions pending; Part 4's "beyond the website" items (product tour, ROI
+  calculator, industry selector, sandbox, docs portal, …) recorded as
+  roadmap, not built.
+
 ### /media go-live + parity route-loss repair + media-aware drift guard (2026-08-04)
 
 Owner instruction: "Approved to go live in production mizoki3.com/media."
