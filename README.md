@@ -45,6 +45,10 @@ Executive Briefing are the core of the operation.
 ├── demo-nexus.html            # Nexus boardroom
 ├── counsel.html … risk.html   # Division landings
 ├── walkthrough.html           # Guided walkthrough
+├── media/                     # MIZ OKI Media standalone product site (/media, 9 pages)
+│   ├── index.html … contact.html
+│   ├── assets/media.css       # route-local design system + downloadables
+│   └── video/                 # explainer film (mp4, Range-streamed)
 ├── app.py                     # Flask factory + routes
 ├── mizoki_runtime/            # Boss runtime + demo_* engines
 ├── assets/js/demo-*.js        # Demo players (incl. demo-capital.js)
@@ -141,17 +145,38 @@ pages live, `/media-buying` 301 → `/marketing`.
 - **Tests**: `tests/test_marketing_site.py` (64) — suite 386, only the 2
   pre-existing homepage failures.
 
-## /media — media division film page (LIVE 2026-08-04)
+## /media — MIZ OKI Media standalone product site (LAUNCHED 2026-08-04)
 
-Owner-approved go-live (canonical `deploy-homepage.yml` run **#52**, typed
-`APPROVED`, sha `1577206`). `/media` serves `media/index.html` ("MIZ OKI
-Media — Causal Growth Control") and a traversal-guarded asset route
-(`/media/<path>`: suffix allowlist + resolved-path prefix check) streams
-`media/video/mizoki-signal-explainer.mp4` as seekable `video/mp4`.
+**MIZ OKI Media — Causal Growth Control**, powered by the MIZ OKI Decision
+Graph: a complete standalone product website at `/media`, strictly additive
+to everything above. First went live as a single film page (run **#52**, sha
+`1577206`); launched as the full site the same day via run **#53**
+(`approve=APPROVED`, parity PR `#591`, sha `bc154c0`) on explicit owner
+approval. Full build & launch record:
+`docs/MEDIA_SITE_LAUNCH_2026-08-04.md`.
 
-The drift guard (`scripts/check_marketing_surfaces.py`) now asserts the
-/media page marker, the film file, and the `app.py` route marker in BOTH
-deploy pipelines — added after a cross-repo parity byte-copy briefly dropped
-the /media + blog routes from canonical main (caught in pre-deploy
-verification, never deployed, restored as the verified union; full account
-in `CLAUDE.md`).
+- **Nine pages**: the 12-section homepage (owner-mandated order: customer
+  problem wall → 5×11 capability comparison → interactive Decision Graph +
+  four memory layers → expandable SENSE→LEARN flow → illustrative scenario →
+  film + verbatim transcript → decision jobs → architecture → pilot →
+  governance → CTA) plus `/media/{platform, decision-graph, how-it-works,
+  use-cases, pilot, trust, resources, contact}` — one additive
+  `any()`-converter route in `app.py`, the `/marketing` convention.
+- **Route-local design system** `media/assets/media.css` (sub-pages only;
+  the homepage stays self-contained/inline, test-pinned). Downloadable
+  leave-behinds: product overview, Decision Graph overview, pilot guide,
+  executive summary, architecture SVG, film transcript.
+- **Interactive walkthrough** on `/media/how-it-works` (CPA slider →
+  hypothesis weights → policy checks → routing/escalation) — STRICTLY
+  deterministic (no randomness, no clock reads; test-enforced on every
+  /media page), aria-live verdicts, noscript fallback, everything labeled
+  illustrative. The film is honestly framed as its actual asset: a 32s
+  silent preview render ("final narrated film pending").
+- **Contracts**: `tests/test_media_page.py` (49) pins routes, section order,
+  copy, per-page SEO/a11y, isolation (classic site never links in; /media
+  pulls no external origin), an internal-link crawl, per-page content_qa,
+  and the traversal-guarded asset route (film streams as seekable
+  `video/mp4`). The drift guard asserts the /media homepage marker, film,
+  and route in BOTH deploy pipelines. `/media` is deliberately not in the
+  sitemap yet; extend the drift guard to the 8 sub-pages in both repos
+  together.
