@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How It Works — The SRPVDAL Decision Lifecycle | MIZ OKI Media</title>
+<meta name="description" content="The complete MIZ OKI Media decision lifecycle: Sense, Reason, Plan, Validate, Decide, Act, Learn — with each stage's objective, inputs, outputs, AI and human responsibilities, governance checkpoints, and metrics. Includes an interactive walkthrough.">
+<link rel="canonical" href="https://mizoki3.com/media/how-it-works">
+<meta property="og:title" content="How MIZ OKI Media works — the seven-stage decision lifecycle">
+<meta property="og:description" content="Sense → Reason → Plan → Validate → Decide → Act → Learn. Move the signal; watch the system answer.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/media/how-it-works">
+<meta property="og:image" content="https://mizoki3.com/media/assets/mizoki-signal-preview.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How MIZ OKI Media works — the seven-stage decision lifecycle">
+<meta name="twitter:description" content="Sense → Reason → Plan → Validate → Decide → Act → Learn. Move the signal; watch the system answer.">
+<meta name="twitter:image" content="https://mizoki3.com/media/assets/mizoki-signal-preview.png">
+<meta name="theme-color" content="#0A1418">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/media/assets/media.css?v=20260804">
+</head>
+<body>
+<a class="mzm-skip" href="#mzm-main">Skip to content</a>
+
+<nav class="mzm-nav" aria-label="MIZ OKI Media site navigation">
+  <div class="mzm-nav-inner">
+    <div class="mzm-brand"><a href="/media"><strong>MIZ OKI Media</strong><span>Causal Growth Control</span></a></div>
+    <div class="mzm-nav-links">
+      <a href="/media/platform">Platform</a>
+      <a href="/media/decision-graph">Decision Graph</a>
+      <a href="/media/how-it-works" aria-current="page">How It Works</a>
+      <a href="/media/use-cases">Use Cases</a>
+      <a href="/media/pilot">Pilot</a>
+      <a href="/media/trust">Trust</a>
+      <a href="/media/resources">Resources</a>
+      <a class="mzm-nav-cta" href="/media/contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main id="mzm-main">
+
+  <section class="mzm-sub-hero" aria-labelledby="h1">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">How it works</p>
+      <h1 id="h1">Seven stages. One record. No gaps.</h1>
+      <p class="mzm-lede">Every MIZ OKI Media decision travels the same lifecycle, in the same order, leaving the same record. This page walks all seven stages — what each one is for, what AI does, what humans do, and where governance holds the line.</p>
+      <div class="mzm-flow-strip" role="img" aria-label="The operating loop: sense, reason, plan, validate, decide, act, learn.">
+        <ol>
+          <li style="color:var(--mzm-cyan)">SENSE</li>
+          <li style="color:var(--mzm-blue)">REASON</li>
+          <li style="color:var(--mzm-rose)">PLAN</li>
+          <li style="color:var(--mzm-amber)">VALIDATE</li>
+          <li style="color:var(--mzm-purple)">DECIDE</li>
+          <li style="color:var(--mzm-emerald)">ACT</li>
+          <li style="color:var(--mzm-cyan)">LEARN</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo" aria-labelledby="demo-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Try it</p>
+      <h2 id="demo-h">Move the signal. Watch the system answer.</h2>
+      <p class="mzm-lede">Drag the slider to change how far CPA has moved. Watch hypotheses gain and lose weight, policy checks fire, and the recommendation — and its required authority — change with the evidence. <span class="mzm-label illus">Illustrative</span></p>
+      <div class="mzm-demo">
+        <div class="mzm-demo-slider">
+          <label for="cpaRange" id="cpaLabel">CPA movement (illustrative scenario · creative engagement stays stable · latency rises with the movement)</label>
+          <output id="cpaOut" for="cpaRange" aria-live="off">+12%</output>
+          <input type="range" id="cpaRange" min="0" max="40" step="1" value="12"
+                 aria-describedby="cpaLabel" aria-valuetext="+12 percent CPA movement">
+        </div>
+        <div class="mzm-demo-cols">
+          <div>
+            <h3 style="font-size:16px;">Competing hypotheses <span style="font-family:var(--mzm-mono); font-size:11px; color:#7E939B;">(relative weight, illustrative)</span></h3>
+            <div class="mzm-hypo-bars" id="hypoBars" style="margin-top:12px;">
+              <div class="mzm-hypo-bar" data-h="landing"><div class="nm"><span>Landing-page degradation</span><span class="pct">36%</span></div><div class="track"><div class="fill" style="width:36%"></div></div></div>
+              <div class="mzm-hypo-bar" data-h="inventory"><div class="nm"><span>Inventory constraint</span><span class="pct">17%</span></div><div class="track"><div class="fill" style="width:17%"></div></div></div>
+              <div class="mzm-hypo-bar" data-h="creative"><div class="nm"><span>Creative fatigue</span><span class="pct">14%</span></div><div class="track"><div class="fill" style="width:14%"></div></div></div>
+              <div class="mzm-hypo-bar" data-h="tracking"><div class="nm"><span>Tracking failure</span><span class="pct">8%</span></div><div class="track"><div class="fill" style="width:8%"></div></div></div>
+            </div>
+          </div>
+          <div class="mzm-demo-verdict" id="demoVerdict" aria-live="polite">
+            <div class="row"><div class="t">Policy validation</div><div class="d" id="vPolicy">Margin floor and budget-shift ceiling checked — the rebalance candidate passes.</div></div>
+            <div class="row"><div class="t">Recommendation</div><div class="d warn" id="vRec">Repair the landing experience; temporarily rebalance eligible budget within the configured cap.</div></div>
+            <div class="row"><div class="t">Required authority</div><div class="d" id="vAuth">Routed to the media lead — the shift crosses the delegated grant, so a named human authorizes it.</div></div>
+          </div>
+        </div>
+        <noscript><p class="mzm-footnote">The interactive version needs JavaScript. Its three states are: small movements stay inside the noise envelope (no action, the desk keeps watching); meaningful movements produce a diagnosed, policy-checked recommendation routed to the media lead; large movements trip the escalation floor and route to Operations and Finance jointly.</p></noscript>
+      </div>
+      <p class="mzm-footnote">Every number in this demonstration is illustrative and deterministic — the same slider position always produces the same result, exactly like a replayed decision. It teaches the pathway; it is not a measurement.</p>
+    </div>
+  </section>
+
+  <section id="lifecycle" aria-labelledby="stages-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The lifecycle, stage by stage</p>
+      <h2 id="stages-h">What happens at every stage</h2>
+      <div class="mzm-timeline">
+
+        <div class="mzm-tl-item t1">
+          <div class="mzm-tl-marker" aria-hidden="true">1</div>
+          <div class="mzm-tl-body">
+            <h3>SENSE</h3>
+            <p class="mzm-stage-obj">Detect meaningful commercial change — and qualify it before anyone spends attention on it.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>Media metrics, commerce events, experience telemetry, inventory movement, economic thresholds.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>A qualified signal: what moved, where, by how much, with what evidence quality.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Continuous monitoring, threshold and anomaly detection, noise suppression, evidence assembly with provenance.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>Define what "meaningful" means here: thresholds, scopes, and watchlists are business choices, not model defaults.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Detection thresholds are recorded configuration; this stage holds no action authority of any kind.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>Blended CPA rises across two campaigns while creative engagement holds steady — a qualified signal opens with the evidence attached.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>time-to-detection</span><span>false-alarm rate</span><span>signal coverage</span><span>evidence completeness</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mzm-tl-item t2">
+          <div class="mzm-tl-marker" aria-hidden="true">2</div>
+          <div class="mzm-tl-body">
+            <h3>REASON</h3>
+            <p class="mzm-stage-obj">Determine why performance moved — by testing competing explanations, not by trusting the loudest metric.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>The qualified signal, operating context, and the organization's decision history.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>Ranked candidate causes, each preserved with its supporting and disconfirming evidence.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Hypothesis generation across the whole stack, evidence testing, separating correlation from plausible cause.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>Contribute ground truth the data cannot see — deploys, promotions, supplier issues — and challenge any diagnosis.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Eliminated hypotheses are preserved, not discarded; no conclusion is recorded without its disconfirming evidence.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>Creative fatigue is ruled out by stable engagement; tracking failure by server-side verification; landing-page degradation survives the evidence.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>diagnostic accuracy vs. later ground truth</span><span>hypothesis coverage</span><span>time-to-diagnosis</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mzm-tl-item t3">
+          <div class="mzm-tl-marker" aria-hidden="true">3</div>
+          <div class="mzm-tl-body">
+            <h3>PLAN</h3>
+            <p class="mzm-stage-obj">Generate multiple possible interventions — including doing nothing — and compare their expected outcomes.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>The diagnosed cause, the business objectives, and the levers actually available.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>A counterfactual comparison set: each candidate with its expected effect and stated assumptions.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Candidate generation, expected-effect estimation, surfacing the assumptions each estimate rests on.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>Add levers the system cannot see — contract terms, launch timing — and set the weight each objective carries.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Every plan includes the no-action baseline; every expected effect is stated so it can be honestly scored later.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>Rebalance, pause, and hold are compared against each other — and against doing nothing.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>alternatives per decision</span><span>assumption explicitness</span><span>plan acceptance rate</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mzm-tl-item t4">
+          <div class="mzm-tl-marker" aria-hidden="true">4</div>
+          <div class="mzm-tl-body">
+            <h3>VALIDATE</h3>
+            <p class="mzm-stage-obj">Hold every candidate action against the organization's own rules — before it reaches a decision-maker.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>The candidate actions plus configured policy: financial floors, brand rules, risk boundaries, compliance constraints.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>A pass-or-fail record per constraint; vetoes recorded with the exact check that failed.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Mechanical policy evaluation and constraint-conflict detection — the checks run the same way every time.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>Own the policy content itself: finance sets the floors, brand sets the rules, risk sets the boundaries.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Margin floors, budget ceilings, brand and risk rules, compliance holds — every check recorded, no veto ever silent.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>A candidate that would breach the margin floor is vetoed before anyone sees it as a recommendation — with the failing check quoted.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>policy coverage</span><span>veto rate</span><span>constraint-conflict rate</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mzm-tl-item t5">
+          <div class="mzm-tl-marker" aria-hidden="true">5</div>
+          <div class="mzm-tl-body">
+            <h3>DECIDE</h3>
+            <p class="mzm-stage-obj">Route the validated recommendation to whoever actually holds the authority — person, delegated rule, or bounded grant.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>The validated recommendation and the organization's authority map.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>Human approval, delegated approval, automatic approval, rejection, or escalation — with the authority recorded.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Routing, and packaging the complete record — evidence through policy — so the approver decides with full context.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>The decision itself, everywhere a standing grant does not explicitly cover it.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Autonomy ceilings, named approvers, and escalation paths are configuration — and every invocation is recorded.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>A budget shift crossing the configured ceiling routes to the media lead by name; nothing dispatches until they approve.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>decision latency</span><span>approval rate</span><span>escalation rate</span><span>override rate</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mzm-tl-item t6">
+          <div class="mzm-tl-marker" aria-hidden="true">6</div>
+          <div class="mzm-tl-body">
+            <h3>ACT</h3>
+            <p class="mzm-stage-obj">Execute only what was authorized — scoped, bounded, reversible, and logged.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>The authorized decision, its scope, and the executing system's contract.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>A dispatched campaign update, budget change, alert, workflow, ticket, notification — or a recorded decision to hold.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Dispatch, execution monitoring, and rollback readiness.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>Manual execution where systems require it, and rollback authority at all times.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Scope bounds enforced at dispatch; the rollback path is recorded before the action runs, not after it fails.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>The approved, bounded budget change dispatches with its rollback path stored; "no action" would be recorded with the same rigor.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>execution fidelity</span><span>action latency</span><span>rollback frequency</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mzm-tl-item t7">
+          <div class="mzm-tl-marker" aria-hidden="true">7</div>
+          <div class="mzm-tl-body">
+            <h3>LEARN</h3>
+            <p class="mzm-stage-obj">Compare what was predicted with what actually happened — and adjust, visibly.</p>
+            <div class="mzm-fields">
+              <div class="row"><span class="t">Inputs</span><p>The prediction recorded at decision time and the realized outcome from the field.</p></div>
+              <div class="row"><span class="t">Outputs</span><p>Confidence adjustments, updated future weighting, and lessons written into outcome memory.</p></div>
+              <div class="row"><span class="t">AI responsibilities</span><p>Outcome comparison, calibration, and drift detection across decision classes.</p></div>
+              <div class="row"><span class="t">Human responsibilities</span><p>Review the lessons; approve any change to thresholds, policies, or models that the lessons suggest.</p></div>
+              <div class="row"><span class="t">Governance checkpoints</span><p>Predictions are recorded at decision time — never reconstructed afterward — and every learning change is versioned.</p></div>
+              <div class="row"><span class="t">Example scenario</span><p>A rebalance recovers less than predicted; confidence for that action class is adjusted down, and the next recommendation says so.</p></div>
+              <div class="row"><span class="t">Typical metrics</span><div class="mzm-chips"><span>prediction accuracy over time</span><span>calibration error</span><span>lesson adoption</span></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="mzm-footnote">The loop closes where it began: LEARN's output changes what SENSE watches, what REASON suspects, and what PLAN expects. That is why the record has no gaps — every stage writes into the same Decision Graph.</p>
+    </div>
+  </section>
+
+  <section class="mzm-next" aria-labelledby="next-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Next</p>
+      <h2 id="next-h">See it applied to real decision jobs</h2>
+      <p>Budget allocation, margin protection, incident routing, forecast confidence — the lifecycle is the same; the stakes change.</p>
+      <div class="mzm-ctas">
+        <a class="mzm-btn primary" href="/media/use-cases">Explore use cases</a>
+        <a class="mzm-btn" href="/media/pilot">Structure a pilot</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mzm-wrap mzm-foot-inner">
+      <span>MIZ OKI Media — a focused commercial application powered by the broader MIZ OKI Operating Knowledge Intelligence platform.</span>
+      <span><a href="/media">MIZ OKI Media home</a> · <a href="/media/resources">Resources</a> · <a href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot">contact@mizoki3.com</a></span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* Interactive walkthrough — deterministic and replayable by design: the same
+   slider position always yields the same weights, checks, and routing. No
+   randomness, no clock reads. All values are illustrative. */
+(function () {
+  var range = document.getElementById("cpaRange");
+  if (!range) { return; }
+  var out = document.getElementById("cpaOut");
+  var bars = {
+    landing:   document.querySelector('[data-h="landing"]'),
+    inventory: document.querySelector('[data-h="inventory"]'),
+    creative:  document.querySelector('[data-h="creative"]'),
+    tracking:  document.querySelector('[data-h="tracking"]')
+  };
+  var vPolicy = document.getElementById("vPolicy");
+  var vRec = document.getElementById("vRec");
+  var vAuth = document.getElementById("vAuth");
+
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+  function weights(c) {
+    return {
+      landing:   Math.round(clamp(10 + c * 2.2, 4, 88)),
+      inventory: Math.round(clamp(c * 1.4, 2, 55)),
+      creative:  Math.round(clamp(24 - c * 0.8, 6, 24)),
+      tracking:  Math.round(c < 6 ? 18 : clamp(14 - c * 0.4, 4, 14))
+    };
+  }
+
+  function setBar(el, pct, isLead) {
+    el.querySelector(".fill").style.width = pct + "%";
+    el.querySelector(".pct").textContent = pct + "%";
+    el.classList.toggle("lead", isLead);
+    el.classList.toggle("faded", pct < 15 && !isLead);
+  }
+
+  function render() {
+    var c = parseInt(range.value, 10);
+    out.textContent = "+" + c + "%";
+    range.setAttribute("aria-valuetext", "+" + c + " percent CPA movement");
+
+    var w = weights(c);
+    var lead = Object.keys(w).reduce(function (a, b) { return w[a] >= w[b] ? a : b; });
+    Object.keys(bars).forEach(function (k) { setBar(bars[k], w[k], k === lead && c >= 8); });
+
+    if (c < 8) {
+      vPolicy.textContent = "No threshold crossed — the movement sits inside the configured noise envelope.";
+      vPolicy.className = "d ok";
+      vRec.textContent = "No action. The desk keeps watching; restraint is recorded like any other outcome.";
+      vRec.className = "d ok";
+      vAuth.textContent = "None required — nothing dispatches, so no authority is invoked.";
+      vAuth.className = "d";
+    } else if (c < 22) {
+      vPolicy.textContent = "Margin floor and budget-shift ceiling checked — the rebalance candidate passes.";
+      vPolicy.className = "d ok";
+      vRec.textContent = "Repair the landing experience; temporarily rebalance eligible budget within the configured cap.";
+      vRec.className = "d warn";
+      vAuth.textContent = "Routed to the media lead — the shift crosses the delegated grant, so a named human authorizes it.";
+      vAuth.className = "d";
+    } else {
+      vPolicy.textContent = "Escalation floor crossed — candidate actions above the cap are vetoed, with the failing check recorded.";
+      vPolicy.className = "d alert";
+      vRec.textContent = "Repair first and hold: larger rebalances are vetoed by policy until margin exposure is contained.";
+      vRec.className = "d alert";
+      vAuth.textContent = "Escalated — Operations and Finance authorize jointly before anything dispatches.";
+      vAuth.className = "d";
+    }
+  }
+
+  range.addEventListener("input", render);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -212,7 +212,9 @@ class MediaPageTestCase(unittest.TestCase):
             'id="scenario"',          # 6 live decision scenario
             'id="film"',              # 7 product explainer video
             'id="decision-jobs"',     # 8 decision jobs
+            'id="architecture"',      # 9 platform architecture
             'id="pilot"',             # 10 pilot program
+            'id="governance"',        # 11 trust & governance
             'id="cta-h"',             # 12 final call to action
         ]
         positions = [self.page.find(m) for m in markers]
@@ -466,6 +468,279 @@ class MediaPageTestCase(unittest.TestCase):
         self.assertEqual(301, response.status_code)
         self.assertTrue(response.headers["Location"].endswith("/marketing"))
         response.close()
+
+
+SUBPAGES = {
+    "platform": "The Commercial Decision Operating System",
+    "decision-graph": "This remembers why.",
+    "how-it-works": "Seven stages. One record. No gaps.",
+    "use-cases": "One decision pathway. Many decision jobs.",
+    "pilot": "The 90-Day Causal Growth Control Pilot",
+    "trust": "Trust comes from governance, not automation.",
+    "resources": "Take the argument with you.",
+    "contact": "Discuss a MIZ OKI Media Pilot",
+}
+
+DOWNLOADABLES = {
+    "mizoki-media-product-overview.html": "text/html",
+    "mizoki-media-decision-graph-overview.html": "text/html",
+    "mizoki-media-pilot-guide.html": "text/html",
+    "mizoki-media-executive-summary.html": "text/html",
+    "mizoki-media-architecture.svg": "image/svg+xml",
+    "mizoki-media-transcript.html": "text/html",
+}
+
+
+class MediaSiteTestCase(unittest.TestCase):
+    """Part 3 contract: /media is a complete standalone product site.
+
+    Eight sub-pages served on clean routes; a shared route-local stylesheet;
+    per-page SEO metadata; downloadable resources that exist and serve with
+    the right mimetypes; the interactive walkthrough is deterministic; every
+    internal link resolves; the whole surface passes the house
+    truth-discipline checks; and the classic site remains untouched.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.temp_dir = tempfile.TemporaryDirectory()
+        runtime = create_runtime(base_dir=BASE_DIR, data_dir=Path(cls.temp_dir.name))
+        app = create_app(runtime=runtime)
+        app.config.update(TESTING=True)
+        cls.client = app.test_client()
+        cls.pages = {}
+        for slug in SUBPAGES:
+            response = cls.client.get(f"/media/{slug}")
+            cls.pages[slug] = response.get_data(as_text=True)
+            response.close()
+        response = cls.client.get("/media")
+        cls.home = response.get_data(as_text=True)
+        response.close()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.temp_dir.cleanup()
+
+    # ------------------------------------------------------------ routes --
+
+    def test_subpages_serve_directly_with_and_without_trailing_slash(self) -> None:
+        for slug in SUBPAGES:
+            for path in (f"/media/{slug}", f"/media/{slug}/"):
+                response = self.client.get(path)
+                self.assertEqual(200, response.status_code, path)
+                self.assertEqual("text/html", response.mimetype, path)
+                response.close()
+
+    def test_unknown_media_paths_404(self) -> None:
+        for path in ("/media/nope", "/media/platform2", "/media/platform.html/x"):
+            response = self.client.get(path)
+            self.assertEqual(404, response.status_code, path)
+            response.close()
+
+    def test_shared_stylesheet_served_and_linked(self) -> None:
+        response = self.client.get("/media/assets/media.css")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("text/css", response.mimetype)
+        css = response.get_data(as_text=True)
+        response.close()
+        self.assertIn("prefers-reduced-motion", css)
+        for slug, page in self.pages.items():
+            self.assertIn('href="/media/assets/media.css', page, slug)
+
+    # ------------------------------------------------------ SEO & a11y ---
+
+    def test_each_page_has_unique_seo_metadata(self) -> None:
+        titles = set()
+        for slug, page in self.pages.items():
+            title = re.search(r"<title>(.*?)</title>", page)
+            self.assertIsNotNone(title, slug)
+            titles.add(title.group(1))
+            self.assertIn(
+                f'<link rel="canonical" href="https://mizoki3.com/media/{slug}">',
+                page, slug)
+            self.assertIn(
+                f'property="og:url" content="https://mizoki3.com/media/{slug}"',
+                page, slug)
+            self.assertIn('name="twitter:card" content="summary_large_image"', page, slug)
+            self.assertIn('name="description"', page, slug)
+        self.assertEqual(len(SUBPAGES), len(titles), "titles must be unique")
+
+    def test_each_page_accessibility_basics(self) -> None:
+        for slug, page in self.pages.items():
+            self.assertEqual(1, len(re.findall(r"<h1\b", page)), f"{slug}: one h1")
+            self.assertIn('lang="en"', page, slug)
+            self.assertIn("Skip to content", page, slug)
+            self.assertIn(SUBPAGES[slug], page, slug)
+            for img in re.findall(r"<img\b[^>]*>", page):
+                self.assertIn("alt=", img, f"{slug}: image missing alt")
+                self.assertIn("width=", img, f"{slug}: image missing dimensions")
+
+    def test_each_page_is_isolated_from_classic_site(self) -> None:
+        for slug, page in self.pages.items():
+            self.assertNotIn("/assets/css/", page, slug)
+            self.assertNotIn("fonts.googleapis.com", page, slug)
+            self.assertNotIn("<script src=", page, slug)
+            for attr, url in re.findall(r'(src|href)="(https?://[^"]+)"', page):
+                self.assertTrue(url.startswith("https://mizoki3.com"),
+                                f"{slug}: external origin in {attr}: {url}")
+
+    def test_internal_links_resolve(self) -> None:
+        # Crawl every /media href on every page (home included): no broken
+        # internal links anywhere on the standalone site.
+        seen = set()
+        for slug, page in list(self.pages.items()) + [("home", self.home)]:
+            for href in re.findall(r'href="(/media[^"#?]*)', page):
+                if href in seen:
+                    continue
+                seen.add(href)
+                response = self.client.get(href)
+                self.assertIn(response.status_code, (200,),
+                              f"{slug}: broken link {href}")
+                response.close()
+
+    # ------------------------------------------------------ page content --
+
+    def test_platform_capabilities(self) -> None:
+        page = self.pages["platform"]
+        for capability in ("Commercial Intelligence", "Causal Reasoning",
+                           "Counterfactual Planning", "Policy Validation",
+                           "Human Approval", "Governed Execution",
+                           "Outcome Learning"):
+            self.assertIn(capability, page, capability)
+        self.assertIn("mizoki-media-architecture.svg", page)
+
+    def test_decision_graph_comparisons_and_pillars(self) -> None:
+        page = self.pages["decision-graph"]
+        self.assertIn("operating model, not a storage model", page)
+        for structure in ("Data warehouse", "Semantic layer", "Knowledge graph",
+                          "Vector database", "Agent memory", "Decision Graph"):
+            self.assertIn(structure, page, structure)
+        for pillar in ("Temporal memory", "Provenance", "Causal relationships",
+                       "Approval history", "Replay", "Continuous learning"):
+            self.assertIn(pillar, page, pillar)
+        # The worked record walks all seven layers.
+        records = re.findall(r'<details class="mzm-rec r\d"', page)
+        self.assertEqual(7, len(records))
+
+    def test_how_it_works_stage_contract(self) -> None:
+        page = self.pages["how-it-works"]
+        for label in ("Inputs", "Outputs", "AI responsibilities",
+                      "Human responsibilities", "Governance checkpoints",
+                      "Example scenario", "Typical metrics"):
+            self.assertEqual(
+                7, page.count(f'<span class="t">{label}</span>'),
+                f"every stage needs a {label} row")
+        for stage in ("SENSE", "REASON", "PLAN", "VALIDATE", "DECIDE", "ACT", "LEARN"):
+            self.assertIn(f"<h3>{stage}</h3>", page, stage)
+
+    def test_interactive_demo_is_deterministic(self) -> None:
+        page = self.pages["how-it-works"]
+        for element_id in ("cpaRange", "cpaOut", "hypoBars", "demoVerdict"):
+            self.assertIn(f'id="{element_id}"', page, element_id)
+        self.assertIn("Illustrative", page)
+        self.assertIn("<noscript>", page)
+        # Determinism across the whole surface: no randomness, no clocks.
+        for slug, source in list(self.pages.items()) + [("home", self.home)]:
+            self.assertNotIn("Math.random", source, slug)
+            self.assertNotIn("Date.now", source, slug)
+            self.assertNotIn("new Date(", source, slug)
+
+    def test_use_cases_complete(self) -> None:
+        page = self.pages["use-cases"]
+        for section in ('id="marketing"', 'id="commerce"',
+                        'id="operations"', 'id="executive"'):
+            self.assertIn(section, page, section)
+        cases = ("Budget allocation", "Creative diagnosis", "Channel optimization",
+                 "Campaign monitoring", "Margin protection", "Inventory-aware spend",
+                 "Promotion decisions", "Conversion diagnosis", "Incident routing",
+                 "Workflow prioritization", "Cross-functional coordination",
+                 "Forecast confidence", "Decision transparency",
+                 "Resource allocation", "Strategic planning")
+        for case in cases:
+            self.assertIn(f"<h3>{case}</h3>", page, case)
+        for field in ("Business problem", "Current approach",
+                      "MIZ OKI Media approach", "Expected operational benefits",
+                      "Required approvals"):
+            self.assertEqual(
+                len(cases), page.count(f'<span class="t">{field}</span>'),
+                f"every use case needs a {field} row")
+
+    def test_pilot_page_structure(self) -> None:
+        page = self.pages["pilot"]
+        for phrase in ("Days 1–30 · Connect and observe",
+                       "Days 31–60 · Diagnose and recommend",
+                       "Days 61–90 · Approve, act, and learn",
+                       "Success metrics", "Exit criteria",
+                       "Governance checkpoint"):
+            self.assertIn(phrase, page, phrase)
+        for exit_state in ("Expand", "Extend", "Stop"):
+            self.assertIn(f'<div class="t">{exit_state}</div>', page, exit_state)
+
+    def test_trust_page_commitments_and_evaluators(self) -> None:
+        page = self.pages["trust"]
+        for commitment in ("Human authority", "Policy enforcement", "Explainability",
+                           "Audit trail", "Rollback capability", "Evidence provenance",
+                           "Decision replay", "Confidence scoring", "Security model",
+                           "Privacy considerations"):
+            self.assertIn(commitment, page, commitment)
+        for evaluator in ("The CFO asks", "Legal asks", "Security asks",
+                          "Marketing asks", "Operations asks", "Procurement asks"):
+            self.assertIn(evaluator, page, evaluator)
+        # Maturity labels separate demonstrated capability from roadmap.
+        for label in ("Live", "Pilot-ready", "Roadmap"):
+            self.assertIn(label, page, label)
+
+    def test_resources_downloadables_exist_and_serve(self) -> None:
+        page = self.pages["resources"]
+        for filename, mimetype in DOWNLOADABLES.items():
+            self.assertTrue((BASE_DIR / "media" / "assets" / filename).is_file(),
+                            filename)
+            response = self.client.get(f"/media/assets/{filename}")
+            self.assertEqual(200, response.status_code, filename)
+            self.assertEqual(mimetype, response.mimetype, filename)
+            response.close()
+            if filename != "mizoki-media-transcript.html":
+                self.assertIn(filename, page, f"resources page must link {filename}")
+        self.assertIn("mizoki-media-transcript.html", page)
+        self.assertIn('href="/media#film"', page)
+
+    def test_contact_page_uses_mailto_not_a_new_backend(self) -> None:
+        page = self.pages["contact"]
+        self.assertIn(
+            'href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot"',
+            page)
+        self.assertNotIn("<form", page)
+
+    # -------------------------------------------------- claims discipline --
+
+    def test_every_media_page_passes_truth_discipline(self) -> None:
+        for slug, page in list(self.pages.items()) + [("index", self.home)]:
+            findings = content_qa.check_file(f"media/{slug}.html", page)
+            self.assertEqual([], findings, slug)
+
+    def test_no_compliance_or_guarantee_claims_sitewide(self) -> None:
+        for slug, page in list(self.pages.items()) + [("index", self.home)]:
+            text = re.sub(r"<[^>]+>", " ", page).lower()
+            for banned in ("soc 2 certified", "hipaa certified", "iso 27001 certified",
+                           "guaranteed roi", "guaranteed savings", "patented"):
+                self.assertNotIn(banned, text, f"{slug}: {banned}")
+
+    # ---------------------------------------------------------- homepage --
+
+    def test_homepage_nav_links_the_standalone_site(self) -> None:
+        for slug in SUBPAGES:
+            self.assertIn(f'href="/media/{slug}"', self.home, slug)
+        for section in ('id="architecture"', 'id="governance"'):
+            self.assertIn(section, self.home, section)
+
+    def test_classic_site_still_untouched(self) -> None:
+        for path in ("/", "/marketing", "/signal", "/demo", "/pricing"):
+            response = self.client.get(path)
+            self.assertEqual(200, response.status_code, path)
+            body = response.get_data(as_text=True)
+            response.close()
+            self.assertNotIn('href="/media"', body, path)
+            self.assertNotIn('href="/media/', body, path)
 
 
 if __name__ == "__main__":

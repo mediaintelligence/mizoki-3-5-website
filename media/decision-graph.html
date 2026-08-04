@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Decision Graph — Operating Model, Not Storage | MIZ OKI Media</title>
+<meta name="description" content="What a Decision Graph is, how it differs from warehouses, semantic layers, knowledge graphs, vector databases, and agent memory — and why preserving the complete lifecycle of every decision changes how organizations operate.">
+<link rel="canonical" href="https://mizoki3.com/media/decision-graph">
+<meta property="og:title" content="The MIZ OKI Decision Graph — an operating model, not a storage model">
+<meta property="og:description" content="Evidence → Context → Decision → Outcome. Temporal memory, provenance, causal relationships, approval history, replay, and continuous learning.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/media/decision-graph">
+<meta property="og:image" content="https://mizoki3.com/media/assets/mizoki-signal-preview.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The MIZ OKI Decision Graph — an operating model, not a storage model">
+<meta name="twitter:description" content="Evidence → Context → Decision → Outcome. Temporal memory, provenance, causal relationships, approval history, replay, and continuous learning.">
+<meta name="twitter:image" content="https://mizoki3.com/media/assets/mizoki-signal-preview.png">
+<meta name="theme-color" content="#0A1418">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/media/assets/media.css?v=20260804">
+<style>
+/* page-local: decision record explorer */
+details.mzm-rec { border: 2px solid var(--mzm-line); border-left-width: 4px; background: var(--mzm-bg-1); margin-top: -2px; }
+details.mzm-rec:first-of-type { margin-top: 26px; }
+.mzm-rec summary { cursor: pointer; list-style: none; padding: 15px 18px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+.mzm-rec summary::-webkit-details-marker { display: none; }
+.mzm-rec summary .st { font-family: var(--mzm-mono); font-size: 12.5px; letter-spacing: 0.1em; text-transform: uppercase; min-width: 108px; }
+.mzm-rec summary .gist { color: var(--mzm-muted); font-size: 14.5px; flex: 1; min-width: 220px; }
+.mzm-rec summary::after { content: "+"; color: #46606A; font-family: var(--mzm-mono); margin-left: auto; }
+.mzm-rec[open] summary::after { content: "–"; }
+.mzm-rec .body { padding: 2px 18px 18px; }
+.mzm-rec .body p { font-size: 14.5px; color: var(--mzm-fg); max-width: 860px; }
+.mzm-rec .body .meta { margin-top: 8px; font-family: var(--mzm-mono); font-size: 12px; color: #7E939B; }
+.mzm-rec.r1 { border-left-color: var(--mzm-cyan); }    .mzm-rec.r1 .st { color: var(--mzm-cyan); }
+.mzm-rec.r2 { border-left-color: var(--mzm-blue); }    .mzm-rec.r2 .st { color: var(--mzm-blue); }
+.mzm-rec.r3 { border-left-color: var(--mzm-rose); }    .mzm-rec.r3 .st { color: var(--mzm-rose); }
+.mzm-rec.r4 { border-left-color: var(--mzm-amber); }   .mzm-rec.r4 .st { color: var(--mzm-amber); }
+.mzm-rec.r5 { border-left-color: var(--mzm-purple); }  .mzm-rec.r5 .st { color: var(--mzm-purple); }
+.mzm-rec.r6 { border-left-color: var(--mzm-emerald); } .mzm-rec.r6 .st { color: var(--mzm-emerald); }
+.mzm-rec.r7 { border-left-color: var(--mzm-cyan); }    .mzm-rec.r7 .st { color: var(--mzm-cyan); }
+</style>
+</head>
+<body>
+<a class="mzm-skip" href="#mzm-main">Skip to content</a>
+
+<nav class="mzm-nav" aria-label="MIZ OKI Media site navigation">
+  <div class="mzm-nav-inner">
+    <div class="mzm-brand"><a href="/media"><strong>MIZ OKI Media</strong><span>Causal Growth Control</span></a></div>
+    <div class="mzm-nav-links">
+      <a href="/media/platform">Platform</a>
+      <a href="/media/decision-graph" aria-current="page">Decision Graph</a>
+      <a href="/media/how-it-works">How It Works</a>
+      <a href="/media/use-cases">Use Cases</a>
+      <a href="/media/pilot">Pilot</a>
+      <a href="/media/trust">Trust</a>
+      <a href="/media/resources">Resources</a>
+      <a class="mzm-nav-cta" href="/media/contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main id="mzm-main">
+
+  <section class="mzm-sub-hero" aria-labelledby="h1">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The Decision Graph</p>
+      <h1 id="h1">This remembers why.</h1>
+      <p class="mzm-lede">Every system you run remembers <em>what</em> happened. None of them remembers <em>why you decided</em> — what the evidence was, which causes were weighed, what policy allowed, who approved, what was done, and whether it worked. The MIZ OKI Decision Graph exists to remember exactly that.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="what-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Definition</p>
+      <h2 id="what-h">What is a Decision Graph?</h2>
+      <p class="mzm-lede">A Decision Graph is an operating model, not a storage model. Storage systems answer "what do we know?" A Decision Graph answers "what should we do, are we allowed to, who says so, and did it work?" — and keeps every one of those answers connected to the evidence that produced it.</p>
+      <div class="mzm-flow-strip" role="img" aria-label="The core flow: evidence, then context, then decision, then outcome, and outcomes feed back into evidence.">
+        <ol>
+          <li style="color:var(--mzm-cyan)">Evidence</li>
+          <li style="color:var(--mzm-blue)">Context</li>
+          <li style="color:var(--mzm-purple)">Decision</li>
+          <li style="color:var(--mzm-emerald)">Outcome</li>
+          <li style="color:#6E8890">↺ back to Evidence</li>
+        </ol>
+      </div>
+      <figure style="margin-top:26px; border:2px solid var(--mzm-line); background:var(--mzm-bg-1); padding:20px 14px; overflow-x:auto;">
+        <svg viewBox="0 0 1000 190" role="img" aria-labelledby="dg-t dg-d" style="min-width:640px; width:100%; height:auto;">
+          <title id="dg-t">Evidence to Context to Decision to Outcome</title>
+          <desc id="dg-d">Four connected blocks: Evidence (what was observed, with provenance), Context (what it means for this business), Decision (what was chosen, allowed, and approved), Outcome (what actually happened). A dashed learning arc returns from Outcome to Evidence.</desc>
+          <defs>
+            <marker id="dg-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#46606A"/>
+            </marker>
+          </defs>
+          <path d="M 905 58 C 905 6, 95 6, 95 55" fill="none" stroke="#22505C" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#dg-arrow)"/>
+          <text x="500" y="22" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#6E8890">outcomes become the next evidence</text>
+          <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="15" text-anchor="middle">
+            <rect x="30"  y="62" width="130" height="52" fill="#0F2530" stroke="#3FDCF2" stroke-width="2.5"/><text x="95"  y="93" fill="#3FDCF2">Evidence</text>
+            <line x1="164" y1="88" x2="238" y2="88" stroke="#46606A" stroke-width="2" marker-end="url(#dg-arrow)"/>
+            <rect x="242" y="62" width="130" height="52" fill="#0F2530" stroke="#5FA0DC" stroke-width="2.5"/><text x="307" y="93" fill="#5FA0DC">Context</text>
+            <line x1="376" y1="88" x2="450" y2="88" stroke="#46606A" stroke-width="2" marker-end="url(#dg-arrow)"/>
+            <rect x="454" y="62" width="130" height="52" fill="#0F2530" stroke="#9D7BE8" stroke-width="2.5"/><text x="519" y="93" fill="#9D7BE8">Decision</text>
+            <line x1="588" y1="88" x2="662" y2="88" stroke="#46606A" stroke-width="2" marker-end="url(#dg-arrow)"/>
+            <rect x="666" y="62" width="130" height="52" fill="#0F2530" stroke="#41D695" stroke-width="2.5"/><text x="731" y="93" fill="#41D695">Outcome</text>
+            <line x1="800" y1="88" x2="838" y2="88" stroke="#22505C" stroke-width="2" stroke-dasharray="4 5"/>
+            <circle cx="905" cy="88" r="27" fill="#0F2530" stroke="#3FDCF2" stroke-width="2" stroke-dasharray="4 4"/><text x="905" y="93" font-size="13" fill="#3FDCF2">learn</text>
+          </g>
+          <g font-family="-apple-system, Segoe UI, Arial, sans-serif" font-size="12" fill="#93A7AE" text-anchor="middle">
+            <text x="95"  y="140">what was observed</text>
+            <text x="307" y="140">what it means here</text>
+            <text x="519" y="140">chosen · allowed · approved</text>
+            <text x="731" y="140">what actually happened</text>
+          </g>
+        </svg>
+        <figcaption class="mzm-visually-hidden">The four-layer flow of the Decision Graph.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="compare-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Honest comparisons</p>
+      <h2 id="compare-h">What each structure does well — and where it stops</h2>
+      <p class="mzm-lede">None of these technologies is wrong. Most organizations should keep all of them. Each simply answers a different question, and none of them was built to answer the decision question.</p>
+      <div class="mzm-table-wrap" role="region" aria-label="Comparison of data structures" tabindex="0">
+        <table class="mzm-compare">
+          <caption class="mzm-visually-hidden">Six structures compared: what each does well and where it stops.</caption>
+          <thead>
+            <tr><th scope="col">Structure</th><th scope="col">Does well</th><th scope="col">Where it stops</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Data warehouse</th>
+              <td>Retains complete history, durably and queryably. The system of record for what happened.</td>
+              <td>Stores facts, not decisions. It cannot say why an action was taken, who approved it, or what was predicted.</td>
+            </tr>
+            <tr>
+              <th scope="row">Semantic layer</th>
+              <td>Gives metrics consistent definitions so "revenue" means one thing everywhere.</td>
+              <td>Defines measures. It carries no causes, no policies, no approvals, no outcomes.</td>
+            </tr>
+            <tr>
+              <th scope="row">Knowledge graph</th>
+              <td>Organizes entities and relationships — what is connected to what.</td>
+              <td>Explains connections, not decisions. It has no native concept of authority, veto, or predicted-versus-realized.</td>
+            </tr>
+            <tr>
+              <th scope="row">Vector database</th>
+              <td>Finds semantically similar content fast. Excellent recall over unstructured material.</td>
+              <td>Similarity is not causality, and retrieval is not governance. Nothing in it is accountable.</td>
+            </tr>
+            <tr>
+              <th scope="row">Agent memory</th>
+              <td>Lets an AI agent carry context across steps and sessions.</td>
+              <td>Private to the agent, rarely inspectable, and not an organizational record anyone can audit or replay.</td>
+            </tr>
+            <tr class="miz">
+              <th scope="row" class="miz">Decision Graph</th>
+              <td class="miz">Preserves the complete lifecycle of every decision: evidence, context, reasoning, policy, approval, action, and realized outcome — connected, inspectable, replayable.</td>
+              <td class="miz">It complements the others rather than replacing them: warehouses keep the facts; the Decision Graph keeps the decisions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pillars-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">What makes it an operating model</p>
+      <h2 id="pillars-h">Six properties, all load-bearing</h2>
+      <div class="mzm-pillars">
+        <div class="mzm-card"><h3>Temporal memory</h3><p>Every fact carries when it was known, not just when it happened. The graph can answer "what did we know at the moment we decided?" — the only honest basis for judging a past decision.</p></div>
+        <div class="mzm-card"><h3>Provenance</h3><p>Every observation carries its source, its quality, and its identity resolution. Evidence you cannot trace is evidence you cannot govern with.</p></div>
+        <div class="mzm-card"><h3>Causal relationships</h3><p>Edges carry claims about cause, each with supporting and disconfirming evidence attached — so "latency caused the abandonment" is an inspectable assertion, not a caption.</p></div>
+        <div class="mzm-card"><h3>Approval history</h3><p>Every decision records the authority that made it: the named approver, the delegated rule, or the automation grant — and every veto is preserved alongside every approval.</p></div>
+        <div class="mzm-card"><h3>Replay</h3><p>Any decision can be re-walked end to end: the evidence as it stood, the alternatives considered, the checks applied, the authority invoked, the action taken, the outcome realized.</p></div>
+        <div class="mzm-card"><h3>Continuous learning</h3><p>Predicted and realized outcomes are compared on every decision, and the difference adjusts future confidence and weighting. The graph gets harder to fool over time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="record-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">One record, end to end</p>
+      <h2 id="record-h">Walk a single decision record</h2>
+      <p class="mzm-lede">This is what "remembering why" looks like in practice — one worked decision record, layer by layer. Expand each entry. <span class="mzm-label illus">Illustrative</span></p>
+
+      <details class="mzm-rec r1" open>
+        <summary><span class="st">Evidence</span><span class="gist">Blended CPA moved sharply; conversion slipped; creative engagement held steady.</span></summary>
+        <div class="body">
+          <p>Observations from the media, commerce, and experience streams, each stored with source, timestamp, provenance, and quality. The CPA movement is recorded as an observation with its detection threshold — not as an alarm someone happened to notice.</p>
+          <p class="meta">stored in: evidence memory · fields: source, timestamp, provenance, confidence, quality, identity</p>
+        </div>
+      </details>
+      <details class="mzm-rec r2">
+        <summary><span class="st">Context</span><span class="gist">The movement resolves to real things: two campaigns, one landing path, one hero SKU.</span></summary>
+        <div class="body">
+          <p>The graph binds the observations to the entities they concern and the constraints that govern them — the margin floor on the SKU, the budget ceiling on the campaigns, the objective this quarter actually carries.</p>
+          <p class="meta">stored in: operating context · fields: entities, relationships, objectives, constraints, policies</p>
+        </div>
+      </details>
+      <details class="mzm-rec r3">
+        <summary><span class="st">Reasoning</span><span class="gist">Four causes tested; two survive the evidence.</span></summary>
+        <div class="body">
+          <p>Creative fatigue is ruled out by stable engagement. Tracking failure is ruled out by server-side verification. Landing-page degradation and an inventory constraint survive — and both the surviving and eliminated hypotheses are preserved with their evidence.</p>
+          <p class="meta">stored in: decision memory · fields: hypotheses, supporting evidence, disconfirming evidence</p>
+        </div>
+      </details>
+      <details class="mzm-rec r4">
+        <summary><span class="st">Policy</span><span class="gist">Candidate actions checked against the margin floor and the budget-shift ceiling.</span></summary>
+        <div class="body">
+          <p>Each candidate action — rebalance, pause, hold — is validated against configured financial and brand policy. One candidate breaches the margin floor and is vetoed; the veto is recorded with the exact check that failed.</p>
+          <p class="meta">stored in: decision memory · fields: policy checks, passes, vetoes</p>
+        </div>
+      </details>
+      <details class="mzm-rec r5">
+        <summary><span class="st">Approval</span><span class="gist">The surviving recommendation routes to the named owner; nothing moves before authorization.</span></summary>
+        <div class="body">
+          <p>The recommendation crosses the autonomous ceiling, so it routes to the accountable human — with the full record above attached. The approval, its time, and its authority basis are written into the same record.</p>
+          <p class="meta">stored in: decision memory · fields: recommendation, authority, approval</p>
+        </div>
+      </details>
+      <details class="mzm-rec r6">
+        <summary><span class="st">Execution</span><span class="gist">The approved action dispatches — scoped, bounded, reversible, logged.</span></summary>
+        <div class="body">
+          <p>Only the authorized change is made, with its scope and rollback path recorded before dispatch. If the decision had been "hold", the hold would be recorded with the same rigor.</p>
+          <p class="meta">stored in: decision memory · fields: action, scope, rollback path</p>
+        </div>
+      </details>
+      <details class="mzm-rec r7">
+        <summary><span class="st">Outcome</span><span class="gist">Predicted versus realized — scored, not assumed.</span></summary>
+        <div class="body">
+          <p>The realized result is compared against the prediction stated at decision time. The difference adjusts confidence for this class of action, and the whole record — evidence to outcome — remains replayable.</p>
+          <p class="meta">stored in: outcome memory · fields: realized impact, prediction accuracy, lessons, future weighting</p>
+        </div>
+      </details>
+
+      <p class="mzm-footnote">Every layer of this record is inspectable after the fact. That is the difference between a system that acted and a system that can explain itself.</p>
+    </div>
+  </section>
+
+  <section class="mzm-next" aria-labelledby="next-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Next</p>
+      <h2 id="next-h">See the graph make a decision</h2>
+      <p>The lifecycle that writes these records — sense, reason, plan, validate, decide, act, learn — stage by stage, with an interactive walkthrough.</p>
+      <div class="mzm-ctas">
+        <a class="mzm-btn primary" href="/media/how-it-works">How it works</a>
+        <a class="mzm-btn" href="/media/assets/mizoki-media-decision-graph-overview.html">Download the Decision Graph overview</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mzm-wrap mzm-foot-inner">
+      <span>MIZ OKI Media — a focused commercial application powered by the broader MIZ OKI Operating Knowledge Intelligence platform.</span>
+      <span><a href="/media">MIZ OKI Media home</a> · <a href="/media/resources">Resources</a> · <a href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot">contact@mizoki3.com</a></span>
+    </div>
+  </footer>
+
+</main>
+</body>
+</html>

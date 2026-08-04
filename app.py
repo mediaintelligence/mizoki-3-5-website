@@ -570,6 +570,18 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def media_home():
         return send_from_directory(BASE_DIR / "media", "index.html")
 
+    # The standalone /media product site's sub-pages (owner spec Part 3).
+    # Same convention as the /marketing division routes: clean extensionless
+    # URLs served from real files in media/. The any() converter keeps this
+    # closed-world — unknown paths still fall through to the asset route's
+    # 404, and the classic site remains untouched.
+    @app.route(
+        "/media/<any('platform', 'decision-graph', 'how-it-works',"
+        " 'use-cases', 'pilot', 'trust', 'resources', 'contact'):page>",
+        strict_slashes=False)
+    def media_subpage(page: str):
+        return send_from_directory(BASE_DIR / "media", f"{page}.html")
+
     @app.route("/media/<path:filename>")
     def media_assets(filename: str):
         # Same traversal-guarded, extension-allowlisted pattern as the

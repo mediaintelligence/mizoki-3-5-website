@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The MIZ OKI Decision Graph — Overview</title>
+<meta name="robots" content="noindex">
+<style>
+:root {
+  --bg:#0A1418; --bg1:#0B1E26; --line:#223A44; --fg:#DBE7EB; --muted:#93A7AE;
+  --cyan:#3FDCF2; --amber:#D9A83C;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--fg); font-family:var(--sans); font-size:16px; line-height:1.6; padding:48px 24px 64px; }
+main { max-width:760px; margin:0 auto; }
+a { color:var(--cyan); text-decoration:none; } a:hover { text-decoration:underline; }
+.kicker { font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:10px; }
+h1 { font-family:var(--serif); font-size:clamp(26px,5vw,34px); line-height:1.15; margin-bottom:6px; }
+.sub { color:var(--muted); font-size:15px; margin-bottom:26px; }
+h2 { font-family:var(--serif); font-size:20px; margin:26px 0 8px; }
+p { color:var(--muted); font-size:15px; max-width:720px; }
+p.strong { color:var(--fg); }
+.chain { font-family:var(--mono); font-size:13px; color:var(--fg); border:2px solid var(--line); background:var(--bg1); padding:12px 14px; margin:16px 0; overflow-x:auto; white-space:nowrap; }
+table { border-collapse:collapse; width:100%; margin-top:12px; font-size:14px; }
+th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #16303A; vertical-align:top; }
+th { font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+td.s { color:var(--fg); white-space:nowrap; }
+td { color:var(--muted); }
+footer { margin-top:36px; padding-top:16px; border-top:2px solid var(--line); font-size:13px; color:#7E939B; }
+@media print {
+  body { background:#fff; color:#111; padding:0; }
+  :root { --fg:#111; --muted:#333; --cyan:#00546B; --bg1:#fff; --line:#999; }
+  .chain { color:#111; } a { color:#00546B; }
+}
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">MIZ OKI Media · Decision Graph overview</p>
+  <h1>This remembers why.</h1>
+  <p class="sub">The MIZ OKI Decision Graph — an operating model, not a storage model</p>
+
+  <h2>Definition</h2>
+  <p class="strong">A Decision Graph preserves the complete lifecycle of every business decision: evidence, context, reasoning, policy, approval, action, and realized outcome — connected, inspectable, replayable.</p>
+  <div class="chain">Evidence → Context → Decision → Outcome → (back to Evidence)</div>
+
+  <h2>Where existing structures stop</h2>
+  <table>
+    <thead><tr><th>Structure</th><th>Does well</th><th>Where it stops</th></tr></thead>
+    <tbody>
+      <tr><td class="s">Data warehouse</td><td>Complete durable history of facts</td><td>No decisions, approvals, or predictions</td></tr>
+      <tr><td class="s">Semantic layer</td><td>Consistent metric definitions</td><td>No causes, policies, or outcomes</td></tr>
+      <tr><td class="s">Knowledge graph</td><td>Entities and relationships</td><td>No authority, veto, or predicted-vs-realized</td></tr>
+      <tr><td class="s">Vector database</td><td>Fast semantic similarity</td><td>Similarity is not causality or governance</td></tr>
+      <tr><td class="s">Agent memory</td><td>Context for one AI agent</td><td>Not an auditable organizational record</td></tr>
+      <tr><td class="s">Decision Graph</td><td>The decisions themselves, end to end</td><td>Complements the others — it does not replace them</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Six load-bearing properties</h2>
+  <table>
+    <tbody>
+      <tr><td class="s">Temporal memory</td><td>What was known at the moment of deciding — the only honest basis for judging a decision later</td></tr>
+      <tr><td class="s">Provenance</td><td>Every observation carries source, quality, and identity resolution</td></tr>
+      <tr><td class="s">Causal relationships</td><td>Cause is an inspectable claim with supporting and disconfirming evidence attached</td></tr>
+      <tr><td class="s">Approval history</td><td>The named authority behind every decision — vetoes preserved beside approvals</td></tr>
+      <tr><td class="s">Replay</td><td>Any decision re-walked end to end, with the evidence as it stood</td></tr>
+      <tr><td class="s">Continuous learning</td><td>Predicted vs. realized scored on every decision; the graph gets harder to fool</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Why it matters</h2>
+  <p>Systems that remember facts help you report. A system that remembers decisions helps you govern — and compounds: every outcome sharpens the next decision.</p>
+
+  <footer>
+    MIZ OKI Media — Causal Growth Control · powered by the MIZ OKI Decision Graph.<br>
+    mizoki3.com/media/decision-graph · contact@mizoki3.com · <a href="/media/decision-graph">← back to the site</a>
+  </footer>
+</main>
+</body>
+</html>

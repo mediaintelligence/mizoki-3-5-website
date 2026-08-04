@@ -179,6 +179,18 @@ h3 { font-size: 20px; margin-bottom: 8px; }
 .mzm-chain-strip .c5 { color: var(--mzm-purple); }
 .mzm-chain-strip .c6 { color: var(--mzm-emerald); }
 .mzm-chain-strip .c7 { color: var(--mzm-cyan); }
+/* hero movement: a signal pulse travels the pathway (information, not decoration) */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mzm-pulse { 0%, 100% { text-shadow: none; opacity: 0.82; } 12% { text-shadow: 0 0 14px currentColor; opacity: 1; } }
+  .mzm-chain-strip li { animation: mzm-pulse 5.6s linear infinite; }
+  .mzm-chain-strip li:nth-child(2) { animation-delay: 0.8s; }
+  .mzm-chain-strip li:nth-child(3) { animation-delay: 1.6s; }
+  .mzm-chain-strip li:nth-child(4) { animation-delay: 2.4s; }
+  .mzm-chain-strip li:nth-child(5) { animation-delay: 3.2s; }
+  .mzm-chain-strip li:nth-child(6) { animation-delay: 4.0s; }
+  .mzm-chain-strip li:nth-child(7) { animation-delay: 4.8s; }
+}
+.mzm-more { display: inline-block; margin-top: 22px; font-family: var(--mzm-mono); font-size: 13.5px; }
 
 /* ---------- customer problem ---------- */
 .mzm-questions { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
@@ -454,19 +466,22 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
 <body>
 <a class="mzm-skip" href="#mzm-main">Skip to content</a>
 
-<!-- Route-local navigation: anchors on this page only. The global site nav is deliberately untouched. -->
-<nav class="mzm-nav" aria-label="MIZ OKI Media page navigation">
+<!-- Route-local navigation for the standalone /media site. The classic site's global nav is deliberately untouched. -->
+<nav class="mzm-nav" aria-label="MIZ OKI Media site navigation">
   <div class="mzm-nav-inner">
     <div class="mzm-brand">
       <strong>MIZ OKI Media</strong>
       <span>Causal Growth Control</span>
     </div>
     <div class="mzm-nav-links">
-      <a href="#decision-graph">Decision Graph</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#decision-jobs">Decision Jobs</a>
-      <a href="#pilot">Pilot</a>
-      <a class="mzm-nav-cta" href="#film">Watch Film</a>
+      <a href="/media/platform">Platform</a>
+      <a href="/media/decision-graph">Decision Graph</a>
+      <a href="/media/how-it-works">How It Works</a>
+      <a href="/media/use-cases">Use Cases</a>
+      <a href="/media/pilot">Pilot</a>
+      <a href="/media/trust">Trust</a>
+      <a href="/media/resources">Resources</a>
+      <a class="mzm-nav-cta" href="/media/contact">Contact</a>
     </div>
   </div>
 </nav>
@@ -755,6 +770,7 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
         </div>
       </div>
       <p class="mzm-footnote">Four layers, one graph — a complete decision record spans all four, and no layer can drift out of sync with the others.</p>
+      <a class="mzm-more" href="/media/decision-graph">The definitive Decision Graph page — comparisons, properties, and a full worked record →</a>
     </div>
   </section>
 
@@ -839,6 +855,7 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
           </div>
         </details>
       </div>
+      <a class="mzm-more" href="/media/how-it-works">The full lifecycle — AI and human responsibilities, governance checkpoints, and an interactive walkthrough →</a>
     </div>
   </section>
 
@@ -889,6 +906,7 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
         </div>
       </div>
       <p class="mzm-footnote">The 34% movement — and every value in this scenario — is an illustrative example. It demonstrates the decision pathway; it is not verified production performance.</p>
+      <a class="mzm-more" href="/media/use-cases">Fifteen decision jobs like this one, by the team that owns them →</a>
     </div>
   </section>
 
@@ -997,6 +1015,24 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
     </div>
   </section>
 
+  <!-- ================= 9 · PLATFORM ARCHITECTURE ================= -->
+  <section id="architecture" class="mzm-reveal" aria-labelledby="arch-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">The platform beneath</p>
+      <h2 id="arch-h">Platform architecture</h2>
+      <p class="mzm-lede">Sources in, governed decisions out, outcomes back in. Your systems keep their jobs — the Decision Graph holds the decisions together, and authority governs the loop.</p>
+      <figure style="margin-top:30px; border:2px solid var(--mzm-line);">
+        <img src="/media/assets/mizoki-media-architecture.svg"
+             alt="MIZ OKI Media platform architecture. Layer 1, sources: media platforms, commerce, experience telemetry, inventory, finance. Layer 2, the Decision Graph: evidence memory and operating context feeding the seven-stage loop with decision memory and outcome memory. Layer 3, authority: policy checks and named human approval. Layer 4, execution: bounded actions dispatched back to the source systems, with realized outcomes returning to the graph as the learning loop."
+             width="1200" height="800" loading="lazy">
+        <figcaption style="padding:12px 16px; background:var(--mzm-bg-1); border-top:2px solid var(--mzm-line); font-size:14px; color:var(--mzm-muted);">
+          The operating model in one diagram — <a href="/media/assets/mizoki-media-architecture.svg" download>download (SVG)</a>
+        </figcaption>
+      </figure>
+      <a class="mzm-more" href="/media/platform">Explore the full platform — the Commercial Decision Operating System →</a>
+    </div>
+  </section>
+
   <!-- ================= 10 · 90-DAY PILOT ================= -->
   <section id="pilot" class="mzm-reveal" aria-labelledby="pilot-h">
     <div class="mzm-wrap">
@@ -1055,6 +1091,23 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
       </div>
 
       <p class="mzm-pilot-mode">Autonomy is earned, never assumed: the pilot starts observe-only, and every advance in authority is a deliberate, human-made decision backed by the pilot's own evidence.</p>
+      <a class="mzm-more" href="/media/pilot">The full pilot structure — metrics, checkpoints, and exit criteria →</a>
+    </div>
+  </section>
+
+  <!-- ================= 11 · TRUST & GOVERNANCE ================= -->
+  <section id="governance" class="mzm-reveal" aria-labelledby="gov-h">
+    <div class="mzm-wrap">
+      <p class="mzm-kicker">Trust before AI</p>
+      <h2 id="gov-h">Trust &amp; governance</h2>
+      <p class="mzm-lede">Trust comes from governance, not automation. AI contributes inside the rails — never around them.</p>
+      <div class="mzm-grid-3" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+        <div class="mzm-card"><h3>Human authority</h3><p>Named approvers, delegated rules, bounded grants. Observe-only is the default everywhere; nothing acts outside an explicit grant.</p></div>
+        <div class="mzm-card"><h3>Policy enforcement</h3><p>Margin floors, budget ceilings, brand and risk rules checked on every candidate action — every veto recorded, never silent.</p></div>
+        <div class="mzm-card"><h3>Audit trail &amp; replay</h3><p>Append-only decision records, re-walkable end to end with the evidence as it stood at the time.</p></div>
+        <div class="mzm-card"><h3>Rollback</h3><p>The rollback path is recorded before an action dispatches — and rollback authority always stays human.</p></div>
+      </div>
+      <a class="mzm-more" href="/media/trust">The full trust center — including how your CFO, Legal, and Security would evaluate this →</a>
     </div>
   </section>
 
@@ -1064,7 +1117,10 @@ html.mzm-js .mzm-reveal { opacity: 1; transform: none; }
       <p class="mzm-kicker">Next step</p>
       <h2 id="cta-h">Ready to know why — and act on it?</h2>
       <p>Tell us about your stack and the decision that costs you the most when it goes ungoverned. We'll scope a 90-day pilot around it.</p>
-      <a class="mzm-btn primary" href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot">Discuss a MIZ OKI Media Pilot</a>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a class="mzm-btn primary" href="mailto:contact@mizoki3.com?subject=MIZ%20OKI%20Media%20Pilot">Discuss a MIZ OKI Media Pilot</a>
+        <a class="mzm-btn" href="/media/contact">The contact page — what to include</a>
+      </div>
     </div>
   </section>
 
