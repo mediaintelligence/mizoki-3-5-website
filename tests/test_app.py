@@ -294,7 +294,7 @@ class BlogFeedTestCase(unittest.TestCase):
         r = self.client.get("/blog/feed.xml")
         self.assertEqual(200, r.status_code)
         self.assertTrue(r.content_type.startswith("application/rss+xml"))
-        self.assertEqual(3, r.data.count(b"<item>"))
+        self.assertEqual(4, r.data.count(b"<item>"))
 
     def test_json_feed_returns_jsonfeed_envelope(self) -> None:
         r = self.client.get("/blog/feed.json")
@@ -303,12 +303,12 @@ class BlogFeedTestCase(unittest.TestCase):
         self.assertEqual(
             "https://jsonfeed.org/version/1.1", body["version"]
         )
-        self.assertEqual(3, len(body["items"]))
+        self.assertEqual(4, len(body["items"]))
 
     def test_posts_manifest_passthrough(self) -> None:
         r = self.client.get("/blog/posts.json")
         self.assertEqual(200, r.status_code)
-        self.assertEqual(3, len(r.get_json()["posts"]))
+        self.assertEqual(4, len(r.get_json()["posts"]))
 
 
 class GoogleAdsApiTestCase(unittest.TestCase):

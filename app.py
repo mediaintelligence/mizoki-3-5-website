@@ -459,6 +459,33 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def signal():
         return serve_page("signal.html")
 
+    # Signal capability site (2026-08-02): /signal is the hub of a multi-page
+    # surface. Each capability page follows the site's dual-route convention.
+    @app.route("/signal/thresholds", strict_slashes=False)
+    @app.route("/signal-thresholds.html")
+    def signal_thresholds():
+        return serve_page("signal-thresholds.html")
+
+    @app.route("/signal/budget", strict_slashes=False)
+    @app.route("/signal-budget.html")
+    def signal_budget():
+        return serve_page("signal-budget.html")
+
+    @app.route("/signal/creative", strict_slashes=False)
+    @app.route("/signal-creative.html")
+    def signal_creative():
+        return serve_page("signal-creative.html")
+
+    @app.route("/signal/audiences", strict_slashes=False)
+    @app.route("/signal-audiences.html")
+    def signal_audiences():
+        return serve_page("signal-audiences.html")
+
+    @app.route("/signal/measurement", strict_slashes=False)
+    @app.route("/signal-measurement.html")
+    def signal_measurement():
+        return serve_page("signal-measurement.html")
+
     @app.route("/risk")
     @app.route("/risk.html")
     def risk():
@@ -531,6 +558,30 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     @app.route("/media-buying.html")
     def media_buying():
         return redirect(url_for("marketing_home"), code=301)
+
+    # ===== MIZ OKI Media (/media) — additive product page ==============
+    # Isolated single-page surface served from media/ (self-contained HTML
+    # plus local video/poster/storyboard assets). Purely additive: no other
+    # route, template, stylesheet, or nav references it, and /media-buying
+    # above is an unrelated legacy redirect. strict_slashes=False serves both
+    # /media and /media/ directly, matching the /marketing convention.
+
+    @app.route("/media", strict_slashes=False)
+    def media_home():
+        return send_from_directory(BASE_DIR / "media", "index.html")
+
+    @app.route("/media/<path:filename>")
+    def media_assets(filename: str):
+        # Same traversal-guarded, extension-allowlisted pattern as the
+        # executive-briefing assets route. send_from_directory serves the MP4
+        # as video/mp4 with Range support, so the film streams from this route
+        # and can never fall through to an HTML handler.
+        base = (BASE_DIR / "media").resolve()
+        target = (base / filename).resolve()
+        allowed = {".html", ".css", ".js", ".svg", ".png", ".jpg", ".webp", ".mp4", ".webm", ".vtt"}
+        if not str(target).startswith(str(base) + "/") or not target.is_file() or target.suffix.lower() not in allowed:
+            abort(404)
+        return send_from_directory(base, filename)
 
     # --- Full-site mirror under /marketing ---------------------------------
     # Owner requirement: browse the ENTIRE site inside the /marketing prefix,
@@ -721,6 +772,8 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         # The demos are the marketing asset — index them (closed decision #2).
         pages = [
             "/", "/counsel", "/estate", "/capital", "/signal", "/risk",
+            "/signal/thresholds", "/signal/budget", "/signal/creative",
+            "/signal/audiences", "/signal/measurement",
             "/pricing", "/executive-briefing/",
             "/marketing", "/marketing/engine", "/marketing/modules",
             "/marketing/simulator", "/marketing/walkthrough",
@@ -733,13 +786,24 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         ]
         posts = _load_blog_manifest()
         blog_lastmod = posts[0].get("updated", posts[0].get("published", "")) if posts else ""
+        # Pages the Signal v2 rollout changed (2026-08-03): the hub, the five
+        # capability pages, the demo surfaces that gained the doorman framing,
+        # and the briefing whose signal pack was extended.
+        rollout_lastmod = {
+            "/signal": "2026-08-03",
+            "/signal/thresholds": "2026-08-03",
+            "/signal/budget": "2026-08-03",
+            "/signal/creative": "2026-08-03",
+            "/signal/audiences": "2026-08-03",
+            "/signal/measurement": "2026-08-03",
+            "/demo": "2026-08-03",
+            "/demo/signal": "2026-08-03",
+            "/executive-briefing/": "2026-08-03",
+        }
         entries = []
         for path in pages:
-            lastmod = (
-                f"\n    <lastmod>{_xml_escape(blog_lastmod)}</lastmod>"
-                if path == "/blog" and blog_lastmod
-                else ""
-            )
+            stamp = blog_lastmod if path == "/blog" else rollout_lastmod.get(path, "")
+            lastmod = f"\n    <lastmod>{_xml_escape(stamp)}</lastmod>" if stamp else ""
             entries.append(
                 "  <url>\n"
                 f"    <loc>{_xml_escape(CANONICAL_BASE_URL + path)}</loc>{lastmod}\n"
@@ -781,6 +845,33 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def blog_index_legacy():
         return redirect(url_for("blog_index"), code=301)
 
+    @app.route("/blog/decision-control-plane")
+    def blog_dcp_article():
+        return send_from_directory(BASE_DIR / "blog", "decision-control-plane.html")
+
+    @app.route("/blog/decision-control-plane/")
+    @app.route("/blog/decision-control-plane.html")
+    def legacy_blog_dcp_article():
+        return redirect(url_for("blog_dcp_article"), code=301)
+
+    @app.route("/blog/adc-decision-framework")
+    def blog_adc_article():
+        return send_from_directory(BASE_DIR / "blog", "adc-decision-framework.html")
+
+    @app.route("/blog/adc-decision-framework/")
+    @app.route("/blog/adc-decision-framework.html")
+    def legacy_blog_adc_article():
+        return redirect(url_for("blog_adc_article"), code=301)
+
+    @app.route("/blog/doorman-problem")
+    def blog_doorman_article():
+        return send_from_directory(BASE_DIR / "blog", "doorman-problem.html")
+
+    @app.route("/blog/doorman-problem/")
+    @app.route("/blog/doorman-problem.html")
+    def legacy_blog_doorman_article():
+        return redirect(url_for("blog_doorman_article"), code=301)
+
     @app.route("/blog/relu-lens-meta-algorithm")
     def blog_relu_lens_article():
         return send_from_directory(BASE_DIR / "blog", "relu-lens-meta-algorithm.html")
@@ -800,13 +891,16 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def blog_rss_feed():
         from flask import Response
         manifest = _load_blog_manifest()
-        rss = _render_rss(manifest, base_url=request.url_root.rstrip("/"))
+        # Feeds are consumed off-site: always emit canonical https URLs, never
+        # the proxy-derived request scheme (Cloud Run terminates TLS upstream,
+        # so request.url_root reports http://).
+        rss = _render_rss(manifest, base_url=CANONICAL_BASE_URL)
         return Response(rss, mimetype="application/rss+xml; charset=utf-8")
 
     @app.route("/blog/feed.json")
     def blog_json_feed():
         manifest = _load_blog_manifest()
-        base = request.url_root.rstrip("/")
+        base = CANONICAL_BASE_URL
         items = []
         for post in manifest:
             items.append({

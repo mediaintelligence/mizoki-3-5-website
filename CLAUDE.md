@@ -183,6 +183,53 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
+### Signal v2 capability site + doorman story rollout + truth-discipline CI gate (2026-08-03)
+
+Owner runbook (`drop/claude-code-prompt-signal-page-rollout.md`) executed in
+full and LIVE (deploys `#48` sha `98b4184`, `#49` sha `6db204c` — both
+`workflow_dispatch` + `APPROVED` on explicit owner instruction). Record:
+`docs/reports/SIGNAL_V2_ROLLOUT_PR.md` (repo root).
+
+- **`/signal` is now a six-page media-buying capability site**: the hub (9
+  filed §-sections; owner-supplied v2 + Field Notes merged as §04) plus
+  `/signal/{thresholds,budget,creative,audiences,measurement}` — ReLU
+  threshold discovery, ReLU-gated reallocation + pacing clamps + staged
+  rollout rails, creative fatigue/rotation, uplift cohorts, and the
+  caused-vs-anticipated measurement ledger. **Every number is a Boss-module
+  operating default read from source** (relu_threshold_agents,
+  autonomous_budget_reallocation_mvp, uplift_pacing, creative_fatigue,
+  uplift_guardrails.yaml, ai_marketing_optimization,
+  cross_platform_attribution), framed "operating defaults, not promised
+  outcomes". Pre-rollout page preserved at `archive/signal-v1.html.bak`.
+- **Doorman story propagated**: one framing sentence each on `/demo` +
+  `/demo/signal`; briefing signal pack extended (statusQuo doorman line,
+  `9 of 14 (composite)` proof metric, privacy-posture talking point —
+  owner-approved diff, canon re-pinned); story bank canonical at
+  `docs/marketing/signal-story-bank.md` with governance pointers in both
+  CLAUDE.mds; **"The Doorman Problem" published** at `/blog/doorman-problem`
+  (manifest, card, clean route + 301 shims, feeds; post-count contract 3→4).
+- **Truth discipline is now a CI gate**: `scripts/content_qa.py` runs in
+  `deploy-homepage.yml` beside the canon check and in the suite
+  (`tests/test_content_qa.py`). Fails on affirmative mind-reading/guaranteed
+  or deployed-intent claims, intent copy without "Preview · in development"
+  in-section, %/× numbers without illustrative/composite/operating-default
+  labels in-section, §-sequence breaks — and **self-tests on seeded
+  violations before every scan** (a gate that can't fire fails the build).
+  First run found 23 real findings, all fixed (incl. preview framing on the
+  demo-signal ORACLE section + one `(composite)` per briefing domain).
+  Post-deploy hardening: §-extractor matches multi-class markup and refuses
+  vacuous passes (`9d6c5a1`).
+- **Blog hygiene (finish-all pass)**: feeds emit canonical https URLs
+  (were proxy-scheme http); clean routes + 301 shims added for
+  `decision-control-plane` and `adc-decision-framework` (their feed links
+  had 404'd since the feeds shipped); index cards use clean URLs.
+- **Sitemap**: rollout pages carry `lastmod 2026-08-03`; `/blog` lastmod
+  derives from the manifest.
+- **Tests**: suite **365** with only the 2 pre-existing homepage failures;
+  canon 20/20 (re-pins for demo.html, demo-signal.html, data.js were
+  owner-approved); marketing drift guard green; Playwright passes on all six
+  signal pages + briefing/demo renders.
+
 ### Marketing parallel site under /marketing (2026-08-02)
 
 Owner instruction: "launch this entire site under a /marketing so i can compare
@@ -725,6 +772,7 @@ Brand colors used throughout:
 2. **Fonts**: JetBrains Mono (code), Instrument Serif (headings), DM Sans (body)
 3. **Images**: SVG preferred for scalability; include alt text for accessibility
 4. **Deployment**: HUMAN-APPROVED ONLY — Actions → "Deploy MIZ OKI 3.5 Homepage" with the `APPROVED` token (see Design Canon governance above). `./deploy.sh` / `./master-deploy.sh` are legacy and must not be run without the same approval
+5. **Story copy**: `docs/marketing/signal-story-bank.md` governs all customer-story copy — obey its five rules (composite/illustrative labeling, ledger grammar, translate-don't-define, preview stays preview, never a guaranteed outcome)
 
 ---
 

@@ -40,6 +40,7 @@ MIZOKI.DOMAINS = {
     promise: "MIZ OKI's most mature domain — the engine the platform was built on. Incrementality-measured budget moves pass a ReLU gate and hard guardrails before they touch a platform, with provenance and a rollback token on every action.",
     statusQuo: [
       "Platform-reported ROAS counts conversions that would have happened anyway",
+      "The doorman problem: retargeting pays to open doors customers were already walking through — and the dashboard books it as return",
       "Budget shifts ride gut feel and last-click, not measured lift",
       "Creative fatigue is discovered after CPA has already spiked",
     ],
@@ -80,6 +81,7 @@ MIZOKI.DOMAINS = {
       { metric: "24%", label: "of spend identified as non-incremental and redeployed" },
       { metric: "1.8×", label: "incremental ROAS versus the last-click view" },
       { metric: "9 of 10", label: "budget moves cleared the gate — the tenth was vetoed" },
+      { metric: "9 of 14", label: "geo-test markets proved lift — doubled down where it worked, cut where it didn't, budget survived (composite)" },
     ],
     pilotScope: [
       "Two channels (Meta + Google) on one P&L",
@@ -90,6 +92,7 @@ MIZOKI.DOMAINS = {
       "Media spend becomes a governed capital allocation, not a faith-based line item",
       "Every move carries provenance and a rollback token",
       "The platform's most mature domain — it runs these playbooks on its own media",
+      "The privacy review that killed the last intent-data vendor approves this one — consent before storage, sensitive categories refused at the schema, no audio anywhere, erasure that cascades",
     ],
   },
   legal: {
@@ -140,7 +143,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "4", label: "specialist experts on every legal query — one synthesized answer" },
       { metric: "100%", label: "of outputs flagged for attorney review — zero autonomous legal conclusions" },
-      { metric: "38%", label: "faster internal review cycles" },
+      { metric: "38%", label: "faster internal review cycles (composite)" },
     ],
     pilotScope: [
       "One practice area (trust & estate or commercial contracts)",
@@ -201,7 +204,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "31%", label: "fewer SLA misses in 60 days" },
       { metric: "18%", label: "lower exception handling cost" },
-      { metric: "4.6×", label: "faster decision cycle on critical lanes" },
+      { metric: "4.6×", label: "faster decision cycle on critical lanes (composite)" },
     ],
     pilotScope: [
       "One corridor + top 3 carriers",
@@ -262,7 +265,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "22%", label: "reduction in regrettable attrition" },
       { metric: "19 days", label: "faster critical-role fill" },
-      { metric: "3.1×", label: "more interventions before resignation" },
+      { metric: "3.1×", label: "more interventions before resignation (composite)" },
     ],
     pilotScope: [
       "One business unit + critical role families",
@@ -323,7 +326,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "35%", label: "faster variance explanation" },
       { metric: "90 bps", label: "margin recovery in pilot units" },
-      { metric: "2.4×", label: "more spend interventions in-quarter" },
+      { metric: "2.4×", label: "more spend interventions in-quarter (composite)" },
     ],
     pilotScope: [
       "One P&L + cost centers feeding the miss",
@@ -384,7 +387,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "9%", label: "OEE lift on pilot lines" },
       { metric: "41%", label: "faster constraint clearance" },
-      { metric: "27%", label: "fewer quality escapes" },
+      { metric: "27%", label: "fewer quality escapes (composite)" },
     ],
     pilotScope: [
       "One site + critical line family",
@@ -445,7 +448,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "16%", label: "lower logo churn in pilot book" },
       { metric: "2.2×", label: "faster critical escalation path" },
-      { metric: "11%", label: "higher net revenue retention" },
+      { metric: "11%", label: "higher net revenue retention (composite)" },
     ],
     pilotScope: [
       "Top 50 accounts by ARR",
@@ -506,7 +509,7 @@ MIZOKI.DOMAINS = {
     proof: [
       { metric: "28%", label: "less expedite spend" },
       { metric: "12 pts", label: "fill-rate improvement on A-items" },
-      { metric: "40%", label: "faster shortage response" },
+      { metric: "40%", label: "faster shortage response (composite)" },
     ],
     pilotScope: [
       "One product family + critical components",

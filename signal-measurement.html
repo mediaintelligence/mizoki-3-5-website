@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZOKI3 — Signal · Measurement Foundations</title>
+<meta name="description" content="One clock, one identity, one ledger: unified attribution windows across platforms, privacy-safe identity stitching, server-side conversion plumbing, and the incrementality engine that grades every claim.">
+<meta name="theme-color" content="#0A1418">
+<meta property="og:title" content="MIZOKI3 — Signal · Measurement Foundations">
+<meta property="og:description" content="One clock, one identity, one ledger: unified attribution windows across platforms, privacy-safe identity stitching, server-side conversion plumbing, and the incrementality engine that grades every claim.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/signal/measurement">
+<meta property="og:image" content="https://mizoki3.com/assets/img/og/og-signal.svg">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="canonical" href="https://mizoki3.com/signal/measurement">
+<style>
+:root{
+  --ink:#0A1418;        /* dossier ground */
+  --ink-2:#0E1B20;      /* raised panel */
+  --rule:#1B2E34;       /* hairline */
+  --seam:#3FD8D0;       /* Signal Factory cyan seam */
+  --caution:#E4A34A;    /* vetoed / anticipated */
+  --paper:#DCE6E6;      /* body text */
+  --paper-dim:#7E9599;  /* captions */
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Helvetica Neue",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body.sig{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);
+  font-size:17px;line-height:1.6;letter-spacing:-.005em;
+  background-image:linear-gradient(180deg,#0C171C 0%,var(--ink) 60%)}
+.sig .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+.sig a{color:inherit}
+.sig h1,.sig h2,.sig h3{letter-spacing:-.03em;line-height:1.08;margin:0;font-weight:600}
+.sig h1{font-size:clamp(2.4rem,5.6vw,4.05rem)}
+.sig h2{font-size:clamp(1.65rem,3.3vw,2.5rem)}
+.sig h3{font-size:1.06rem;letter-spacing:-.01em}
+.sig em{font-style:italic;color:var(--seam)}
+
+/* ---- filing marks: the site's dossier grammar ---- */
+.sig .mark{font-family:var(--mono);font-size:.66rem;letter-spacing:.20em;
+  text-transform:uppercase;color:var(--paper-dim)}
+.sig .sec-mark{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.sig .sec-mark::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+/* ---- masthead ---- */
+.sig .strip{border-bottom:1px solid var(--rule);background:rgba(10,20,24,.92);
+  position:sticky;top:0;z-index:20;backdrop-filter:blur(9px)}
+.sig .strip .wrap{display:flex;align-items:center;justify-content:space-between;
+  gap:18px;height:56px;flex-wrap:wrap}
+.sig .brand{font-family:var(--mono);font-size:.82rem;letter-spacing:.24em;
+  text-decoration:none;font-weight:600}
+.sig nav{display:flex;gap:20px;flex-wrap:wrap}
+.sig nav a{font-family:var(--mono);font-size:.66rem;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--paper-dim);text-decoration:none}
+.sig nav a:hover,.sig nav a:focus-visible{color:var(--seam)}
+
+/* ---- sections ---- */
+.sig section{padding:86px 0;border-bottom:1px solid var(--rule)}
+.sig .lede{font-size:1.16rem;color:var(--paper-dim);max-width:60ch;margin-top:22px}
+
+/* ---- hero ---- */
+.sig .hero{padding:96px 0 78px}
+.sig .hero h1{margin-bottom:6px}
+.sig .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
+.sig .btn{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;text-decoration:none;padding:14px 22px;border:1px solid var(--seam);
+  color:var(--seam);transition:background .18s,color .18s}
+.sig .btn:hover,.sig .btn:focus-visible{background:var(--seam);color:var(--ink)}
+.sig .btn.ghost{border-color:var(--rule);color:var(--paper-dim)}
+.sig .btn.ghost:hover,.sig .btn.ghost:focus-visible{border-color:var(--paper-dim);
+  background:transparent;color:var(--paper)}
+
+/* ---- SIGNATURE: the evidence ledger ---- */
+.sig .ledger{margin-top:56px;border:1px solid var(--rule);background:var(--ink-2)}
+.sig .ledger-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 18px;border-bottom:1px solid var(--rule)}
+.sig .bar{display:flex;height:74px}
+.sig .bar div{display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:0 10px}
+.sig .bar .caused{flex:0 0 31%;background:rgba(63,216,208,.16);color:var(--seam);
+  border-right:1px solid var(--rule)}
+.sig .bar .anticipated{flex:1;background:rgba(228,163,74,.09);color:var(--caution)}
+.sig .ledger-foot{padding:13px 18px;border-top:1px solid var(--rule)}
+
+/* ---- grids ---- */
+.sig .grid{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:34px}
+.sig .g2{grid-template-columns:repeat(2,1fr)}
+.sig .g3{grid-template-columns:repeat(3,1fr)}
+.sig .cell{background:var(--ink);padding:26px 24px}
+.sig .cell h3{margin-bottom:9px}
+.sig .cell p{margin:0;font-size:.94rem;color:var(--paper-dim)}
+.sig ul.spec{list-style:none;margin:14px 0 0;padding:0}
+.sig ul.spec li{font-size:.93rem;color:var(--paper-dim);padding:7px 0 7px 17px;position:relative}
+.sig ul.spec li::before{content:"";position:absolute;left:0;top:16px;width:6px;height:1px;
+  background:var(--seam)}
+
+/* ---- stage sequence (real order: it's a pipeline) ---- */
+.sig ol.stages{list-style:none;counter-reset:s;margin:34px 0 0;padding:0;
+  display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.sig ol.stages li{counter-increment:s;background:var(--ink);padding:24px;
+  display:grid;grid-template-columns:56px 1fr;gap:18px;align-items:start}
+.sig ol.stages li::before{content:"0" counter(s);font-family:var(--mono);font-size:.74rem;
+  letter-spacing:.1em;color:var(--seam);padding-top:3px}
+.sig ol.stages p{margin:7px 0 0;font-size:.94rem;color:var(--paper-dim)}
+
+/* ---- status tag: truth discipline ---- */
+.sig .tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;
+  text-transform:uppercase;padding:4px 9px;border:1px solid var(--caution);
+  color:var(--caution);vertical-align:middle;margin-left:10px}
+.sig .note{margin-top:26px;padding:16px 18px;border-left:2px solid var(--caution);
+  background:rgba(228,163,74,.05);font-size:.9rem;color:var(--paper-dim)}
+
+/* ---- autonomy ladder ---- */
+.sig .ladder{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:34px}
+.sig .rung{background:var(--ink);padding:19px 15px}
+.sig .rung.on{background:rgba(63,216,208,.09)}
+.sig .rung .lv{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;color:var(--paper-dim)}
+.sig .rung.on .lv{color:var(--seam)}
+.sig .rung .nm{font-size:.87rem;margin-top:5px}
+
+/* ---- close ---- */
+.sig footer{padding:56px 0 72px}
+.sig footer .wrap{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap}
+.sig footer a{color:var(--paper-dim);text-decoration:none;font-size:.9rem;display:block;padding:4px 0}
+.sig footer a:hover,.sig footer a:focus-visible{color:var(--seam)}
+
+/* ---- field notes: story cards ---- */
+.sig .story{background:var(--ink);padding:30px 26px;display:flex;flex-direction:column;gap:14px}
+.sig .story .q{font-size:1.14rem;line-height:1.45;letter-spacing:-.015em;color:var(--paper)}
+.sig .story .q::before{content:"“ ";color:var(--seam)}
+.sig .story .q::after{content:" ”";color:var(--seam)}
+.sig .story dl{margin:0;display:grid;grid-template-columns:96px 1fr;row-gap:9px;column-gap:14px}
+.sig .story dt{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--seam);padding-top:3px}
+.sig .story dd{margin:0;font-size:.93rem;color:var(--paper-dim)}
+.sig .story .verdict{border-top:1px solid var(--rule);padding-top:12px;font-size:.95rem;color:var(--paper)}
+@media (max-width:560px){.sig .story dl{grid-template-columns:1fr}.sig .story dt{padding-top:6px}}
+
+.sig a:focus-visible,.sig .btn:focus-visible{outline:2px solid var(--seam);outline-offset:3px}
+@media (max-width:820px){
+  .sig .g2,.sig .g3{grid-template-columns:1fr}
+  .sig .ladder{grid-template-columns:repeat(2,1fr)}
+  .sig section{padding:62px 0}
+  .sig .bar{height:auto;flex-direction:column}
+  .sig .bar .caused{flex:none;height:64px;border-right:none;border-bottom:1px solid var(--rule)}
+  .sig .bar .anticipated{flex:none;height:64px}
+}
+@media (prefers-reduced-motion:reduce){.sig *{transition:none!important;animation:none!important}}
+
+/* ---- capability-page exhibits ---- */
+.sig .exhibit{margin-top:34px;border:1px solid var(--rule);background:var(--ink-2);padding:22px 24px}
+.sig .exhibit .formula{font-family:var(--mono);font-size:.92rem;color:var(--paper);letter-spacing:.02em;
+  overflow-x:auto;white-space:nowrap;padding:6px 0}
+.sig .exhibit .formula b{color:var(--seam);font-weight:600}
+.sig .steps{list-style:none;counter-reset:st;margin:14px 0 0;padding:0}
+.sig .steps li{counter-increment:st;font-size:.93rem;color:var(--paper-dim);padding:8px 0 8px 30px;position:relative}
+.sig .steps li::before{content:counter(st);position:absolute;left:0;top:7px;font-family:var(--mono);
+  font-size:.7rem;color:var(--seam);border:1px solid var(--rule);width:19px;height:19px;display:flex;
+  align-items:center;justify-content:center}
+.sig table.params{width:100%;border-collapse:collapse;margin-top:14px;font-size:.9rem}
+.sig table.params th{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--paper-dim);text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);font-weight:500}
+.sig table.params td{padding:9px 12px;border-bottom:1px solid var(--rule);color:var(--paper-dim)}
+.sig table.params td:first-child{color:var(--paper)}
+.sig table.params td.v{font-family:var(--mono);color:var(--seam);white-space:nowrap}
+.sig .tablewrap{overflow-x:auto;margin-top:20px}
+.sig .quad{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:34px}
+.sig .quad .q-cell{background:var(--ink);padding:22px}
+.sig .quad .q-cell.hot{background:rgba(63,216,208,.07)}
+.sig .quad .q-cell.cold{background:rgba(228,163,74,.05)}
+.sig .quad h3{margin-bottom:7px}
+.sig .quad p{margin:0;font-size:.9rem;color:var(--paper-dim)}
+.sig .phases{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.sig .phase{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:7px 11px;border:1px solid var(--rule);color:var(--paper-dim)}
+.sig .phase.on{border-color:var(--seam);color:var(--seam)}
+.sig .phase.warn{border-color:var(--caution);color:var(--caution)}
+.sig .crumbs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+@media (max-width:560px){.sig .quad{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="sig">
+
+<div class="strip">
+  <div class="wrap">
+    <a class="brand" href="/">MIZOKI3</a>
+    <nav aria-label="Signal capabilities">
+      <a href="/signal">Signal</a>
+      <a href="/signal/thresholds">Thresholds</a>
+      <a href="/signal/budget">Budget</a>
+      <a href="/signal/creative">Creative</a>
+      <a href="/signal/audiences">Audiences</a>
+      <a href="/signal/measurement" style="color:var(--seam)" aria-current="page">Measurement</a>
+      <a href="/demo/signal">Factory</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" style="padding:76px 0 64px">
+  <div class="wrap">
+    <p class="mark">§ SIGNAL / MEASUREMENT FOUNDATIONS / FILED 2026</p>
+    <h1>One clock. One identity. <em>One ledger.</em></h1>
+    <p class="lede">Meta and Google each keep their own clock, their own identity space and their own scoreboard — and both grade generously. Signal normalizes all of it into one causal accounting system, then feeds corrected values back to the platforms' own bidders.</p>
+    <div class="cta-row">
+      <a class="btn" href="/demo/signal">Run the Signal Factory ▸</a>
+      <a class="btn ghost" href="/signal#capabilities">All capabilities</a>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§01 · Synchronization</p>
+    <h2>Platforms disagree by design. <em>The house window doesn't.</em></h2>
+    <div class="grid g2">
+      <div class="cell">
+        <h3>One clock</h3>
+        <p>Every conversion is re-attributed under a single house standard — 7-day click, 1-day view — regardless of which platform reported it, with empirical lag profiles per source and a nightly recompute. Cross-platform numbers become comparable for the first time.</p>
+      </div>
+      <div class="cell">
+        <h3>One identity</h3>
+        <p>Identities stitch across platforms through salted SHA-256 hashes of first-party identifiers — matching without exposure. Raw identifiers never leave the boundary; deterministic identity is required for causal math.</p>
+      </div>
+    </div>
+    <ul class="spec">
+      <li>Drift monitor — alerts when platform-reported and model-attributed revenue diverge past 20% for three consecutive days (operating default)</li>
+      <li>Weight back-propagation — corrected attribution flows to Meta and Google bid systems, so their optimizers learn from honest numbers</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§02 · The plumbing</p>
+    <h2>Signal loss is an infrastructure problem. <em>So it gets infrastructure.</em></h2>
+    <div class="tablewrap"><table class="params">
+      <tr><th>Rail</th><th>What it carries</th><th>Discipline</th></tr>
+      <tr><td>Enhanced Conversions</td><td>hashed first-party data to Google</td><td class="v">SHA-256, spec-normalized</td></tr>
+      <tr><td>Meta Conversions API</td><td>server-side events beside the pixel</td><td class="v">shared event-id, 48h dedup</td></tr>
+      <tr><td>Aggregated Event Measurement</td><td>iOS signals under App Tracking Transparency</td><td class="v">8-event priority schema</td></tr>
+      <tr><td>GA4 Measurement Protocol</td><td>server-side analytics events</td><td class="v">validated before send</td></tr>
+      <tr><td>Offline conversions</td><td>closed-won revenue back to the click</td><td class="v">GCLID · WBRAID · GBRAID, 90-day window</td></tr>
+    </table></div>
+    <p class="lede" style="font-size:.95rem">Deduplication is the quiet hero: server-side events carry the same event identity as the browser's, so nothing is counted twice — the failure mode that silently inflates every naive server-side setup.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§03 · The incrementality engine</p>
+    <h2>Every number faces <em>the experiment.</em></h2>
+    <ol class="steps">
+      <li>Design registered before the first impression — randomized holdout, ghost bids that log the auctions a control customer would have won, or matched control geographies. Minimum detectable effect declared up front.</li>
+      <li>Heterogeneous effects estimated per segment and region with meta-learner models — who was actually persuadable, not just whether the average moved.</li>
+      <li>Automated refutation tries to break the result: placebo treatments must collapse the effect, random confounders must not move it, subset re-runs must agree. A result that fails is flagged, never shipped.</li>
+      <li>Each conversion is classified caused or anticipated, with lift and a confidence interval, and written to the immutable ledger — the exhibit on the <a href="/signal">Signal overview</a>.</li>
+    </ol>
+    <p class="lede">Incremental return — not platform-reported return — is what the <a href="/signal/budget">budget engine</a> is allowed to read. That single wiring decision is most of the product.</p>
+    <p class="note"><strong>Stated plainly:</strong> mechanisms on this page are operating machinery, and the windows and thresholds shown are operating defaults — not promised outcomes. Ledger figures shown anywhere on this site are illustrative until they are your own — produced by your experiments, on your data, with the confidence intervals printed.</p>
+  </div>
+</section>
+
+
+<!-- ═══ CLOSE ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§04 · See it run</p>
+    <h2>Mechanism on this page. <em>Proof in the factory.</em></h2>
+    <p class="lede">The Signal Factory desk runs the full seven-stage SRPVDAL loop on live runtime — including a deliberate guardrail block you'll watch get caught in red. No signup, no sales call.</p>
+    <div class="cta-row">
+      <a class="btn" href="/demo/signal">Open the Signal Factory ▸</a>
+      <a class="btn ghost" href="/signal">Signal overview</a>
+      <a class="btn ghost" href="/executive-briefing/">Executive briefing · ~9 min</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p class="mark">MIZOKI3 · Signal</p>
+      <p style="max-width:34ch;color:var(--paper-dim);font-size:.9rem;margin:10px 0 0">
+        Causal acquisition intelligence on one governed loop. Proof, not attribution theatre.</p>
+    </div>
+    <div>
+      <p class="mark">Capabilities</p>
+      <a href="/signal/thresholds">Thresholds</a><a href="/signal/budget">Budget</a>
+      <a href="/signal/creative">Creative</a><a href="/signal/audiences">Audiences</a>
+      <a href="/signal/measurement">Measurement</a>
+    </div>
+    <div>
+      <p class="mark">Platform</p>
+      <a href="/#pipeline">Decision engine</a><a href="/#control">Control plane</a>
+      <a href="/demo">Live demo</a><a href="/pricing">Pricing</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:34px;padding-top:20px;border-top:1px solid var(--rule)">
+    <p class="mark">© 2026 MIZOKI3 · MediaIntelligence.ai · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

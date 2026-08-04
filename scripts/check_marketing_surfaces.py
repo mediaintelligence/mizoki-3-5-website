@@ -31,6 +31,10 @@ REQUIRED = {
     "tests/test_marketing_site.py": "MARKETING_PAGES",
     "marketing/index.html": "Stop Managing Dashboards. Start Governing Ad Growth.",
     "marketing/signal.html": 'id="acquisition"',
+    # /media (owner-approved 2026-08-03) rides the same guard: a parity copy
+    # once dropped its routes — never again.
+    "media/index.html": "Causal Growth Control",
+    "media/video/mizoki-signal-explainer.mp4": None,
 }
 
 # app.py must still carry the routing layer for the parallel site.
@@ -40,6 +44,7 @@ APP_MARKERS = (
     "def marketing_demo_hub(",
     "def _marketize(",
     '@app.route("/media-buying")',
+    '@app.route("/media", strict_slashes=False)',
 )
 
 MIN_PAGE_BYTES = 2000  # every marketing page is a real page, not a stub
@@ -66,7 +71,8 @@ def main() -> int:
         if not path.is_file():
             problems.append(f"missing file: {rel}")
             continue
-        if marker not in path.read_text(encoding="utf-8", errors="replace"):
+        if marker is not None and marker not in path.read_text(
+                encoding="utf-8", errors="replace"):
             problems.append(f"marker not found in {rel}: {marker!r}")
 
     app_py = root / "app.py"
