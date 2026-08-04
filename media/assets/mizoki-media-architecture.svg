@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="t d">
+  <title id="t">MIZ OKI Media platform architecture</title>
+  <desc id="d">Four layers. Layer one, sources: media platforms, commerce, experience telemetry, inventory, and finance systems. Layer two, the MIZ OKI Decision Graph: evidence memory and operating context feed the seven-stage loop — sense, reason, plan, validate, decide, act, learn — which writes decision memory and outcome memory. Layer three, authority: policy checks and named human approval govern the loop. Layer four, execution: bounded actions dispatch back to the source systems, and realized outcomes flow back into the graph as the learning loop.</desc>
+
+  <rect width="1200" height="800" fill="#0A1418"/>
+
+  <!-- ===== layer 1: sources ===== -->
+  <text x="60" y="52" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" letter-spacing="2" fill="#93A7AE">SOURCES — THE SYSTEMS YOU ALREADY RUN</text>
+  <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="15" text-anchor="middle">
+    <rect x="60"  y="72" width="196" height="54" fill="#0B1E26" stroke="#223A44" stroke-width="2"/><text x="158" y="105" fill="#DBE7EB">Media platforms</text>
+    <rect x="282" y="72" width="196" height="54" fill="#0B1E26" stroke="#223A44" stroke-width="2"/><text x="380" y="105" fill="#DBE7EB">Commerce</text>
+    <rect x="504" y="72" width="196" height="54" fill="#0B1E26" stroke="#223A44" stroke-width="2"/><text x="602" y="105" fill="#DBE7EB">Experience</text>
+    <rect x="726" y="72" width="196" height="54" fill="#0B1E26" stroke="#223A44" stroke-width="2"/><text x="824" y="105" fill="#DBE7EB">Inventory</text>
+    <rect x="948" y="72" width="192" height="54" fill="#0B1E26" stroke="#223A44" stroke-width="2"/><text x="1044" y="105" fill="#DBE7EB">Finance</text>
+  </g>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#46606A"/>
+    </marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2A7A62"/>
+    </marker>
+  </defs>
+  <g stroke="#46606A" stroke-width="2">
+    <line x1="158"  y1="126" x2="360" y2="186" marker-end="url(#ar)"/>
+    <line x1="380"  y1="126" x2="480" y2="186" marker-end="url(#ar)"/>
+    <line x1="602"  y1="126" x2="600" y2="186" marker-end="url(#ar)"/>
+    <line x1="824"  y1="126" x2="720" y2="186" marker-end="url(#ar)"/>
+    <line x1="1044" y1="126" x2="840" y2="186" marker-end="url(#ar)"/>
+  </g>
+  <text x="600" y="176" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#6E8890">structured evidence with provenance</text>
+
+  <!-- ===== layer 2: the decision graph ===== -->
+  <rect x="60" y="196" width="1080" height="330" fill="#0B1E26" stroke="#3FDCF2" stroke-width="2"/>
+  <text x="84" y="232" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="15" letter-spacing="2" fill="#3FDCF2">THE MIZ OKI DECISION GRAPH</text>
+
+  <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" text-anchor="middle">
+    <rect x="96"  y="256" width="230" height="56" fill="#0F2530" stroke="#3FDCF2" stroke-width="2"/><text x="211" y="280" fill="#3FDCF2">Evidence memory</text>
+    <text x="211" y="300" font-size="11" fill="#93A7AE">source · time · provenance</text>
+    <rect x="96"  y="330" width="230" height="56" fill="#0F2530" stroke="#5FA0DC" stroke-width="2"/><text x="211" y="354" fill="#5FA0DC">Operating context</text>
+    <text x="211" y="374" font-size="11" fill="#93A7AE">entities · constraints · policies</text>
+    <rect x="96"  y="404" width="230" height="56" fill="#0F2530" stroke="#9D7BE8" stroke-width="2"/><text x="211" y="428" fill="#9D7BE8">Decision memory</text>
+    <text x="211" y="448" font-size="11" fill="#93A7AE">hypotheses · vetoes · approvals</text>
+    <rect x="850" y="330" width="230" height="56" fill="#0F2530" stroke="#41D695" stroke-width="2"/><text x="965" y="354" fill="#41D695">Outcome memory</text>
+    <text x="965" y="374" font-size="11" fill="#93A7AE">predicted vs. realized</text>
+  </g>
+
+  <!-- loop -->
+  <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle">
+    <circle cx="418" cy="358" r="30" fill="#0F2530" stroke="#3FDCF2" stroke-width="2.5"/><text x="418" y="363" fill="#3FDCF2">SEN</text>
+    <circle cx="502" cy="358" r="30" fill="#0F2530" stroke="#5FA0DC" stroke-width="2.5"/><text x="502" y="363" fill="#5FA0DC">REA</text>
+    <circle cx="586" cy="358" r="30" fill="#0F2530" stroke="#FF6B7C" stroke-width="2.5"/><text x="586" y="363" fill="#FF6B7C">PLA</text>
+    <circle cx="670" cy="358" r="30" fill="#0F2530" stroke="#D9A83C" stroke-width="2.5"/><text x="670" y="363" fill="#D9A83C">VAL</text>
+    <circle cx="754" cy="358" r="30" fill="#0F2530" stroke="#9D7BE8" stroke-width="2.5"/><text x="754" y="363" fill="#9D7BE8">DEC</text>
+  </g>
+  <text x="586" y="308" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#6E8890">SENSE → REASON → PLAN → VALIDATE → DECIDE → ACT → LEARN</text>
+  <g stroke="#46606A" stroke-width="2">
+    <line x1="326" y1="284" x2="388" y2="340" marker-end="url(#ar)"/>
+    <line x1="326" y1="358" x2="386" y2="358" marker-end="url(#ar)"/>
+    <line x1="326" y1="430" x2="388" y2="378" marker-end="url(#ar)"/>
+  </g>
+  <line x1="786" y1="358" x2="846" y2="358" stroke="#46606A" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- ===== layer 3: authority (right column) ===== -->
+  <rect x="60" y="560" width="520" height="130" fill="#0B1E26" stroke="#9D7BE8" stroke-width="2"/>
+  <text x="84" y="594" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" letter-spacing="2" fill="#9D7BE8">AUTHORITY — GOVERNS THE LOOP</text>
+  <g font-family="-apple-system, 'Segoe UI', Arial, sans-serif" font-size="14" fill="#DBE7EB">
+    <text x="84" y="626">Policy checks: margin floors · budget ceilings · brand and risk rules</text>
+    <text x="84" y="652">Named human approval above every autonomous ceiling</text>
+    <text x="84" y="678" fill="#93A7AE">Every pass, veto, and approval recorded — never silent</text>
+  </g>
+  <line x1="320" y1="558" x2="670" y2="392" stroke="#9D7BE8" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ar)"/>
+
+  <!-- ===== layer 4: execution ===== -->
+  <rect x="620" y="560" width="520" height="130" fill="#0B1E26" stroke="#41D695" stroke-width="2"/>
+  <text x="644" y="594" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" letter-spacing="2" fill="#41D695">EXECUTION — BOUNDED &amp; REVERSIBLE</text>
+  <g font-family="-apple-system, 'Segoe UI', Arial, sans-serif" font-size="14" fill="#DBE7EB">
+    <text x="644" y="626">Only authorized actions dispatch to the source systems</text>
+    <text x="644" y="652">Scoped · bounded · rollback path recorded before dispatch</text>
+    <text x="644" y="678" fill="#93A7AE">"No action" recorded with the same rigor as action</text>
+  </g>
+  <line x1="754" y1="392" x2="860" y2="558" stroke="#41D695" stroke-width="2" marker-end="url(#arg)"/>
+
+  <!-- learning return arc -->
+  <path d="M 1140 560 C 1185 420, 1185 300, 1140 240 C 1100 190, 900 160, 700 150" fill="none" stroke="#2A7A62" stroke-width="2.5" stroke-dasharray="6 7" marker-end="url(#arg)"/>
+  <text x="1176" y="392" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#41D695" transform="rotate(90 1176 392)" text-anchor="middle">realized outcomes return as new evidence</text>
+
+  <!-- footer -->
+  <text x="60" y="762" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#6E8890">MIZ OKI Media — Causal Growth Control · powered by the MIZ OKI Decision Graph · mizoki3.com/media</text>
+</svg>
