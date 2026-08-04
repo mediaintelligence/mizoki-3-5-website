@@ -183,6 +183,46 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
+### /media go-live + parity route-loss repair + media-aware drift guard (2026-08-04)
+
+Owner instruction: "Approved to go live in production mizoki3.com/media."
+Deployed via canonical `deploy-homepage.yml` run **#52** (typed `APPROVED`,
+sha `1577206`, green in ~110s). Production verified from the live domain:
+`/media` 200 with the owner's **MIZ OKI Media — Causal Growth Control** page;
+`/media/video/mizoki-signal-explainer.mp4` streams as seekable `video/mp4`
+(302 KB, `accept-ranges: bytes`); traversal probes (`..%2f`, unknown files)
+404; `/intelligence` + `/vision` 200 (the audit-fix routes for `/contact`'s
+dangling links — 404 before this deploy, so their flip proves the revision);
+blog clean routes + canonical-https feeds live; root still has ZERO
+`/marketing` references; `/media-buying` still 301s; covenant-veto API smoke
+`funnel.executed == 0`; `/api/health` healthy with admin login enabled.
+
+- **Defect caused, caught, and fixed pre-deploy (recorded honestly)**: the
+  2026-08-03 parity byte-copy (`4e2db84` in MIZOKICloudRun) overwrote
+  canonical `app.py` and silently dropped two concurrent commits' routes —
+  the owner's `/media` block (`9fb05d7`, which run `#51` had already put in
+  production) and the signal-rollout blog article routes + canonical-https
+  feed fix (`5ed94c5`). Caught during pre-deploy verification of this
+  go-live (a grep for the `/media` route on canonical main returned 0); a
+  deploy from main in that window would have taken `/media` DOWN. Nothing
+  broken was ever deployed. **Binding lesson: parity is a UNION merge, never
+  a byte-copy** — before copying `app.py` across repos, diff against the
+  other repo's HEAD for routes that exist only there.
+- **Fix**: rebuilt the verified union `app.py` — marketing site + `/media`
+  page + traversal-guarded asset route (suffix allowlist, resolved-path
+  prefix check) + blog routes + https feeds + `/intelligence` + `/vision` —
+  byte-identical in both repos (website PR `#26` = `38a1d65`; canonical
+  `1577206` auto-merged from `claude/media-route-restore-union`).
+- **Guard extended so this failure mode is structurally impossible**:
+  `scripts/check_marketing_surfaces.py` now also asserts `media/index.html`
+  (via its "Causal Growth Control" content marker), the explainer film file
+  on disk, and the `/media` route marker in `app.py` — gating BOTH deploy
+  pipelines (canonical `deploy-homepage.yml` and this repo's
+  `deploy-cloudrun.yml`) and running in-suite via `DriftGuardTestCase`.
+- Gates on the deployed tree: canon 20/20 · content-QA clean (self-test +
+  10 files) · marketing+media guard OK · suite **386** (only the 2
+  pre-existing homepage failures).
+
 ### Signal v2 capability site + doorman story rollout + truth-discipline CI gate (2026-08-03)
 
 Owner runbook (`drop/claude-code-prompt-signal-page-rollout.md`) executed in
