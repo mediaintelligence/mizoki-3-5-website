@@ -402,6 +402,15 @@ class HygieneTestCase(_AppTestCase):
         for path in MARKETING_PAGES:
             self.assertNotIn('href="#"', self.page(path), path)
 
+
+    def test_contact_linked_pages_are_routed(self) -> None:
+        # /contact links /intelligence and /vision; the 2026-08-03 audit found
+        # them unrouted (404 in production). The templates exist — serve them.
+        for path in ("/intelligence", "/vision"):
+            response = self.client.get(path)
+            self.assertEqual(200, response.status_code, path)
+            self.assertIn("MIZ OKI", response.get_data(as_text=True), path)
+
     def test_soft_sell_discipline_single_contact_cta(self) -> None:
         body = self.page()
         self.assertEqual(1, body.count("/contact?source=marketing"))

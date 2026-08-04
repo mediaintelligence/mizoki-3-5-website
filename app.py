@@ -678,6 +678,16 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         source = "".join(ch for ch in source if ch.isalnum() or ch in "-_")[:64]
         return render_template("contact.html", source=source)
 
+    # The contact page links these two; the templates existed but were never
+    # routed — the 2026-08-03 full-site audit found them 404ing in production.
+    @app.route("/intelligence")
+    def intelligence_page():
+        return render_template("intelligence.html")
+
+    @app.route("/vision")
+    def vision_page():
+        return render_template("vision.html")
+
     @app.route("/favicon.ico")
     def favicon_ico():
         # Pages link the SVG explicitly, but browsers, crawlers and older clients
