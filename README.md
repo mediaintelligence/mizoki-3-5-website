@@ -138,5 +138,20 @@ pages live, `/media-buying` 301 → `/marketing`.
   pipelines (this workflow and the website repo's `deploy-cloudrun.yml`);
   `DriftGuardTestCase` runs the same gate in the test suite; both repos are
   byte-identical on every meaningful surface (diff-verified).
-- **Tests**: `tests/test_marketing_site.py` (63) — suite 351, only the 2
+- **Tests**: `tests/test_marketing_site.py` (64) — suite 386, only the 2
   pre-existing homepage failures.
+
+## /media — media division film page (LIVE 2026-08-04)
+
+Owner-approved go-live (canonical `deploy-homepage.yml` run **#52**, typed
+`APPROVED`, sha `1577206`). `/media` serves `media/index.html` ("MIZ OKI
+Media — Causal Growth Control") and a traversal-guarded asset route
+(`/media/<path>`: suffix allowlist + resolved-path prefix check) streams
+`media/video/mizoki-signal-explainer.mp4` as seekable `video/mp4`.
+
+The drift guard (`scripts/check_marketing_surfaces.py`) now asserts the
+/media page marker, the film file, and the `app.py` route marker in BOTH
+deploy pipelines — added after a cross-repo parity byte-copy briefly dropped
+the /media + blog routes from canonical main (caught in pre-deploy
+verification, never deployed, restored as the verified union; full account
+in `CLAUDE.md`).
