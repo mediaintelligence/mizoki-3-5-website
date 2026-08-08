@@ -183,6 +183,48 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
+### MIZOKICloudRun: Virtuoso integration verified + security hardening arc closed (2026-08-08)
+
+Cross-repo work in **MIZOKICloudRun** (documented here because this repo's
+`mizoki_runtime/virtuoso.py` mirrors that package; canonical entry lives in
+MIZOKICloudRun's Claude memory system, `mem:` commit `895f7c56`). Arc, in order:
+
+- **`virtuoso_models` verify+integrate (owner's Steps 0–5 prompt):** independent
+  package audit found 4 real bugs (vendor-adapter `**kwargs` NameError, dispatcher
+  passing `system`/`tools` twice, jsonschema `ValidationError` leaking past the module
+  wrapper, sendgrid mapper poisoning identity-stitching with `sg_message_id` as email)
+  — all fixed, tests grown ~24→40. Registry bridge `src/shared/model_registry.py` got
+  `VIRTUOSO_SLOT_ROLES` (7 slots→roles; `claude_sonnet` formally **EXEMPT:general-fast-tier**
+  with an OPEN review trigger filed), lazy env resolution, and a boot guard. BigQuery
+  store fixed to STRUCT columns + STRING params (JSON-typed params double-encode).
+  Evidence trail in the repo's `REPORT.md`; live-proof runner
+  `scripts/virtuoso_live_proofs.py` merged (PR #606) — still needs a credentialed env.
+- **Dependabot sweep (1,561 alerts) + MDM:** Python fully resolved (uv-verified pins;
+  apache-beam held at 2.72.0 — 2.74.0 unsatisfiable on py3.11); npm down to two
+  documented runtime majors (OTel SDK 2.0, fastify 5). Master Decision Memorandum at
+  `docs/MDM-2026-07-06-dependency-security-remediation.md` (+ addendum).
+- **ANTHROPIC_API_KEY rollout:** canonical Secret Manager secret `anthropic-api-key`
+  wired into 11 more Cloud Run manifests (12/43 total incl. coding-moa) via PR #605.
+- **Auto-sync bot disabled (owner directive):** `auto-sync-main.yml` push trigger
+  removed — it auto-merged ANY non-AI branch to main with an `-X theirs` fallback.
+- **Launch:** deploy-router sweep after merges — 9/9 workflows green incl. the boss
+  SRPVDAL live test. `deploy-boss-bq-iam` unblocked after the owner granted the CI
+  deployer SA `roles/resourcemanager.projectIamAdmin` (Option A, terminal gcloud).
+- **Protected-path gate (the safeguard closing the loop, PR #637 → `9429070f`):**
+  because the deployer SA now holds projectIamAdmin, a workflow-file edit IS an IAM
+  change. New `.github/scripts/protected_path_gate.sh` blocks all four auto-merge
+  lanes when a branch touches `.github/**`, `deployment/terraform/**`,
+  `deployment/cloudbuild*`, or `CODEOWNERS` — blocked branches get a human-review PR
+  labeled `protected-path-review` instead of merging. Sole override: `auto-sync-main`'s
+  dispatch input `allow_protected` (literal `true` only); push lanes have none.
+  **Caveat:** push events run the *pushed ref's* workflow file, so branches cut before
+  the gate merge ungated until rebased onto main. Gate functionally tested in a scratch
+  repo and confirmed intact on `origin/main` after later `theirs`-strategy merges.
+
+**Still open:** run `PYTHONPATH=src python3 scripts/virtuoso_live_proofs.py` from an
+env with real vendor keys; OTel-2.0/fastify-5 staged migrations; VERIFY-vs-VALIDATE
+phase naming reconciliation; Boss decision on the `claude_sonnet` exemption.
+
 ### MIZ OKI Media standalone site LAUNCHED — /media Parts 2–4 (2026-08-04)
 
 Owner four-part deployment prompt executed in full and deployed on explicit
