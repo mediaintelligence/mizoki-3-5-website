@@ -25,6 +25,7 @@ from flask import (
 from functools import wraps
 
 from mizoki_runtime import BossRuntime, create_runtime
+from mizoki_runtime import connections
 from mizoki_runtime import (
     demo_capital,
     demo_counsel,
@@ -1079,6 +1080,65 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         session.pop("user", None)
         flash("You have been signed out.", "info")
         return redirect(url_for("admin_login_page"))
+
+    # ===== Admin: API connections (customer key management) =========
+    # ALWAYS session-gated, regardless of MIZOKI_REQUIRE_AUTH_FOR_APIS —
+    # this surface handles credentials.
+    def _require_admin_session():
+        if "user" not in session:
+            return (
+                jsonify(
+                    {
+                        "error": "authentication required",
+                        "hint": "Sign in at /admin/login to obtain a session cookie.",
+                    }
+                ),
+                401,
+            )
+        return None
+
+    @app.route("/admin/connections")
+    def admin_connections_page():
+        if "user" not in session:
+            return redirect(url_for("admin_login_page"))
+        return render_template(
+            "admin_connections.html", user_email=session.get("user")
+        )
+
+    @app.route("/api/admin/connections", methods=["GET"])
+    def api_connections_status():
+        denied = _require_admin_session()
+        if denied:
+            return denied
+        return jsonify({"connections": connections.connections_status()})
+
+    @app.route("/api/admin/connections/<provider_id>", methods=["POST", "DELETE"])
+    def api_connections_update(provider_id: str):
+        denied = _require_admin_session()
+        if denied:
+            return denied
+        try:
+            if request.method == "DELETE":
+                entry = connections.clear_key(provider_id)
+            else:
+                payload = request.get_json(silent=True) or {}
+                entry = connections.set_key(provider_id, payload.get("api_key", ""))
+        except connections.UnknownProviderError:
+            return jsonify({"error": f"unknown provider: {provider_id}"}), 404
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+        return jsonify({"connection": entry})
+
+    @app.route("/api/admin/connections/<provider_id>/verify", methods=["POST"])
+    def api_connections_verify(provider_id: str):
+        denied = _require_admin_session()
+        if denied:
+            return denied
+        try:
+            result = connections.verify_connection(provider_id)
+        except connections.UnknownProviderError:
+            return jsonify({"error": f"unknown provider: {provider_id}"}), 404
+        return jsonify({"verification": result})
 
     @app.route("/templates/<path:filename>")
     def serve_template(filename: str):
