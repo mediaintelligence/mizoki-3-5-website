@@ -36,6 +36,7 @@ SIGNAL_PAGES = (
     "/signal/creative",
     "/signal/audiences",
     "/signal/measurement",
+    "/shopify",
 )
 
 

@@ -183,6 +183,38 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
+### /shopify merchant homepage — parity port + Shopify offering docs (2026-08-09)
+
+Owner: "Build it" (mirror the MIZOKICloudRun Shopify offering into this repo).
+The canonical `/shopify` surface (LIVE on mizoki3.com since 2026-08-07 via
+owner-dispatched deploy #57) is now byte-identical here, per the binding
+union-merge parity rule:
+
+- **`shopify.html`** (13,585 B, byte-identical to canonical): the Net
+  Contribution Yield merchant homepage — "Other tools optimize the number
+  your ad platform reports. Mizoki optimizes the number your bank account
+  reports." PROVE → PROFIT → ANTICIPATE, Story 7 ledger, doorman story,
+  Preview framing throughout.
+- **`app.py` union**: canonical's `/shopify` + `/shopify.html` routes and
+  sitemap entry (lastmod 2026-08-07) added; the two repos' `app.py` now
+  differ ONLY by this repo's admin-connections block (ported to canonical in
+  the same arc — see MIZOKICloudRun PR).
+- **`scripts/content_qa.py` + `tests/test_content_qa.py`** synced from
+  canonical (superset): net-yield claim-ledger rules — "Quokka Swarm" banned
+  outright, Airbnb KL figures require attribution, 15-min/sub-second claims
+  need a "design target" label, net-yield copy needs Preview framing;
+  `/shopify` joins the scanned routes.
+- **`docs/marketing/`**: story bank → v1.1 (adds Story 7 net-yield + Story 8
+  cold-start); three Shopify offering docs copied (net-yield positioning +
+  claim ledger §2, democratizing-decision-intelligence v2.1 whitepaper with
+  LIVE/PARTIAL/PROPOSED labels, app-listing draft — still unpublished).
+- **Drift guard**: `check_marketing_surfaces.py` (kept byte-identical in
+  BOTH repos) now asserts `shopify.html` ("bank account reports" marker) and
+  the `/shopify` route marker — a parity copy can no longer drop the page.
+- **Tests**: suite **431**, only the 2 pre-existing homepage failures; canon
+  20/20; content_qa 12 files clean; drift guard OK; smoke `/shopify` +
+  `/shopify.html` + `/shopify/` all 200 (13,585 B) and sitemap listed.
+
 ### Admin API Connections page — customer key management (2026-08-09)
 
 Owner instruction ("tied to a front-end page where customers would be updating

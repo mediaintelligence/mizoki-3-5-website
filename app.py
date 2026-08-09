@@ -487,6 +487,13 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
     def signal_measurement():
         return serve_page("signal-measurement.html")
 
+    # Shopify-merchant homepage (owner-directed, 2026-08-07): a standalone
+    # landing surface — no other page links to or depends on it.
+    @app.route("/shopify", strict_slashes=False)
+    @app.route("/shopify.html")
+    def shopify():
+        return serve_page("shopify.html")
+
     @app.route("/risk")
     @app.route("/risk.html")
     def risk():
@@ -786,7 +793,7 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
         pages = [
             "/", "/counsel", "/estate", "/capital", "/signal", "/risk",
             "/signal/thresholds", "/signal/budget", "/signal/creative",
-            "/signal/audiences", "/signal/measurement",
+            "/signal/audiences", "/signal/measurement", "/shopify",
             "/pricing", "/executive-briefing/",
             "/marketing", "/marketing/engine", "/marketing/modules",
             "/marketing/simulator", "/marketing/walkthrough",
@@ -812,6 +819,8 @@ def create_app(runtime: BossRuntime | None = None) -> Flask:
             "/demo": "2026-08-03",
             "/demo/signal": "2026-08-03",
             "/executive-briefing/": "2026-08-03",
+            # Shopify-merchant homepage (owner-directed standalone surface).
+            "/shopify": "2026-08-07",
         }
         entries = []
         for path in pages:

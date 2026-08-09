@@ -35,6 +35,8 @@ REQUIRED = {
     # once dropped its routes — never again.
     "media/index.html": "Causal Growth Control",
     "media/video/mizoki-signal-explainer.mp4": None,
+    # /shopify merchant homepage (owner-directed go-live 2026-08-07).
+    "shopify.html": "bank account reports",
 }
 
 # app.py must still carry the routing layer for the parallel site.
@@ -45,6 +47,7 @@ APP_MARKERS = (
     "def _marketize(",
     '@app.route("/media-buying")',
     '@app.route("/media", strict_slashes=False)',
+    '@app.route("/shopify", strict_slashes=False)',
 )
 
 MIN_PAGE_BYTES = 2000  # every marketing page is a real page, not a stub
