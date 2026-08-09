@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Connections — MIZ OKI 3.5</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-0:#06070b; --bg-1:#0e1119; --bg-2:#161a25;
+      --ink:#f3f4f8; --ink-2:#a7adbb; --ink-3:#6b7280;
+      --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.16);
+      --accent:#7c5cff; --accent-2:#5FA0DC; --ok:#41D695; --warn:#D9A83C; --err:#FF6B7C;
+      --mono:'JetBrains Mono',monospace;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg-0);color:var(--ink);min-height:100vh;line-height:1.5}
+    .topbar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;
+      padding:14px 24px;background:rgba(6,7,11,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .brand{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}
+    .brand strong{color:var(--ink)}
+    .user{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--ink-2)}
+    .user a{color:var(--ink-2);text-decoration:none}
+    .user a:hover{color:var(--ink)}
+    .wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px}
+    h1{font-size:26px;font-weight:600;letter-spacing:-.01em;margin-bottom:6px}
+    .lede{color:var(--ink-2);margin-bottom:20px;max-width:72ch}
+    .notice{border:1px solid var(--line-2);border-left:3px solid var(--warn);border-radius:8px;
+      background:var(--bg-1);padding:14px 16px;font-size:13px;color:var(--ink-2);margin-bottom:28px;max-width:80ch}
+    .notice code{font-family:var(--mono);font-size:12px;color:var(--ink)}
+    h2{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--ink-3);margin:30px 0 12px}
+    .card{border:1px solid var(--line);border-radius:10px;background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%);
+      padding:18px 20px;margin-bottom:14px}
+    .row-head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between}
+    .pname{font-size:16px;font-weight:600}
+    .penv{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+    .pnotes{font-size:13px;color:var(--ink-2);margin:6px 0 12px;max-width:70ch}
+    .chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+      padding:3px 10px;border-radius:999px;border:1px solid var(--line-2)}
+    .chip.ok{color:var(--ok);border-color:rgba(65,214,149,.4)}
+    .chip.off{color:var(--ink-3)}
+    .chip.err{color:var(--err);border-color:rgba(255,107,124,.4)}
+    .chip.warn{color:var(--warn);border-color:rgba(217,168,60,.4)}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    input[type=password]{flex:1 1 260px;min-width:200px;background:var(--bg-0);border:1px solid var(--line-2);
+      border-radius:8px;color:var(--ink);font-family:var(--mono);font-size:13px;padding:9px 12px}
+    input[type=password]:focus{outline:none;border-color:var(--accent)}
+    button{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:8px;
+      border:1px solid var(--line-2);background:var(--bg-2);color:var(--ink);cursor:pointer}
+    button:hover{border-color:var(--accent)}
+    button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    button.ghost{color:var(--ink-3)}
+    button:disabled{opacity:.5;cursor:wait}
+    .result{font-family:var(--mono);font-size:12px;margin-top:10px;color:var(--ink-2);min-height:1em}
+    .result.ok{color:var(--ok)} .result.err{color:var(--err)}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">MIZ OKI 3.5 · <strong>API CONNECTIONS</strong></div>
+    <div class="user">
+      <span>{{ user_email }}</span>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/logout">Sign out</a>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>API Connections</h1>
+    <p class="lede">Update the credentials the platform uses to reach its model vendors and
+      outbound integrations. Keys are applied to the running service immediately — the Virtuoso
+      dispatcher and every adapter resolve credentials lazily, so the next call uses what you set here.</p>
+    <div class="notice">
+      <strong>Durability note:</strong> instances are ephemeral. A key set on this page lives until
+      the instance recycles. For permanent configuration, store it in Secret Manager and redeploy
+      (see <code>docs/PRODUCTION_SECRETS_SETUP.md</code>). Values are never displayed back —
+      status shows the last 4 characters only.
+    </div>
+
+    <h2>Model vendors (Virtuoso roles)</h2>
+    <div id="modelVendors"></div>
+
+    <h2>Other integrations</h2>
+    <div id="integrations"></div>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+    function el(tag, cls, text) {
+      var node = document.createElement(tag);
+      if (cls) node.className = cls;
+      if (text) node.textContent = text;
+      return node;
+    }
+    function chipFor(conn) {
+      if (!conn.configured) return el("span", "chip off", "not configured");
+      var label = conn.source === "runtime" ? "set this session · " + conn.masked : "from environment · " + conn.masked;
+      return el("span", "chip ok", label);
+    }
+    function render(list) {
+      var vendors = document.getElementById("modelVendors");
+      var integrations = document.getElementById("integrations");
+      vendors.textContent = "";
+      integrations.textContent = "";
+      list.forEach(function (conn) {
+        var card = el("div", "card");
+        var head = el("div", "row-head");
+        var left = el("div");
+        left.appendChild(el("span", "pname", conn.label));
+        left.appendChild(document.createTextNode("  "));
+        left.appendChild(el("span", "penv", conn.env_var));
+        head.appendChild(left);
+        head.appendChild(chipFor(conn));
+        card.appendChild(head);
+        var notes = conn.notes + (conn.roles && conn.roles.length ? " Roles: " + conn.roles.join(", ") + "." : "");
+        card.appendChild(el("p", "pnotes", notes));
+
+        var controls = el("div", "controls");
+        var input = el("input");
+        input.type = "password";
+        input.placeholder = "Paste new " + conn.env_var + " value";
+        input.autocomplete = "off";
+        var saveBtn = el("button", "primary", "Update key");
+        var verifyBtn = el("button", null, "Verify");
+        verifyBtn.disabled = !conn.verifiable || !conn.configured;
+        var clearBtn = el("button", "ghost", "Clear");
+        clearBtn.disabled = !conn.configured;
+        controls.appendChild(input);
+        controls.appendChild(saveBtn);
+        controls.appendChild(verifyBtn);
+        controls.appendChild(clearBtn);
+        card.appendChild(controls);
+        var result = el("div", "result");
+        card.appendChild(result);
+
+        saveBtn.addEventListener("click", function () {
+          if (!input.value.trim()) { result.className = "result err"; result.textContent = "Enter a key first."; return; }
+          saveBtn.disabled = true;
+          fetch("/api/admin/connections/" + conn.id, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ api_key: input.value })
+          }).then(function (r) { return r.json().then(function (b) { return { s: r.status, b: b }; }); })
+            .then(function (res) {
+              saveBtn.disabled = false;
+              if (res.s === 200) {
+                input.value = "";
+                result.className = "result ok";
+                result.textContent = "Key updated (" + res.b.connection.masked + "). Verify to confirm it works.";
+                refresh();
+              } else {
+                result.className = "result err";
+                result.textContent = res.b.error || ("Update failed (HTTP " + res.s + ")");
+              }
+            }).catch(function () { saveBtn.disabled = false; result.className = "result err"; result.textContent = "Network error."; });
+        });
+
+        verifyBtn.addEventListener("click", function () {
+          verifyBtn.disabled = true;
+          result.className = "result";
+          result.textContent = "Verifying against the provider…";
+          fetch("/api/admin/connections/" + conn.id + "/verify", { method: "POST" })
+            .then(function (r) { return r.json(); })
+            .then(function (body) {
+              verifyBtn.disabled = false;
+              var v = body.verification || {};
+              result.className = v.ok ? "result ok" : "result err";
+              result.textContent = (v.ok ? "✓ " : "✗ ") + (v.detail || "no detail") +
+                (v.http_status ? " (HTTP " + v.http_status + ")" : "");
+            }).catch(function () { verifyBtn.disabled = false; result.className = "result err"; result.textContent = "Network error."; });
+        });
+
+        clearBtn.addEventListener("click", function () {
+          fetch("/api/admin/connections/" + conn.id, { method: "DELETE" })
+            .then(function (r) { return r.json(); })
+            .then(function () { result.className = "result"; result.textContent = "Key cleared for this instance."; refresh(); })
+            .catch(function () { result.className = "result err"; result.textContent = "Network error."; });
+        });
+
+        (conn.group === "model-vendor" ? vendors : integrations).appendChild(card);
+      });
+    }
+    function refresh() {
+      fetch("/api/admin/connections")
+        .then(function (r) { return r.json(); })
+        .then(function (body) { render(body.connections || []); })
+        .catch(function () {
+          document.getElementById("modelVendors").textContent = "Failed to load connection status.";
+        });
+    }
+    refresh();
+  })();
+  </script>
+</body>
+</html>

@@ -183,6 +183,38 @@ python -m unittest discover tests   # includes test_demo_platform, test_demo_cap
 
 ## Recent Work (August 2026)
 
+### Admin API Connections page — customer key management (2026-08-09)
+
+Owner instruction ("tied to a front-end page where customers would be updating
+all of these and other API [keys]"). New auth-gated surface where a signed-in
+admin updates the platform's outbound credentials at runtime:
+
+- **`/admin/connections`** (`templates/admin_connections.html`, night-dossier
+  admin styling, linked from the dashboard topbar): one card per provider —
+  the four Virtuoso model vendors (Anthropic `ANTHROPIC_API_KEY`, Google
+  `GEMINI_API_KEY`, OpenAI `OPENAI_API_KEY`, xAI `XAI_API_KEY`, each labeled
+  with its role) plus SendGrid, Meta Marketing, and Google Ads (status-only —
+  a developer token can't be checked without OAuth). Paste-key → Update,
+  live **Verify** (round-trip to the provider's own `/models`-style endpoint),
+  Clear.
+- **`mizoki_runtime/connections.py`**: provider registry + `set_key` (writes
+  `os.environ`, so the lazily-resolving Virtuoso dispatcher picks it up on
+  the next call), `verify_connection` (injectable opener, 8s timeout),
+  masking. **Bright lines, test-enforced:** full key values are NEVER
+  returned, logged, or persisted to disk (status shows last 4 chars only);
+  keys travel only to the provider's own API host; every endpoint AND the
+  page are admin-session-gated regardless of `MIZOKI_REQUIRE_AUTH_FOR_APIS`.
+- **Flask**: `GET /admin/connections`, `GET /api/admin/connections`,
+  `POST|DELETE /api/admin/connections/<id>`, `POST
+  /api/admin/connections/<id>/verify`.
+- **Durability honesty**: Cloud Run instances are ephemeral — the page says
+  out loud that a pasted key lives until the instance recycles and permanent
+  config belongs in Secret Manager (`docs/PRODUCTION_SECRETS_SETUP.md`).
+  Registry coverage of all Virtuoso `api_key_env`s is itself a test, so a
+  new vendor role can't ship without a connections row.
+- **Tests**: `tests/test_connections.py` (16) — suite **431** with only the
+  2 pre-existing homepage failures.
+
 ### MIZOKICloudRun: Virtuoso integration verified + security hardening arc closed (2026-08-08)
 
 Cross-repo work in **MIZOKICloudRun** (documented here because this repo's
