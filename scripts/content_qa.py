@@ -8,10 +8,16 @@ file violates the rollout's truth discipline:
   A. BANNED STRINGS — "mind-reading" and "guaranteed" as affirmative claims
      (negated uses such as "not mind-reading" / "never a guaranteed outcome"
      are the discipline itself and stay legal), plus any present-tense claim
-     that intent prediction / ORACLE is deployed for customers.
+     that intent prediction / ORACLE — or net-yield pricing/bidding — is
+     deployed for customers. Claim-ledger bans (signal-net-yield rollout,
+     per docs/marketing/mizoki-shopify-net-yield-positioning.md §2):
+     "Quokka Swarm" anywhere; Airbnb's published KL-divergence figures
+     (4.95 → 0.66 / 0.04) in a section that does not attribute them to
+     Airbnb; 15-minute-cycle / sub-second claims in a section without a
+     "design target" label.
   B. PREVIEW FRAMING — every section that mentions ORACLE / anticipatory or
-     latent intent must carry the "Preview · in development" framing string
-     in that same section.
+     latent intent — or net yield / net contribution — must carry the
+     "Preview · in development" framing string in that same section.
   C. NUMBER LABELING — every percentage or multiplier visible in a section
      must share that section with an honesty label: "illustrative" or
      "composite" for scenario numbers, "operating default" / "operating
@@ -51,6 +57,9 @@ SCOPE_FILES = [
     "demo-signal.html",
     "blog/doorman-problem.html",
     "executive-briefing/js/data.js",
+    "shopify.html",
+    # Customer-facing draft copy is scoped even before it is published anywhere.
+    "docs/marketing/shopify-app-listing-copy.md",
     # docs/marketing/signal-story-bank.md is deliberately NOT scoped: it is the
     # rulebook these checks implement, so it must quote banned phrases to define
     # them ("no present-tense deployment claims until ORACLE is live") and is
@@ -66,6 +75,7 @@ SEC_MARK_PAGES = [
     "signal-creative.html",
     "signal-audiences.html",
     "signal-measurement.html",
+    "shopify.html",
 ]
 
 # --- check A: banned strings -------------------------------------------------
@@ -85,6 +95,28 @@ DEPLOYED_INTENT = [
     re.compile(r"intent (?:prediction|inference|scoring) (?:is )?(?:deployed|live|in production)", re.I),
 ]
 
+# Present-tense claims that net-yield pricing/bidding/writeback is customer-
+# deployed. The capability is scaffolded behind NET_YIELD_WRITEBACK=false and
+# stays "Preview · in development" until a real pilot writes verified numbers.
+DEPLOYED_NET_YIELD = [
+    re.compile(r"net[\s-]?(?:yield|contribution)(?: \w+){0,2} is "
+               r"(?:live|deployed|running|in production|shipping)", re.I),
+    re.compile(r"(?:now|already) bid(?:s|ding)? on net[\s-]?contribution", re.I),
+]
+
+# Claim-ledger bans (positioning doc §2). "Quokka Swarm" is an unvalidated
+# novelty term — banned outright on customer surfaces. The KL-divergence trio
+# is Airbnb's published research: legal only in a section that names Airbnb.
+# 15-minute cycles / sub-second latency are design targets, never observed
+# performance — the section must say "design target".
+QUOKKA = re.compile(r"quokka\s+swarm", re.I)
+AIRBNB_KL_HEADLINE = re.compile(r"\b4\.95\b")
+KL_CONTEXT = re.compile(r"KL[\s-]?divergence", re.I)
+KL_SECONDARY = re.compile(r"\b0\.66\b|\b0\.04\b")
+AIRBNB_ATTRIBUTION = re.compile(r"airbnb", re.I)
+OBSERVED_PERF = re.compile(r"15[\s-]?minute|sub[\s-]?second", re.I)
+DESIGN_TARGET_LABEL = re.compile(r"design\s+target", re.I)
+
 # --- check B: preview framing ------------------------------------------------
 
 INTENT_TRIGGER = re.compile(
@@ -93,6 +125,10 @@ INTENT_TRIGGER = re.compile(
     re.I,
 )
 PREVIEW_FRAMING = re.compile(r"preview\s*(?:[·—–-]|&#183;|&middot;)\s*in development", re.I)
+
+# Net-yield / net-contribution copy carries the same framing obligation as
+# intent copy until the pilot flips the label (positioning doc claim ledger).
+NET_YIELD_TRIGGER = re.compile(r"net[\s-]?yield|net[\s-]?contribution", re.I)
 
 # --- check C: number labeling ------------------------------------------------
 
@@ -140,7 +176,11 @@ def _sections(rel_path: str, raw: str) -> list[tuple[str, str]]:
         parts = re.split(r"(?m)^(#{1,3} .+)$", raw)
         chunks = [("intro", parts[0])]
         for i in range(1, len(parts), 2):
-            chunks.append((parts[i].strip("# ").strip(), parts[i + 1] if i + 1 < len(parts) else ""))
+            title = parts[i].strip("# ").strip()
+            body = parts[i + 1] if i + 1 < len(parts) else ""
+            # The heading is customer-visible text of the section it opens, so
+            # labels/framing carried in the heading count for that section.
+            chunks.append((title, f"{title}\n{body}"))
         return chunks
     # HTML: chunk on <section boundaries; the head/nav before the first
     # section is its own chunk.
@@ -163,13 +203,21 @@ def check_file(rel_path: str, raw: str) -> list[str]:
         for m in pattern.finditer(visible_whole):
             ctx = visible_whole[max(0, m.start() - 40): m.end() + 40].strip()
             findings.append(f"{rel_path} :: banned-string :: {label}: …{' '.join(ctx.split())}…")
-    for pattern in DEPLOYED_INTENT:
-        for m in pattern.finditer(visible_whole):
-            ctx = visible_whole[max(0, m.start() - 40): m.end() + 40].strip()
-            findings.append(
-                f"{rel_path} :: banned-string :: present-tense deployed-intent claim: "
-                f"…{' '.join(ctx.split())}…"
-            )
+    for patterns, label in ((DEPLOYED_INTENT, "deployed-intent"),
+                            (DEPLOYED_NET_YIELD, "deployed-net-yield")):
+        for pattern in patterns:
+            for m in pattern.finditer(visible_whole):
+                ctx = visible_whole[max(0, m.start() - 40): m.end() + 40].strip()
+                findings.append(
+                    f"{rel_path} :: banned-string :: present-tense {label} claim: "
+                    f"…{' '.join(ctx.split())}…"
+                )
+    for m in QUOKKA.finditer(visible_whole):
+        ctx = visible_whole[max(0, m.start() - 40): m.end() + 40].strip()
+        findings.append(
+            f"{rel_path} :: banned-string :: \"Quokka Swarm\" (unvalidated novelty term): "
+            f"…{' '.join(ctx.split())}…"
+        )
 
     # B + C — per section
     for name, text in _sections(rel_path, raw):
@@ -177,6 +225,23 @@ def check_file(rel_path: str, raw: str) -> list[str]:
             findings.append(
                 f"{rel_path} :: preview-framing :: section '{name}' mentions intent/ORACLE "
                 f"without 'Preview · in development' framing"
+            )
+        if NET_YIELD_TRIGGER.search(text) and not PREVIEW_FRAMING.search(text):
+            findings.append(
+                f"{rel_path} :: preview-framing :: section '{name}' mentions net yield / "
+                f"net contribution without 'Preview · in development' framing"
+            )
+        if (AIRBNB_KL_HEADLINE.search(text)
+                or (KL_CONTEXT.search(text) and KL_SECONDARY.search(text))):
+            if not AIRBNB_ATTRIBUTION.search(text):
+                findings.append(
+                    f"{rel_path} :: claim-ledger :: section '{name}' quotes the KL-divergence "
+                    f"figures without attributing them to Airbnb's published research"
+                )
+        if OBSERVED_PERF.search(text) and not DESIGN_TARGET_LABEL.search(text):
+            findings.append(
+                f"{rel_path} :: claim-ledger :: section '{name}' states 15-minute / "
+                f"sub-second performance without a 'design target' label"
             )
         numbers = NUMBER.findall(text)
         if numbers and not NUMBER_LABEL.search(text):
@@ -219,6 +284,10 @@ SEEDED_BAD = """<html><head><title>seed</title></head><body>
 <section id="s2"><p class="mark sec-mark">§03</p>
 <p>ORACLE is live and already predicting intent for every visitor.</p></section>
 <section id="s3"><p>Customers see a 37% lift and 2.4× return.</p></section>
+<section id="s4"><p>Net-yield bidding is live: our Quokka Swarm inspector
+already bids on net-contribution for every store.</p></section>
+<section id="s5"><p>KL divergence fell from 4.95 to 0.66 in our tests,
+refreshed on 15-minute cycles.</p></section>
 </body></html>"""
 
 SEEDED_CLEAN = """<html><head><title>seed</title></head><body>
@@ -228,6 +297,10 @@ SEEDED_CLEAN = """<html><head><title>seed</title></head><body>
 <section id="s2"><p class="mark sec-mark">§02</p>
 <p>A composite scenario: 37% of spend was non-incremental (illustrative).</p>
 <p>The 10% daily cap is an operating default.</p></section>
+<section id="s3"><p>Net contribution pricing — Preview · in development —
+runs on a 15-minute cycle as a design target, not observed performance.
+Airbnb's published research reported KL divergence of 4.95 falling to 0.66;
+those are Airbnb's figures, never quoted as ours.</p></section>
 </body></html>"""
 
 
@@ -237,6 +310,12 @@ def run_self_test() -> bool:
         "banned mind-reading": any("mind-reading" in f for f in bad),
         "banned guaranteed": any("guaranteed" in f for f in bad),
         "deployed-intent claim": any("deployed-intent" in f for f in bad),
+        "deployed-net-yield claim": any("deployed-net-yield" in f for f in bad),
+        "banned quokka-swarm": any("Quokka Swarm" in f for f in bad),
+        "unattributed KL figures": any("KL-divergence" in f for f in bad),
+        "unlabeled observed-perf": any("design target" in f for f in bad),
+        "net-yield preview framing": any(
+            "preview-framing" in f and "net" in f for f in bad),
         "preview framing": any("preview-framing" in f for f in bad),
         "number label": any("number-label" in f for f in bad),
         "sec sequence": any("sec-sequence" in f for f in bad),

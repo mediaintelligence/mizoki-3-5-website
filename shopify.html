@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZOKI3 — Shopify · The Number Your Bank Account Reports</title>
+<meta name="description" content="Other tools optimize the number your ad platform reports. Mizoki optimizes the number your bank account reports — proof-first acquisition intelligence for Shopify merchants.">
+<meta name="theme-color" content="#0A1418">
+<meta property="og:title" content="MIZOKI3 — Shopify · The Number Your Bank Account Reports">
+<meta property="og:description" content="Enterprise platforms have quant departments; you have dashboards that grade their own homework. Mizoki closes that gap: prove, profit, anticipate — with receipts.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizoki3.com/shopify">
+<meta property="og:image" content="https://mizoki3.com/assets/img/og/og-signal.svg">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/img/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<style>
+:root{
+  --ink:#0A1418;      /* dossier ground */
+  --ink-2:#0E1B20;    /* raised panel */
+  --rule:#1B2E34;     /* hairline */
+  --seam:#3FD8D0;     /* Signal Factory cyan seam */
+  --caution:#E4A34A;  /* vetoed / anticipated */
+  --paper:#DCE6E6;    /* body text */
+  --paper-dim:#7E9599;/* captions */
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Helvetica Neue",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body.sig{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);
+  font-size:17px;line-height:1.6;letter-spacing:-.005em;
+  background-image:linear-gradient(180deg,#0C171C 0%,var(--ink) 60%)}
+.sig .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+.sig a{color:inherit}
+.sig h1,.sig h2,.sig h3{letter-spacing:-.03em;line-height:1.08;margin:0;font-weight:600}
+.sig h1{font-size:clamp(2.1rem,5vw,3.6rem)}
+.sig h2{font-size:clamp(1.65rem,3.3vw,2.5rem)}
+.sig h3{font-size:1.06rem;letter-spacing:-.01em}
+.sig em{font-style:italic;color:var(--seam)}
+.sig .mark{font-family:var(--mono);font-size:.66rem;letter-spacing:.20em;
+  text-transform:uppercase;color:var(--paper-dim)}
+.sig .sec-mark{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.sig .sec-mark::after{content:"";flex:1;height:1px;background:var(--rule)}
+.sig .tag{display:inline-block;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--caution);
+  border:1px solid var(--caution);padding:4px 9px;vertical-align:middle;margin-left:10px}
+.sig .strip{border-bottom:1px solid var(--rule);background:rgba(10,20,24,.92);
+  position:sticky;top:0;z-index:20;backdrop-filter:blur(9px)}
+.sig .strip .wrap{display:flex;align-items:center;justify-content:space-between;
+  gap:18px;height:56px;flex-wrap:wrap}
+.sig .brand{font-family:var(--mono);font-size:.82rem;letter-spacing:.24em;
+  text-decoration:none;font-weight:600}
+.sig nav{display:flex;gap:20px;flex-wrap:wrap}
+.sig nav a{font-family:var(--mono);font-size:.66rem;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--paper-dim);text-decoration:none}
+.sig nav a:hover,.sig nav a:focus-visible{color:var(--seam)}
+.sig section{padding:78px 0;border-bottom:1px solid var(--rule)}
+.sig .lede{font-size:1.14rem;color:var(--paper-dim);max-width:62ch;margin-top:20px}
+.sig .hero{padding:92px 0 72px}
+.sig .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px}
+.sig .btn{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;text-decoration:none;padding:14px 22px;border:1px solid var(--seam);
+  color:var(--seam);transition:background .18s,color .18s}
+.sig .btn:hover,.sig .btn:focus-visible{background:var(--seam);color:var(--ink)}
+.sig .btn.ghost{border-color:var(--rule);color:var(--paper-dim)}
+.sig .btn.ghost:hover,.sig .btn.ghost:focus-visible{border-color:var(--paper-dim);
+  background:transparent;color:var(--paper)}
+.sig .grid{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:34px}
+.sig .g2{grid-template-columns:repeat(2,1fr)}
+.sig .g3{grid-template-columns:repeat(3,1fr)}
+.sig .cell{background:var(--ink);padding:26px 24px}
+.sig .cell p{margin:10px 0 0;color:var(--paper-dim);font-size:.95rem}
+.sig .ledger{margin-top:38px;border:1px solid var(--rule);background:var(--ink-2)}
+.sig .ledger-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 18px;border-bottom:1px solid var(--rule)}
+.sig .ledger-row{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:15px 18px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:.85rem}
+.sig .ledger-row:last-child{border-bottom:0}
+.sig .ledger-row .neg{color:var(--caution)}
+.sig .ledger-row .pos{color:var(--seam)}
+.sig .note{margin-top:26px;padding:16px 18px;border:1px solid var(--rule);
+  background:var(--ink-2);color:var(--paper-dim);font-size:.92rem}
+.sig footer{padding:44px 0 64px}
+.sig footer .wrap{display:flex;gap:44px;flex-wrap:wrap;justify-content:space-between}
+.sig footer a{display:block;color:var(--paper-dim);text-decoration:none;
+  font-size:.9rem;margin-top:8px}
+.sig footer a:hover{color:var(--seam)}
+@media (max-width:760px){.sig .g2,.sig .g3{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){.sig *{transition:none!important}}
+</style>
+</head>
+<body class="sig">
+
+<header class="strip">
+  <div class="wrap">
+    <a class="brand" href="/">MIZOKI3</a>
+    <nav aria-label="Primary">
+      <a href="/signal">Signal</a>
+      <a href="/demo/signal">Live demo</a>
+      <a href="/executive-briefing/">Executive briefing</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══ HERO — THE ASYMMETRY ═══ -->
+<section class="hero">
+  <div class="wrap">
+    <p class="mark sec-mark">§01 · The asymmetry</p>
+    <h1>Other tools optimize the number your ad platform reports.<br>
+      <em>Mizoki optimizes the number your bank account reports.</em></h1>
+    <p class="lede">Enterprise platforms have quant departments. You have dashboards that grade
+      their own homework — every ad platform reports the conversions that happened after its own
+      ads, and none of them tell you which orders were coming anyway, or what an order actually
+      nets after components, packing, shipping, fees, and returns. Mizoki closes that gap with
+      experiments and a ledger, not a prettier report.</p>
+    <div class="cta-row">
+      <a class="btn" href="/demo/signal">Run the live demo</a>
+      <a class="btn ghost" href="/signal">See the Signal division</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STORY 7 — THE BUNDLE ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§02 · The bundle that lost money — composite scenario · illustrative numbers</p>
+    <h2>Revenue up. Cash down. <em>The hero product hid its own costs.</em></h2>
+    <p class="lede">Their $180 bundle was the best seller, and cash kept shrinking. Signal priced
+      every order at what it truly nets — components, packing, dimensional shipping, payment
+      fees, and the returns coming back.</p>
+    <div class="ledger" role="table" aria-label="Composite net-contribution ledger: the hero bundle netted between minus two and sixteen dollars per order; the single SKU netted thirty-one dollars.">
+      <div class="ledger-head"><span class="mark">The ledger — what each order truly netted</span>
+        <span class="mark">composite · illustrative</span></div>
+      <div class="ledger-row"><span>Hero bundle · a third of them boomeranged</span>
+        <span class="neg">−$2 to $16 per order</span></div>
+      <div class="ledger-row"><span>The "boring" single SKU · almost never returned</span>
+        <span class="pos">$31 per order</span></div>
+    </div>
+    <p class="lede">When net-yield bidding ships, the bidding signal switches from checkout
+      revenue to net contribution, and the ad platforms start hunting buyers who keep what they
+      buy. Revenue flattens. Cash grows.</p>
+    <p class="note"><strong>Stated plainly:</strong> net-yield pricing and bidding are
+      Preview · in development — nothing here claims they are deployed, and the label flips only
+      after a real pilot writes verified numbers. Returns of 25–40% in apparel are an industry
+      statistic, not a customer result (composite scenario).</p>
+  </div>
+</section>
+
+<!-- ═══ STORY 1 — THE DOORMAN ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§03 · The doorman — composite scenario · illustrative numbers</p>
+    <h2>How much of your retargeting was <em>already walking through the door?</em></h2>
+    <p class="lede">Your dashboard says retargeting returns 8x (illustrative). The question it
+      can't answer: how many of those people were coming back anyway? One team let us quietly
+      hold the ads back from a small, identical slice of shoppers. That slice bought almost as
+      often as everyone else — the real return was about 1.4x (illustrative). They cut the
+      channel by a third, moved the money to net-new customers, and revenue held. You were paying
+      a doorman to open a door people were already walking through.</p>
+  </div>
+</section>
+
+<!-- ═══ TODAY ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§04 · What you get today</p>
+    <h2>Proof, not attribution theatre.</h2>
+    <div class="grid g3">
+      <div class="cell">
+        <h3>The caused-vs-anticipated ledger</h3>
+        <p>Holdouts, ghost bids, and matched-market experiments on your actual spend — which
+          conversions your money caused, and which were coming anyway, with confidence intervals
+          printed on the slide.</p>
+      </div>
+      <div class="cell">
+        <h3>One canonical event stream</h3>
+        <p>Shopify orders, Google Ads, Meta, and lifecycle email emit the same governed business
+          event — evidence to reason over, not eight vendor exports to reconcile.</p>
+      </div>
+      <div class="cell">
+        <h3>A governed loop that earns trust</h3>
+        <p>Starts in observe-only and earns spend authority the way you'd let a new hire earn it.
+          Never a guaranteed outcome — always a decision with a receipt and a rollback token.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ROADMAP — PREVIEW ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§05 · On the roadmap</p>
+    <h2>Prove → Profit → Anticipate <span class="tag">Preview · in development</span></h2>
+    <p class="lede">Prove is live in the ledger above. The next two acts are built in the open
+      and labeled honestly until a pilot verifies them.</p>
+    <div class="grid g2">
+      <div class="cell">
+        <h3>Net contribution, not top line</h3>
+        <p>Your real economics — landed component costs, pick-and-pack, shipping, fees, and the
+          returns that quietly turn winning campaigns into losing ones — priced into every order
+          from your own cost inputs, never invented defaults. After your pilot proves it, those
+          net-contribution values feed the ad platforms' own bidders, recommend-only first.</p>
+      </div>
+      <div class="cell">
+        <h3>Anticipatory intent</h3>
+        <p>Reading where a shopper is heading before they raise their hand — anticipatory
+          modeling of consented behavior, not mind-reading. By house rule, acting on a prediction
+          always runs against a held-out comparison: the prediction never grades itself.</p>
+      </div>
+    </div>
+    <p class="note"><strong>Stated plainly:</strong> both cards above are Preview · in
+      development, not deployed. Signal uses no microphone or audio signals of any kind — not
+      now, not on the roadmap.</p>
+  </div>
+</section>
+
+<!-- ═══ SEE IT RUN ═══ -->
+<section>
+  <div class="wrap">
+    <p class="mark sec-mark">§06 · See it run</p>
+    <h2>Watch a real decision earn its receipt.</h2>
+    <p class="lede">The live demo runs the actual pipeline — including the veto most demos hide.
+      No pressure, no forms first: run it, replay it, then talk to us if it's your Tuesday.</p>
+    <div class="cta-row">
+      <a class="btn" href="/demo/signal">Run the Signal Factory demo</a>
+      <a class="btn ghost" href="/executive-briefing/">Executive briefing</a>
+      <a class="btn ghost" href="/contact?source=shopify-page">Talk to us</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p class="mark">MIZOKI3 · Shopify</p>
+      <p style="max-width:36ch;color:var(--paper-dim);font-size:.9rem;margin:10px 0 0">
+        Proof-first acquisition intelligence for merchants. Composite scenarios carry
+        illustrative numbers; preview capabilities stay preview until a pilot writes verified
+        numbers.</p>
+    </div>
+    <div>
+      <p class="mark">Explore</p>
+      <a href="/signal">Signal division</a>
+      <a href="/demo/signal">Live demo</a>
+      <a href="/executive-briefing/">Executive briefing</a>
+    </div>
+    <div>
+      <p class="mark">Company</p>
+      <a href="/">Home</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

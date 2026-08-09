@@ -1,11 +1,11 @@
-# Signal Intelligence — Customer Story Bank v1.0
-*Composite field notes for sales, briefing deck, site, and content. All numbers illustrative until replaced by verified pilots.*
+# Signal Intelligence — Customer Story Bank v1.1
+*Composite field notes for sales, briefing deck, site, and content. All numbers illustrative until replaced by verified pilots. v1.1 adds Stories 7–8 (net yield, cold start) per the Shopify/Net Contribution positioning.*
 
 ## The rules (non-negotiable)
 1. **Label honestly.** Every story is a "composite scenario, illustrative numbers" until a real customer signs off on a named case study. Never invent company names, logos, or quotes attributed to people.
 2. **One grammar, every story:** *their question → the quiet test → what the ledger showed → what changed.* Repetition teaches the product without a glossary.
-3. **Translate, don't define.** Holdout = "we quietly kept the ads away from a small identical slice." Ghost bids = "we noted the exact moments an ad *would* have shown — without showing it." Incrementality = "what your money actually caused." Confidence interval = "how sure we are, printed on the slide."
-4. **Preview capabilities stay preview.** Intent prediction stories are told in future tense ("when this ships, here's how that morning goes") until Cells 28/33/34/35 are live.
+3. **Translate, don't define.** Holdout = "we quietly kept the ads away from a small identical slice." Ghost bids = "we noted the exact moments an ad *would* have shown — without showing it." Incrementality = "what your money actually caused." Net contribution = "what an order actually nets after everything it costs you." Confidence interval = "how sure we are, printed on the slide."
+4. **Preview capabilities stay preview.** Intent prediction (Story 6), net-yield bidding (Story 7), and cold-start seeding (Story 8) are told with in-development framing until their cells ship. Research-backed approaches cite the research; published results from other companies (e.g., Airbnb's synthetic-data metrics) are NEVER presented as ours.
 5. **Never a guaranteed outcome.** Stories end in decisions and receipts, not promised percentages for the listener.
 
 ---
@@ -46,16 +46,32 @@
 **Metaphor:** *the prediction never grades itself.*
 **Required framing:** "in development / preview" — no present-tense deployment claims until ORACLE is live.
 
+## Story 7 — The Bundle That Lost Money (net yield — PREVIEW)
+**Persona:** Shopify founder / DTC operator. **Pain:** revenue up, cash down; the hero product hides its own costs.
+**30-second talk track:** "Their $180 bundle was the best seller, and cash kept shrinking. Signal priced every order at what it truly nets — components, packing, dimensional shipping, payment fees, and the returns coming back. The ledger said the hero bundle netted somewhere between minus two and sixteen dollars an order once a third of them boomeranged. The boring single SKU netted thirty-one and almost never returned. So the bidding signal switched from checkout revenue to net contribution, and the ad platforms started hunting buyers who keep what they buy. Revenue flattened. Cash grew."
+**Metaphor:** *the dashboard applauded the bundle; the bank account preferred the boring one.*
+**Objection:** "our ROAS is fine." (ROAS can't see your returns, your packing line, or your shipping surcharges.)
+**Required framing:** net-yield bidding is "in development / preview"; return-rate context (25–40% in apparel) cited as industry data, not customer result.
+
+## Story 8 — Day One (cold start — PREVIEW)
+**Persona:** new Shopify store / new SKU launch. **Pain:** every tool says "come back when you have data"; platform learning phases burn the launch budget.
+**30-second talk track:** "New stores get told to pay for weeks of 'learning phase' — random exploration billed at full price. Instead, Mizoki seeds the targeting models with statistically realistic synthetic shoppers built from the catalog itself, an approach drawn from published enterprise research, then lets real signals take over as they arrive. The expensive exploration compresses, and the first ad dollar goes out with a hypothesis behind it instead of a shrug."
+**Metaphor:** *new stores don't lack intelligence — they lack history, and history can be scaffolded.*
+**Objection:** "AI tools need our data first."
+**Required framing:** "in development / preview"; the approach follows published work (Airbnb synthetic search data, Amazon COSMO) — their published metrics are theirs, never quoted as ours.
+
 ---
 
 ## Where each story goes
 | Surface | Stories | Format |
 |---|---|---|
 | signal.html §03 Field Notes | 1, 2, 3, 4 | Card grid (built — signal-field-notes-section.html) |
-| Executive briefing (~9 min) | 1 → 4 → 5 | One per act: waste → defense → trust |
-| Sales discovery call | Match to persona pain, one story max, then ask "which of these is your Tuesday?" |
+| signal.html roadmap/preview section | 6, 7 (as capability cards) | Preview-tagged cards (built in signal-v2.1) |
+| Shopify app listing / partner copy | 7 lead, then 1 | One-liner + story 7 opener |
+| Executive briefing (~9 min) | Acts: PROVE (1) → PROFIT (7) → ANTICIPATE (6); 4 & 5 as supporting beats | One per act |
+| Sales discovery call | Match persona pain, one story max, then ask "which of these is your Tuesday?" |
 | Blog / LinkedIn | One story per post, ledger grammar intact |
 | Demo hub intro | Story 1 as the setup for the Signal Factory run |
 
 ## Upgrade path
-When a real pilot completes: replace the illustrative number with the measured one, get written customer approval, relabel that story "pilot result," and move it to the top of every surface. One verified story outranks six composites — and the honesty of the composite labeling is what makes the first verified one believable.
+When a real pilot completes: replace the illustrative number with the measured one, get written customer approval, relabel that story "pilot result," and move it to the top of every surface. One verified story outranks eight composites — and the honesty of the composite labeling is what makes the first verified one believable.
